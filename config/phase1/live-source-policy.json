@@ -1,0 +1,168 @@
+{
+  "live_policy_schema_version": "1.3.0",
+  "reviewed_at": "2026-08-03",
+  "valid_until": "2026-08-16",
+  "review_expiry_rule": "The review validity window is a project control, not a source claim. If the acceptance-session date is later than valid_until, live collection is HOLD and exits 4 until this file is re-reviewed and re-frozen; the runner must not extend the date automatically.",
+  "scope": "Phase 1 live incremental collection for low-frequency internal research raw evidence only",
+  "production_collection_approved": false,
+  "redistribution_approved": false,
+  "baseline_separation": {
+    "rule": "This policy applies only to source-mode=live with mode=incremental. Bootstrap and every source-mode=snapshot run continue to use the frozen source-catalog.json and collection-policy.json without reinterpretation.",
+    "immutable_baseline_config": [
+      "config/phase1/source-catalog.json",
+      "config/phase1/collection-policy.json"
+    ],
+    "baseline_source_pair": ["ydniu", "eastmoney"],
+    "baseline_release_id": "baseline-v1",
+    "baseline_gate_ids": ["G1", "G2"]
+  },
+  "network_policy": {
+    "method_allowlist": ["GET"],
+    "https_only": true,
+    "authentication_allowed": false,
+    "cookies_allowed": false,
+    "cross_process_same_host_min_interval_seconds": 2.0,
+    "request_timeout_seconds": 30,
+    "max_attempts_per_request": 2,
+    "retry_backoff_seconds": 2,
+    "retryable_error_categories": ["dns_timeout_tls_or_required_source_unavailable"],
+    "max_response_bytes": 1048576,
+    "redirect_policy": "same_origin_only",
+    "max_redirects": 3,
+    "persist_raw_before_parse": true,
+    "cache_may_satisfy_current_run": false,
+    "request_plan_rule": "Only the exact static endpoints declared in this file may enter the current live request plan. A calendar, expected issue number, timestamp cache-buster, discovered child, or guessed future URL is never a request source."
+  },
+  "failure_classification": {
+    "preflight": {
+      "stage_rule": "These checks finish before a request plan or run is created.",
+      "expired_or_changed_policy": {
+        "decision": "HOLD",
+        "cli_exit_code": 4,
+        "effect": "creates_no_request_run_or_release",
+        "retryable": false
+      },
+      "endpoint_or_configuration_policy_violation": {
+        "decision": "HOLD",
+        "cli_exit_code": 4,
+        "effect": "creates_no_request_run_or_release",
+        "retryable": false
+      }
+    },
+    "runtime": {
+      "stage_rule": "These failures occur only after a run and request_started attempt exist. Append and flush exactly one request_failed terminal for that attempt. A retryable attempt-1 failure schedules exactly one attempt-2 after the frozen delay; a non-retryable or exhausted failure rejects the run, creates no release, and leaves current-release.json unchanged.",
+      "redirect_policy_violation": {"decision": "HOLD", "cli_exit_code": 4, "retryable": false},
+      "authentication_cookie_or_challenge_required": {"decision": "HOLD", "cli_exit_code": 3, "retryable": false},
+      "dns_timeout_tls_or_required_source_unavailable": {"decision": "HOLD", "cli_exit_code": 3, "retryable": true},
+      "http_non_success_or_response_too_large": {"decision": "HOLD", "cli_exit_code": 3, "retryable": false},
+      "content_type_encoding_or_parse_failure": {"decision": "FAIL", "cli_exit_code": 2, "retryable": false},
+      "publisher_core_fact_conflict": {"decision": "FAIL", "cli_exit_code": 2, "retryable": false}
+    },
+    "acceptance_mapping": {
+      "rule": "The product CLI/preflight supplies the underlying exit code. When E2E-05 or G3 classifies that outcome as HOLD, the acceptance report preserves underlying_exit_code and the acceptance runner exits 20.",
+      "hold_runner_exit_code": 20,
+      "expired_policy_underlying_exit_code": 4
+    }
+  },
+  "game_source_pairs": {
+    "ssq": {
+      "source_ids": ["ydniu", "swlc"],
+      "required_observations_per_issue": 2,
+      "distinct_publisher_ids_required": true,
+      "core_fact_sha256_agreement_required": true,
+      "on_missing_or_conflict": "reject_run"
+    },
+    "dlt": {
+      "source_ids": ["ydniu", "gdlottery"],
+      "required_observations_per_issue": 2,
+      "distinct_publisher_ids_required": true,
+      "core_fact_sha256_agreement_required": true,
+      "on_missing_or_conflict": "reject_run"
+    }
+  },
+  "recheck_policy": {
+    "recheck_policy_schema_version": "1.1.0",
+    "window_per_game_latest_issues": 20,
+    "new_issue_target_rule": "Any newly observed issue is a target; a missing required source pair is unresolved and rejects publication.",
+    "existing_complete_pair_rule": "Inside the latest-20 per-game window, a complete required pair follows normal unchanged, revised, or conflict handling; any extra dissent blocks publication.",
+    "deferred_rule": "For an existing target with an incomplete required pair, if every available observation equals the current draw core, retain the old draw and evidence, record RECHECK_DEFERRED_MISSING_PARTNER, do not count unresolved, do not block, and do not claim the recheck complete.",
+    "unconfirmed_change_rule": "For an existing target with an incomplete required pair, any available observation whose core differs from the current draw is RECHECK_UNCONFIRMED_CHANGE, unresolved, and rejects publication.",
+    "quality_counters": ["recheck_attempted", "recheck_complete", "recheck_deferred"],
+    "source_expansion_approved": false
+  },
+  "sources": [
+    {
+      "source_id": "ydniu",
+      "publisher_id": "ydniu-publisher",
+      "games": ["ssq", "dlt"],
+      "parser_id": "phase1-ydniu-parser",
+      "parser_version": "1.0.0",
+      "endpoint_kind": "exact_history_page",
+      "endpoints": {
+        "ssq": "https://www.ydniu.com/open/ssq-500/1.html",
+        "dlt": "https://www.ydniu.com/open/dlt-500/1.html"
+      },
+      "expected_content_type": "text/html",
+      "expected_encoding": "utf-8",
+      "observed_page_capacity": 30,
+      "reviewed_at": "2026-08-02",
+      "valid_until": "2026-08-16",
+      "review_evidence_urls": [
+        "https://www.ydniu.com/open/ssq-500/1.html",
+        "https://www.ydniu.com/open/dlt-500/1.html",
+        "https://www.ydniu.com/robots.txt",
+        "https://www.ydniu.com/about.aspx"
+      ]
+    },
+    {
+      "source_id": "swlc",
+      "publisher_id": "swlc-publisher",
+      "games": ["ssq"],
+      "parser_id": "phase1-swlc-live-parser",
+      "parser_version": "1.0.0",
+      "endpoint_kind": "exact_history_query",
+      "endpoints": {
+        "ssq": "https://www.swlc.net.cn/shsflcpfxzx/lottery/ssq.html?view=previous&limit=30"
+      },
+      "query_rule": "The query string and parameter values are exact and immutable; callers must not change view, limit, parameter order, or add parameters.",
+      "expected_content_type": "text/html",
+      "expected_encoding": "utf-8",
+      "observed_page_capacity": 30,
+      "reviewed_at": "2026-08-02",
+      "valid_until": "2026-08-16",
+      "review_evidence_urls": [
+        "https://www.swlc.net.cn/shsflcpfxzx/lottery/ssq.html?view=previous&limit=30",
+        "https://www.swlc.net.cn/robots.txt",
+        "https://www.swlc.net.cn/"
+      ]
+    },
+    {
+      "source_id": "gdlottery",
+      "publisher_id": "gdlottery-publisher",
+      "games": ["dlt"],
+      "parser_id": "phase1-gdlottery-history-parser",
+      "parser_version": "1.0.0",
+      "endpoint_kind": "exact_history_json",
+      "endpoints": {
+        "dlt": "https://www.gdlottery.cn/f_html/kjgg/gameNumber.json"
+      },
+      "expected_content_type": "application/json",
+      "expected_encoding": "utf-8",
+      "max_response_bytes": 2097152,
+      "observed_response_bytes": 1828447,
+      "observed_response_sha256": "dae5c9e0f33cfc09e8b245e9f093bfeaf115ed9383c673dd78ef08f34c98b5ac",
+      "reviewed_at": "2026-08-02",
+      "valid_until": "2026-08-16",
+      "review_evidence_urls": [
+        "https://www.gdlottery.cn/f_html/kjgg/gameNumber.json",
+        "https://www.gdlottery.cn/robots.txt",
+        "https://www.gdlottery.cn/"
+      ],
+      "known_limits": [
+        "robots.txt returned a soft-404 page at review time rather than an explicit policy file.",
+        "The reviewed JSON endpoint is authorized only at its exact queryless URL; timestamp cache-busters and arbitrary query strings are outside the current profile.",
+        "One observed response does not establish a long-term publication-time SLA."
+      ]
+    }
+  ]
+}

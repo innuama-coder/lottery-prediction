@@ -1,0 +1,124 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "verification_command",
+  "contract_version": "1.3",
+  "freeze_id": "P0-01-p0-20260801-a",
+  "frozen_at_utc": "2026-08-01T02:18:45Z",
+  "bootstrap_gate_command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/phase0/verify_phase0.ps1 --contract docs/roadmap/phase-0-acceptance-contract.json --artifacts artifacts/phase-0 --stage p0-01",
+  "bootstrap_expected_exit_code": 0,
+  "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/phase0/verify_phase0.ps1 --contract docs/roadmap/phase-0-acceptance-contract.json --artifacts artifacts/phase-0 --stage full",
+  "full_replay_command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/phase0/verify_phase0.ps1 --contract docs/roadmap/phase-0-acceptance-contract.json --artifacts artifacts/phase-0 --stage full",
+  "working_directory": ".",
+  "launcher_path": "scripts/phase0/verify_phase0.ps1",
+  "interpreter_path": "C:\\Users\\54256213\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+  "interpreter_version": "3.12.13",
+  "interpreter_sha256": "3c6a206b7d93cca823934a83732220dcffd413fd1036d9fb82eebb64599cf7f3",
+  "interpreter_override_environment_variable": "PHASE0_PYTHON",
+  "prerequisites": [
+    "Run from the repository root on Windows with powershell available.",
+    "The frozen CPython interpreter exists at interpreter_path and matches both interpreter_version and interpreter_sha256.",
+    "The four frozen verification tool files match verifier_file_hashes before bootstrap or full replay executes.",
+    "The three P0-01 frozen input files and all 17 schema files match the exact SHA-256 values recorded here.",
+    "The bootstrap gate validates P0-01 without network; the canonical full replay is reserved for P0-07 after all required Phase 0 artifacts exist.",
+    "No network connection is required or permitted by either verification stage."
+  ],
+  "expected_exit_code": 0,
+  "non_interactive": true,
+  "network_required": false,
+  "frozen_input_hashes": {
+    "scope_freeze": "eb815e03d1f51f0c0ca8bd91dea1ab57b14d08bc654c4b1869564129655f6d34",
+    "observation_plan": "417279486152230fa931e6f1326bc8acc4818428a1da1c9a83eaa5d2c83a7c4e",
+    "reviewer_assignment": "6bb1bf78cfaf3f899d0782e56ae465f59601dfdad90292d296ac08cab08a01f2"
+  },
+  "contract_sha256": "784ff08ba44925ddb668834140dc5f9841b6dd3966789efac935fb3c8ca80c12",
+  "schemas_manifest_sha256": "68065c3ff9e862b2adb3caf51a559d2cc83f3a4de1c5c653f644bc1bec7611ae",
+  "schema_hashes": [
+    {
+      "path": "artifacts/phase-0/schemas/coverage-report.schema.json",
+      "sha256": "0bca65181ae31cc05d7403367d9b138ccda4f8a0a694b97459a568b36895c9fd"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/environment-lock.schema.json",
+      "sha256": "bf65f4404e01f0f0b9423329dd272ff2a7b2655c332e9fc224f4e88145c17571"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/evidence-manifest.schema.json",
+      "sha256": "3731c7500069c8e6df3aee8b6cf91074648d5c7d9c6b79bb5f914996b25daec3"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/field-contract.schema.json",
+      "sha256": "6fe3d33b1745090e2d83186b1fa7cc4d48714a0a9af16f3dbe91a2e3ef8942d3"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/normalized-records.schema.json",
+      "sha256": "98c82672ed786267dbb2ab427a4bd44c4634717f2902ce8aedbed7870687de3f"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/observation-plan.schema.json",
+      "sha256": "9fcde1f275570ccffa99b60410bb64f7419965cb306b054ceac64a2f256f21bc"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/reconciliation.schema.json",
+      "sha256": "95eed8851c56c818da9d67d5db58a559079af34ec0ff85e40ef625646dc74671"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/replay-report.schema.json",
+      "sha256": "86332ba33f83c9ba130d56cb1d7c4d2ccbf585d2cd078f44b62383bcc397fb13"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/reviewer-assignment.schema.json",
+      "sha256": "565f61a23a40303a01ddc566d3186cb623295cad709ec9e8770cfff7755dbc6f"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/reviewer-attestation.schema.json",
+      "sha256": "aad9d560cb6bbfdf52c692f53f1adfa7771e3a07300d550ae6a8f2c1e4af67b5"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/revision-report.schema.json",
+      "sha256": "a86bd2e5832ad3a99fd85d0cea2026037b647fccae48733884fa3fc817e9ac7d"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/rule-bundles.schema.json",
+      "sha256": "1b85580f4208471480cb54549564db95194786cdc8aae8e521e0bfc57dbfb2fd"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/scope-freeze.schema.json",
+      "sha256": "ba2ebe0eb84409357ddc260b8a593e2b36dcd3180f65eb9a7bc497702ec70363"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/soak-log.schema.json",
+      "sha256": "6d99ee4b092c087025586c88cd03a86f04884103b71217eb15e87ce7ee73b09d"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/source-catalog.schema.json",
+      "sha256": "28af2f41fbad0b98aaf1b394a5e3a3fae3f30c2c6d0c22d2cacfd0b741c4f87b"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/stage1-handoff-fixture.schema.json",
+      "sha256": "af176a62b2feedfbef600da7207ba1636dac0d7a70342b6fefa20271003b1922"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/verification-command.schema.json",
+      "sha256": "f15b5662513e4d805c43026ab0377c18c2b18afecd31bb0c864b2d6b350af691"
+    }
+  ],
+  "verifier_file_hashes": [
+    {
+      "path": "scripts/phase0/verify_phase0.ps1",
+      "sha256": "2f95cd1a4a64d0e1dc567909159d245b3775c5d302fd380d289e121bce545d0e"
+    },
+    {
+      "path": "scripts/phase0/verify_phase0.py",
+      "sha256": "3ac8a43dd04b53d446b37c69fe9424f1dc843636bcba43c6419232a00b0afcb1"
+    },
+    {
+      "path": "scripts/phase0/phase0lib.py",
+      "sha256": "09d192831de891f6d4937276a858e0426fbd2d401836ae6f426e395555524025"
+    },
+    {
+      "path": "scripts/phase0/hash_artifact.py",
+      "sha256": "1c781689a770ea7090520ccceecd9431194e6e6acc90ba56399b089b871a627a"
+    }
+  ],
+  "self_hash_sidecar": "artifacts/phase-0/verification-command.json.sha256"
+}

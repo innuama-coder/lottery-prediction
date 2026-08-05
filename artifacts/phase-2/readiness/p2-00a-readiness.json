@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase2_p2_00a_readiness",
+  "terminal": "P2-00A-READY",
+  "evaluated_at_utc": "2026-08-04T10:14:10Z",
+  "contract_identity": {
+    "path": "docs/roadmap/phase-2-acceptance-contract.json",
+    "sha256": "9f5456ca5d8fb041d755fb0e00d668a0e8d4fe424c9c983f7ec8224033f3a8e6"
+  },
+  "upstream_identities": [
+    {"path": "docs/roadmap/phase-1-acceptance-contract.json", "sha256": "6a941622e2de77aa5371750ceb4c9d012574ba581c2b6226851006a819243a40"},
+    {"path": "artifacts/phase-1/acceptance/phase1-acceptance.json", "sha256": "959b1dddacf453dbff347786d572de4cd8c52d1b7eb2e7a3805cffa2a166bb18"},
+    {"path": "artifacts/phase-1/baseline-v1/draws.jsonl", "sha256": "f2e34a88fbd43a378d7fb6255d39deee1354216b918934f355a06ef986be60c1"},
+    {"path": "artifacts/phase-1/baseline-v1/observations.jsonl", "sha256": "dc974863c845da1e895ecf623bc6e878ba6aa6710c902357bce68ad5e661966e"},
+    {"path": "artifacts/phase-1/baseline-v1/manifest.json", "sha256": "0ddcccb72dce7662af665b369995b1c1fd28c68554b32e175f4561fc9f9683d1"},
+    {"path": "tests/phase1/fixtures/spec/spec-bundle-freeze.json", "sha256": "56d443d76075acdc8914da3fa8a0b7318325aff91f222bcd181c7390f14a2c6e"}
+  ],
+  "R2_source_path_and_sha256": {
+    "path": "docs/research/lottery-autoresearch-technical-strategy.md",
+    "sha256": "1327ed33efb23afb4fd6034a5a426141f1cca9c1494e82f895c3e3022b9e07bb"
+  },
+  "draft_path_sha256_inventory": [
+    {"path": "artifacts/phase-2/readiness/drafts/input-manifest.draft.json", "sha256": "60c31513bd7a34b2d177f87573faec98cc2e85d584a2b86757e93959f52f7ce9"},
+    {"path": "artifacts/phase-2/readiness/drafts/input-rule-and-time-contract.draft.md", "sha256": "7bfb55317c548d0f9f8c9d7cb1f5b32665f85cf13b269580e5be1f6cf010d31b"},
+    {"path": "artifacts/phase-2/readiness/drafts/preregistration.draft.json", "sha256": "f25f0d1373c0b1fd9b5364685f4b526931d4ad460b1117553c46da4ade34ed93"},
+    {"path": "artifacts/phase-2/readiness/drafts/reviewer-assignment.draft.json", "sha256": "7fd39604dfadfa327dd97b88f4d74fa6d75e6dc4a27e383d523847c86ad2826e"}
+  ],
+  "generation_rule_join_count": 400,
+  "unresolved_generation_null_blockers": 0,
+  "required_draft_field_coverage": 1.0,
+  "formal_D2_path_occupancy_count": 0,
+  "formal_historical_result_count": 0,
+  "validator_identity": {
+    "path": "scripts/validate_phase2_readiness.py",
+    "sha256": "6d0947b19ccaedbe0db84a3b8d7ae494d5fe7f7640dee8939543d96c87caea30"
+  },
+  "reviewer_identity": {
+    "reviewer_id": "codex-root-p2-00a-self-check",
+    "review_type": "deterministic_self_check",
+    "independence_claim": "none; independent method review remains P2-00B work"
+  },
+  "notes": [
+    "This readiness authorizes only P2-01 startup and is not G0/G1 acceptance.",
+    "Practical-effect thresholds, Monte Carlo interval method, budgets and actual reviewer identities remain drafts for P2-00B freeze."
+  ]
+}

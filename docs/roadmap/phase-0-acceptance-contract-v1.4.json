@@ -1,0 +1,80 @@
+{
+  "version": "1.4",
+  "phase": "P0",
+  "name": "official-draw-data-immediate-feasibility",
+  "status": "active_amendment",
+  "supersedes_for_decision": "docs/roadmap/phase-0-acceptance-contract.json@1.3",
+  "preserves_v1_3_evidence": true,
+  "objective": "Decide now whether the currently evidenced official DLT and SSQ data paths are usable and sufficient for later modeling, without making future draw-cycle observations a completion prerequisite.",
+  "scope": {
+    "included": [
+      "point-in-time official-source accessibility and policy status",
+      "deterministic historical parsing and offline replay",
+      "failure injection and append-only evidence behavior",
+      "source topology and conflict-test assessability",
+      "historical coverage sufficiency for stage 1"
+    ],
+    "excluded": [
+      "future-month production availability SLO",
+      "prediction model selection or training",
+      "claims that shared-upstream publication channels are independent",
+      "access-control circumvention"
+    ]
+  },
+  "immediate_hard_gates": [
+    {
+      "id": "I-SOURCE-STATUS",
+      "standard": "Every declared official source has a dated access observation and an explicit approved-use status; a policy-blocked source is never represented as available for collection.",
+      "evidence": ["source-catalog.json"]
+    },
+    {
+      "id": "I-REPLAY",
+      "standard": "Saved DLT and SSQ inputs parse deterministically, malformed inputs fail closed, and saved evidence replays without network access.",
+      "evidence": ["test_p0_04.py", "raw/", "parsed/", "normalized/", "evidence-manifest.jsonl"]
+    },
+    {
+      "id": "I-FAILURE-AUDIT",
+      "standard": "Injected parse, encoding, hash, duplicate-ID and write-conflict failures produce no verified bad record and do not overwrite prior evidence.",
+      "evidence": ["test_p0_04.py"]
+    },
+    {
+      "id": "I-SOURCE-TOPOLOGY",
+      "standard": "Conflict testing is described as independently assessable only when at least two accessible data-bearing sources are evidenced as independent; shared-upstream agreement is not independent corroboration.",
+      "evidence": ["source-catalog.json"]
+    },
+    {
+      "id": "I-DATA-SUFFICIENCY",
+      "standard": "Expected and observed historical issue counts are mechanically computed for target and minimum intervals for each game; no sampled subset is presented as model-ready coverage.",
+      "evidence": ["coverage-report.json", "p0-05-work-plan.json"]
+    },
+    {
+      "id": "I-CORRECTIVE-CLASSIFICATION",
+      "standard": "Every non-passing game is HOLD only when at least one concrete compliant corrective action remains, STOP only when all audited compliant alternatives are explicitly exhausted with nonempty exhaustion evidence, every evidence reference resolves inside the repository and enters the report hash closure, and any incomplete or contradictory classification fails closed.",
+      "evidence": ["artifacts/phase-0-amendment-1/corrective-paths.json"]
+    }
+  ],
+  "prospective_observation": {
+    "source": "P0-06",
+    "classification": "supplementary_non_blocking",
+    "blocking": false,
+    "purpose": [
+      "observe live publication timing",
+      "observe short-term endpoint availability",
+      "exercise the scheduler in the deployment environment"
+    ],
+    "cannot_prove": [
+      "historical coverage sufficiency",
+      "source independence",
+      "long-term production reliability",
+      "modeling readiness by itself"
+    ]
+  },
+  "decision_logic": {
+    "GO": "Both games satisfy all immediate gates and target historical coverage.",
+    "LIMITED_GO": "At least one game satisfies all immediate gates and minimum historical coverage; only passing games may enter stage 1.",
+    "HOLD": "No game may enter stage 1 now, and corrective-path evidence records compliant_corrective_action_available=true and alternatives_exhausted_no_evidentiary_path=false.",
+    "STOP": "No game may enter stage 1, and corrective-path evidence records compliant_corrective_action_available=false and alternatives_exhausted_no_evidentiary_path=true.",
+    "completion_rule": "GO, LIMITED_GO, HOLD, and STOP are all terminal, independently acceptable phase-0 assessment outcomes. Prospective observation is not consulted when selecting them."
+  },
+  "required_output": "artifacts/phase-0-amendment-1/immediate-feasibility-report.json"
+}

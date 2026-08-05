@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase2_p2_01_start_authorization",
+  "checked_at_utc": "2026-08-04T22:40:03Z",
+  "validation_argv": [
+    ".venv/Scripts/python.exe",
+    "scripts/validate_phase2_readiness.py",
+    "--contract",
+    "docs/roadmap/phase-2-acceptance-contract.json",
+    "--readiness",
+    "artifacts/phase-2/readiness/p2-00a-readiness.json"
+  ],
+  "validation_exit_code": 0,
+  "terminal": "P2-00A-READY",
+  "actual": {
+    "formal_D2_path_occupancy_count": 0,
+    "formal_historical_result_count": 0,
+    "generation_rule_join_count": 400,
+    "required_draft_field_coverage": 1.0,
+    "unresolved_generation_null_blockers": 0
+  },
+  "claim_mismatches": [],
+  "draft_errors": [],
+  "identities": [
+    {"path": "docs/roadmap/phase-2-acceptance-contract.json", "sha256": "9f5456ca5d8fb041d755fb0e00d668a0e8d4fe424c9c983f7ec8224033f3a8e6"},
+    {"path": "artifacts/phase-2/readiness/p2-00a-readiness.json", "sha256": "13e003d4a79b46fb0b53ea09704c6c85af19eafe8f7c345032efcd10a2d5ce68"},
+    {"path": "scripts/validate_phase2_readiness.py", "sha256": "6d0947b19ccaedbe0db84a3b8d7ae494d5fe7f7640dee8939543d96c87caea30"}
+  ],
+  "scope": "authorizes P2-01 startup only; not G0/G1 acceptance"
+}

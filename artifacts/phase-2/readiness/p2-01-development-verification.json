@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase2_p2_01_development_verification",
+  "checked_at_utc": "2026-08-04T23:26:41Z",
+  "status": "PASS",
+  "scope": "D2-06 implementation verification only; not G0/G1, not independent acceptance and not a scientific result",
+  "d2_06_paths": [
+    "src/lottery_research/phase2",
+    "schemas/phase2",
+    "requirements/phase2.lock",
+    "artifacts/phase-2/contracts/environment-lock.json"
+  ],
+  "identities": [
+    {"path": "artifacts/phase-2/contracts/environment-lock.json", "sha256": "592b067b34cdfb5532778d32876e1ff7edda477ac43eb42ceed3fdd379ef4810"},
+    {"path": "requirements/phase2.lock", "sha256": "576f183ec8f44f53c8edac1819b4221c3708223063f19c8b97c34b57a7e59f89"},
+    {"path": "tests/phase2_cli_contract/test_phase2_cli_contract.py", "sha256": "5848a7cdbe412189978d4c6f9123fa4246fe6233b6e6443512eea7ceaa42f324"},
+    {"path": "tests/phase2_readiness/test_validate_phase2_readiness.py", "sha256": "9a3ab1a33247b3cfe781f7d246b7cadfcdd76e8628c795a41367932614d4e55b"},
+    {"path": "pyproject.toml", "sha256": "0f39f4a375e34358e809eb7d67ddbeb6c9cc7bec0f8612fa3d0e27a698ac4727"},
+    {"path": "artifacts/phase-2/readiness/p2-01-start-authorization.json", "sha256": "de60718da69418132b1173bbca1392cf4d1812906b6ad1dae88c10dd3b3bc4be"}
+  ],
+  "quantitative_results": {
+    "contract_command_count": 6,
+    "schema_count": 8,
+    "phase2_cli_contract_tests_passed": 10,
+    "phase2_cli_contract_tests_failed": 0,
+    "phase2_readiness_lifecycle_tests_passed": 5,
+    "phase2_readiness_lifecycle_tests_failed": 0,
+    "accepted_invalid_argument_combinations": 0,
+    "phase1_project_dependency_changes": 0,
+    "formal_historical_result_artifacts": 0,
+    "clean_environment_dependency_install_exit_code": 0,
+    "clean_environment_project_build_install_exit_code": 0,
+    "installed_schema_load_count": 8,
+    "phase1_release_verify_exit_code": 0
+  },
+  "benchmark": {
+    "synthetic_only": true,
+    "worlds_per_scenario": 1000,
+    "draws_per_world": 200,
+    "repeats": 3,
+    "null_wall_seconds_per_1000_worlds": 1.0628885999904014,
+    "bias_wall_seconds_per_1000_worlds": 1.5449907000001986,
+    "peak_memory_bytes": 19763200,
+    "memory_metric": "coordinator_process_peak_working_set_bytes",
+    "parallel_workers": 4,
+    "parallel_efficiency_factor": 0.389635074922429
+  },
+  "fail_closed_checks": [
+    {"case": "missing required arguments for each of six commands", "expected_exit_code": 4, "status": "PASS"},
+    {"case": "tampered upstream hash", "expected_exit_code": 5, "status": "PASS"},
+    {"case": "overlapping generation-rule segment", "expected_exit_code": 2, "status": "PASS"},
+    {"case": "five post-entry commands before their gates", "expected_exit_code": 20, "output_files_created": 0, "status": "PASS"}
+  ],
+  "regression_context": {
+    "phase1_formal_verify": "PASS; 400 DrawRecord and 800 SourceObservation identities unchanged",
+    "phase1_unittest_suite": "407 of 408 passed; one pre-existing self-inconsistent test expects _formal_state() to ignore acceptance/g2.json without passing its exclude argument",
+    "phase0_unittest_suite": "not a P2-01 gate; historical frozen-interpreter and evidence anchors no longer match the current 2026-08-05 environment",
+    "blocking_for_d2_06": false
+  },
+  "review": {
+    "review_type": "implementation-owned deterministic verification",
+    "independent": false,
+    "independent_method_review_remains": "P2-00B / D2-05"
+  },
+  "next_authorized_work_package": "P2-00B-entry-freeze"
+}

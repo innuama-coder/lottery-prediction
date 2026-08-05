@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase2-final-evidence-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "status", "acceptance_mode", "frozen_at_utc", "contract_identity", "signal_status", "run_selections", "deliverables", "e2e_registry_identity", "e2e_verdicts", "blocking_findings", "signature"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase2_final_evidence_manifest"},
+    "status": {"const": "frozen"},
+    "acceptance_mode": {"enum": ["formal", "isolated_e2e"]},
+    "frozen_at_utc": {"type": "string", "format": "date-time"},
+    "contract_identity": {"$ref": "#/$defs/pathHash"},
+    "signal_status": {"enum": ["no_detectable_signal", "candidate_signal", "indeterminate"]},
+    "run_selections": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "object", "additionalProperties": false, "required": ["command", "run_id", "request", "result", "published_output"], "properties": {"command": {"enum": ["audit", "power", "replay"]}, "run_id": {"type": "string", "minLength": 1}, "request": {"$ref": "#/$defs/pathHash"}, "result": {"$ref": "#/$defs/pathHash"}, "published_output": {"$ref": "#/$defs/pathHash"}}}},
+    "deliverables": {"type": "array", "minItems": 12, "maxItems": 12, "items": {"type": "object", "additionalProperties": false, "required": ["id", "evidence"], "properties": {"id": {"type": "string", "pattern": "^D2-(0[1-9]|1[0-2])$"}, "evidence": {"type": "array", "items": {"$ref": "#/$defs/pathHash"}}}}},
+    "e2e_registry_identity": {"$ref": "#/$defs/pathHash"},
+    "e2e_verdicts": {"type": "array", "minItems": 10, "maxItems": 10, "items": {"type": "object", "additionalProperties": false, "required": ["id", "status", "expected", "observed", "receipt"], "properties": {"id": {"type": "string", "pattern": "^E2E-P2-[0-9]{2}-.+$"}, "status": {"enum": ["PASS", "PENDING"]}, "expected": {"$ref": "#/$defs/outcome"}, "observed": {"anyOf": [{"$ref": "#/$defs/outcome"}, {"type": "null"}]}, "receipt": {"anyOf": [{"$ref": "#/$defs/pathHash"}, {"type": "null"}]}}}},
+    "blocking_findings": {"type": "array", "maxItems": 0},
+    "signature": {"type": "object", "additionalProperties": false, "required": ["signer_id", "signed", "signed_at_utc"], "properties": {"signer_id": {"type": "string", "minLength": 1}, "signed": {"const": true}, "signed_at_utc": {"type": "string", "format": "date-time"}}}
+  },
+  "$defs": {
+    "outcome": {"type": "object", "additionalProperties": false, "required": ["exit_code", "terminal"], "properties": {"exit_code": {"type": "integer"}, "terminal": {"type": "string", "minLength": 1}}},
+    "pathHash": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}
+  }
+}

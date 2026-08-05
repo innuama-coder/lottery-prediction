@@ -1,0 +1,1 @@
+{"decision":"FAIL","deterministic":{"blocking_reason_codes":["DNS_TIMEOUT_TLS_OR_REQUIRED_SOURCE_UNAVAILABLE"],"checks":[],"counts":{},"input_hashes":{},"output_hashes":{}},"generated_at_utc":"2026-08-03T05:59:59.616Z","quality_schema_version":"1.0.0","run_id":"live01"}

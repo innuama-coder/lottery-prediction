@@ -1,0 +1,23 @@
+{
+  "profile_version": "1.1.0",
+  "cases": [
+    {
+      "id": "success-terminal-without-discovered-child",
+      "base": "valid_stream",
+      "mutation": "remove_request_discovered_and_child_lifecycle",
+      "expected_violation": "run_no_change requires one authorized discovered child and all five effective requests succeeded"
+    },
+    {
+      "id": "published-terminal-with-static-request-not-started",
+      "base": "valid_stream",
+      "mutation": "remove_first_static_request_lifecycle_and_set_run_published",
+      "expected_violation": "run_published requires one authorized discovered child and all five effective requests succeeded"
+    },
+    {
+      "id": "terminal-result-status-mismatch",
+      "base": "valid_stream_and_no_change_result",
+      "mutation": "set_result_status_published",
+      "expected_violation": "does not map to terminal event"
+    }
+  ]
+}

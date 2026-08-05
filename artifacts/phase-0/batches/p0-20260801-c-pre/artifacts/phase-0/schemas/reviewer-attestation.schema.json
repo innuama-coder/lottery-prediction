@@ -1,0 +1,6 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"urn:autoresearch-lotte:phase0:reviewer-attestation:1.0.0","type":"object","additionalProperties":false,
+  "required":["schema_version","artifact_type","contract_version","reviewer_id","assignment_sha256","replay_report_sha256","verification_command_sha256","executed_command","exit_code","independence_confirmed","evidence_unmodified","conclusion","signed_at_utc","signature"],
+  "properties":{"schema_version":{"const":"1.0.0"},"artifact_type":{"const":"reviewer_attestation"},"contract_version":{"const":"1.3"},"reviewer_id":{"type":"string","minLength":1},"assignment_sha256":{"$ref":"#/$defs/hash"},"replay_report_sha256":{"$ref":"#/$defs/hash"},"verification_command_sha256":{"$ref":"#/$defs/hash"},"executed_command":{"type":"string","minLength":1},"exit_code":{"type":"integer"},"independence_confirmed":{"const":true},"evidence_unmodified":{"const":true},"conclusion":{"enum":["PASS","FAIL"]},"signed_at_utc":{"type":"string","format":"date-time"},"signature":{"type":"string","minLength":1}},
+  "$defs":{"hash":{"type":"string","pattern":"^[0-9a-f]{64}$"}}
+}

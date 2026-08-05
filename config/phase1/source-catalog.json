@@ -1,0 +1,64 @@
+{
+  "catalog_schema_version": "1.0.0",
+  "reviewed_at": "2026-08-02",
+  "applicability": "Phase 1 internal research using the frozen Phase 0 snapshot only",
+  "production_collection_approved": false,
+  "redistribution_approved": false,
+  "limitations": [
+    "Approval is limited to internal research transformation of already captured Phase 0 evidence.",
+    "This catalog does not authorize a production collection service or redistribution of source pages.",
+    "Different publishers report the same official draw process and are not independent physical observations."
+  ],
+  "sources": [
+    {
+      "source_id": "ydniu",
+      "publisher_id": "ydniu-publisher",
+      "publisher_name": "一定牛历史开奖发布主体",
+      "publisher_role": "professional_lottery_portal",
+      "parser_id": "phase1-ydniu-parser",
+      "parser_version": "1.0.0",
+      "games": ["ssq", "dlt"],
+      "approved_for_phase1_internal_snapshot_research": true,
+      "policy_basis": "Frozen public history pages captured at low rate in Phase 0; use here is limited to saved raw evidence.",
+      "policy_evidence_urls": [
+        "https://www.ydniu.com/robots.txt",
+        "https://www.ydniu.com/about.aspx"
+      ]
+    },
+    {
+      "source_id": "eastmoney",
+      "publisher_id": "eastmoney-publisher",
+      "publisher_name": "东方财富彩票频道发布主体",
+      "publisher_role": "major_financial_portal_lottery_channel",
+      "parser_id": "phase1-eastmoney-parser",
+      "parser_version": "1.0.0",
+      "games": ["ssq", "dlt"],
+      "approved_for_phase1_internal_snapshot_research": true,
+      "policy_basis": "Frozen ordinary history pages captured at low rate in Phase 0; use here is limited to saved raw evidence.",
+      "policy_evidence_urls": [
+        "https://www.eastmoney.com/robots.txt",
+        "https://about.eastmoney.com/about",
+        "https://about.eastmoney.com/home/disclaimer"
+      ],
+      "known_quality_limits": [
+        "The ordinary DLT history pages omit issues 2026026 and 2026027 in the frozen snapshot."
+      ]
+    },
+    {
+      "source_id": "gdlottery",
+      "publisher_id": "gdlottery-publisher",
+      "publisher_name": "广东省体育彩票中心",
+      "publisher_role": "provincial_official_lottery_publisher",
+      "parser_id": "phase1-gdlottery-parser",
+      "parser_version": "1.0.0",
+      "games": ["dlt"],
+      "approved_for_phase1_internal_snapshot_research": true,
+      "policy_basis": "Two frozen official static announcements were captured in Phase 0 solely to resolve deterministic archive gaps.",
+      "policy_evidence_urls": [
+        "https://www.gdlottery.cn/html/help/20210219/81472.html",
+        "https://www.gdlottery.cn/robots.txt"
+      ],
+      "approved_issue_ids": ["2026026", "2026027"]
+    }
+  ]
+}

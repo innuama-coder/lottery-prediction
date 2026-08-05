@@ -1,0 +1,639 @@
+{
+  "contract_version": "3.5.0",
+  "phase": 1,
+  "name": "canonical-data-and-collection-cli",
+  "decision_values": ["PASS", "FAIL", "HOLD"],
+  "plain_language_goal": "交付可执行的数据规格、可追溯的400条基础数据，以及用一条管线完成采集到发布的非交互式CLI。",
+  "runtime_contract": {
+    "python": ">=3.12,<3.13",
+    "python_placeholder": "{python}",
+    "placeholder_resolution": "run_acceptance.py must replace {python} with sys.executable",
+    "package_manifest": "pyproject.toml",
+    "dependency_lock": "requirements.lock",
+    "environment_setup_argv": [
+      ["{python}", "-m", "pip", "install", "-r", "requirements.lock"],
+      ["{python}", "-m", "pip", "install", "--no-deps", "-e", "."]
+    ],
+    "acceptance_runner_exit_codes": {"0": "PASS", "1": "FAIL", "20": "HOLD"},
+    "required_entrypoints": ["python -m lottery_data", "lottery-data"]
+  },
+  "scope": {
+    "included": [
+      "data specification",
+      "400-record normalized baseline",
+      "collection CLI",
+      "bootstrap",
+      "incremental collection",
+      "offline replay",
+      "release verification",
+      "atomic publication",
+      "machine acceptance"
+    ],
+    "excluded": [
+      "WebUI",
+      "scheduler or daemon platform",
+      "database service",
+      "full-history backfill",
+      "feature engineering",
+      "model training",
+      "prediction claims"
+    ]
+  },
+  "input_freeze": {
+    "phase0_snapshot_id": "20260802T025000Z",
+    "root": "artifacts/phase-0-multisource/snapshots/20260802T025000Z",
+    "canonical_ref": "artifacts/phase-0-multisource/snapshots/20260802T025000Z/consensus/canonical-records.jsonl",
+    "reconciliation_ref": "artifacts/phase-0-multisource/snapshots/20260802T025000Z/consensus/reconciliation.jsonl",
+    "capture_manifest_ref": "artifacts/phase-0-multisource/snapshots/20260802T025000Z/capture-manifest.jsonl",
+    "artifact_hashes_ref": "artifacts/phase-0-multisource/snapshots/20260802T025000Z/artifact-hashes.json",
+    "expected": {
+      "draw_records": 400,
+      "source_observations": 800,
+      "unique_game_issue": 400,
+      "games": {
+        "ssq": {"records": 200, "oldest": "2025037", "newest": "2026085"},
+        "dlt": {"records": 200, "oldest": "2025034", "newest": "2026083"}
+      }
+    }
+  },
+  "configuration_inputs": {
+    "hash_algorithm": "SHA-256",
+    "files": [
+      {
+        "path": "config/phase1/source-catalog.json",
+        "expected_sha256": "b0a30f0a6c90744043cb74ed504db161b3456c9607618a522237cf28487b36fa",
+        "applies_to": ["bootstrap:snapshot", "incremental:snapshot"],
+        "mutation_rule": "frozen; contract 3.5.0 does not change G1/G2 baseline source identity, normalized data bytes, or evidence"
+      },
+      {
+        "path": "config/phase1/collection-policy.json",
+        "expected_sha256": "79c2f55d93d3458602122f51148c96073f3dc4a809f95bc3cc7041e0a983e760",
+        "applies_to": ["bootstrap:snapshot", "incremental:snapshot"],
+        "mutation_rule": "frozen; normal_source_pair remains ydniu plus eastmoney for the accepted baseline"
+      },
+      {
+        "path": "config/phase1/live-source-policy.json",
+        "expected_sha256": "9f3f7c91e73632511a588122cc6e2f7e25a1190aecef4e455c6099a28d7d53a0",
+        "applies_to": ["incremental:live"],
+        "mutation_rule": "fail closed on missing file, hash mismatch, schema mismatch, expired review, or production/redistribution approval other than false"
+      }
+    ],
+    "validation_rule": "Preflight hashes every applicable configuration input before creating a request plan. The acceptance report records path and observed SHA-256; a mismatch makes the product CLI/preflight exit 4 and creates no request, run, or release. E2E-05 records underlying_exit_code=4, classifies HOLD, and makes the acceptance runner exit 20.",
+    "acceptance_exit_mapping": {
+      "product_cli_preflight_policy_exit_code": 4,
+      "acceptance_decision": "HOLD",
+      "acceptance_runner_exit_code": 20,
+      "required_report_fields": ["decision", "underlying_exit_code", "acceptance_runner_exit_code"],
+      "rule": "Never report product CLI exit 4 as the acceptance runner exit. Preserve it as underlying_exit_code while the E2E-05 or G3 runner returns 20 for HOLD."
+    },
+    "mode_specific_pair_rule": {
+      "bootstrap:snapshot": "config/phase1/collection-policy.json normal_source_pair and approved_issue_fallbacks",
+      "incremental:snapshot": "config/phase1/collection-policy.json normal_source_pair and approved_issue_fallbacks",
+      "incremental:live:ssq": ["ydniu", "swlc"],
+      "incremental:live:dlt": ["ydniu", "gdlottery"],
+      "bootstrap:live": "forbidden"
+    }
+  },
+  "serialization_contract": {
+    "encoding": "UTF-8",
+    "bom": false,
+    "ensure_ascii": false,
+    "object_key_order": "Unicode code point ascending",
+    "separators": [",", ":"],
+    "record_terminator": "LF",
+    "hash_algorithm": "SHA-256",
+    "core_fact_profile": {
+      "id": "phase0-core-fact-v1",
+      "ordered_semantic_fields": ["game", "issue_id", "draw_date", "front_numbers", "back_numbers"],
+      "phase1_projection": {
+        "game": "game",
+        "issue_id": "issue_id",
+        "draw_date": "draw_date_local",
+        "front_numbers": "front_numbers",
+        "back_numbers": "back_numbers"
+      },
+      "compatibility_source": "scripts/phase0_multisource/phase0_multisource.py:43-48,219-223"
+    },
+    "jsonl_sort_keys": {
+      "observations": ["game", "issue_id", "publisher_id", "source_id", "observation_id"],
+      "reconciliation": ["game", "issue_id"],
+      "draws": ["game", "issue_id", "revision_id"]
+    },
+    "replay_byte_equal": ["observations", "reconciliation", "candidate_draws", "quality_report.deterministic"],
+    "replay_semantic_only": ["run_id", "started_at_utc", "completed_at_utc", "event_times", "replay_manifest"]
+  },
+  "live_execution_profile": {
+    "profile_version": "1.3.0",
+    "scope": "incremental:live only; snapshot/replay baseline schemas, the six frozen v1 schemas, G1 bundle, and G1/G2 normalized data bytes remain byte-identical",
+    "policy": {"path": "config/phase1/live-source-policy.json", "schema_version": "1.3.0", "sha256": "9f3f7c91e73632511a588122cc6e2f7e25a1190aecef4e455c6099a28d7d53a0"},
+    "schemas": {
+      "manifest": {"path": "schemas/phase1/run-manifest-v1.3.schema.json", "sha256": "55919a70ab5f9870419dccf5e1ba8da838414b1dc2a307c66c46a8a018c9c4f2"},
+      "event": {"path": "schemas/phase1/run-event-v1.3.schema.json", "sha256": "e2224d3d803e1d055b2a4d0e54b078515c752e973936921157a531ded885751e"}
+    },
+    "manifest_rule": "RunManifest v1.3 is persisted exactly once through write_once_json and is never overwritten or mutated. request_plan is exactly four ordered static GET history requests: live-ydniu-ssq-history, live-swlc-ssq-history, live-ydniu-dlt-history, live-gdlottery-dlt-history. Dynamic discovery, request_discovered, child_authorization, announcement requests, input_ref, guessed issue URLs, and any fifth logical request are forbidden.",
+    "gd_history_request": {
+      "request_id": "live-gdlottery-dlt-history",
+      "url": "https://www.gdlottery.cn/f_html/kjgg/gameNumber.json",
+      "query_rule": "exact queryless URL; cache-busters and all query strings are forbidden",
+      "request_kind": "history",
+      "parser_id": "phase1-gdlottery-history-parser",
+      "parser_version": "1.0.0",
+      "response_profile": {"expected_media_type": "application/json", "max_response_bytes": 2097152},
+      "cap_rule": "The 2 MiB cap applies only to this exact GD JSON endpoint; every other current live request remains capped at 1048576 bytes (1 MiB)."
+    },
+    "gd_history_fixture": {
+      "path": "tests/phase1/fixtures/real/gd-game-number-history-20260803.json",
+      "sha256": "dae5c9e0f33cfc09e8b245e9f093bfeaf115ed9383c673dd78ef08f34c98b5ac",
+      "size_bytes": 1828447,
+      "top_level_record_count": 14091,
+      "dlt_085_record_count": 1276,
+      "latest20_issue_range": ["2026067", "2026086"],
+      "latest20_count": 20,
+      "latest_issue_closure": {"26084": "2026084", "26085": "2026085", "26086": "2026086"},
+      "validation_rule": "All top-level identity keys are strict; every 085 record, including older records outside latest20, is fully validated. Non-085 record bodies are not interpreted as DLT records."
+    },
+    "effective_plan_rule": "The effective plan is exactly the four manifest requests. Each logical request has one or two consecutive audited attempts; every request_started attempt has exactly one request_succeeded or request_failed terminal. published/no_change requires all four logical requests to succeed, while request_stats count logical requests rather than attempts.",
+    "event_stream_rule": "RunEvent v1.3 forbids request_discovered. The validator enforces explicit v1.3 manifest/event identity, contiguous sequence/event IDs, request identity against the four static plan entries, consecutive attempt numbers 1..2, one terminal per started attempt, at most one final run terminal, and no event after the terminal.",
+    "terminal_result_rule": "Every run_published, run_no_change, run_rejected or run_interrupted terminal requires exactly one RunResult; RunResult is forbidden before a run terminal. published/no_change use exit 0, rejected uses non-zero, interrupted recovery may use null; release_id is non-null only for published. RunResult request_stats must exactly match the validated four-request event stream.",
+    "raw_artifact_rule": "Every live request_succeeded artifact_ref is content-addressed as raw/<source>/<game>/sha256/<sha256>.raw. The raw file is durably persisted and its file SHA-256 equals both the path digest and parse provenance before parser entry.",
+    "preflight_failure_output": "Policy/hash/schema/expiry failure before run creation emits only a non-persistent preflight envelope, creates no request, run, or release, and invents no manifest/events/quality artifact reference. E2E-05 preserves underlying exit 4, classifies HOLD, and the acceptance runner exits 20.",
+    "dual_profile_rule": "verify, recovery, and replay dispatch only from the explicit manifest schema version plus the matching frozen policy SHA. Current v1.3, historical v1.2, and legacy v1.1 are disjoint; request shape or legacy fields must never select or upgrade a profile.",
+    "legacy_compatibility": {
+      "policy_fixture": {"path": "tests/phase1/fixtures/live-policy/live-source-policy-v1.1.1.json", "schema_version": "1.1.1", "sha256": "442eac435a16bc5ea9d521b227bd5ad87f3592ba47af67f8eead64c1f2c14fb1"},
+      "manifest_schema": {"path": "schemas/phase1/run-manifest-v1.1.schema.json", "sha256": "b5cc83086b4c3dbbce35ebd20373302fac36f7b3e3800c4759d04610baebd673"},
+      "event_schema": {"path": "schemas/phase1/run-event-v1.1.schema.json", "sha256": "cff590d5b0dec8a4bc28ad3eb6c2b86bc56ca903978b362d56524ce2b7353c73"},
+      "rule": "These bytes are immutable historical compatibility fixtures only. They do not authorize current live collection and are never interpreted as current policy 1.3.0."
+    },
+    "replay_read_rule": "Replay remains read_only_without_lock. It freezes and hashes manifest/raw inventory before processing, performs no network or publication operation, then re-inventories and re-hashes before acceptance. Any concurrent addition, removal, or byte change exits 5 and publishes nothing."
+  },
+  "live_recheck_contract": {
+    "policy_schema_version": "1.3.0",
+    "window_rule": "For each game, form the latest-20 window over the union of current and newly observed issue keys. Every newly observed issue is a target; existing issues are recheck targets only when they fall inside that window and have at least one current-run observation.",
+    "new_issue_rule": "Any observation makes a new issue a target. The required two-source pair must be complete and from distinct publishers; otherwise the issue is unresolved and publication is rejected.",
+    "complete_existing_rule": "An existing recheck target with the complete required pair follows normal unchanged, revised, or conflict handling. Any extra observation that dissents from the complete pair blocks publication.",
+    "deferred_existing_rule": "If an existing recheck target lacks its required partner and every available observation core equals the current DrawRecord core, retain the old draw and old evidence, record reconciliation reason RECHECK_DEFERRED_MISSING_PARTNER, increment recheck_deferred, do not increment unresolved, do not block publication, and do not count or describe that recheck as complete.",
+    "unconfirmed_change_rule": "If an existing recheck target lacks its required partner and any available observation core differs from the current DrawRecord core, record RECHECK_UNCONFIRMED_CHANGE, increment unresolved, and reject publication without revising the draw.",
+    "quality_counters": ["recheck_attempted", "recheck_complete", "recheck_deferred"],
+    "gap_rule": "The existing bounded same-year internal-gap rule remains unchanged.",
+    "observed_gd_limit": "The approved queryless GD history JSON fixture is 1,828,447 bytes with 14,091 top-level records and 1,276 strict 085 identities. It deterministically supplies latest20 2026067..2026086, including the 26084..26086 closure. One observed response does not establish a long-term publication-time SLA.",
+    "source_scope_rule": "Keep ydniu+swlc for live SSQ and ydniu+gdlottery for live DLT. Do not add portals whose collection and redistribution review is incomplete.",
+    "current_execution_profile": "RunManifest/RunEvent v1.3 uses exactly four static history requests, at most two audited attempts per logical request, and forbids discovery or child requests. Historical v1.2 and legacy v1.1 profiles remain byte-frozen only for compatibility."
+  },
+  "work_items": [
+    {
+      "id": "W1",
+      "name": "executable-data-specification",
+      "deliverables": [
+        "docs/data/lottery-data-spec-v1.md",
+        "schemas/phase1/source-observation.schema.json",
+        "schemas/phase1/draw-record.schema.json",
+        "schemas/phase1/dataset-release.schema.json",
+        "schemas/phase1/run-manifest.schema.json",
+        "schemas/phase1/run-event.schema.json",
+        "schemas/phase1/run-result.schema.json",
+        "tests/phase1/fixtures/spec/valid/",
+        "tests/phase1/fixtures/spec/invalid/",
+        "tests/phase1/fixtures/spec/hash-vectors.json",
+        "tests/phase1/test_specification.py"
+      ],
+      "accepted_by": ["G1"]
+    },
+    {
+      "id": "W2",
+      "name": "normalized-baseline-v1",
+      "deliverables": [
+        "artifacts/phase-1/baseline-v1/draws.jsonl",
+        "artifacts/phase-1/baseline-v1/observations.jsonl",
+        "artifacts/phase-1/baseline-v1/manifest.json",
+        "artifacts/phase-1/baseline-v1/quality-report.json",
+        "artifacts/phase-1/baseline-v1/hashes.json"
+      ],
+      "accepted_by": ["G2"]
+    },
+    {
+      "id": "W3",
+      "name": "collection-cli-workflow",
+      "delivery_form": "non-interactive Python 3.12 command-line package",
+      "components": ["W3.bootstrap", "W3.incremental", "W3.replay", "W3.verify", "W3.publication", "W3.acceptance"],
+      "deliverables": [
+        "pyproject.toml",
+        "requirements.lock",
+        "src/lottery_data/",
+        "config/phase1/source-catalog.json",
+        "config/phase1/collection-policy.json",
+        "config/phase1/live-source-policy.json",
+        "schemas/phase1/run-manifest-v1.3.schema.json",
+        "schemas/phase1/run-event-v1.3.schema.json",
+        "schemas/phase1/run-manifest-v1.2.schema.json",
+        "schemas/phase1/run-event-v1.2.schema.json",
+        "tests/phase1/fixtures/live-policy/live-source-policy-v1.2.0.json",
+        "tests/phase1/fixtures/live-execution-v1.2/",
+        "tests/phase1/test_live_execution_v12_spec.py",
+        "tests/phase1/test_live_v12_workflow.py",
+        "tests/phase1/test_live_v12_verify_recovery.py",
+        "schemas/phase1/run-manifest-v1.1.schema.json",
+        "schemas/phase1/run-event-v1.1.schema.json",
+        "tests/phase1/fixtures/live-execution/",
+        "tests/phase1/fixtures/live-policy/live-source-policy-v1.1.1.json",
+        "tests/phase1/test_live_execution_spec.py",
+        "tests/phase1/test_workflow_unit.py",
+        "tests/phase1/test_workflow_e2e.py",
+        "tests/phase1/run_acceptance.py",
+        "artifacts/phase-1/runs/",
+        "artifacts/phase-1/releases/",
+        "artifacts/phase-1/current-release.json",
+        "artifacts/phase-1/acceptance/phase1-acceptance.json",
+        "artifacts/phase-1/reviews/data-review.json",
+        "artifacts/phase-1/reviews/workflow-review.json"
+      ],
+      "accepted_by": ["G3"]
+    }
+  ],
+  "object_contract": {
+    "schemas_required": [
+      "SourceObservation",
+      "DrawRecord",
+      "DatasetRelease",
+      "RunManifest",
+      "RunEvent",
+      "RunResult"
+    ],
+    "published_draw_status": "verified",
+    "dataset_release_status": "published",
+    "run_result_statuses": ["published", "no_change", "rejected", "interrupted"],
+    "evidence_link_required_fields": ["source_id", "publisher_id", "observation_id", "raw_ref", "raw_sha256"],
+    "run_transitions": [
+      ["planned", "running"],
+      ["running", "published"],
+      ["running", "no_change"],
+      ["running", "rejected"],
+      ["running", "interrupted"]
+    ],
+    "request_event_rule": "request_started is appended and flushed before every network attempt; exactly one request_succeeded or request_failed closes that same attempt; attempt 2 is permitted only after a retryable attempt-1 failure"
+  },
+  "collection_policy_contract": {
+    "recheck_published_issues": 20,
+    "observed_phase0_page_capacity": {"ydniu": 30, "eastmoney": 50},
+    "max_pages_per_run_per_game": 3,
+    "request_timeout_seconds": 30,
+    "max_attempts_per_request": 2,
+    "inter_request_delay_seconds": 0.75,
+    "candidate_rule": "every observed new issue plus every observed existing issue inside the per-game latest-20 union window; incomplete existing pairs follow the explicit deferred/unconfirmed-change rules",
+    "unobserved_schedule_rule": "do not infer an issue solely from the draw calendar",
+    "internal_gap_rule": "a same-year numerical gap bounded by observed newer and older issues is unresolved until explained",
+    "agreement_rule": "two different publishers must agree on core_fact_sha256",
+    "publication_evidence_count_per_draw": 2,
+    "normal_source_pair": ["ydniu", "eastmoney"],
+    "fallback_source_pair": ["ydniu", "gdlottery"],
+    "source_pair_publisher_rule": "the two selected source ids must map to different publisher ids",
+    "additional_observation_rule": "retain agreeing extras in run reconciliation but not the release evidence set; any dissent blocks publication",
+    "source_failure_rule": "reject run",
+    "unresolved_issue_rule": "reject run",
+    "fallback_rule": "only an explicitly approved source-catalog entry may be used",
+    "approved_issue_fallbacks": [
+      {"game": "dlt", "issue_id": "2026026", "source_id": "gdlottery"},
+      {"game": "dlt", "issue_id": "2026027", "source_id": "gdlottery"}
+    ],
+    "known_limit": "correction checks target the per-game latest-20 union window. The approved queryless GD history JSON contains 1,276 strict 085 records and deterministically supplies latest20 through 2026086; incomplete required pairs remain explicitly deferred and are never reported complete",
+    "phase1_source_review_required": true,
+    "phase1_source_review_scope": "internal research collection only; production service and redistribution require a separate review",
+    "mode_specific_policy_rule": "Snapshot bootstrap and snapshot incremental use the frozen collection-policy.json. Live incremental uses live-source-policy.json and its per-game pairs. No live setting may reinterpret or replace accepted baseline evidence.",
+    "live_policy_ref": "config/phase1/live-source-policy.json",
+    "live_review_expiry_rule": "If the acceptance date is later than live-source-policy.valid_until, product CLI/preflight exits 4 without creating a request, run, or release. E2E-05 and G3 report HOLD with underlying_exit_code=4 and the acceptance runner exits 20; dates must never be extended automatically."
+  },
+  "cli_contract": {
+    "commands": ["run", "replay", "verify"],
+    "run_modes": ["bootstrap", "incremental"],
+    "source_modes": ["live", "snapshot"],
+    "required_run_options": ["--mode", "--source-mode", "--artifacts-root"],
+    "optional_run_options": {"--config-root": "config/phase1", "--snapshot-root": null, "--run-id": "auto for incremental", "--release-id": "auto for incremental"},
+    "conditional_options": {
+      "bootstrap": ["--phase0-snapshot", "--run-id", "--release-id"],
+      "incremental": ["--games"]
+    },
+    "snapshot_network_allowed": false,
+    "replay_network_allowed": false,
+    "stdout": "exactly one RunResult JSON object",
+    "stderr": "diagnostics only",
+    "exit_codes": {
+      "0": "published or no_change",
+      "2": "parse, response-schema, data-quality or source-conflict failure",
+      "3": "network or required source unavailable",
+      "4": "argument, configuration, schema-definition or source-policy failure",
+      "5": "raw, file-hash or replay mismatch",
+      "6": "publish lock contention or current-release compare-and-swap failure",
+      "10": "unclassified program failure"
+    }
+  },
+  "publication_contract": {
+    "lock_path": "<artifacts-root>/.publish.lock",
+    "exclusive_for": ["bootstrap publish", "incremental publish"],
+    "read_only_without_lock": ["verify", "replay"],
+    "precondition": "current previous_release_id must equal the value captured by preflight",
+    "release_write": "same-filesystem temporary directory followed by verified rename",
+    "pointer_write": "temporary file followed by atomic replace",
+    "failure_effect": "preserve run evidence; do not create release or modify current-release.json",
+    "recovery_effect": "append request_failed recovery events for started requests without a terminal event, mark the stale run interrupted, and move the temporary release into its recovery evidence directory",
+    "replay_stable_read": "Capture and hash the complete manifest/raw inventory before replay; after deterministic processing, re-inventory and re-hash. Any concurrent change exits 5. Replay never acquires the publish lock, uses network, creates a release, or changes current-release.json."
+  },
+  "implementation_sequence": [
+    "complete and freeze W1",
+    "implement W3 bootstrap kernel through atomic publication",
+    "use the W3 bootstrap kernel to produce and accept W2",
+    "complete W3 incremental, replay, verify, concurrency and recovery on the same pipeline",
+    "execute deterministic E2E cases",
+    "obtain a current live-source smoke PASS",
+    "complete two read-only reviews",
+    "aggregate final phase acceptance"
+  ],
+  "e2e_cases": [
+    {
+      "id": "E2E-01",
+      "name": "real-400-bootstrap",
+      "input_mode": "frozen phase0 snapshot",
+      "isolated_artifacts_root": true,
+      "executor_args": ["--execute-case", "E2E-01"],
+      "expected_exit_code": 0,
+      "assertions": ["draws=400", "observations=800", "ssq=200", "dlt=200", "unique_game_issue=400", "release_published=true"]
+    },
+    {
+      "id": "E2E-02",
+      "name": "fixed-input-no-change",
+      "input_mode": "same frozen snapshot; network forbidden",
+      "isolated_artifacts_root": true,
+      "executor_args": ["--execute-case", "E2E-02"],
+      "expected_exit_code": 0,
+      "assertions": ["independent_bootstrap_hash_match=true", "snapshot_incremental_status=no_change", "added=0", "revised=0", "duplicates=0", "current_pointer_unchanged=true", "normalized_hashes_unchanged=true"]
+    },
+    {
+      "id": "E2E-03",
+      "name": "real-historical-issue-arrival",
+      "input_mode": "fixed real seed release and unmodified real raw",
+      "isolated_artifacts_root": true,
+      "executor_args": ["--execute-case", "E2E-03"],
+      "expected_exit_code": 0,
+      "assertions": ["added=1", "old_release_unchanged=true", "second_run_status=no_change"]
+    },
+    {
+      "id": "E2E-04",
+      "name": "real-dlt-gap-fallback",
+      "input_mode": "frozen real raw for dlt 2026026 and 2026027",
+      "isolated_artifacts_root": true,
+      "executor_args": ["--execute-case", "E2E-04"],
+      "expected_exit_code": 0,
+      "assertions": ["eastmoney_missing=2", "ydniu_gdlottery_agreement=2", "fallback_rule_recorded=2", "published_issues=2"]
+    },
+    {
+      "id": "E2E-05",
+      "name": "current-live-source-smoke",
+      "input_mode": "live approved public pages",
+      "isolated_artifacts_root": true,
+      "executor_args": ["--execute-case", "E2E-05"],
+      "expected_exit_code": 0,
+      "environment_failure_decision": "HOLD",
+      "environment_failure_acceptance_runner_exit_code": 20,
+      "policy_preflight_hold_mapping": {"underlying_exit_code": 4, "acceptance_runner_exit_code": 20},
+      "assertions": [
+        "live_policy_sha256_verified=true",
+        "live_policy_internal_only=true",
+        "production_collection_approved=false",
+        "redistribution_approved=false",
+        "live_review_not_expired=true",
+        "preflight_policy_failure_creates_no_request_run_or_release=true",
+        "runtime_failure_appends_one_terminal_request_failed=true",
+        "policy_preflight_underlying_exit_code=4",
+        "policy_preflight_HOLD_acceptance_runner_exit_code=20",
+        "acceptance_report_preserves_underlying_exit_code=true",
+        "bootstrap_live_forbidden=true",
+        "mode_specific_pair.ssq=ydniu|swlc",
+        "mode_specific_pair.dlt=ydniu|gdlottery",
+        "all_required_sources_requested=true",
+        "no_future_url_guessing=true",
+        "gdlottery_history_json_is_static_request=true",
+        "static_manifest_request_count=4",
+        "effective_plan_request_count=4_no_dynamic_child=true",
+        "request_discovered_event_absent=true",
+        "child_authorization_absent=true",
+        "live_success_raw_refs_are_content_addressed=true",
+        "live_recheck_window_uses_latest20_union=true",
+        "dlt_unchanged_missing_partner_is_deferred_not_complete=true",
+        "dlt_single_side_change_is_unresolved=true",
+        "new_issue_missing_pair_is_unresolved=true",
+        "ssq_twenty_history_rechecks_complete=true",
+        "raw_persisted_before_parse=true",
+        "status_in=published|no_change",
+        "no_production_pointer_change=true"
+      ]
+    },
+    {
+      "id": "E2E-06",
+      "name": "offline-real-raw-replay",
+      "input_mode": "E2E-01 saved raw and manifest; network forbidden",
+      "isolated_artifacts_root": true,
+      "executor_args": ["--execute-case", "E2E-06"],
+      "expected_exit_code": 0,
+      "assertions": ["network_requests=0", "publication_operations=0", "deterministic_hash_mismatches=0", "decision_equal=true", "stable_read_inventory_guard=true", "concurrent_input_change_exit=5"]
+    },
+    {
+      "id": "E2E-07",
+      "name": "adversarial-rejection-and-recovery",
+      "input_mode": "temporary copies of real raw plus controlled faults",
+      "isolated_artifacts_root": true,
+      "executor_args": ["--execute-case", "E2E-07"],
+      "expected_exit_codes": [2, 3, 4, 5, 6],
+      "fault_exit_map": {
+        "source_conflict": 2,
+        "truncated_html": 2,
+        "wrong_encoding": 2,
+        "network_failure": 3,
+        "invalid_configuration": 4,
+        "raw_hash_mismatch": 5,
+        "publish_lock_contention": 6,
+        "compare_and_swap_failure": 6,
+        "forced_process_termination": "no normal exit; recovered as interrupted on next start"
+      },
+      "assertions": ["every_fault_has_expected_exit=true", "every_started_request_has_one_terminal=true", "release_created=false", "current_pointer_unchanged=true", "interrupted_run_recovered=true"]
+    }
+  ],
+  "gates": [
+    {
+      "id": "G1",
+      "work_items": ["W1"],
+      "depends_on": [],
+      "verification": [
+        {
+          "argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/phase1", "-p", "test_specification.py", "-v"],
+          "expected_exit_code": 0
+        }
+      ],
+      "assertions": [
+        "six_schema_files_exist",
+        "six_schema_meta_validation_passes",
+        "valid_and_invalid_fixtures_have_expected_results",
+        "run_and_request_state_machine_negative_cases_pass",
+        "three_real_phase0_hash_vectors_match",
+        "spec_bundle_hash_is_frozen"
+      ],
+      "required_evidence": ["artifacts/phase-1/acceptance/g1.json"],
+      "pass_rule": "all verification commands and assertions PASS"
+    },
+    {
+      "id": "G2",
+      "work_items": ["W2", "W3.bootstrap"],
+      "depends_on": ["G1"],
+      "verification": [
+        {
+          "argv": ["{python}", "tests/phase1/run_acceptance.py", "--contract", "docs/roadmap/phase-1-acceptance-contract.json", "--execute-case", "E2E-01"],
+          "expected_exit_code": 0
+        },
+        {
+          "argv": ["{python}", "tests/phase1/run_acceptance.py", "--contract", "docs/roadmap/phase-1-acceptance-contract.json", "--execute-case", "E2E-02"],
+          "expected_exit_code": 0
+        },
+        {
+          "argv": ["{python}", "-m", "lottery_data", "verify", "--release-id", "baseline-v1", "--artifacts-root", "artifacts/phase-1"],
+          "expected_exit_code": 0
+        }
+      ],
+      "assertions": [
+        "draw_records=400",
+        "source_observations=800",
+        "records_by_game.ssq=200",
+        "records_by_game.dlt=200",
+        "unique_game_issue=400",
+        "invalid=0",
+        "missing=0",
+        "duplicates=0",
+        "conflicts=0",
+        "manual_core_edits=0",
+        "phase0_core_fact_mismatches=0",
+        "raw_hash_mismatches=0",
+        "independent_bootstrap_hash_match=true",
+        "snapshot_incremental_status=no_change"
+      ],
+      "required_evidence": [
+        "artifacts/phase-1/baseline-v1/draws.jsonl",
+        "artifacts/phase-1/baseline-v1/observations.jsonl",
+        "artifacts/phase-1/baseline-v1/manifest.json",
+        "artifacts/phase-1/baseline-v1/quality-report.json",
+        "artifacts/phase-1/baseline-v1/hashes.json",
+        "artifacts/phase-1/acceptance/g2.json"
+      ],
+      "pass_rule": "G1 PASS and all verification commands, assertions and evidence checks PASS"
+    },
+    {
+      "id": "G3",
+      "work_items": ["W3"],
+      "depends_on": ["G1", "G2"],
+      "verification": [
+        {
+          "argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/phase1", "-p", "test_workflow_unit.py", "-v"],
+          "expected_exit_code": 0
+        },
+        {
+          "argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/phase1", "-p", "test_workflow_e2e.py", "-v"],
+          "expected_exit_code": 0
+        },
+        {
+          "argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/phase1", "-p", "test_live_execution_v12_spec.py", "-v"],
+          "expected_exit_code": 0
+        },
+        {
+          "argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/phase1", "-p", "test_live_v12_workflow.py", "-v"],
+          "expected_exit_code": 0
+        },
+        {
+          "argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/phase1", "-p", "test_live_v12_verify_recovery.py", "-v"],
+          "expected_exit_code": 0
+        },
+        {
+          "argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/phase1", "-p", "test_e2e_live_case_contract.py", "-v"],
+          "expected_exit_code": 0
+        },
+        {
+          "argv": ["{python}", "tests/phase1/run_acceptance.py", "--contract", "docs/roadmap/phase-1-acceptance-contract.json", "--execute-case", "E2E-03"],
+          "expected_exit_code": 0
+        },
+        {
+          "argv": ["{python}", "tests/phase1/run_acceptance.py", "--contract", "docs/roadmap/phase-1-acceptance-contract.json", "--execute-case", "E2E-04"],
+          "expected_exit_code": 0
+        },
+        {
+          "argv": ["{python}", "tests/phase1/run_acceptance.py", "--contract", "docs/roadmap/phase-1-acceptance-contract.json", "--execute-case", "E2E-05"],
+          "expected_exit_code": 0
+        },
+        {
+          "argv": ["{python}", "tests/phase1/run_acceptance.py", "--contract", "docs/roadmap/phase-1-acceptance-contract.json", "--execute-case", "E2E-06"],
+          "expected_exit_code": 0
+        },
+        {
+          "argv": ["{python}", "tests/phase1/run_acceptance.py", "--contract", "docs/roadmap/phase-1-acceptance-contract.json", "--execute-case", "E2E-07"],
+          "expected_exit_code": 0
+        }
+      ],
+      "assertions": [
+        "module_and_console_entrypoints_are_equivalent",
+        "configuration_input_hashes_match_contract",
+        "snapshot_and_live_source_policies_are_mode_separated",
+        "G1_G2_baseline_ids_and_hashes_unchanged",
+        "live_policy_fail_closed_validation_passes",
+        "live_pairs_are_game_specific_and_publishers_are_distinct",
+        "live_review_expiry_cli_exit_4_maps_to_HOLD_runner_exit_20",
+        "preflight_and_runtime_failure_effects_are_distinct",
+        "preflight_failure_has_no_persisted_run_or_fake_artifact_refs",
+        "live_v1_3_schema_hashes_match_contract",
+        "legacy_v1_1_policy_and_schema_bytes_remain_frozen",
+        "original_six_v1_schema_hashes_remain_frozen",
+        "live_effective_plan_and_event_stream_validator_pass",
+        "live_plan_has_exactly_four_static_history_requests",
+        "live_discovery_and_child_events_are_forbidden",
+        "live_success_raw_refs_are_content_addressed",
+        "live_raw_is_persisted_and_hash_closed_before_parse",
+        "live_recheck_deferred_and_unconfirmed_change_rules_pass",
+        "live_recheck_quality_counters_are_truthful",
+        "gd_history_fixture_count_latest20_and_26084_26086_closure_are_evidenced",
+        "gd_json_two_mib_cap_is_endpoint_specific",
+        "future_url_guessing_is_rejected_before_request",
+        "incremental_policy_matches_contract",
+        "revision_is_append_only",
+        "failed_runs_preserve_evidence",
+        "failed_runs_do_not_create_release",
+        "atomic_pointer_update_passes",
+        "lock_and_compare_and_swap_tests_pass",
+        "crash_recovery_test_passes",
+        "offline_replay_uses_no_network",
+        "offline_replay_stable_read_inventory_guard_passes",
+        "offline_replay_concurrent_change_exits_5",
+        "E2E-01..E2E-07_pass",
+        "current_acceptance_session_live_smoke=PASS",
+        "data_review.blocking_findings=0",
+        "workflow_review.blocking_findings=0"
+      ],
+      "required_evidence": [
+        "config/phase1/live-source-policy.json",
+        "artifacts/phase-1/acceptance/g3.json",
+        "artifacts/phase-1/reviews/data-review.json",
+        "artifacts/phase-1/reviews/workflow-review.json"
+      ],
+      "pass_rule": "G1 and G2 PASS; every deterministic check PASS; current live smoke PASS; both reviews have zero blocking findings"
+    }
+  ],
+  "final_acceptance": {
+    "contract_resign_rule": "Contract 3.5.0 freezes live policy 1.3.0 with at most two audited attempts per static request. G1/G2 normalized data, baseline IDs, and artifact bytes remain unchanged, but formal G1/G2/G3/ALL reports must be re-signed before this contract is claimed as accepted.",
+    "runner_argv": [
+      "{python}",
+      "tests/phase1/run_acceptance.py",
+      "--contract",
+      "docs/roadmap/phase-1-acceptance-contract.json",
+      "--gate",
+      "ALL",
+      "--output",
+      "artifacts/phase-1/acceptance/phase1-acceptance.json"
+    ],
+    "expected_exit_code": 0,
+    "required_gate_results": {"G1": "PASS", "G2": "PASS", "G3": "PASS"},
+    "required_report": "artifacts/phase-1/acceptance/phase1-acceptance.json",
+    "go_rule": "all required deliverables exist; G1, G2 and G3 are PASS; required evidence hashes verify; no blocking review finding exists",
+    "hold_rule": "any required evidence is missing, any assertion fails, the current live smoke is not PASS, or a blocking review finding exists"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "run_schema_version": "1.2.0",
+  "run_id": "live-v12-contract-fixture",
+  "mode": "incremental",
+  "source_mode": "live",
+  "started_at_utc": "2026-08-03T00:00:00Z",
+  "artifacts_root": "artifacts/phase-1",
+  "previous_release_id": "baseline-v1",
+  "games": ["ssq", "dlt"],
+  "request_plan": [
+    {"request_id":"live-ydniu-ssq-history","sequence":1,"source_id":"ydniu","publisher_id":"ydniu-publisher","game":"ssq","method":"GET","url":"https://www.ydniu.com/open/ssq-500/1.html","request_kind":"history","parser_id":"phase1-ydniu-parser","parser_version":"1.0.0","response_profile":{"expected_media_type":"text/html","max_response_bytes":1048576}},
+    {"request_id":"live-swlc-ssq-history","sequence":2,"source_id":"swlc","publisher_id":"swlc-publisher","game":"ssq","method":"GET","url":"https://www.swlc.net.cn/shsflcpfxzx/lottery/ssq.html?view=previous&limit=30","request_kind":"history","parser_id":"phase1-swlc-live-parser","parser_version":"1.0.0","response_profile":{"expected_media_type":"text/html","max_response_bytes":1048576}},
+    {"request_id":"live-ydniu-dlt-history","sequence":3,"source_id":"ydniu","publisher_id":"ydniu-publisher","game":"dlt","method":"GET","url":"https://www.ydniu.com/open/dlt-500/1.html","request_kind":"history","parser_id":"phase1-ydniu-parser","parser_version":"1.0.0","response_profile":{"expected_media_type":"text/html","max_response_bytes":1048576}},
+    {"request_id":"live-gdlottery-dlt-history","sequence":4,"source_id":"gdlottery","publisher_id":"gdlottery-publisher","game":"dlt","method":"GET","url":"https://www.gdlottery.cn/f_html/kjgg/gameNumber.json","request_kind":"history","parser_id":"phase1-gdlottery-history-parser","parser_version":"1.0.0","response_profile":{"expected_media_type":"application/json","max_response_bytes":2097152}}
+  ],
+  "config_files": [{"ref":"config/phase1/live-source-policy-v1.2.json","sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}],
+  "schema_bundle_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "pipeline_bundle_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "python_version": "3.12.11",
+  "bootstrap_snapshot": null,
+  "incremental_watermark": {"current_release_id":"baseline-v1","latest_issue_by_game":{"ssq":"2026085","dlt":"2026083"},"recheck_published_issues":20},
+  "publish_policy": {"lock_ref":".publish.lock","compare_and_swap":true,"atomic_release_rename":true,"atomic_pointer_replace":true},
+  "replay_of_run_id": null
+}

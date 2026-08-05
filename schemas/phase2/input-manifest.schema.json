@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase2-input-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "status", "frozen_at_utc", "statistical_unit", "active_games", "upstream", "R2_source", "point_in_time_policy", "forbidden_statistical_matrix_fields", "game_rule_maps", "rule_evidence"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase2_input_manifest"},
+    "status": {"const": "frozen"},
+    "frozen_at_utc": {"type": "string", "format": "date-time"},
+    "statistical_unit": {"type": "string", "minLength": 20},
+    "active_games": {"type": "array", "prefixItems": [{"const": "dlt"}, {"const": "ssq"}], "items": false},
+    "upstream": {
+      "type": "object", "additionalProperties": false,
+      "required": ["phase1_contract", "phase1_final", "draws", "observations", "manifest", "schema_freeze"],
+      "properties": {
+        "phase1_contract": {"$ref": "#/$defs/pathHash"},
+        "phase1_final": {"$ref": "#/$defs/pathHash"},
+        "draws": {"$ref": "#/$defs/drawIdentity"},
+        "observations": {"$ref": "#/$defs/countIdentity"},
+        "manifest": {"$ref": "#/$defs/pathHash"},
+        "schema_freeze": {"$ref": "#/$defs/pathHash"}
+      }
+    },
+    "R2_source": {"type": "object", "required": ["path", "sha256", "objective"], "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/hash"}, "objective": {"type": "string", "minLength": 20}}, "additionalProperties": false},
+    "point_in_time_policy": {"type": "object", "required": ["knowledge_class", "available_at_utc_is_null", "allowed_use", "forbidden_use"], "properties": {"knowledge_class": {"const": "retrospective_current_view"}, "available_at_utc_is_null": {"const": true}, "allowed_use": {"type": "string"}, "forbidden_use": {"type": "string"}}, "additionalProperties": false},
+    "forbidden_statistical_matrix_fields": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "game_rule_maps": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/gameRuleMap"}},
+    "rule_evidence": {"type": "array", "minItems": 4, "items": {"type": "object", "required": ["id", "authority", "url", "retrieved_at", "supports"], "properties": {"id": {"type": "string"}, "authority": {"type": "string"}, "url": {"type": "string", "format": "uri", "pattern": "^https://"}, "retrieved_at": {"type": "string", "format": "date"}, "supports": {"type": "array", "minItems": 1, "items": {"type": "string"}}}, "additionalProperties": false}}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "pathHash": {"type": "object", "required": ["path", "sha256"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/hash"}}, "additionalProperties": false},
+    "countIdentity": {"type": "object", "required": ["path", "sha256", "count"], "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/hash"}, "count": {"type": "integer", "minimum": 0}}, "additionalProperties": false},
+    "drawIdentity": {"type": "object", "required": ["path", "sha256", "count", "count_by_game"], "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/hash"}, "count": {"const": 400}, "count_by_game": {"type": "object", "properties": {"dlt": {"const": 200}, "ssq": {"const": 200}}, "required": ["dlt", "ssq"], "additionalProperties": false}}, "additionalProperties": false},
+    "zone": {"type": "object", "required": ["min", "max", "draw_count"], "properties": {"min": {"type": "integer", "minimum": 1}, "max": {"type": "integer", "minimum": 2}, "draw_count": {"type": "integer", "minimum": 1}}, "additionalProperties": false},
+    "segment": {"type": "object", "required": ["id", "issue_start", "issue_end"], "properties": {"id": {"type": "string", "minLength": 1}, "issue_start": {"type": "integer"}, "issue_end": {"type": "integer"}, "description": {"type": "string"}, "evidence_ref_ids": {"type": "array", "items": {"type": "string"}}, "generation_split": {"type": "boolean"}}, "additionalProperties": true},
+    "numberSpace": {"allOf": [{"$ref": "#/$defs/segment"}, {"type": "object", "required": ["front", "back"], "properties": {"front": {"$ref": "#/$defs/zone"}, "back": {"$ref": "#/$defs/zone"}}}]},
+    "gameRuleMap": {"type": "object", "required": ["game", "sample_issue_start", "sample_issue_end", "sample_count", "number_space_segments", "documented_draw_process_segments", "prize_rule_segments", "promotions", "mechanism_metadata_status", "generation_null_blockers"], "properties": {"game": {"enum": ["dlt", "ssq"]}, "sample_issue_start": {"type": "integer"}, "sample_issue_end": {"type": "integer"}, "sample_count": {"const": 200}, "number_space_segments": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/numberSpace"}}, "documented_draw_process_segments": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/segment"}}, "prize_rule_segments": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/segment"}}, "promotions": {"type": "array", "items": {"$ref": "#/$defs/segment"}}, "mechanism_metadata_status": {"type": "string", "pattern": "^unknown_"}, "generation_null_blockers": {"type": "array", "maxItems": 0}}, "additionalProperties": false}
+  }
+}

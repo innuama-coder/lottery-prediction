@@ -1,0 +1,160 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "verification_command",
+  "contract_version": "1.3",
+  "freeze_id": "P0-01-p0-20260801-b-repair",
+  "frozen_at_utc": "2026-08-01T08:00:50.3020835Z",
+  "bootstrap_gate_command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/phase0/verify_phase0.ps1 --contract docs/roadmap/phase-0-acceptance-contract.json --artifacts artifacts/phase-0 --stage p0-01",
+  "bootstrap_expected_exit_code": 0,
+  "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/phase0/verify_phase0.ps1 --contract docs/roadmap/phase-0-acceptance-contract.json --artifacts artifacts/phase-0 --stage full",
+  "full_replay_command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/phase0/verify_phase0.ps1 --contract docs/roadmap/phase-0-acceptance-contract.json --artifacts artifacts/phase-0 --stage full",
+  "working_directory": ".",
+  "launcher_path": "scripts/phase0/verify_phase0.ps1",
+  "interpreter_path": "C:\\Users\\54256213\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+  "interpreter_version": "3.12.13",
+  "interpreter_sha256": "3c6a206b7d93cca823934a83732220dcffd413fd1036d9fb82eebb64599cf7f3",
+  "interpreter_override_environment_variable": "PHASE0_PYTHON",
+  "prerequisites": [
+    "Run from the repository root on Windows with powershell available.",
+    "The frozen CPython interpreter exists at interpreter_path and matches both interpreter_version and interpreter_sha256.",
+    "The nine frozen verification/runtime tool files match verifier_file_hashes before bootstrap or full replay executes.",
+    "The three P0-01 frozen input files and all 21 schema files match the exact SHA-256 values recorded here.",
+    "The bootstrap gate validates P0-01 without network; the canonical full replay is reserved for P0-07 after all required Phase 0 artifacts exist.",
+    "No network connection is required or permitted by either verification stage."
+  ],
+  "expected_exit_code": 0,
+  "non_interactive": true,
+  "network_required": false,
+  "frozen_input_hashes": {
+    "scope_freeze": "eb815e03d1f51f0c0ca8bd91dea1ab57b14d08bc654c4b1869564129655f6d34",
+    "observation_plan": "417279486152230fa931e6f1326bc8acc4818428a1da1c9a83eaa5d2c83a7c4e",
+    "reviewer_assignment": "6bb1bf78cfaf3f899d0782e56ae465f59601dfdad90292d296ac08cab08a01f2"
+  },
+  "contract_sha256": "784ff08ba44925ddb668834140dc5f9841b6dd3966789efac935fb3c8ca80c12",
+  "schemas_manifest_sha256": "5e4609dccc1fa79e49e0ea944feb9f35acab3a15d2943ad23c9a72ee69afd395",
+  "schema_hashes": [
+    {
+      "path": "artifacts/phase-0/schemas/coverage-report.schema.json",
+      "sha256": "0bca65181ae31cc05d7403367d9b138ccda4f8a0a694b97459a568b36895c9fd"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/environment-lock.schema.json",
+      "sha256": "bf65f4404e01f0f0b9423329dd272ff2a7b2655c332e9fc224f4e88145c17571"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/evidence-manifest.schema.json",
+      "sha256": "ecbcaa817baa59ab7ceec22d0183e2ff9332507fc76406813c6ec98802ac026c"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/field-contract.schema.json",
+      "sha256": "7a9dc7a8a784721ccfd3e567c025e440aca67513829917652c205cd86b1d09ab"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/normalized-records.schema.json",
+      "sha256": "2babe349f17ff714fa4daae80549419157d9e5f272816938f22f522ad502b78e"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/observation-plan.schema.json",
+      "sha256": "9fcde1f275570ccffa99b60410bb64f7419965cb306b054ceac64a2f256f21bc"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/p0-04-evidence-migration.schema.json",
+      "sha256": "af2761b04f9c81c026998c5865fc5e350327d6eb4233c41648e962a20cde6bf9"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/p0-05-work-plan.schema.json",
+      "sha256": "21aaede4f3838c3d1acd18b52d5b667fcb72523284b9b5e634480e90862a04cf"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/p0-06-runtime-plan.schema.json",
+      "sha256": "d07aa1a41b8cd0830c77c804e8ede9fa448a8113dbb3c2460d61fd6b825f5012"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/p0-06-scheduler-install-audit.schema.json",
+      "sha256": "8470103750837d8d9d06c39c34c5bf54591265383a06d53a8f43eab19a9e01a6"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/reconciliation.schema.json",
+      "sha256": "95eed8851c56c818da9d67d5db58a559079af34ec0ff85e40ef625646dc74671"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/replay-report.schema.json",
+      "sha256": "86332ba33f83c9ba130d56cb1d7c4d2ccbf585d2cd078f44b62383bcc397fb13"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/reviewer-assignment.schema.json",
+      "sha256": "565f61a23a40303a01ddc566d3186cb623295cad709ec9e8770cfff7755dbc6f"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/reviewer-attestation.schema.json",
+      "sha256": "aad9d560cb6bbfdf52c692f53f1adfa7771e3a07300d550ae6a8f2c1e4af67b5"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/revision-report.schema.json",
+      "sha256": "a86bd2e5832ad3a99fd85d0cea2026037b647fccae48733884fa3fc817e9ac7d"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/rule-bundles.schema.json",
+      "sha256": "e84e4134637ec9e4786d516adf831127babecbb8011833175a9f1804543f72de"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/scope-freeze.schema.json",
+      "sha256": "ba2ebe0eb84409357ddc260b8a593e2b36dcd3180f65eb9a7bc497702ec70363"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/soak-log.schema.json",
+      "sha256": "db38cce5f9b412a6d23dba454299ad20747fb127543ff1ca772e2ef164fa4cd7"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/source-catalog.schema.json",
+      "sha256": "5d6a296c5be110453ab6bf737a011b35508e7ac6d6489086c8411ed132560c45"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/stage1-handoff-fixture.schema.json",
+      "sha256": "af176a62b2feedfbef600da7207ba1636dac0d7a70342b6fefa20271003b1922"
+    },
+    {
+      "path": "artifacts/phase-0/schemas/verification-command.schema.json",
+      "sha256": "ec916a18abe23cc24f5feb5f84646a4233f33d365b53d4e6400ca7ac3313e417"
+    }
+  ],
+  "verifier_file_hashes": [
+    {
+      "path": "scripts/phase0/verify_phase0.ps1",
+      "sha256": "2f95cd1a4a64d0e1dc567909159d245b3775c5d302fd380d289e121bce545d0e"
+    },
+    {
+      "path": "scripts/phase0/verify_phase0.py",
+      "sha256": "2b550852146a154876c97b88f52b41d8d53332798755a35fd0a68b098fa19875"
+    },
+    {
+      "path": "scripts/phase0/phase0lib.py",
+      "sha256": "6f67b83351123e0a9174f6495bdf49e977bb64820087e9c42c9ad36796ebaa3b"
+    },
+    {
+      "path": "scripts/phase0/hash_artifact.py",
+      "sha256": "1c781689a770ea7090520ccceecd9431194e6e6acc90ba56399b089b871a627a"
+    },
+    {
+      "path": "scripts/phase0/p0_06_runner.py",
+      "sha256": "3ded6d7ebfbb019589be9bc2bbfcd933b506092b39154387c2e1b696be2dc053"
+    },
+    {
+      "path": "scripts/phase0/install_p0_06_scheduled_task.ps1",
+      "sha256": "46c2219e7edea4f1655681c088c80aa52778667e50a9df7885c6245cbb566fe5"
+    },
+    {
+      "path": "scripts/phase0/p0_04_http.py",
+      "sha256": "d5ad991d59277424dd9e4bb23fce2ebbd611ccd70a443a343c43d573d92858b2"
+    },
+    {
+      "path": "scripts/phase0/p0_04_pipeline.py",
+      "sha256": "30dcd5ad0d40b99998b50cceab77a3a30da930f30c323da624ed41101ed66013"
+    },
+    {
+      "path": "scripts/phase0/p0_04_parser.py",
+      "sha256": "8b2bd3ef955c8f3a201480f9642ca01dd9dcefa193d9ce241e324810c17fde43"
+    }
+  ],
+  "self_hash_sidecar": "artifacts/phase-0/verification-command.json.sha256"
+}

@@ -1,0 +1,1 @@
+{"decision":"FAIL","deterministic":{"blocking_reason_codes":["SNAPSHOT_FILE_MISMATCH"],"checks":[],"counts":{},"input_hashes":{},"output_hashes":{}},"generated_at_utc":"2026-08-03T05:54:09.497Z","quality_schema_version":"1.0.0","run_id":"stage1-live-validation-20260803-01"}

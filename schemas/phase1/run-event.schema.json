@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autoresearch-lotte.local/schemas/phase1/run-event.schema.json",
+  "title": "RunEvent",
+  "description": "One append-only run or request state transition.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_schema_version",
+    "event_id",
+    "run_id",
+    "sequence",
+    "event_type",
+    "occurred_at_utc",
+    "request_id",
+    "attempt",
+    "source_id",
+    "game",
+    "error_code",
+    "error_detail_ref"
+  ],
+  "properties": {
+    "event_schema_version": {"const": "1.0.0"},
+    "event_id": {"type": "string", "pattern": "^evt-v1:[0-9a-f]{64}$"},
+    "run_id": {"$ref": "#/$defs/runId"},
+    "sequence": {"type": "integer", "minimum": 1},
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "run_planned", "run_started", "stage_started", "stage_succeeded", "stage_failed",
+        "request_started", "request_succeeded", "request_failed",
+        "run_published", "run_no_change", "run_rejected", "run_interrupted"
+      ]
+    },
+    "occurred_at_utc": {"$ref": "#/$defs/utcTimestamp"},
+    "request_id": {"type": ["string", "null"], "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,191}$"},
+    "attempt": {"type": ["integer", "null"], "minimum": 1},
+    "source_id": {"oneOf": [{"$ref": "#/$defs/stableId"}, {"type": "null"}]},
+    "game": {"oneOf": [{"$ref": "#/$defs/game"}, {"type": "null"}]},
+    "artifact_ref": {"oneOf": [{"$ref": "#/$defs/relativeRef"}, {"type": "null"}]},
+    "error_code": {"type": ["string", "null"], "pattern": "^[A-Z][A-Z0-9_]{0,127}$"},
+    "error_detail_ref": {"oneOf": [{"$ref": "#/$defs/relativeRef"}, {"type": "null"}]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"event_type": {"enum": ["request_started", "request_succeeded", "request_failed"]}}, "required": ["event_type"]},
+      "then": {
+        "properties": {
+          "request_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,191}$"},
+          "attempt": {"type": "integer", "minimum": 1},
+          "source_id": {"$ref": "#/$defs/stableId"},
+          "game": {"$ref": "#/$defs/game"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"event_type": {"const": "request_succeeded"}}, "required": ["event_type"]},
+      "then": {"properties": {"artifact_ref": {"$ref": "#/$defs/relativeRef"}, "error_code": {"type": "null"}, "error_detail_ref": {"type": "null"}}}
+    },
+    {
+      "if": {"properties": {"event_type": {"enum": ["request_failed", "stage_failed", "run_rejected", "run_interrupted"]}}, "required": ["event_type"]},
+      "then": {"properties": {"error_code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{0,127}$"}, "error_detail_ref": {"$ref": "#/$defs/relativeRef"}}}
+    },
+    {
+      "if": {"properties": {"event_type": {"enum": ["run_planned", "run_started", "run_published", "run_no_change"]}}, "required": ["event_type"]},
+      "then": {"properties": {"request_id": {"type": "null"}, "attempt": {"type": "null"}, "error_code": {"type": "null"}, "error_detail_ref": {"type": "null"}}}
+    }
+  ],
+  "$defs": {
+    "game": {"type": "string", "enum": ["ssq", "dlt"]},
+    "runId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "stableId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"},
+    "utcTimestamp": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "relativeRef": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\.\\.)(?!.*\\\\).+$"}
+  }
+}

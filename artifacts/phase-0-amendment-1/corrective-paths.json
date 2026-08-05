@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase0_corrective_path_assessment",
+  "contract_version": "1.4",
+  "assessed_at_utc": "2026-08-02T01:16:00Z",
+  "games": [
+    {
+      "game": "dlt",
+      "compliant_corrective_action_available": true,
+      "alternatives_exhausted_no_evidentiary_path": false,
+      "rationale": "The Guangdong Sports Lottery official issue-page family is approved for scheduled low-rate retrieval, and the historical reach and request budget can be audited without bypassing access controls. The national primary remains blocked, so this is a corrective investigation path rather than proof of model-ready coverage.",
+      "actions": [
+        {
+          "action_id": "DLT-A1-HISTORICAL-REACH",
+          "description": "Audit whether the approved Guangdong official issue-page family can retrieve the frozen historical issue set at the existing low-rate policy.",
+          "evidence_refs": [
+            "artifacts/phase-0/source-catalog.json",
+            "artifacts/phase-0/p0-05-work-plan.json"
+          ],
+          "acceptance_condition": "A bounded sample proves deterministic URL resolution and parsing across the frozen interval without policy exceptions, followed by an approved request budget."
+        },
+        {
+          "action_id": "DLT-A2-OFFICIAL-PRIMARY-ALTERNATIVES",
+          "description": "Audit other publicly documented national or provincial official publication endpoints without circumventing the HTTP 567 control.",
+          "evidence_refs": ["artifacts/phase-0/source-catalog.json"],
+          "acceptance_condition": "An official endpoint has a documented compliant access method and reproducible historical query capability."
+        }
+      ],
+      "audited_alternatives": [
+        {
+          "alternative_id": "DLT-NATIONAL-PRIMARY",
+          "description": "China Sports Lottery national primary entry point",
+          "status": "blocked",
+          "evidence_refs": ["artifacts/phase-0/source-catalog.json"]
+        },
+        {
+          "alternative_id": "DLT-GD-OFFICIAL",
+          "description": "Guangdong Sports Lottery official issue-page family",
+          "status": "available",
+          "evidence_refs": ["artifacts/phase-0/source-catalog.json", "artifacts/phase-0/p0-05-work-plan.json"]
+        }
+      ],
+      "exhaustion_evidence_refs": []
+    },
+    {
+      "game": "ssq",
+      "compliant_corrective_action_available": true,
+      "alternatives_exhausted_no_evidentiary_path": false,
+      "rationale": "The Guangdong Welfare Lottery official history page is technically reachable but deliberately held pending terms review, and alternative official endpoints have not been exhaustively audited. These are concrete compliance and source-discovery actions, not permission to collect now.",
+      "actions": [
+        {
+          "action_id": "SSQ-A1-COMPLIANCE-REVIEW",
+          "description": "Obtain an owner decision or documented permission for the Guangdong official history page before any collection.",
+          "evidence_refs": ["artifacts/phase-0/source-catalog.json"],
+          "acceptance_condition": "The source policy changes from hold_pending only after a recorded review establishes an allowed low-rate use."
+        },
+        {
+          "action_id": "SSQ-A2-OFFICIAL-SOURCE-AUDIT",
+          "description": "Audit other China Welfare Lottery or provincial official publication endpoints for compliant historical access without bypassing HTTP 403.",
+          "evidence_refs": [
+            "artifacts/phase-0/source-catalog.json",
+            "artifacts/phase-0/p0-05-work-plan.json"
+          ],
+          "acceptance_condition": "At least one official source has a documented compliant method, deterministic parsing, and sufficient historical reach."
+        }
+      ],
+      "audited_alternatives": [
+        {
+          "alternative_id": "SSQ-NATIONAL-PRIMARY",
+          "description": "China Welfare Lottery national primary entry point",
+          "status": "blocked",
+          "evidence_refs": ["artifacts/phase-0/source-catalog.json"]
+        },
+        {
+          "alternative_id": "SSQ-GD-OFFICIAL",
+          "description": "Guangdong Welfare Lottery official history page",
+          "status": "hold",
+          "evidence_refs": ["artifacts/phase-0/source-catalog.json", "artifacts/phase-0/p0-05-work-plan.json"]
+        }
+      ],
+      "exhaustion_evidence_refs": []
+    }
+  ]
+}

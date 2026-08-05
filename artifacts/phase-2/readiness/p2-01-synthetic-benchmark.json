@@ -1,0 +1,17 @@
+{
+  "artifact_bytes": 474,
+  "bias_wall_seconds_per_1000_worlds": 1.5449907000001986,
+  "diagnostic_checksum": 765.620714285715,
+  "draws_per_world": 200,
+  "formal_estimate_allowed": true,
+  "memory_metric": "coordinator_process_peak_working_set_bytes",
+  "null_wall_seconds_per_1000_worlds": 1.0628885999904014,
+  "parallel_efficiency_factor": 0.389635074922429,
+  "parallel_workers": 4,
+  "peak_memory_bytes": 19763200,
+  "repeats": 3,
+  "seed": 20260805,
+  "status": "PASS",
+  "synthetic_only": true,
+  "worlds_per_scenario": 1000
+}

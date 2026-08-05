@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase0_freeze_supersession_incident",
+  "incident_id": "p0-20260801-c-after-superseded-hardcoded-validation",
+  "recorded_at_utc": "2026-08-01T16:01:30.528970Z",
+  "review_outcome": "SUPERSEDED_PRE_REVIEW_NO_PASS_ARTIFACT",
+  "reviewer_pass_artifact_created": false,
+  "original_canonical_batch_id": "p0-20260801-c-after",
+  "preserved_snapshot_manifest_path": "artifacts/phase-0/batches/p0-20260801-c-after-superseded-hardcoded-validation/snapshot-manifest.json",
+  "preserved_snapshot_manifest_sha256": "b73fe82cfa4dae0e36c49c904fac49a26568fc5a87656faec009d3d7ee0886e1",
+  "preserved_pending_manifest_path": "artifacts/phase-0/batches/p0-20260801-c-after-superseded-hardcoded-validation.pending-manifest.json",
+  "preserved_pending_manifest_sha256": "745993ff7f0121e6b8c82167ab9eafa7b3ebd74cbf45fc2f81c50d01d83c3aeb",
+  "affected_generator": {
+    "path": "scripts/phase0/archive_p0_c_after.py",
+    "preserved_snapshot_sha256": "d5f6480b91f1ec631a7271e140e977c0f44689e7ea5bfc9b5a87754b8c1e38a1"
+  },
+  "root_cause": "The C-after archive generator mixed declared expected outcomes with actual execution evidence: it hardcoded phase-gate exit codes, the unittest count and exit code, the pre-cutoff replay HOLD result, and operational-tree hashes into the pending manifest instead of consuming a separately recorded execution observation.",
+  "risk": "A pending manifest could claim a successful validation even when the observed suite or replay differed; Reviewer1's earlier observed-count mismatch demonstrated that this was not merely theoretical.",
+  "corrective_action": "Require a governance-side validator to execute the fixed commands, preserve exact stdout and stderr bytes, mechanically re-derive every result, compare scheduler and repository state before and after, commit a fail-closed record and sidecar, and make the new C-after archive bind and project that record without result constants.",
+  "scope_boundary": "This incident and repair concern Phase-0 evidence authenticity only. They do not change the frozen data-feasibility decision surface, observation schedule, lottery data, model design, or Stage-1 implementation scope.",
+  "scheduled_task_mutated": false,
+  "protected_runtime_mutated": false,
+  "decision_surface_mutated": false
+}

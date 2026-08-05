@@ -1,0 +1,22 @@
+{
+  "artifact_type": "phase1_independent_review",
+  "review_scope": "workflow",
+  "contract_version": "3.5.0",
+  "contract_sha256": "2e5dee8f9921d54fab2311db9514fbb70aca4ea1c38d5eb9c658aade688c0652",
+  "reviewer": "independent-workflow-reacceptance-v1.3-retry",
+  "reviewed_artifact_hashes": {
+    "docs/roadmap/phase-1-acceptance-contract.json": "2e5dee8f9921d54fab2311db9514fbb70aca4ea1c38d5eb9c658aade688c0652",
+    "config/phase1/live-source-policy.json": "9f3f7c91e73632511a588122cc6e2f7e25a1190aecef4e455c6099a28d7d53a0",
+    "schemas/phase1/run-manifest-v1.3.schema.json": "55919a70ab5f9870419dccf5e1ba8da838414b1dc2a307c66c46a8a018c9c4f2",
+    "schemas/phase1/run-event-v1.3.schema.json": "e2224d3d803e1d055b2a4d0e54b078515c752e973936921157a531ded885751e",
+    "src/lottery_data/models.py": "61745d487f89a1c4db3a80b43c3a17860aa3a1e42329401f92f87ff8a2e7b08b",
+    "src/lottery_data/steps/live.py": "fb60212597be97d68de51a3b98fe55091456fc50b811d8ae686067661ddb3fb6",
+    "src/lottery_data/steps/live_policy.py": "4f442d629141f8109735fe59ae3786e5adc442bfe1ab1a0fbbb0d9d8d8fc59a4",
+    "src/lottery_data/steps/preflight.py": "f3cde02f1308efcd1ad1e536f679116bfee7214280f7e2d1cc0bbc00396ee30b",
+    "src/lottery_data/steps/verify.py": "866bfeb3d610da7373d5cf09f8949663eca2a11ccbab45245cb7ec0a726c1285",
+    "src/lottery_data/steps/recovery.py": "1bb307a1fc38d44ae3f2c26f3faeb22ede9260eb13fc63aee6dc15f3f9791bb6",
+    "src/lottery_data/steps/replay.py": "f7bf19ca253cd68eadc6ddb8354d959071ea7bec71214ab5b94240179729b2e7",
+    "src/lottery_data/workflow.py": "7206203b44ea26cbd7b80cf310aae3b7c68854ddd0ac62466cd0fc48d0163750"
+  },
+  "blocking_findings": []
+}

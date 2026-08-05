@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase2_replay_review",
+  "status": "PASS",
+  "reviewer_identity": "/root/replay_review",
+  "independence_level": "procedural_agent_independence",
+  "source_run_identities": [
+    {
+      "path": "artifacts/phase-2/runs/p2-audit-refreeze-20260805t0652z/request.json",
+      "sha256": "362567b944ff2083f0c8ae6d4e61621c5584bdb24b8b57aba212ff1656b95ffe"
+    },
+    {
+      "path": "artifacts/phase-2/runs/p2-audit-refreeze-20260805t0652z/result.json",
+      "sha256": "2b80d4e8b7e8a160f7ca5304d86eba2ab43eb8cfcf640fd291ab23d8f72ce488"
+    },
+    {
+      "path": "artifacts/phase-2/results/historical-audit.json",
+      "sha256": "952213369d1236b8c8298de7f42fed513f2e3abc94b34660d1f0832c877af075"
+    },
+    {
+      "path": "artifacts/phase-2/runs/p2-power-refreeze-20260805t0652z/request.json",
+      "sha256": "2859c3f57ff6c4e642bbb2661d58ff76e88987a0470346fe58884c4b81ebb8ac"
+    },
+    {
+      "path": "artifacts/phase-2/runs/p2-power-refreeze-20260805t0652z/result.json",
+      "sha256": "07f8dac1763fc2fd6f0e5ba562d81b3c798e63e02401c0a51a469a68b32c0397"
+    },
+    {
+      "path": "artifacts/phase-2/results/power-envelope.json",
+      "sha256": "f53b1bd17341cf3e9ded0d664ef328d7422dd6148cb14478e21ba30026ead3d4"
+    },
+    {
+      "path": "artifacts/phase-2/contracts/replay-evidence-manifest.json",
+      "sha256": "a56d5ea19f2f1beae19d3fc615af2a56a9568c4cc40fb05eb1bb7f074ba808f4"
+    }
+  ],
+  "replay_run_identities": [
+    {
+      "path": "artifacts/phase-2/runs/p2-replay-refreeze-20260805t0654z/request.json",
+      "sha256": "73953d724c66ae0437dfb4af268dfa13f8f2e68465a2e730646c4ee67614d215"
+    },
+    {
+      "path": "artifacts/phase-2/runs/p2-replay-refreeze-20260805t0654z/result.json",
+      "sha256": "908ab89f251f9b930b9af49258e82182d8a99bc9d7d0a74876b5857ed633e7e9"
+    },
+    {
+      "path": "artifacts/phase-2/replay/replay-run.json",
+      "sha256": "61b5fe5207e6eb69805041163612fc223e878764d54c43107a0c5322ec591334"
+    },
+    {
+      "path": "artifacts/phase-2/replay/power-envelope-same-seed-replay.json",
+      "sha256": "f53b1bd17341cf3e9ded0d664ef328d7422dd6148cb14478e21ba30026ead3d4"
+    },
+    {
+      "path": "artifacts/phase-2/replay/power-envelope-replay.json",
+      "sha256": "5f1b3c8d9c160084b65165d5b40d97564eb3b997187e9dd976bbd420110d0a6c"
+    }
+  ],
+  "deterministic_match_rate": 1.0,
+  "independent_reference_match_rate": 1.0,
+  "different_seed_verdict": "compatible",
+  "blocking_findings": [],
+  "signature": {
+    "signed": true,
+    "signed_at_utc": "2026-08-05T07:01:01.4465132Z",
+    "signature_type": "procedural_attestation",
+    "run_id": "p2-replay-refreeze-20260805t0654z",
+    "request_result_binding_verified": true,
+    "source_and_replay_identities_rehashed": true,
+    "metric_attestation": {
+      "REP-01": "PASS; normalized power-core-v1 SHA-256 matched exactly",
+      "REP-02": "PASS; 4 of 4 independent reference statistics matched exactly",
+      "REP-03": "PASS; 240 of 240 different-seed simultaneous intervals were compatible",
+      "REP-04": "PASS; 50 of 50 delta-star and required-n state comparisons were compatible",
+      "REP-05": "PASS; missing batches 0, duplicate batches 0, normalized resume hash matched",
+      "COV-05": "PASS; unresolved blocking findings 0"
+    },
+    "independence_boundary": "Reviewer did not author the frozen statistical methods, implementation, historical audit, power envelope, or final acceptance artifacts."
+  }
+}

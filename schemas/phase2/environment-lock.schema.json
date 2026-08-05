@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase2-environment-lock.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "created_at_utc", "python", "platform", "hardware", "dependency_lock", "installed_packages", "p2_01_start_authorization", "source_schema_bundle", "benchmark"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase2_environment_lock"},
+    "created_at_utc": {"type": "string", "format": "date-time"},
+    "python": {"type": "object", "required": ["version", "implementation", "executable"], "additionalProperties": false, "properties": {"version": {"type": "string"}, "implementation": {"type": "string"}, "executable": {"type": "string"}}},
+    "platform": {"type": "object", "required": ["system", "release", "version", "machine"], "additionalProperties": false, "properties": {"system": {"type": "string"}, "release": {"type": "string"}, "version": {"type": "string"}, "machine": {"type": "string"}}},
+    "hardware": {"type": "object", "required": ["logical_processors", "processor"], "additionalProperties": false, "properties": {"logical_processors": {"type": "integer", "minimum": 1}, "processor": {"type": "string"}}},
+    "dependency_lock": {"$ref": "#/$defs/pathHash"},
+    "installed_packages": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string", "minLength": 1}},
+    "p2_01_start_authorization": {"$ref": "#/$defs/pathHash"},
+    "source_schema_bundle": {"type": "object", "required": ["algorithm", "profile", "file_count", "sha256"], "additionalProperties": false, "properties": {"algorithm": {"const": "sha256"}, "profile": {"type": "string"}, "file_count": {"type": "integer", "minimum": 1}, "sha256": {"$ref": "#/$defs/hash"}}},
+    "benchmark": {"type": "object", "additionalProperties": false, "required": ["status", "synthetic_only", "seed", "worlds_per_scenario", "draws_per_world", "repeats", "null_wall_seconds_per_1000_worlds", "bias_wall_seconds_per_1000_worlds", "peak_memory_bytes", "memory_metric", "artifact_bytes", "parallel_workers", "parallel_efficiency_factor", "formal_estimate_allowed", "diagnostic_checksum"], "properties": {"status": {"const": "PASS"}, "synthetic_only": {"const": true}, "seed": {"type": "integer"}, "worlds_per_scenario": {"type": "integer", "minimum": 1000}, "draws_per_world": {"type": "integer", "minimum": 1}, "repeats": {"type": "integer", "minimum": 1}, "null_wall_seconds_per_1000_worlds": {"type": "number", "exclusiveMinimum": 0}, "bias_wall_seconds_per_1000_worlds": {"type": "number", "exclusiveMinimum": 0}, "peak_memory_bytes": {"type": "integer", "minimum": 1}, "memory_metric": {"const": "coordinator_process_peak_working_set_bytes"}, "artifact_bytes": {"type": "integer", "minimum": 1}, "parallel_workers": {"type": "integer", "minimum": 1}, "parallel_efficiency_factor": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}, "formal_estimate_allowed": {"const": true}, "diagnostic_checksum": {"type": "number"}}}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "pathHash": {"type": "object", "required": ["path", "sha256"], "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/hash"}}, "additionalProperties": false}}
+}

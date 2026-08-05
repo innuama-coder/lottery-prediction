@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"urn:autoresearch-lotte:phase0:reconciliation-entry:1.0.0","type":"object","additionalProperties":false,
+  "required":["schema_version","artifact_type","game","issue_id","primary_evidence_ref","corroborating_evidence_refs","corroboration_tier","core_fact_match","conflict_fields","resolution_status","resolved_record_ref"],
+  "properties":{"schema_version":{"const":"1.0.0"},"artifact_type":{"const":"reconciliation_entry"},"game":{"enum":["dlt","ssq"]},"issue_id":{"type":"string","pattern":"^[0-9]{5,12}$"},"primary_evidence_ref":{"type":"string","minLength":1},"corroborating_evidence_refs":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}},"corroboration_tier":{"enum":["corroborated_official","shared_upstream","primary_only"]},"core_fact_match":{"type":"boolean"},"conflict_fields":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}},"resolution_status":{"enum":["agreed","primary_only","resolved","unresolved"]},"resolved_record_ref":{"type":["string","null"]}}
+}

@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase2_nonstatistical_patch_review",
+  "status": "PASS",
+  "reviewer_identity": "/root/method_review",
+  "independence_level": "procedural_agent_independence",
+  "review_context": {
+    "timing": "post_result",
+    "historical_results_known_to_reviewer": true,
+    "blind_or_pre_result_review_claimed": false,
+    "purpose": "Review only the path-normalization and project-containment patch discovered during independent formal replay; preserve the original pre-result D2-05 unchanged."
+  },
+  "base_pre_result_review": {
+    "path": "artifacts/phase-2/reviews/method-review.json",
+    "sha256": "3b84133f2e7e245825a7ee493fad32309ef04ca068dbc4f80e194e146b5c71b1",
+    "status": "PASS",
+    "signed_at_utc": "2026-08-05T05:09:56Z",
+    "earliest_current_formal_audit_or_power_request_utc": "2026-08-05T05:43:43.695417Z",
+    "pre_result_ordering_preserved": true
+  },
+  "patched_environment": {
+    "environment_lock": {
+      "path": "artifacts/phase-2/contracts/environment-lock.json",
+      "sha256": "b6cbbb459ea4b4c44f71e70bcdb299eccd38ca0dce870c6be4b89ef75f2fab8d"
+    },
+    "source_schema_bundle": {
+      "file_count": 32,
+      "sha256": "0ff533048edfa1a82cb86efdc86012ce1127ccb6fcd96445b66d13c0dee43543",
+      "recomputed_match": true
+    }
+  },
+  "patch_identities": {
+    "previous_workflows": {
+      "path": "src/lottery_research/phase2/workflows.py",
+      "sha256": "7b6e75eaf2e367cf470b57bd027b588c109a3eed078545aaed8ffa5fa25ddf0b"
+    },
+    "current_workflows": {
+      "path": "src/lottery_research/phase2/workflows.py",
+      "sha256": "c66d63387ec3d8cfa199e877459fb4beade8346a151660d24eb44a2668a3321f"
+    },
+    "changed_test_identities": [
+      {"path": "tests/phase2/test_research_engine.py", "sha256": "37ac8694129719966937305d1da25e16dcfd26e61f64e32085364913e03a338b"},
+      {"path": "tests/phase2_cli_contract/test_phase2_cli_contract.py", "sha256": "61d77d677d7b87e30b73ce859968c1575e421978fd2bedcce74718e8160a7316"}
+    ]
+  },
+  "statistical_core_immutability": {
+    "all_match_original_d2_05": true,
+    "files": [
+      {"path": "src/lottery_research/phase2/draws.py", "original_d2_05_sha256": "cd86c5b9022a6f481c766529fabb0f31131b596c46e9ec26e0739e5f60fc58ba", "current_sha256": "cd86c5b9022a6f481c766529fabb0f31131b596c46e9ec26e0739e5f60fc58ba", "unchanged": true},
+      {"path": "src/lottery_research/phase2/formal_workflows.py", "original_d2_05_sha256": "1a099a316b661ef3f7ceb3c0b05bae097ea7b8b7ac16430d9972cb8fe7c69ae3", "current_sha256": "1a099a316b661ef3f7ceb3c0b05bae097ea7b8b7ac16430d9972cb8fe7c69ae3", "unchanged": true},
+      {"path": "src/lottery_research/phase2/research_engine.py", "original_d2_05_sha256": "50ecf488c8b436d37973c2f78789892b7576acf1b8a9918218566babadd888a7", "current_sha256": "50ecf488c8b436d37973c2f78789892b7576acf1b8a9918218566babadd888a7", "unchanged": true},
+      {"path": "src/lottery_research/phase2/vectorized.py", "original_d2_05_sha256": "215d666b29b4cac596635e86b668cbd05c0523f2b6120b393b6604acafaa398f", "current_sha256": "215d666b29b4cac596635e86b668cbd05c0523f2b6120b393b6604acafaa398f", "unchanged": true},
+      {"path": "src/lottery_research/phase2/statistics.py", "original_d2_05_sha256": "45b815a4b3fb0ca351c2ad126ee50a028852e134157392f4b4b23fb94c9667ee", "current_sha256": "45b815a4b3fb0ca351c2ad126ee50a028852e134157392f4b4b23fb94c9667ee", "unchanged": true},
+      {"path": "src/lottery_research/phase2/reference.py", "original_d2_05_sha256": "255fd17870a1637b4a07012fbae4dc84f9a487b3888e8118983ccf67b7202b75", "current_sha256": "255fd17870a1637b4a07012fbae4dc84f9a487b3888e8118983ccf67b7202b75", "unchanged": true}
+    ]
+  },
+  "scope_verdicts": [
+    {
+      "id": "PATCH-PATH-NORMALIZATION",
+      "status": "PASS",
+      "rationale": "Project-relative and project-internal absolute caller paths normalize to one canonical relative label before replay or final acceptance evidence is written."
+    },
+    {
+      "id": "PATCH-PROJECT-CONTAINMENT",
+      "status": "PASS",
+      "rationale": "Caller-supplied replay and acceptance outputs outside the selected project root fail with INVALID_CONTRACT and are not written."
+    },
+    {
+      "id": "PATCH-HOLD-SEMANTICS",
+      "status": "PASS",
+      "rationale": "Five downstream commands still return HOLD for missing prerequisites when exercised in a stable isolated project with an internal output path."
+    },
+    {
+      "id": "PATCH-NONSTATISTICAL-SCOPE",
+      "status": "PASS",
+      "rationale": "The reviewed production change is confined to path normalization, containment, and path labeling in workflows.py; statistical core identities are unchanged."
+    }
+  ],
+  "regression_evidence": {
+    "total_tests": 58,
+    "passed_tests": 58,
+    "suites": [
+      {"name": "phase2", "passed": 31, "total": 31},
+      {"name": "phase2_e2e", "passed": 7, "total": 7},
+      {"name": "phase2_cli_contract", "passed": 15, "total": 15},
+      {"name": "phase2_readiness", "passed": 5, "total": 5}
+    ],
+    "compileall": "PASS",
+    "validate_input": "PASS",
+    "validate_input_formal_historical_result_count": 2
+  },
+  "statistical_change_attestation": {
+    "methods_changed": false,
+    "thresholds_changed": false,
+    "seeds_changed": false,
+    "effect_grids_changed": false,
+    "sample_size_grids_changed": false,
+    "results_changed_by_reviewer": false,
+    "statement": "The reviewer knew current result artifacts existed but did not use their values to modify or approve any statistical method, threshold, seed, grid, or result."
+  },
+  "blocking_findings": [],
+  "unresolved_nonblocking_findings": [],
+  "signature": {
+    "signed": true,
+    "signed_at_utc": "2026-08-05T06:50:50Z"
+  }
+}

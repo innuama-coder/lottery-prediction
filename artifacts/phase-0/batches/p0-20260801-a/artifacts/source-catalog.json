@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "source_catalog",
+  "contract_version": "1.3",
+  "assessed_at_utc": "2026-08-01T02:54:43Z",
+  "assessor_id": "/root",
+  "games": [
+    {
+      "game": "dlt",
+      "authoritative_primary": {
+        "source_id": "dlt-national-primary",
+        "publisher": "国家体育总局体育彩票管理中心",
+        "url": "https://m.lottery.gov.cn/mkjdlt/",
+        "authority_tier": "A",
+        "content_type": "官方动态HTML开奖入口",
+        "access_method": "public_https_get",
+        "historical_query_capability": "unknown"
+      },
+      "official_corroborators": [
+        {
+          "source_id": "dlt-gd-official-issue-pages",
+          "publisher": "广东省体育彩票中心",
+          "url": "https://www.gdlottery.cn/f_html/kjgg/P085_26070.html",
+          "authority_tier": "B",
+          "content_type": "官方逐期静态HTML开奖公告",
+          "access_method": "public_https_get",
+          "historical_query_capability": "unknown"
+        }
+      ],
+      "channel_availability_assessed": true,
+      "shared_upstream_assessment": "广东省体育彩票中心是官方省级发行销售机构，其逐期公告指向国家体彩开奖体系；两渠道应按shared_upstream处理，只能支持传输和解析一致性核对，不能表述为独立真值生成。",
+      "compliance": {
+        "reviewed_at_utc": "2026-08-01T02:48:25Z",
+        "terms_status": "restricted",
+        "robots_status": "unclear",
+        "copyright_status": "recorded",
+        "access_controls_bypassed": false,
+        "unresolved_questions": [
+          "国家主源和候选历史接口在本执行环境返回HTTP 567；原因及可公开复用的访问方法未确认，禁止绕过。",
+          "未发现官方动态接口的公开使用授权、接口文档或数值化频率限制。",
+          "竞彩网法律声明限制未经授权复制和再造；原始响应留存及批量重放的适用范围需要合规责任人确认，本工程记录不构成法律批准。",
+          "广东逐期公告当前可公开低频GET，但尚未实证其完整覆盖2024001至2026050。",
+          "HTTP Last-Modified不得解释为page_published_at。",
+          "官方更正、撤回和历史版本保留机制尚未确认。"
+        ]
+      }
+    },
+    {
+      "game": "ssq",
+      "authoritative_primary": {
+        "source_id": "ssq-national-primary",
+        "publisher": "中国福利彩票发行管理中心",
+        "url": "https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/",
+        "authority_tier": "A",
+        "content_type": "官方历史开奖HTML入口及候选分页接口",
+        "access_method": "public_https_get",
+        "historical_query_capability": "unknown"
+      },
+      "official_corroborators": [
+        {
+          "source_id": "ssq-gd-official-history",
+          "publisher": "广东省福利彩票发行中心",
+          "url": "https://www.gdfc.org.cn/sjfx/ssq_200.html",
+          "authority_tier": "B",
+          "content_type": "官方省级服务端HTML历史号码表",
+          "access_method": "public_https_get",
+          "historical_query_capability": "limited"
+        }
+      ],
+      "channel_availability_assessed": true,
+      "shared_upstream_assessment": "广东省福利彩票发行中心逐期内容明确标注来源为中国福彩，因此与国家主源属于shared_upstream；可核对公开号码的传输和解析，但不能声称独立开奖真值。",
+      "compliance": {
+        "reviewed_at_utc": "2026-08-01T02:49:54Z",
+        "terms_status": "unclear",
+        "robots_status": "unclear",
+        "copyright_status": "recorded",
+        "access_controls_bypassed": false,
+        "unresolved_questions": [
+          "中国福彩网历史页、逐期页及候选接口在本执行环境返回HTTP 403；未确认公开可复用访问方法，禁止绕过。",
+          "候选分页接口未发现公开契约，成功载荷、字段、分页上限和历史深度均保持unknown。",
+          "广东历史页公开低频GET可用，但最多200期，不能单独覆盖冻结目标区间。",
+          "两个站点均未发现明确的自动化许可或数值化请求频率；robots的403或404不解释为许可或禁止。",
+          "国家逐期公告中的核心号码以图片呈现时，纯HTML文本解析不应被标记为verified。",
+          "HTTP Last-Modified和本系统retrieved_at不得替代page_published_at或实际draw_at。"
+        ]
+      }
+    }
+  ]
+}

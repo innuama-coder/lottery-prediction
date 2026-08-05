@@ -1,0 +1,234 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase0_c_after_independent_freeze_review",
+  "repair_layer_id": "p0-20260801-c",
+  "canonical_batch_id": "p0-20260801-c-after",
+  "reviewer": {
+    "reviewer_id": "/root/phase0_reviewer",
+    "assignment_role": "independent_reviewer4",
+    "identity_assurance": "declared_not_cryptographically_authenticated"
+  },
+  "reviewed_at_utc": "2026-08-01T16:21:57.800644Z",
+  "scope": {
+    "included": [
+      "canonical C-after repair freeze",
+      "root review-pending repair manifest",
+      "freeze validation actual-observation record",
+      "formal verification inventory",
+      "protected Phase-0 evidence and decision surface",
+      "read-only Windows Task Scheduler live state"
+    ],
+    "excluded": [
+      "lottery model quality",
+      "future draw collection",
+      "P0-07 reviewer attestation",
+      "P0-07 terminalization"
+    ]
+  },
+  "reviewed_hashes": {
+    "snapshot_manifest_sha256": "4181b61d24b0928c8dca349e5797497a808c24430abe5c09616c5da09322c9e2",
+    "snapshot_sidecar_file_sha256": "522f147284c68301071d08604bc621b245e09e871f4bba295d211e833940c61c",
+    "snapshot_tree_sha256": "b999b20f7cedd858a81d3aa39ac14193700bfa6b6705d96c46ba98230d7e0339",
+    "pending_manifest_sha256": "f468ff6b666be441e9e7ff0d6069d7a72d0d70dadbb5121ab3c6ca36635c7cb7",
+    "pending_sidecar_file_sha256": "884d957325d8bf303ebcb18144a796dd3675d06db71ee9dd910a9cde4eca1875",
+    "freeze_validation_record_sha256": "1d7f5af511375977b37b8e67c3699519d4193173f0ed8ca4d52513cad09cf1d9",
+    "freeze_validation_sidecar_file_sha256": "fb58e649a95051740e61dc7bdcdaa430c69b94d1dc0a17f88e3866ad22eab76e",
+    "scheduler_install_audit_sha256": "e00b1e5ad314cb6a757c2bee5fd8fa1db8c874869259acef3483829d239c3b2f",
+    "formal_verification_command_sha256": "21083d14b96ccd854d19537ae8f9a11b273f65f40a836d1f48d01e59f3cc646a",
+    "formal_verification_command_sidecar_file_sha256": "bfd132da4ac1d7d1850e0368e87c3ba69db7cfbaad868e731616868e570753c3",
+    "soak_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "canonical_evidence": {
+    "validation_interval_utc": {
+      "started": "2026-08-01T16:12:40.880054Z",
+      "completed": "2026-08-01T16:13:55.400139Z"
+    },
+    "snapshot_recorded_at_utc": "2026-08-01T16:15:11.330347Z",
+    "acceptance_cutoff_utc": "2026-08-15T17:00:00Z",
+    "full_unittest_exact_reparse": {
+      "stdout_size": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_size": 104,
+      "stderr_sha256": "4af37aef096aff4aef5fafda9e3ebc28f1a1d29f40b7ccadc6c29ac54505a6ed",
+      "observed_test_count": 160,
+      "result": "OK",
+      "count_source": "parsed_from_exact_subprocess_output"
+    },
+    "operational_tree_root_sha256": "3d01c92ef9bc068ee54a7606a878ddfd5d3c9d4f0f97c6ad0d277bb9204e165c",
+    "trusted_inputs_root_sha256": "9949e99d4265749ee8e5393f86cf5104bec8a8186aa498ae69f12e24325eadd3",
+    "decision_surface_sha256": "d772e1a4d26c916b8866f6692c96280787a731e3c96d528d83ac9689ae9fce91"
+  },
+  "independent_rerun": {
+    "method": "frozen Python in-memory import of validate_p0_c_freeze.collect_validation with its real default subprocess.run; no clock, runner, result, path, or write_record injection",
+    "started_at_utc": "2026-08-01T16:19:38.292220Z",
+    "completed_at_utc": "2026-08-01T16:20:48.846154Z",
+    "status": "PASS",
+    "argv_hash_semantics": "sha256(utf8(canonical-json-array))",
+    "processes": [
+      {
+        "role": "scheduler_live_read_only_before",
+        "argv_contract_ref": "scripts/phase0/validate_p0_c_freeze.py#SCHEDULER_COMMAND",
+        "argv_sha256": "5c495857e890247dae8577491afa3a088870c754ea556c887a16819e0eb8712c",
+        "exit_code": 0,
+        "stdout_size": 2754,
+        "stdout_sha256": "b2a09bb4de57cb15fdbb24cd187a93d3189b9565d4aaab942201d160db994e6c",
+        "stderr_size": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "role": "phase_gate_p0-01",
+        "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/phase0/verify_phase0.ps1", "--contract", "docs/roadmap/phase-0-acceptance-contract.json", "--artifacts", "artifacts/phase-0", "--stage", "p0-01"],
+        "argv_sha256": "ce91c6a54c81db1af3cbd733233b34fc987d2fcccee30a891a7d299c66ead6c0",
+        "exit_code": 0,
+        "stdout_size": 81,
+        "stdout_sha256": "f482c3e50af30db802d06fb0ee3a33f8e6748ad26442ae54d649197bcd805c84",
+        "stderr_size": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "role": "phase_gate_p0-02",
+        "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/phase0/verify_phase0.ps1", "--contract", "docs/roadmap/phase-0-acceptance-contract.json", "--artifacts", "artifacts/phase-0", "--stage", "p0-02"],
+        "argv_sha256": "e49d257b8b55525717ef3f3418f5a4e99fec1acda1bb01320e75c1307f397d07",
+        "exit_code": 0,
+        "stdout_size": 81,
+        "stdout_sha256": "55f29c1dba8c262d7a020c55e243dacd620e4cd4bc50f93ff8a7d8e6c4b87f5d",
+        "stderr_size": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "role": "phase_gate_p0-03",
+        "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/phase0/verify_phase0.ps1", "--contract", "docs/roadmap/phase-0-acceptance-contract.json", "--artifacts", "artifacts/phase-0", "--stage", "p0-03"],
+        "argv_sha256": "44b1174d20719e0673ce7c1fc895b16a593a7ecae0a7de00ab3302b5db90794e",
+        "exit_code": 0,
+        "stdout_size": 81,
+        "stdout_sha256": "60e4e8509dc9bb836853292e75e3e2432399ab30613aca2cc58451208fb3588f",
+        "stderr_size": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "role": "phase_gate_p0-05",
+        "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/phase0/verify_phase0.ps1", "--contract", "docs/roadmap/phase-0-acceptance-contract.json", "--artifacts", "artifacts/phase-0", "--stage", "p0-05"],
+        "argv_sha256": "7a08a917365ea80e06b1f8c23e595b4bd2f7dfd4d9fd83eb019432e988d5f72c",
+        "exit_code": 0,
+        "stdout_size": 81,
+        "stdout_sha256": "a025f949eb834d21419ec603bd90f77c4191bda9d2e7164d8b2f820b06cf2387",
+        "stderr_size": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "role": "phase_gate_p0-06",
+        "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/phase0/verify_phase0.ps1", "--contract", "docs/roadmap/phase-0-acceptance-contract.json", "--artifacts", "artifacts/phase-0", "--stage", "p0-06"],
+        "argv_sha256": "736af7dceeaccdd21988ecda69b7690e36e51c172f60f60250558d38cffb9999",
+        "exit_code": 0,
+        "stdout_size": 81,
+        "stdout_sha256": "86ac35dcb782fd7fa9c3eb2434a68bc46508140fdcc6e7b8237918b7b47287c8",
+        "stderr_size": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "role": "full_unittest_discover",
+        "argv": ["C:\\Users\\54256213\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe", "-B", "-m", "unittest", "discover", "-s", "tests/phase0", "-p", "test_*.py", "-q"],
+        "argv_sha256": "c63159b4f2ec4e4909c9dc44a2361d0a07a34d0b9e9a4b8eaa5574a0fc2d715d",
+        "exit_code": 0,
+        "stdout_size": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_size": 104,
+        "stderr_sha256": "a596f8674d472937c1f711a03499137849f46b48e5f69342561a070a8dd1768c"
+      },
+      {
+        "role": "pre_cutoff_replay_launcher",
+        "argv": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/phase0/p0_07_replay_launcher.ps1"],
+        "argv_sha256": "a7119c5b02ed97dda8a20fef95fafe951964a8cb27973a22a5100bd581770ceb",
+        "exit_code": 1,
+        "stdout_size": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_size": 123,
+        "stderr_sha256": "5b3f0a43c2c35a187283560c7b331b765d0132e59d3e7a3d8a2bc1ad6b88b7da"
+      },
+      {
+        "role": "scheduler_live_read_only_after",
+        "argv_contract_ref": "scripts/phase0/validate_p0_c_freeze.py#SCHEDULER_COMMAND",
+        "argv_sha256": "5c495857e890247dae8577491afa3a088870c754ea556c887a16819e0eb8712c",
+        "exit_code": 0,
+        "stdout_size": 2754,
+        "stdout_sha256": "b2a09bb4de57cb15fdbb24cd187a93d3189b9565d4aaab942201d160db994e6c",
+        "stderr_size": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "phase_gates": ["p0-01", "p0-02", "p0-03", "p0-05", "p0-06"],
+    "full_unittest": {
+      "observed_test_count": 160,
+      "reported_duration_seconds": 61.438,
+      "result": "OK",
+      "count_source": "parsed_from_exact_subprocess_output"
+    },
+    "pre_cutoff_replay": {
+      "status": "HOLD",
+      "exit_code": 1,
+      "network_used": false,
+      "acceptance_cutoff_utc": "2026-08-15T17:00:00Z",
+      "observed_started_at_utc": "2026-08-01T16:20:45.647061Z",
+      "observed_completed_at_utc": "2026-08-01T16:20:46.475420Z",
+      "stderr_semantics": "one exact canonical JSON line"
+    },
+    "scheduler_live_state": {
+      "query_mode": "read_only_Get-ScheduledTask_plus_Get-ScheduledTaskInfo",
+      "before_equals_after": true,
+      "task_name": "AutoresearchLotte-P0-06",
+      "state": "Ready",
+      "trigger_count": 24,
+      "next_run_local": "2026-08-02T22:00:00.0000000+08:00",
+      "last_run_state": "never_run",
+      "last_task_result": 267011,
+      "missed_runs": 0
+    },
+    "state_stability": {
+      "operational_tree_before_sha256": "3d01c92ef9bc068ee54a7606a878ddfd5d3c9d4f0f97c6ad0d277bb9204e165c",
+      "operational_tree_after_sha256": "3d01c92ef9bc068ee54a7606a878ddfd5d3c9d4f0f97c6ad0d277bb9204e165c",
+      "file_diff_count": 0,
+      "directory_diff_count": 0,
+      "trusted_inputs_root_sha256": "9949e99d4265749ee8e5393f86cf5104bec8a8186aa498ae69f12e24325eadd3",
+      "decision_surface_sha256": "d772e1a4d26c916b8866f6692c96280787a731e3c96d528d83ac9689ae9fce91",
+      "protected_state_unchanged": true
+    },
+    "canonical_invariant_matches": {
+      "phase_gates": true,
+      "full_unittest_count_and_result": true,
+      "pre_cutoff_replay_semantics": true,
+      "process_roles_argv_and_exit_codes": true,
+      "operational_tree_root": true,
+      "trusted_inputs_root": true,
+      "protected_state": true,
+      "scheduler_state": true
+    }
+  },
+  "checks": [
+    {"check_id": "canonical_archive_verify", "status": "PASS", "evidence": "archive_p0_c_after.py read-only verify returned PASS before review"},
+    {"check_id": "snapshot_exact_closure", "status": "PASS", "evidence": {"expected_files": 110, "actual_files": 110, "missing": 0, "extra": 0, "manifest_file_count": 108}},
+    {"check_id": "change_surface", "status": "PASS", "evidence": {"allowed_surface_only": true, "added": 52, "modified": 9, "removed": 0, "total": 61}},
+    {"check_id": "archive_generator_actual_observation", "status": "PASS", "evidence": "pending tests subtree is projected from the validated observation record; no hardcoded observed exit codes, unittest result, replay result, or tree hashes remain"},
+    {"check_id": "validation_exact_stream_reparse", "status": "PASS", "evidence": {"process_count": 9, "all_stream_hashes_and_sizes_valid": true, "full_unittest_observed": 160, "full_unittest_result": "OK"}},
+    {"check_id": "pending_tests_mechanical_projection", "status": "PASS", "evidence": "deep equality with _pending_tests_from_validation(validation) verified"},
+    {"check_id": "chronology", "status": "PASS", "evidence": "validation.completed_at_utc <= snapshot.recorded_at_utc < acceptance_cutoff_utc"},
+    {"check_id": "formal_inventory", "status": "PASS", "evidence": {"schema_count": 32, "schema_unique": 32, "schema_hash_mismatches": 0, "tool_count": 23, "tool_unique": 23, "tool_hash_mismatches": 0, "three_commands_distinct": true}},
+    {"check_id": "protected_and_decision_state", "status": "PASS", "evidence": {"protected_file_count": 21, "protected_hash_mismatches": 0, "decision_surface_unchanged": true, "scheduler_audit_unchanged": true, "soak_size": 0}},
+    {"check_id": "superseded_hardcoded_validation_lineage", "status": "PASS", "evidence": {"snapshot_manifest_sha256": "b73fe82cfa4dae0e36c49c904fac49a26568fc5a87656faec009d3d7ee0886e1", "pending_manifest_sha256": "745993ff7f0121e6b8c82167ab9eafa7b3ebd74cbf45fc2f81c50d01d83c3aeb", "reviewer_pass_artifact_created": false}},
+    {"check_id": "root_preterminal_state", "status": "PASS", "evidence": {"root_repair_manifest_count": 1, "root_repair_manifest": "repair-manifest-p0-20260801-c-review-pending.json", "root_review_candidate_attestation_terminal_count": 0, "pending_reviewer_status": "pending"}},
+    {"check_id": "independent_actual_rerun", "status": "PASS", "evidence": "five gates, full 160-test suite, pre-cutoff replay, and scheduler before/after queries all completed with exact fail-closed parsing"},
+    {"check_id": "review_boundary", "status": "PASS", "evidence": "no model evaluation, future collection, scheduler installation, AuditPath use, production validation main, attestation, or terminalization was performed"},
+    {"check_id": "before_after_hash_stability", "status": "PASS", "evidence": "snapshot, pending, validation, scheduler audit, formal command, and soak hashes were identical before and after independent rerun"}
+  ],
+  "network_used": false,
+  "persistent_writes": {
+    "created": ["artifacts/phase-0/batches/p0-20260801-c-review/repair-review-p0-20260801-c.json"],
+    "sidecar_created": false,
+    "other_writes": []
+  },
+  "integrity_limitations": {
+    "sidecars": "All reviewed SHA-256 sidecars are unkeyed integrity commit markers; they are not proof of author identity or origin authenticity.",
+    "reviewer_identity": "The reviewer_id is a declared agent identity and is not cryptographically authenticated.",
+    "review_artifact": "No sidecar or cryptographic signature is created for this governance review artifact."
+  },
+  "conclusion": "PASS"
+}

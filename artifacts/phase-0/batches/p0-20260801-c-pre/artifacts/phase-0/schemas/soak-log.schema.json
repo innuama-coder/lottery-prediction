@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:autoresearch-lotte:phase0:soak-log-entry:1.1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "request_id", "game", "planned_at_utc", "started_at_utc", "completed_at_utc", "source_slot", "source_id", "scheduled_issue_id", "request_schedule_sha256", "execution_disposition", "attempts", "network_used", "clock_check_at_utc", "clock_offset_seconds", "result", "classification_reason", "failure_injection", "evidence_ref", "raw_payload_ref"],
+  "properties": {
+    "schema_version": {"const": "1.1.0"},
+    "artifact_type": {"const": "soak_log_entry"},
+    "request_id": {"type": "string", "pattern": "^REQ-[A-Za-z0-9._-]+$"},
+    "game": {"enum": ["dlt", "ssq"]},
+    "planned_at_utc": {"type": "string", "format": "date-time"},
+    "started_at_utc": {"type": ["string", "null"], "format": "date-time"},
+    "completed_at_utc": {"type": ["string", "null"], "format": "date-time"},
+    "source_slot": {"enum": ["authoritative_primary", "official_corroborator_if_available"]},
+    "source_id": {"type": "string", "minLength": 1},
+    "scheduled_issue_id": {"type": "string", "pattern": "^[0-9]{7}$"},
+    "request_schedule_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "execution_disposition": {"enum": ["network_attempted", "policy_blocked", "compliance_hold"]},
+    "attempts": {"type": "integer", "minimum": 0, "maximum": 1},
+    "network_used": {"type": "boolean"},
+    "clock_check_at_utc": {"type": ["string", "null"], "format": "date-time"},
+    "clock_offset_seconds": {"type": ["integer", "null"]},
+    "result": {"enum": ["unverified", "invalid", "policy_blocked", "compliance_hold"]},
+    "classification_reason": {"type": "string", "minLength": 1},
+    "failure_injection": {"enum": ["none", "timeout", "http_200_empty", "malformed_json", "encoding_damage", "dom_change", "duplicate_payload", "clock_failure"]},
+    "evidence_ref": {"type": ["string", "null"], "minLength": 1},
+    "raw_payload_ref": {"type": ["string", "null"], "minLength": 1}
+  }
+}

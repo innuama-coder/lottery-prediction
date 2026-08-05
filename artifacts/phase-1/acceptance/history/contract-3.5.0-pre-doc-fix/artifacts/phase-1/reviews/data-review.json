@@ -1,0 +1,15 @@
+{
+  "artifact_type": "phase1_independent_review",
+  "review_scope": "data",
+  "contract_version": "3.5.0",
+  "contract_sha256": "2e5dee8f9921d54fab2311db9514fbb70aca4ea1c38d5eb9c658aade688c0652",
+  "reviewer": "independent-data-reviewer-20260803-baseline-rebind",
+  "reviewed_artifact_hashes": {
+    "docs/roadmap/phase-1-acceptance-contract.json": "2e5dee8f9921d54fab2311db9514fbb70aca4ea1c38d5eb9c658aade688c0652",
+    "artifacts/phase-1/releases/baseline-v1/manifest.json": "0ddcccb72dce7662af665b369995b1c1fd28c68554b32e175f4561fc9f9683d1",
+    "artifacts/phase-1/releases/baseline-v1/draws.jsonl": "f2e34a88fbd43a378d7fb6255d39deee1354216b918934f355a06ef986be60c1",
+    "artifacts/phase-1/releases/baseline-v1/observations.jsonl": "dc974863c845da1e895ecf623bc6e878ba6aa6710c902357bce68ad5e661966e",
+    "artifacts/phase-1/current-release.json": "76c2998060a8a284ba1a3e892ec853e9fdb89707cffb5d5c992a535cc56a510c"
+  },
+  "blocking_findings": []
+}

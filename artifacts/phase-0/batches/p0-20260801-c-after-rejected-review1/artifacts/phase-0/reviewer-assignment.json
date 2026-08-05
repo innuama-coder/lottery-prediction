@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "reviewer_assignment",
+  "contract_version": "1.3",
+  "freeze_id": "P0-01-p0-20260801-a",
+  "frozen_at_utc": "2026-08-01T02:18:45Z",
+  "assigned_by": "/root",
+  "reviewers": [
+    {
+      "reviewer_id": "/root/phase0_reviewer",
+      "display_name": "Phase 0 independent reviewer agent",
+      "responsibilities": [
+        "schema_review",
+        "clean_replay",
+        "hash_verification",
+        "gate_review"
+      ],
+      "authored_parser": false,
+      "will_modify_evidence": false
+    }
+  ],
+  "role_separation": {
+    "executor_ids": [
+      "/root"
+    ],
+    "parser_author_ids": [
+      "unassigned:phase0_parser_author_non_reviewer"
+    ],
+    "reviewer_ids": [
+      "/root/phase0_reviewer"
+    ],
+    "pairwise_disjoint": true
+  },
+  "independence_declaration": {
+    "text": "The reviewer is assigned before P0-02 and is separate from the executor and the reserved non-reviewer parser-author role. The reviewer must not author the parser; collect or modify raw evidence; modify raw, normalized, manifest, threshold, Schema, or frozen artifacts; or resolve source conflicts by manual number edits. At P0-07 the reviewer performs only read-only schema review, clean canonical replay, hash verification, and gate review. Replay inputs, exit code, hashes, and conclusions belong only in reviewer-attestation.json after replay. The parser-author role remains unassigned at this freeze and may be filled only by a recorded non-reviewer identity before parser authorship begins.",
+    "declared_by_reviewer_ids": [
+      "/root/phase0_reviewer"
+    ],
+    "declared_at_utc": "2026-08-01T02:18:45Z",
+    "attestation_deferred_to_p0_07": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "fixture_metadata_schema_version": "1.0.0",
+  "fixture_path": "tests/phase1/fixtures/real/gd-game-number-history-20260803.json",
+  "source_url": "https://www.gdlottery.cn/f_html/kjgg/gameNumber.json",
+  "content_type": "application/json",
+  "sha256": "dae5c9e0f33cfc09e8b245e9f093bfeaf115ed9383c673dd78ef08f34c98b5ac",
+  "size_bytes": 1828447,
+  "parser_id": "phase1-gdlottery-history-parser",
+  "parser_version": "1.0.0",
+  "game_id": "085",
+  "selection_rule": "normalize issue as 20+drawId, select numeric latest-20 descending, emit ascending",
+  "expected_raw_issue_range": ["26067", "26086"],
+  "target_raw_issue_ids": ["26084", "26085", "26086"],
+  "scope": "real raw evidence retained for deterministic internal parser regression only"
+}

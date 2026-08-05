@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autoresearch-lotte.local/schemas/phase1/run-manifest-v1.1.schema.json",
+  "title": "RunManifestLiveV1.1",
+  "description": "Write-once live-incremental manifest. The static four-request plan may authorize one bounded discovered child request.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_schema_version", "run_id", "mode", "source_mode", "started_at_utc",
+    "artifacts_root", "previous_release_id", "games", "request_plan", "config_files",
+    "schema_bundle_sha256", "pipeline_bundle_sha256", "python_version",
+    "bootstrap_snapshot", "incremental_watermark", "publish_policy", "replay_of_run_id"
+  ],
+  "properties": {
+    "run_schema_version": {"const": "1.1.0"},
+    "run_id": {"$ref": "#/$defs/runId"},
+    "mode": {"const": "incremental"},
+    "source_mode": {"const": "live"},
+    "started_at_utc": {"$ref": "#/$defs/utcTimestamp"},
+    "artifacts_root": {"type": "string", "minLength": 1},
+    "previous_release_id": {"$ref": "#/$defs/releaseId"},
+    "games": {"type": "array", "const": ["ssq", "dlt"]},
+    "request_plan": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "prefixItems": [
+        {"$ref": "#/$defs/staticRequest"}, {"$ref": "#/$defs/staticRequest"},
+        {"$ref": "#/$defs/staticRequest"}, {"$ref": "#/$defs/discoveryRequest"}
+      ],
+      "items": false
+    },
+    "config_files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/hashedRef"}},
+    "schema_bundle_sha256": {"$ref": "#/$defs/sha256"},
+    "pipeline_bundle_sha256": {"$ref": "#/$defs/sha256"},
+    "python_version": {"type": "string", "pattern": "^3\\.12(?:\\.[0-9]+)?$"},
+    "bootstrap_snapshot": {"type": "null"},
+    "incremental_watermark": {"$ref": "#/$defs/incrementalWatermark"},
+    "publish_policy": {"$ref": "#/$defs/publishPolicy"},
+    "replay_of_run_id": {"type": "null"}
+  },
+  "$defs": {
+    "game": {"type": "string", "enum": ["ssq", "dlt"]},
+    "runId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "releaseId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "stableId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"},
+    "issueId": {"type": "string", "pattern": "^20[0-9]{5}$"},
+    "semver": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "utcTimestamp": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "relativeRef": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\.\\.)(?!.*\\\\).+$"},
+    "hashedRef": {
+      "type": "object", "additionalProperties": false, "required": ["ref", "sha256"],
+      "properties": {"ref": {"$ref": "#/$defs/relativeRef"}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "requestIdentity": {
+      "type": "object",
+      "required": [
+        "request_id", "sequence", "source_id", "publisher_id", "game", "method", "url",
+        "request_kind", "parser_id", "parser_version"
+      ],
+      "properties": {
+        "request_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,191}$"},
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 4},
+        "source_id": {"$ref": "#/$defs/stableId"},
+        "publisher_id": {"$ref": "#/$defs/stableId"},
+        "game": {"$ref": "#/$defs/game"},
+        "method": {"const": "GET"},
+        "url": {"type": "string", "format": "uri"},
+        "request_kind": {"type": "string", "enum": ["history", "discovery"]},
+        "parser_id": {"$ref": "#/$defs/stableId"},
+        "parser_version": {"$ref": "#/$defs/semver"}
+      }
+    },
+    "staticRequest": {
+      "allOf": [{"$ref": "#/$defs/requestIdentity"}],
+      "unevaluatedProperties": false
+    },
+    "discoveryRequest": {
+      "allOf": [
+        {"$ref": "#/$defs/requestIdentity"},
+        {
+          "type": "object", "required": ["child_authorization"],
+          "properties": {"request_kind": {"const": "discovery"}, "child_authorization": {"$ref": "#/$defs/childAuthorization"}}
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "childAuthorization": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "child_request_id", "source_id", "publisher_id", "game", "method", "request_kind",
+        "parser_id", "parser_version", "same_origin", "path_pattern", "max_children"
+      ],
+      "properties": {
+        "child_request_id": {"const": "live-gdlottery-dlt-announcement"},
+        "source_id": {"const": "gdlottery"},
+        "publisher_id": {"const": "gdlottery-publisher"},
+        "game": {"const": "dlt"},
+        "method": {"const": "GET"},
+        "request_kind": {"const": "announcement"},
+        "parser_id": {"const": "phase1-gdlottery-live-parser"},
+        "parser_version": {"const": "2.0.0"},
+        "same_origin": {"const": "https://www.gdlottery.cn"},
+        "path_pattern": {"const": "^/f_html/kjgg/P085_[0-9]{5}\\.html$"},
+        "max_children": {"const": 1}
+      }
+    },
+    "incrementalWatermark": {
+      "type": "object", "additionalProperties": false,
+      "required": ["current_release_id", "latest_issue_by_game", "recheck_published_issues"],
+      "properties": {
+        "current_release_id": {"$ref": "#/$defs/releaseId"},
+        "latest_issue_by_game": {
+          "type": "object", "additionalProperties": false, "required": ["ssq", "dlt"],
+          "properties": {"ssq": {"$ref": "#/$defs/issueId"}, "dlt": {"$ref": "#/$defs/issueId"}}
+        },
+        "recheck_published_issues": {"const": 20}
+      }
+    },
+    "publishPolicy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["lock_ref", "compare_and_swap", "atomic_release_rename", "atomic_pointer_replace"],
+      "properties": {
+        "lock_ref": {"$ref": "#/$defs/relativeRef"}, "compare_and_swap": {"const": true},
+        "atomic_release_rename": {"const": true}, "atomic_pointer_replace": {"const": true}
+      }
+    }
+  }
+}

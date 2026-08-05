@@ -1,0 +1,15 @@
+{
+  "event_schema_version":"1.2.0",
+  "event_id":"evt-v1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "run_id":"live-v12-contract-fixture",
+  "sequence":1,
+  "event_type":"request_discovered",
+  "occurred_at_utc":"2026-08-03T00:00:01Z",
+  "request_id":"live-gdlottery-dlt-announcement",
+  "attempt":null,
+  "source_id":"gdlottery",
+  "game":"dlt",
+  "artifact_ref":null,
+  "error_code":null,
+  "error_detail_ref":null
+}

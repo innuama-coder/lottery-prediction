@@ -1,0 +1,23 @@
+{
+  "result_schema_version": "1.0.0",
+  "run_id": "phase1-bootstrap-001",
+  "mode": "bootstrap",
+  "status": "published",
+  "started_at_utc": "2026-08-02T03:00:00Z",
+  "completed_at_utc": "2026-08-02T03:01:00Z",
+  "request_stats": {"planned": 30, "started": 30, "succeeded": 30, "failed": 0, "not_started": 0},
+  "observation_stats": {"parsed": 800, "valid": 800, "invalid": 0, "missing": 0, "duplicate": 0, "conflict": 0},
+  "candidate_stats": {"observed": 400, "eligible": 400, "unresolved": 0},
+  "change_stats": {"added": 400, "revised": 0, "unchanged": 0, "conflict": 0, "invalid": 0, "duplicate": 0, "manual_core_edit": 0},
+  "exit_code": 0,
+  "release_id": "baseline-v1",
+  "manifest_ref": "artifacts/phase-1/runs/phase1-bootstrap-001/run-manifest.json",
+  "events_ref": "artifacts/phase-1/runs/phase1-bootstrap-001/events.jsonl",
+  "quality_report_ref": "artifacts/phase-1/runs/phase1-bootstrap-001/quality-report.json",
+  "error_refs": [],
+  "deterministic_artifact_hashes": {
+    "candidate_draws": "7777777777777777777777777777777777777777777777777777777777777777",
+    "observations": "8888888888888888888888888888888888888888888888888888888888888888",
+    "reconciliation": "9999999999999999999999999999999999999999999999999999999999999999"
+  }
+}

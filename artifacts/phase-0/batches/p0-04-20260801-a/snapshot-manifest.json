@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase0_probe_snapshot_manifest",
+  "archive_id": "p0-04-20260801-a",
+  "created_at_utc": "2026-08-01T04:18:36Z",
+  "overall_outcome": "HOLD",
+  "blockers": [
+    {
+      "blocker_id": "P0-04-REQUEST-METHOD-MISSING",
+      "severity": "blocking",
+      "description": "The evidence manifest entry and its archived Schema do not record request_method, so the claimed public GET cannot be reconstructed from the machine evidence alone.",
+      "evidence_paths": [
+        "artifacts/phase-0/evidence-manifest.jsonl",
+        "artifacts/phase-0/schemas/evidence-manifest.schema.json"
+      ]
+    },
+    {
+      "blocker_id": "P0-04-DECODE-LAYERS-CONFLATED",
+      "severity": "blocking",
+      "description": "content_decoding_applied is set when character decoding succeeds, while the retained evidence does not separately record HTTP content decoding, selected character codec, and field parsing. HTTP, character, and field parsing layers therefore cannot be independently replayed from the manifest.",
+      "evidence_paths": [
+        "artifacts/phase-0/evidence-manifest.jsonl",
+        "scripts/phase0/p0_04_pipeline.py",
+        "scripts/phase0/p0_04_parser.py"
+      ]
+    }
+  ],
+  "verified_fact_hash_summary": {
+    "scope": "provenance_and_integrity_only",
+    "core_draw_status": "unverified",
+    "evidence_id": "p0-04-dlt-2026050",
+    "game": "dlt",
+    "issue_id": "2026050",
+    "stored_payload_sha256": "89cd32a94313086fa9a7d5a039d21566934b23b72d4268fe2eb7b725147718ad",
+    "parser_artifact_sha256": "8b2bd3ef955c8f3a201480f9642ca01dd9dcefa193d9ce241e324810c17fde43",
+    "environment_lock_sha256": "6942d13330fc564b8d43d963ac1604c638f7f43d1c510164315eae03755baaa0",
+    "parsed_canonical_sha256": "4cf2b92b4b6c40ab04f2962097c289da4b65c108144a6ce192791daaf7aacb88",
+    "normalized_canonical_sha256": "28ae23739b8b4b2171188a267d101279c1201ec8df20c4d871d0c2c6cc25c619",
+    "clock_check_raw_result_sha256": "2a1e4b4a609e01325fdf6291beb00896f79f53d2a435b5fc30157e64564b1302",
+    "clock_check_passed": true,
+    "clock_offset_seconds": 2,
+    "maximum_clock_offset_seconds": 5,
+    "statement": "These hashes verify archived byte identity and declared provenance links only. They do not promote the parsed draw facts from unverified to verified."
+  },
+  "files": [
+    {
+      "source_path": "artifacts/phase-0/clock-check-p0-04.json",
+      "archive_path": "artifacts/phase-0/batches/p0-04-20260801-a/artifacts/phase-0/clock-check-p0-04.json",
+      "size_bytes": 256,
+      "sha256": "dcb1b3ce624d25dc926d7f4f86babfb26d01e337fcaf3c1d39e21f69eeb30d29"
+    },
+    {
+      "source_path": "artifacts/phase-0/environment-lock.json",
+      "archive_path": "artifacts/phase-0/batches/p0-04-20260801-a/artifacts/phase-0/environment-lock.json",
+      "size_bytes": 592,
+      "sha256": "6942d13330fc564b8d43d963ac1604c638f7f43d1c510164315eae03755baaa0"
+    },
+    {
+      "source_path": "artifacts/phase-0/evidence-manifest.jsonl",
+      "archive_path": "artifacts/phase-0/batches/p0-04-20260801-a/artifacts/phase-0/evidence-manifest.jsonl",
+      "size_bytes": 1604,
+      "sha256": "69dc24ce6aa72c05c5839b7dc1cbf6e83ec5b4ba66742c71a2502b13d8898e64"
+    },
+    {
+      "source_path": "artifacts/phase-0/raw/p0-04-dlt-2026050.html",
+      "archive_path": "artifacts/phase-0/batches/p0-04-20260801-a/artifacts/phase-0/raw/p0-04-dlt-2026050.html",
+      "size_bytes": 6774,
+      "sha256": "89cd32a94313086fa9a7d5a039d21566934b23b72d4268fe2eb7b725147718ad"
+    },
+    {
+      "source_path": "artifacts/phase-0/parsed/p0-04-dlt-2026050.json",
+      "archive_path": "artifacts/phase-0/batches/p0-04-20260801-a/artifacts/phase-0/parsed/p0-04-dlt-2026050.json",
+      "size_bytes": 705,
+      "sha256": "90c27c5a709082d99ad01b682ab5036c632c6c82723e62d8cfbe1eaef5625024"
+    },
+    {
+      "source_path": "artifacts/phase-0/normalized/p0-04-dlt-2026050.json",
+      "archive_path": "artifacts/phase-0/batches/p0-04-20260801-a/artifacts/phase-0/normalized/p0-04-dlt-2026050.json",
+      "size_bytes": 723,
+      "sha256": "046843a873bbd4adfe99d5c2d742ef30b24d9f376f0027965fe02cf331542d06"
+    },
+    {
+      "source_path": "scripts/phase0/p0_04_http.py",
+      "archive_path": "artifacts/phase-0/batches/p0-04-20260801-a/scripts/phase0/p0_04_http.py",
+      "size_bytes": 9622,
+      "sha256": "d5ad991d59277424dd9e4bb23fce2ebbd611ccd70a443a343c43d573d92858b2"
+    },
+    {
+      "source_path": "scripts/phase0/p0_04_parser.py",
+      "archive_path": "artifacts/phase-0/batches/p0-04-20260801-a/scripts/phase0/p0_04_parser.py",
+      "size_bytes": 8940,
+      "sha256": "8b2bd3ef955c8f3a201480f9642ca01dd9dcefa193d9ce241e324810c17fde43"
+    },
+    {
+      "source_path": "scripts/phase0/p0_04_pipeline.py",
+      "archive_path": "artifacts/phase-0/batches/p0-04-20260801-a/scripts/phase0/p0_04_pipeline.py",
+      "size_bytes": 28466,
+      "sha256": "a7abf6fab15f53e04fcdb93cf720d392e8d641293cc4a45e35098118896d625d"
+    },
+    {
+      "source_path": "tests/phase0/test_p0_04.py",
+      "archive_path": "artifacts/phase-0/batches/p0-04-20260801-a/tests/phase0/test_p0_04.py",
+      "size_bytes": 21082,
+      "sha256": "640401407eb467b9e8c738f2b63ea102ae3447ffaaac03dc00cab365f8e04b8c"
+    },
+    {
+      "source_path": "artifacts/phase-0/schemas/evidence-manifest.schema.json",
+      "archive_path": "artifacts/phase-0/batches/p0-04-20260801-a/artifacts/phase-0/schemas/evidence-manifest.schema.json",
+      "size_bytes": 3221,
+      "sha256": "ba75e26d6979c26b7a53d39f4a690a22665dc7505b2f6f5323fcb240b9a8f11b"
+    },
+    {
+      "source_path": "artifacts/phase-0/source-catalog.json",
+      "archive_path": "artifacts/phase-0/batches/p0-04-20260801-a/artifacts/phase-0/source-catalog.json",
+      "size_bytes": 8319,
+      "sha256": "cbafa54df87ab3ad3a2856c86f34f8accb20d2dec6be634077eda4097706a1d0"
+    }
+  ],
+  "immutability": {
+    "snapshot_mode": "copy_exact_source_bytes_then_verify",
+    "canonical_files_modified": false,
+    "archive_files_must_be_read_only": true,
+    "deletion_or_overwrite_permitted": false,
+    "declaration": "This batch is an immutable read-only snapshot. Corrections must be written to a new batch and must never overwrite this archive or its canonical source files."
+  }
+}

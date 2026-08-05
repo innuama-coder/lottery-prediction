@@ -1,0 +1,140 @@
+{
+  "canonicalization": {
+    "encoding": "UTF-8",
+    "ensure_ascii": false,
+    "object_key_order": "Unicode code point ascending",
+    "record_terminator": "LF",
+    "separators": [",", ":"]
+  },
+  "core_fact_profile": "phase0-core-fact-v1",
+  "deterministic_id_vectors": [
+    {
+      "case_id": "real-observation-id-ssq-2026085-ydniu",
+      "kind": "observation",
+      "fixture_ref": "tests/phase1/fixtures/spec/valid/source-observation.json",
+      "fixture_id_field": "observation_id",
+      "identity": {"source_id":"ydniu","game":"ssq","issue_id":"2026085","raw_sha256":"cf873716cb97619b672c487a99debeb50090d893cae5871004307fc349107baa","parser_version":"phase0-ydniu-v1"},
+      "canonical_identity_json_lf": "{\"game\":\"ssq\",\"issue_id\":\"2026085\",\"parser_version\":\"phase0-ydniu-v1\",\"raw_sha256\":\"cf873716cb97619b672c487a99debeb50090d893cae5871004307fc349107baa\",\"source_id\":\"ydniu\"}\n",
+      "expected_id": "obs-v1:0f61552f69b0df4e139f4fbe3690af32c0b6622820495c6a4edac652499e2894"
+    },
+    {
+      "case_id": "real-revision-id-dlt-2026026",
+      "kind": "revision",
+      "fixture_ref": "tests/phase1/fixtures/spec/valid/draw-record.json",
+      "fixture_id_field": "revision_id",
+      "identity": {"game":"dlt","issue_id":"2026026","core_fact_sha256":"f27d85502fcd4bd9b2805dee621aa24d2c965ff0ea4e01b1870be7565227e8d7","supersedes_revision_id":null},
+      "canonical_identity_json_lf": "{\"core_fact_sha256\":\"f27d85502fcd4bd9b2805dee621aa24d2c965ff0ea4e01b1870be7565227e8d7\",\"game\":\"dlt\",\"issue_id\":\"2026026\",\"supersedes_revision_id\":null}\n",
+      "expected_id": "rev-v1:50be463cdecf0db6d133e796967f7a7d71ad6b836ea923b863ecdde5dabee318"
+    },
+    {
+      "case_id": "real-event-id-bootstrap-request-started",
+      "kind": "event",
+      "fixture_ref": "tests/phase1/fixtures/spec/valid/run-event-request-started.json",
+      "fixture_id_field": "event_id",
+      "identity": {"run_id":"phase1-bootstrap-001","sequence":1,"event_type":"request_started","request_id":"snapshot-ssq","attempt":1},
+      "canonical_identity_json_lf": "{\"attempt\":1,\"event_type\":\"request_started\",\"request_id\":\"snapshot-ssq\",\"run_id\":\"phase1-bootstrap-001\",\"sequence\":1}\n",
+      "expected_id": "evt-v1:b1bfca8a568d26ab8cb6e0188776fb599f8713eedf3645f99c9136553b30d85f"
+    }
+  ],
+  "vectors": [
+    {
+      "case_id": "real-ssq-2026085",
+      "category": "ssq",
+      "phase0_ref": "artifacts/phase-0-multisource/snapshots/20260802T025000Z/consensus/canonical-records.jsonl",
+      "phase0_fact": {
+        "back_numbers": [15],
+        "draw_date": "2026-07-26",
+        "front_numbers": [6, 9, 13, 17, 24, 28],
+        "game": "ssq",
+        "issue_id": "2026085"
+      },
+      "phase1_projection": {
+        "back_numbers": [15],
+        "draw_date_local": "2026-07-26",
+        "front_numbers": [6, 9, 13, 17, 24, 28],
+        "game": "ssq",
+        "issue_id": "2026085"
+      },
+      "canonical_phase0_json_lf": "{\"back_numbers\":[15],\"draw_date\":\"2026-07-26\",\"front_numbers\":[6,9,13,17,24,28],\"game\":\"ssq\",\"issue_id\":\"2026085\"}\n",
+      "expected_core_fact_sha256": "427aefeaf9f2d43212155dfa552f8e51f7e620bb4e2bd3394ae5c907ebc02fc7",
+      "evidence": [
+        {
+          "raw_ref": "raw/ydniu/ssq/page-001.html",
+          "raw_sha256": "cf873716cb97619b672c487a99debeb50090d893cae5871004307fc349107baa",
+          "source_id": "ydniu"
+        },
+        {
+          "raw_ref": "raw/eastmoney/ssq/page-001.html",
+          "raw_sha256": "26ffee2f9ddc37845804cbca8082113d70a09fbb3d2da4ddfcdcc5f08b24da78",
+          "source_id": "eastmoney"
+        }
+      ]
+    },
+    {
+      "case_id": "real-dlt-normal-2026083",
+      "category": "dlt_normal",
+      "phase0_ref": "artifacts/phase-0-multisource/snapshots/20260802T025000Z/consensus/canonical-records.jsonl",
+      "phase0_fact": {
+        "back_numbers": [7, 9],
+        "draw_date": "2026-07-25",
+        "front_numbers": [14, 15, 16, 23, 26],
+        "game": "dlt",
+        "issue_id": "2026083"
+      },
+      "phase1_projection": {
+        "back_numbers": [7, 9],
+        "draw_date_local": "2026-07-25",
+        "front_numbers": [14, 15, 16, 23, 26],
+        "game": "dlt",
+        "issue_id": "2026083"
+      },
+      "canonical_phase0_json_lf": "{\"back_numbers\":[7,9],\"draw_date\":\"2026-07-25\",\"front_numbers\":[14,15,16,23,26],\"game\":\"dlt\",\"issue_id\":\"2026083\"}\n",
+      "expected_core_fact_sha256": "bdb0c3d663354998d2eee6b2e17b84e9093bdfc7477a74b7360641e8d7569131",
+      "evidence": [
+        {
+          "raw_ref": "raw/ydniu/dlt/page-001.html",
+          "raw_sha256": "e95ba0972deda86cb9dedce7d7b755d81d6a62897e342b04d13aeb2956efe872",
+          "source_id": "ydniu"
+        },
+        {
+          "raw_ref": "raw/eastmoney/dlt/page-001.html",
+          "raw_sha256": "203d723376283730623fe53e781aa0c03b6e0f782fe5367e64c43c4a6aee5be5",
+          "source_id": "eastmoney"
+        }
+      ]
+    },
+    {
+      "case_id": "real-dlt-fallback-2026026",
+      "category": "dlt_fallback",
+      "phase0_ref": "artifacts/phase-0-multisource/snapshots/20260802T025000Z/consensus/canonical-records.jsonl",
+      "phase0_fact": {
+        "back_numbers": [1, 8],
+        "draw_date": "2026-03-14",
+        "front_numbers": [10, 11, 22, 26, 32],
+        "game": "dlt",
+        "issue_id": "2026026"
+      },
+      "phase1_projection": {
+        "back_numbers": [1, 8],
+        "draw_date_local": "2026-03-14",
+        "front_numbers": [10, 11, 22, 26, 32],
+        "game": "dlt",
+        "issue_id": "2026026"
+      },
+      "canonical_phase0_json_lf": "{\"back_numbers\":[1,8],\"draw_date\":\"2026-03-14\",\"front_numbers\":[10,11,22,26,32],\"game\":\"dlt\",\"issue_id\":\"2026026\"}\n",
+      "expected_core_fact_sha256": "f27d85502fcd4bd9b2805dee621aa24d2c965ff0ea4e01b1870be7565227e8d7",
+      "evidence": [
+        {
+          "raw_ref": "raw/ydniu/dlt/page-003.html",
+          "raw_sha256": "b8f7cda4a3bcf531acbed0ca2e0edf6f1d59ca84ed1328ac0bdd3d1674155552",
+          "source_id": "ydniu"
+        },
+        {
+          "raw_ref": "raw/gdlottery/dlt/page-001.html",
+          "raw_sha256": "719043831f79f38f18faeb96d55a8e2cde0587cb60c14a0235a77cce80da92ce",
+          "source_id": "gdlottery"
+        }
+      ]
+    }
+  ]
+}

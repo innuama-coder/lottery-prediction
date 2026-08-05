@@ -1,0 +1,82 @@
+{
+  "run_transition_negative_cases": [
+    {"case_id": "planned-directly-to-published", "from": "planned", "to": "published"},
+    {"case_id": "published-back-to-running", "from": "published", "to": "running"},
+    {"case_id": "rejected-back-to-running", "from": "rejected", "to": "running"}
+  ],
+  "request_history_positive_cases": [
+    {
+      "case_id": "contiguous-sequence-and-terminal-after-start",
+      "planned_request_ids": ["r1"],
+      "events": [
+        {"sequence": 1, "event_type": "request_started", "request_id": "r1"},
+        {"sequence": 2, "event_type": "request_succeeded", "request_id": "r1"}
+      ]
+    }
+  ],
+  "request_history_negative_cases": [
+    {
+      "case_id": "missing-terminal",
+      "planned_request_ids": ["r1"],
+      "events": [{"sequence": 1, "event_type": "request_started", "request_id": "r1"}]
+    },
+    {
+      "case_id": "succeeded-before-start",
+      "planned_request_ids": ["r1"],
+      "events": [
+        {"sequence": 1, "event_type": "request_succeeded", "request_id": "r1"},
+        {"sequence": 2, "event_type": "request_started", "request_id": "r1"}
+      ]
+    },
+    {
+      "case_id": "failed-before-start",
+      "planned_request_ids": ["r1"],
+      "events": [
+        {"sequence": 1, "event_type": "request_failed", "request_id": "r1"},
+        {"sequence": 2, "event_type": "request_started", "request_id": "r1"}
+      ]
+    },
+    {
+      "case_id": "terminal-after-terminal",
+      "planned_request_ids": ["r1"],
+      "events": [
+        {"sequence": 1, "event_type": "request_started", "request_id": "r1"},
+        {"sequence": 2, "event_type": "request_succeeded", "request_id": "r1"},
+        {"sequence": 3, "event_type": "request_failed", "request_id": "r1"}
+      ]
+    },
+    {
+      "case_id": "request-event-after-terminal",
+      "planned_request_ids": ["r1"],
+      "events": [
+        {"sequence": 1, "event_type": "request_started", "request_id": "r1"},
+        {"sequence": 2, "event_type": "request_failed", "request_id": "r1"},
+        {"sequence": 3, "event_type": "request_started", "request_id": "r1"}
+      ]
+    },
+    {
+      "case_id": "duplicate-sequence",
+      "planned_request_ids": ["r1"],
+      "events": [
+        {"sequence": 1, "event_type": "request_started", "request_id": "r1"},
+        {"sequence": 1, "event_type": "request_succeeded", "request_id": "r1"}
+      ]
+    },
+    {
+      "case_id": "sequence-out-of-order",
+      "planned_request_ids": ["r1"],
+      "events": [
+        {"sequence": 2, "event_type": "request_succeeded", "request_id": "r1"},
+        {"sequence": 1, "event_type": "request_started", "request_id": "r1"}
+      ]
+    },
+    {
+      "case_id": "sequence-gap",
+      "planned_request_ids": ["r1"],
+      "events": [
+        {"sequence": 1, "event_type": "request_started", "request_id": "r1"},
+        {"sequence": 3, "event_type": "request_succeeded", "request_id": "r1"}
+      ]
+    }
+  ]
+}

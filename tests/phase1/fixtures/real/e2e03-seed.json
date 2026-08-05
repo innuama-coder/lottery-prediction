@@ -1,0 +1,23 @@
+{
+  "fixture_schema_version": "1.0.0",
+  "recipe": "current-bootstrap-minus-one-normalized-draw-v1",
+  "source_release_id": "e2e03-seed",
+  "removed_game": "ssq",
+  "removed_issue_id": "2026085",
+  "removed_revision_id": "rev-v1:92aa58e4156ddfbac782654339900da0d38b52fcc0b256aaaa80919772a546e6",
+  "removed_core_fact_sha256": "427aefeaf9f2d43212155dfa552f8e51f7e620bb4e2bd3394ae5c907ebc02fc7",
+  "removed_observation_ids": [
+    "obs-v1:c4b6effb7c2b8ecd3155863adde63838d650cea2b3cd772c557f26aff01f32fe",
+    "obs-v1:e065903809bd07c2877da89547191fa4e928f06b2572b90fde80b64b76730ad3"
+  ],
+  "expected_draws_sha256": "cde7c6f2491ec03ecf0dce451bfc60894cbd69c0cfd1e904c52a3193ce4b95dd",
+  "expected_observations_sha256": "cb80d27a685decf62574214c2343dbf126f1b91174c2ab23fda0b35e63096029",
+  "expected_counts": {
+    "draws": 399,
+    "release_observations": 798,
+    "run_observations": 1042,
+    "ssq": 199,
+    "dlt": 200
+  },
+  "raw_mutation_allowed": false
+}

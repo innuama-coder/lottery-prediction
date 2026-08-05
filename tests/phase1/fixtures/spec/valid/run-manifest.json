@@ -1,0 +1,30 @@
+{
+  "run_schema_version": "1.0.0",
+  "run_id": "phase1-bootstrap-001",
+  "mode": "bootstrap",
+  "source_mode": "snapshot",
+  "started_at_utc": "2026-08-02T03:00:00Z",
+  "artifacts_root": "artifacts/phase-1",
+  "previous_release_id": null,
+  "games": ["ssq", "dlt"],
+  "request_plan": [
+    {"request_id": "snapshot-ssq", "sequence": 1, "source_id": "ydniu", "publisher_id": "ydniu-publisher", "game": "ssq", "method": "SNAPSHOT", "url": "snapshot://phase0/ssq", "input_ref": "raw/ydniu/ssq/page-001.html"},
+    {"request_id": "snapshot-dlt", "sequence": 2, "source_id": "ydniu", "publisher_id": "ydniu-publisher", "game": "dlt", "method": "SNAPSHOT", "url": "snapshot://phase0/dlt", "input_ref": "raw/ydniu/dlt/page-001.html"}
+  ],
+  "config_files": [
+    {"ref": "config/phase1/source-catalog.json", "sha256": "6666666666666666666666666666666666666666666666666666666666666666"},
+    {"ref": "config/phase1/collection-policy.json", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
+  ],
+  "schema_bundle_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "pipeline_bundle_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "python_version": "3.12.10",
+  "bootstrap_snapshot": {
+    "snapshot_id": "20260802T025000Z",
+    "snapshot_root": "artifacts/phase-0-multisource/snapshots/20260802T025000Z",
+    "artifact_hashes_ref": "artifacts/phase-0-multisource/snapshots/20260802T025000Z/artifact-hashes.json",
+    "artifact_hashes_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "incremental_watermark": null,
+  "publish_policy": {"lock_ref": "artifacts/phase-1/.publish.lock", "compare_and_swap": true, "atomic_release_rename": true, "atomic_pointer_replace": true},
+  "replay_of_run_id": null
+}

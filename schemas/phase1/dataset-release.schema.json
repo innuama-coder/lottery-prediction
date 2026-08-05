@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autoresearch-lotte.local/schemas/phase1/dataset-release.schema.json",
+  "title": "DatasetRelease",
+  "description": "Immutable metadata for a successfully published canonical dataset snapshot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "release_schema_version",
+    "release_id",
+    "created_at_utc",
+    "previous_release_id",
+    "input_run_id",
+    "record_count_by_game",
+    "observation_count",
+    "input_manifest_sha256",
+    "schema_bundle_sha256",
+    "pipeline_bundle_sha256",
+    "records_sha256",
+    "observations_sha256",
+    "quality_report_ref",
+    "status"
+  ],
+  "properties": {
+    "release_schema_version": {"const": "1.0.0"},
+    "release_id": {"$ref": "#/$defs/releaseId"},
+    "created_at_utc": {"$ref": "#/$defs/utcTimestamp"},
+    "previous_release_id": {"oneOf": [{"$ref": "#/$defs/releaseId"}, {"type": "null"}]},
+    "input_run_id": {"$ref": "#/$defs/runId"},
+    "record_count_by_game": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ssq", "dlt"],
+      "properties": {
+        "ssq": {"type": "integer", "minimum": 0},
+        "dlt": {"type": "integer", "minimum": 0}
+      }
+    },
+    "observation_count": {"type": "integer", "minimum": 0},
+    "input_manifest_sha256": {"$ref": "#/$defs/sha256"},
+    "schema_bundle_sha256": {"$ref": "#/$defs/sha256"},
+    "pipeline_bundle_sha256": {"$ref": "#/$defs/sha256"},
+    "records_sha256": {"$ref": "#/$defs/sha256"},
+    "observations_sha256": {"$ref": "#/$defs/sha256"},
+    "quality_report_ref": {"$ref": "#/$defs/relativeRef"},
+    "status": {"const": "published"}
+  },
+  "$defs": {
+    "releaseId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "runId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "utcTimestamp": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "relativeRef": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\.\\.)(?!.*\\\\).+$"}
+  }
+}

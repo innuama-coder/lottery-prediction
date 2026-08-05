@@ -1,0 +1,11 @@
+{
+  "witness_schema_version": "1.0.0",
+  "source_url": "https://www.gdlottery.cn/html/dlt/index.html",
+  "captured_date": "2026-08-03",
+  "raw_sha256": "1e4c0cf17baf9467968012dc9f76a8c9abd36b876cd8910e4d46cdbb9a39bc43",
+  "raw_size_bytes": 37838,
+  "fragment_offset_bytes": 15087,
+  "fragment_length_bytes": 337,
+  "fragment_sha256": "6504ffe7e2c45132f472d2fd8e291dc519af22d23fa86e597250170690c940cd",
+  "fragment_utf8": "<div class=\"btn\"><a href=\"/f_html/kjgg/P085_26086.html\" target=\"_blank\"><img src=\"/r/cms/www/2012_07/images/button3.jpg\" width=\"112\" height=\"22\" title=\"查看中奖详情\" /></a><a href=\"/html/help/lskj.html\" target=\"_blank\"><img src=\"/r/cms/www/2012_07/images/button4.jpg\" width=\"112\" height=\"22\" title=\"历史数据查询\" /></a></div>"
+}

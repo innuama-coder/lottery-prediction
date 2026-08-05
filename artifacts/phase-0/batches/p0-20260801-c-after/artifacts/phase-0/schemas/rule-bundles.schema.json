@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:autoresearch-lotte:phase0:rule-bundles:1.1.0",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "contract_version", "evidence", "version_registry", "promotion_registry", "activity_ledger", "bundles", "issue_mappings"],
+  "properties": {
+    "schema_version": {"const": "1.1.0"}, "artifact_type": {"const": "rule_bundles"}, "contract_version": {"const": "1.3"},
+    "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence"}},
+    "version_registry": {"$ref": "#/$defs/version_registry"},
+    "promotion_registry": {"type": "array", "items": {"$ref": "#/$defs/promotion"}},
+    "activity_ledger": {"type": "array", "items": {"$ref": "#/$defs/activity"}},
+    "bundles": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/bundle"}},
+    "issue_mappings": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/mapping"}}
+  },
+  "$defs": {
+    "issue": {"type": "string", "pattern": "^[0-9]{7}$"},
+    "nullable_issue": {"anyOf": [{"$ref": "#/$defs/issue"}, {"type": "null"}]},
+    "refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^EV-RULE-[A-Z0-9-]+$"}},
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidence_id", "game", "url", "publisher", "claim", "status", "observed_on"],
+      "properties": {
+        "evidence_id": {"type": "string", "pattern": "^EV-RULE-[A-Z0-9-]+$"}, "game": {"enum": ["dlt", "ssq"]},
+        "url": {"type": "string", "pattern": "^https://"}, "publisher": {"type": "string", "minLength": 1},
+        "claim": {"type": "string", "minLength": 1}, "status": {"enum": ["verified", "pending"]}, "observed_on": {"type": "string", "format": "date"}
+      }
+    },
+    "version_registry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["number_space_versions", "draw_process_versions", "prize_rule_versions"],
+      "properties": {
+        "number_space_versions": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/number_space"}},
+        "draw_process_versions": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/version"}},
+        "prize_rule_versions": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/version"}}
+      }
+    },
+    "version": {
+      "type": "object", "additionalProperties": false, "required": ["version_id", "game", "description", "evidence_refs"],
+      "properties": {"version_id": {"type": "string", "minLength": 1}, "game": {"enum": ["dlt", "ssq"]}, "description": {"type": "string", "minLength": 1}, "evidence_refs": {"$ref": "#/$defs/refs"}}
+    },
+    "number_space": {
+      "type": "object", "additionalProperties": false,
+      "required": ["version_id", "game", "front_count", "front_min", "front_max", "back_count", "back_min", "back_max", "evidence_refs"],
+      "properties": {
+        "version_id": {"type": "string", "minLength": 1}, "game": {"enum": ["dlt", "ssq"]},
+        "front_count": {"type": "integer", "minimum": 1}, "front_min": {"type": "integer", "minimum": 1}, "front_max": {"type": "integer", "minimum": 1},
+        "back_count": {"type": "integer", "minimum": 1}, "back_min": {"type": "integer", "minimum": 1}, "back_max": {"type": "integer", "minimum": 1},
+        "evidence_refs": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "promotion": {
+      "type": "object", "additionalProperties": false,
+      "required": ["promotion_id", "game", "kind", "effective_start_issue", "effective_end_issue", "evidence_refs", "state_machine"],
+      "properties": {
+        "promotion_id": {"type": "string", "minLength": 1}, "game": {"enum": ["dlt", "ssq"]},
+        "kind": {"enum": ["fixed_issue_range", "state_machine"]}, "effective_start_issue": {"$ref": "#/$defs/issue"},
+        "effective_end_issue": {"$ref": "#/$defs/nullable_issue"}, "evidence_refs": {"$ref": "#/$defs/refs"},
+        "state_machine": {"anyOf": [{"$ref": "#/$defs/state_machine"}, {"type": "null"}]}
+      }
+    },
+    "state_machine": {
+      "type": "object", "additionalProperties": false, "required": ["initial_state", "states", "transitions"],
+      "properties": {
+        "initial_state": {"type": "string", "minLength": 1},
+        "states": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "transitions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/transition"}}
+      }
+    },
+    "transition": {
+      "type": "object", "additionalProperties": false, "required": ["from_state", "to_state", "trigger_field", "operator", "threshold_yuan"],
+      "properties": {
+        "from_state": {"type": "string", "minLength": 1}, "to_state": {"type": "string", "minLength": 1},
+        "trigger_field": {"const": "post_draw_pool_yuan"}, "operator": {"enum": ["greater_than_or_equal", "less_than"]},
+        "threshold_yuan": {"type": "integer", "minimum": 0}
+      }
+    },
+    "activity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["issue_id", "promotion_id", "active_for_issue", "post_draw_pool_yuan", "post_draw_pool_lower_bound_yuan", "post_draw_pool_upper_bound_yuan", "active_for_next_issue", "transition_reason", "evidence_refs"],
+      "properties": {
+        "issue_id": {"$ref": "#/$defs/issue"}, "promotion_id": {"type": "string", "minLength": 1},
+        "active_for_issue": {"type": "boolean"},
+        "post_draw_pool_yuan": {"anyOf": [{"type": "integer", "minimum": 0}, {"type": "null"}]},
+        "post_draw_pool_lower_bound_yuan": {"anyOf": [{"type": "integer", "minimum": 0}, {"type": "null"}]},
+        "post_draw_pool_upper_bound_yuan": {"anyOf": [{"type": "integer", "minimum": 0}, {"type": "null"}]},
+        "active_for_next_issue": {"type": "boolean"}, "transition_reason": {"type": "string", "minLength": 1},
+        "evidence_refs": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "bundle": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bundle_id", "game", "number_space_version", "draw_process_version", "prize_rule_version", "active_promotion_ids", "effective_start_issue", "effective_end_issue", "evidence_refs"],
+      "properties": {
+        "bundle_id": {"type": "string", "minLength": 1}, "game": {"enum": ["dlt", "ssq"]},
+        "number_space_version": {"type": "string", "minLength": 1}, "draw_process_version": {"type": "string", "minLength": 1}, "prize_rule_version": {"type": "string", "minLength": 1},
+        "active_promotion_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "effective_start_issue": {"$ref": "#/$defs/issue"}, "effective_end_issue": {"$ref": "#/$defs/issue"}, "evidence_refs": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "mapping": {
+      "type": "object", "additionalProperties": false, "required": ["game", "issue_id", "bundle_id"],
+      "properties": {"game": {"enum": ["dlt", "ssq"]}, "issue_id": {"$ref": "#/$defs/issue"}, "bundle_id": {"type": "string", "minLength": 1}}
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "observation_schema_version": "1.0.0",
+  "observation_id": "obs-v1:0f61552f69b0df4e139f4fbe3690af32c0b6622820495c6a4edac652499e2894",
+  "source_id": "ydniu",
+  "publisher_id": "ydniu-publisher",
+  "game": "ssq",
+  "raw_issue_id": "2026085",
+  "issue_id": "2026085",
+  "draw_date_local": "2026-07-26",
+  "front_numbers": [6, 9, 13, 17, 24, 28],
+  "back_numbers": [15],
+  "source_url": "https://www.ydniu.com/open/ssq-500/1.html",
+  "captured_at_utc": "2026-08-02T02:40:35.599Z",
+  "raw_ref": "raw/ydniu/ssq/page-001.html",
+  "raw_sha256": "cf873716cb97619b672c487a99debeb50090d893cae5871004307fc349107baa",
+  "parser_id": "phase0-ydniu-parser",
+  "parser_version": "phase0-ydniu-v1",
+  "core_fact_profile": "phase0-core-fact-v1",
+  "core_fact_sha256": "427aefeaf9f2d43212155dfa552f8e51f7e620bb4e2bd3394ae5c907ebc02fc7",
+  "parse_status": "parsed"
+}

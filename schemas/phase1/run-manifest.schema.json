@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autoresearch-lotte.local/schemas/phase1/run-manifest.schema.json",
+  "title": "RunManifest",
+  "description": "Write-once preflight inputs and execution environment for one run.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_schema_version",
+    "run_id",
+    "mode",
+    "source_mode",
+    "started_at_utc",
+    "artifacts_root",
+    "previous_release_id",
+    "games",
+    "request_plan",
+    "config_files",
+    "schema_bundle_sha256",
+    "pipeline_bundle_sha256",
+    "python_version",
+    "bootstrap_snapshot",
+    "incremental_watermark",
+    "publish_policy",
+    "replay_of_run_id"
+  ],
+  "properties": {
+    "run_schema_version": {"const": "1.0.0"},
+    "run_id": {"$ref": "#/$defs/runId"},
+    "mode": {"type": "string", "enum": ["bootstrap", "incremental"]},
+    "source_mode": {"type": "string", "enum": ["live", "snapshot"]},
+    "started_at_utc": {"$ref": "#/$defs/utcTimestamp"},
+    "artifacts_root": {"type": "string", "minLength": 1},
+    "previous_release_id": {"oneOf": [{"$ref": "#/$defs/releaseId"}, {"type": "null"}]},
+    "games": {"type": "array", "minItems": 1, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/game"}},
+    "request_plan": {"type": "array", "items": {"$ref": "#/$defs/plannedRequest"}},
+    "config_files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/hashedRef"}},
+    "schema_bundle_sha256": {"$ref": "#/$defs/sha256"},
+    "pipeline_bundle_sha256": {"$ref": "#/$defs/sha256"},
+    "python_version": {"type": "string", "pattern": "^3\\.12(?:\\.[0-9]+)?$"},
+    "bootstrap_snapshot": {"oneOf": [{"$ref": "#/$defs/bootstrapSnapshot"}, {"type": "null"}]},
+    "incremental_watermark": {"oneOf": [{"$ref": "#/$defs/incrementalWatermark"}, {"type": "null"}]},
+    "publish_policy": {"$ref": "#/$defs/publishPolicy"},
+    "replay_of_run_id": {"oneOf": [{"$ref": "#/$defs/runId"}, {"type": "null"}]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"mode": {"const": "bootstrap"}}, "required": ["mode"]},
+      "then": {
+        "properties": {
+          "bootstrap_snapshot": {"$ref": "#/$defs/bootstrapSnapshot"},
+          "incremental_watermark": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"mode": {"const": "incremental"}}, "required": ["mode"]},
+      "then": {
+        "properties": {
+          "bootstrap_snapshot": {"type": "null"},
+          "incremental_watermark": {"$ref": "#/$defs/incrementalWatermark"}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "game": {"type": "string", "enum": ["ssq", "dlt"]},
+    "runId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "releaseId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "stableId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"},
+    "issueId": {"type": "string", "pattern": "^20[0-9]{5}$"},
+    "utcTimestamp": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "relativeRef": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\.\\.)(?!.*\\\\).+$"},
+    "hashedRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "sha256"],
+      "properties": {"ref": {"$ref": "#/$defs/relativeRef"}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "plannedRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_id", "sequence", "source_id", "publisher_id", "game", "method", "url"],
+      "properties": {
+        "request_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,191}$"},
+        "sequence": {"type": "integer", "minimum": 1},
+        "source_id": {"$ref": "#/$defs/stableId"},
+        "publisher_id": {"$ref": "#/$defs/stableId"},
+        "game": {"$ref": "#/$defs/game"},
+        "method": {"type": "string", "enum": ["GET", "POST", "SNAPSHOT"]},
+        "url": {"type": "string", "format": "uri"},
+        "input_ref": {"$ref": "#/$defs/relativeRef"}
+      }
+    },
+    "bootstrapSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["snapshot_id", "snapshot_root", "artifact_hashes_ref", "artifact_hashes_sha256"],
+      "properties": {
+        "snapshot_id": {"type": "string", "pattern": "^[0-9]{8}T[0-9]{6}Z$"},
+        "snapshot_root": {"type": "string", "minLength": 1},
+        "artifact_hashes_ref": {"$ref": "#/$defs/relativeRef"},
+        "artifact_hashes_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "incrementalWatermark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["current_release_id", "latest_issue_by_game", "recheck_published_issues"],
+      "properties": {
+        "current_release_id": {"$ref": "#/$defs/releaseId"},
+        "latest_issue_by_game": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {"ssq": {"$ref": "#/$defs/issueId"}, "dlt": {"$ref": "#/$defs/issueId"}}
+        },
+        "recheck_published_issues": {"const": 20}
+      }
+    },
+    "publishPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lock_ref", "compare_and_swap", "atomic_release_rename", "atomic_pointer_replace"],
+      "properties": {
+        "lock_ref": {"$ref": "#/$defs/relativeRef"},
+        "compare_and_swap": {"const": true},
+        "atomic_release_rename": {"const": true},
+        "atomic_pointer_replace": {"const": true}
+      }
+    }
+  }
+}

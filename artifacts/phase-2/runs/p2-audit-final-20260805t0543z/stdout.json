@@ -1,0 +1,1 @@
+{"artifact_type":"phase2_cli_result","checks":{"COV-01":1.0,"COV-04":{"cross_game_merging":0,"exploratory_primary_mixing":0,"selective_deletion":0},"negative_control_results":2,"registered_primary_results":10,"registered_sensitivity_results":10,"unexplained_missing":0},"command":"audit","errors":[],"exit_code":0,"output_written":true,"schema_version":"1.0.0","terminal":"PASS"}

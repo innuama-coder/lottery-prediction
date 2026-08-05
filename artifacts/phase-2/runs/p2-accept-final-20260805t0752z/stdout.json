@@ -1,0 +1,1 @@
+{"artifact_type":"phase2_cli_result","checks":{"delivery_status":"GO","signal_status":"indeterminate"},"command":"accept","errors":[],"exit_code":0,"output_written":true,"schema_version":"1.0.0","terminal":"PASS"}

@@ -1,0 +1,28 @@
+.venv/
+.uv-cache/
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+coverage.xml
+
+# Historical superseded snapshots are intentionally excluded from the initial
+# remote handoff. The current formal artifacts and their manifests remain.
+artifacts/phase-2/superseded/
+
+# Local execution roots and transient locks are not authoritative releases.
+artifacts/phase-1-integration-root-*/
+artifacts/**/*.lock
+
+# Phase 2 bulk Monte Carlo checkpoints are deterministic, regenerable working
+# state. Keep the compact published JSON and canonical qualification corpora.
+artifacts/phase-2/results/power-checkpoints/
+artifacts/phase-2/replay/different-seed-checkpoints/
+artifacts/phase-2/replay/same-seed-checkpoints/
+
+# E2E cases contain recursive workspaces and tamper copies. The registry and
+# its ten selected compact receipts are force-added to Git separately.
+artifacts/phase-2/e2e/**

@@ -1,0 +1,441 @@
+{
+  "version": "1.3",
+  "phase": "P0",
+  "name": "official-draw-data-feasibility",
+  "contract_status": "ready_to_start_p0_01",
+  "objective": "Prove that official DLT and SSQ draw facts can be acquired, interpreted, evidenced, revised, and independently replayed without manual number edits or access-control circumvention.",
+  "canonical_plan": "docs/roadmap/phase-0-data-feasibility-plan.md",
+  "upstream_strategy": "docs/research/lottery-autoresearch-technical-strategy.md",
+  "pre_execution_freeze": {
+    "must_complete_before": "P0-02",
+    "immutable_after_source_observation_begins": true,
+    "required_parameters": [
+      "per-game target interval",
+      "per-game minimum viable interval",
+      "acceptance cutoff in UTC",
+      "corroboration sample design and random seed",
+      "observation request schedule",
+      "retry and rate budgets",
+      "maximum clock offset",
+      "reviewer identities and independence declaration"
+    ],
+    "games": {
+      "dlt": {
+        "target_start_issue": null,
+        "target_end_issue": null,
+        "minimum_viable_start_issue": null,
+        "minimum_viable_end_issue": null,
+        "acceptance_cutoff_utc": null,
+        "freeze_status": "pending_p0_01"
+      },
+      "ssq": {
+        "target_start_issue": null,
+        "target_end_issue": null,
+        "minimum_viable_start_issue": null,
+        "minimum_viable_end_issue": null,
+        "acceptance_cutoff_utc": null,
+        "freeze_status": "pending_p0_01"
+      }
+    }
+  },
+  "record_statuses": [
+    "unavailable",
+    "unverified",
+    "verified",
+    "conflicted",
+    "invalid"
+  ],
+  "status_transition_policy": {
+    "event_sourced": true,
+    "historical_status_events_are_immutable": true,
+    "allowed_transitions": {
+      "unavailable": [
+        "unverified"
+      ],
+      "unverified": [
+        "verified",
+        "conflicted",
+        "invalid",
+        "unavailable"
+      ],
+      "verified": [
+        "verified",
+        "conflicted"
+      ],
+      "conflicted": [
+        "verified",
+        "invalid"
+      ],
+      "invalid": [
+        "unverified"
+      ]
+    },
+    "transition_requires": [
+      "new immutable evidence snapshot or approved parser artifact",
+      "reason code",
+      "actor identity",
+      "transition timestamp in UTC"
+    ]
+  },
+  "rule_model": {
+    "single_value_axes": [
+      "number_space_version",
+      "draw_process_version",
+      "prize_rule_version"
+    ],
+    "multi_value_axes": [
+      "active_promotion_ids"
+    ]
+  },
+  "time_fields": [
+    "draw_at",
+    "page_published_at",
+    "http_date",
+    "first_seen_at",
+    "retrieved_at",
+    "corrected_at",
+    "available_at"
+  ],
+  "serialization_and_hashing": {
+    "hash_algorithm": "SHA-256",
+    "stored_payload_hash": "Hash the exact stored payload bytes before character decoding; record whether HTTP content decoding occurred and preserve Content-Encoding metadata.",
+    "normalized_record_encoding": "UTF-8 without BOM",
+    "normalized_record_canonicalization": "RFC 8785 JSON Canonicalization Scheme",
+    "unicode_policy": "Preserve source text bytes; normalized identifiers and textual values must declare their Unicode normalization policy in field-contract.json.",
+    "time_format": "RFC 3339 UTC with Z suffix",
+    "numbers": "Core lottery numbers are zero-padded strings; monetary values are decimal strings, never binary floating point.",
+    "parser_identity": "parser_artifact_sha256 over the immutable parser source/binary bundle; a mutable version label is insufficient.",
+    "environment_identity": "environment-lock.json must identify runtime, dependencies, operating system, locale and timezone.",
+    "clock_evidence": "observation-plan.json freezes the clock source and maximum permitted offset; each run records the last clock check."
+  },
+  "header_and_secret_policy": {
+    "request_headers_forbidden": [
+      "Authorization",
+      "Cookie",
+      "Proxy-Authorization"
+    ],
+    "response_header_allowlist": [
+      "Content-Type",
+      "Content-Length",
+      "Content-Encoding",
+      "Date",
+      "ETag",
+      "Last-Modified",
+      "Cache-Control",
+      "Location"
+    ],
+    "sensitive_headers_must_not_be_persisted": [
+      "Set-Cookie",
+      "Authentication-Info",
+      "Proxy-Authentication-Info"
+    ],
+    "redirect_evidence": "Record requested URL, redirect chain, status of each hop, and final URL.",
+    "redaction_evidence": "Record header names removed and the redaction policy version; do not hash secrets into shareable manifests."
+  },
+  "corroboration_policy": {
+    "confidence_tiers": {
+      "corroborated_official": "The authoritative primary publication and an approved official corroborating channel agree on the core facts; known upstream sharing is disclosed.",
+      "shared_upstream": "Two official channels agree, but they are known or reasonably assessed to share an upstream feed; this supports acquisition and parsing consistency, not independent truth generation.",
+      "primary_only": "One authoritative primary publication is available with complete provenance and replay evidence, but no usable official corroborating channel is available for the record; the limitation is explicit and does not by itself make official data infeasible."
+    },
+    "required_record_field": "corroboration_tier",
+    "handoff_summary": "stage1-handoff-fixture.json uses corroboration_tier as a map keyed by game; each game reports minimum_tier across accepted records and counts_by_tier, with evidence references for the calculation.",
+    "live_observation": "Use an approved official corroborating channel when available; otherwise retain the authoritative primary record as primary_only with complete provenance, replay evidence, and an explicit channel-availability assessment.",
+    "historical": "When an approved official corroborating channel is available, corroborate all rule-boundary issues, all anomalies/conflicts, and the stratified sample frozen in P0-01 before historical results are inspected. When it is unavailable, retain those records as primary_only and report the frozen corroboration coverage gap without substituting a third-party source.",
+    "sample_contract": [
+      "strata",
+      "sample size rationale",
+      "random seed",
+      "selected issue IDs",
+      "shared-upstream assessment"
+    ],
+    "interpretation": "The absence of a second official channel lowers corroboration confidence but does not automatically negate data feasibility when an authoritative primary source, provenance, deterministic parsing, and replay all pass. Agreement between shared-upstream channels validates acquisition and parsing only; no tier may be described as independent corroboration unless independence is evidenced."
+  },
+  "planned_artifacts": {
+    "artifact_schemas": "artifacts/phase-0/schemas/",
+    "scope_freeze": "artifacts/phase-0/scope-freeze.json",
+    "source_catalog": "artifacts/phase-0/source-catalog.json",
+    "field_contract": "artifacts/phase-0/field-contract.json",
+    "rule_bundles": "artifacts/phase-0/rule-bundles.json",
+    "observation_plan": "artifacts/phase-0/observation-plan.json",
+    "reviewer_assignment": "artifacts/phase-0/reviewer-assignment.json",
+    "environment_lock": "artifacts/phase-0/environment-lock.json",
+    "verification_command": "artifacts/phase-0/verification-command.json",
+    "evidence_manifest": "artifacts/phase-0/evidence-manifest.jsonl",
+    "raw_snapshots": "artifacts/phase-0/raw/",
+    "normalized_records": "artifacts/phase-0/normalized/",
+    "reconciliation": "artifacts/phase-0/reconciliation.jsonl",
+    "coverage_report": "artifacts/phase-0/coverage-report.json",
+    "revision_report": "artifacts/phase-0/revision-report.json",
+    "soak_log": "artifacts/phase-0/soak-run-log.jsonl",
+    "replay_report": "artifacts/phase-0/replay-report.json",
+    "reviewer_attestation": "artifacts/phase-0/reviewer-attestation.json",
+    "stage1_handoff_fixture": "artifacts/phase-0/stage1-handoff-fixture.json",
+    "acceptance_report": "artifacts/phase-0/phase-0-acceptance-report.md"
+  },
+  "schema_policy": {
+    "format": "JSON Schema 2020-12",
+    "machine_artifacts_requiring_schema": [
+      "scope_freeze",
+      "source_catalog",
+      "field_contract",
+      "rule_bundles",
+      "observation_plan",
+      "reviewer_assignment",
+      "environment_lock",
+      "verification_command",
+      "evidence_manifest",
+      "normalized_records",
+      "reconciliation",
+      "coverage_report",
+      "revision_report",
+      "soak_log",
+      "replay_report",
+      "reviewer_attestation",
+      "stage1_handoff_fixture"
+    ],
+    "rule": "Unknown fields, missing required fields, invalid enums, and schema-version mismatches fail validation unless an explicit compatible schema version is selected."
+  },
+  "hard_gates": [
+    {
+      "id": "G-SCOPE",
+      "standard": "Target and minimum viable intervals, acceptance cutoff, corroboration sample, observation schedule, budgets, clock tolerance, and reviewers are frozen before P0-02 and are not reduced after source results are observed.",
+      "evidence": [
+        "scope_freeze",
+        "observation_plan",
+        "reviewer_assignment"
+      ],
+      "fail_when": [
+        "Any required freeze value is null after P0-01.",
+        "A target or minimum interval is reduced after source observation begins.",
+        "The corroboration sample is selected after historical outcomes are inspected."
+      ]
+    },
+    {
+      "id": "G-AUTHORITY",
+      "standard": "Each game has one authoritative primary publication source. Official corroborating channels are assessed when available; the source topology is classified for supported corroboration tiers, and known shared upstream dependencies are disclosed.",
+      "evidence": [
+        "source_catalog"
+      ],
+      "fail_when": [
+        "No authoritative official primary source exists.",
+        "A third-party source is used as final truth.",
+        "Official-channel availability or shared-upstream dependency is not assessed.",
+        "Shared-upstream agreement is represented as independent corroboration."
+      ]
+    },
+    {
+      "id": "G-COMPLIANCE",
+      "standard": "The approved access method does not bypass login, CAPTCHA, tokens, rate limits, or other controls; terms, robots, copyright, review date, and unresolved legal questions are recorded.",
+      "evidence": [
+        "source_catalog",
+        "reviewer_attestation"
+      ],
+      "fail_when": [
+        "Access requires circumvention.",
+        "A material permission uncertainty is hidden or treated as legal approval by an engineer."
+      ]
+    },
+    {
+      "id": "G-SCHEMA",
+      "standard": "Every machine artifact validates against its frozen JSON Schema version before semantic gates are evaluated.",
+      "evidence": [
+        "artifact_schemas",
+        "verification_command",
+        "replay_report"
+      ],
+      "fail_when": [
+        "A required schema is missing.",
+        "Any required artifact fails schema validation.",
+        "A schema is changed after evidence collection without a recorded contract revision."
+      ]
+    },
+    {
+      "id": "G-PROVENANCE",
+      "standard": "Every normalized core fact maps to stored payload bytes, approved response metadata, requested/final URL, retrieval time, SHA-256, parser artifact hash, environment lock, and canonical output hash.",
+      "evidence": [
+        "evidence_manifest",
+        "raw_snapshots",
+        "normalized_records",
+        "environment_lock"
+      ],
+      "fail_when": [
+        "Stored payload bytes are missing or overwritten.",
+        "A normalized fact has no source snapshot.",
+        "A mutable parser version label is used without parser_artifact_sha256.",
+        "Sensitive request or response headers are persisted contrary to policy."
+      ]
+    },
+    {
+      "id": "G-RULES",
+      "standard": "Every issue in the frozen interval maps to exactly one complete rule bundle with single-valued rule versions and zero-or-more active promotion IDs.",
+      "evidence": [
+        "rule_bundles",
+        "coverage_report"
+      ],
+      "fail_when": [
+        "An in-scope issue has no rule bundle.",
+        "Prize or promotion changes are incorrectly treated as number-space changes.",
+        "Overlapping promotions cannot be represented."
+      ]
+    },
+    {
+      "id": "G-TIME",
+      "standard": "Publication, first-seen, retrieval, correction, and availability times are distinct, in UTC, clock-qualified, and never inferred without evidence.",
+      "evidence": [
+        "field_contract",
+        "evidence_manifest",
+        "observation_plan",
+        "soak_log"
+      ],
+      "fail_when": [
+        "HTTP Date or draw time is substituted for page_published_at.",
+        "An unavailable historical timestamp is fabricated.",
+        "A run exceeds the frozen clock-offset tolerance without being invalidated."
+      ]
+    },
+    {
+      "id": "G-PARSE",
+      "standard": "The same stored payload, parser artifact, environment lock, and canonicalization rules deterministically produce the same normalized record hash.",
+      "evidence": [
+        "normalized_records",
+        "environment_lock",
+        "replay_report"
+      ],
+      "fail_when": [
+        "Malformed, incomplete, out-of-range, duplicate, encoding-damaged, or unverified OCR data is emitted as verified.",
+        "A core number is manually edited.",
+        "Output hashes differ without a recorded parser or contract revision."
+      ]
+    },
+    {
+      "id": "G-CORRECTNESS",
+      "standard": "Verified core facts agree with the authoritative primary source, and every normalized record declares exactly one corroboration tier supported by its evidence. Records with an available official corroborating channel have zero unresolved core-number conflicts in required live and frozen historical coverage; primary_only records retain complete provenance and are never represented as independently corroborated.",
+      "evidence": [
+        "reconciliation",
+        "evidence_manifest",
+        "scope_freeze"
+      ],
+      "fail_when": [
+        "Any unresolved core-number conflict exists in required corroboration coverage.",
+        "A corroborating channel silently replaces the primary source.",
+        "Corroboration coverage is selected after results are inspected.",
+        "A record has no corroboration tier or its tier contradicts the channel evidence.",
+        "A primary_only record lacks complete provenance or is described as independently corroborated."
+      ]
+    },
+    {
+      "id": "G-COVERAGE",
+      "standard": "Expected and observed issue sets are reproducible for both frozen target and minimum viable intervals; every missing, duplicate, extra, holiday, and rule-boundary issue is classified.",
+      "evidence": [
+        "scope_freeze",
+        "coverage_report",
+        "rule_bundles"
+      ],
+      "fail_when": [
+        "An unexplained missing issue remains in the claimed coverage tier.",
+        "Sampled issues are used to claim full coverage without issue-set reconciliation.",
+        "The supported interval is reduced after source results are observed."
+      ]
+    },
+    {
+      "id": "G-REVISION",
+      "standard": "Snapshots and status events are append-only; supersession, current-view selection, reprocessing impact, and historical reconstruction are deterministic.",
+      "evidence": [
+        "evidence_manifest",
+        "revision_report",
+        "replay_report"
+      ],
+      "fail_when": [
+        "An earlier snapshot or status event is overwritten.",
+        "The current effective record cannot be derived deterministically.",
+        "A synthetic correction scenario cannot reconstruct before-and-after views.",
+        "An observed official correction is not fully replayed."
+      ]
+    },
+    {
+      "id": "G-RECOVERY",
+      "standard": "The frozen observation request set covers at least two complete draw cycles per game; actual requests reconcile to the plan, injected failures produce no verified bad records, and recovery is replayable.",
+      "evidence": [
+        "observation_plan",
+        "soak_log",
+        "replay_report"
+      ],
+      "fail_when": [
+        "A planned request is missing without a classified reason.",
+        "Rate or retry budgets are changed after observing failures.",
+        "A failure creates a silently valid record.",
+        "A temporary failure becomes an unexplained permanent gap."
+      ]
+    },
+    {
+      "id": "G-REPRODUCIBILITY",
+      "standard": "An independent reviewer in a clean environment executes the frozen verification command and rebuilds schemas, hashes, normalized records, coverage, reconciliation, revisions, and gate results.",
+      "evidence": [
+        "verification_command",
+        "environment_lock",
+        "replay_report",
+        "reviewer_attestation",
+        "acceptance_report"
+      ],
+      "fail_when": [
+        "The reviewer authored the parser or changed evidence under review.",
+        "The verification command is absent or non-zero.",
+        "Independent replay differs without an explained and approved revision."
+      ]
+    },
+    {
+      "id": "G-HANDOFF",
+      "standard": "Stage 1 can consume a verified fixture using only the frozen field contract, schemas, rule bundle, evidence references, and environment instructions; the fixture explicitly declares active_games, excluded_games, per_game_outcome, coverage_tier, corroboration_tier, and evidence_ref.",
+      "evidence": [
+        "stage1_handoff_fixture",
+        "field_contract",
+        "artifact_schemas",
+        "replay_report"
+      ],
+      "fail_when": [
+        "The fixture contains undocumented fields.",
+        "Stage 1 requires hidden manual transformation.",
+        "The fixture cannot be traced to raw evidence.",
+        "A game without PASS_FULL or PASS_LIMITED appears in active_games.",
+        "A game is absent from both active_games and excluded_games.",
+        "Coverage tier, corroboration tier, or per-game outcome is missing, contradictory, or unsupported by gate evidence."
+      ]
+    }
+  ],
+  "decision_logic": {
+    "per_game_outcomes": {
+      "PASS_FULL": "All non-coverage gates pass and the frozen target interval passes G-COVERAGE.",
+      "PASS_LIMITED": "All non-coverage gates pass, the frozen minimum viable interval passes G-COVERAGE, and target-interval gaps are fully classified.",
+      "HOLD": "No pass outcome is available, but at least one failed gate has a concrete, compliant corrective action.",
+      "STOP": "No pass outcome is available and, after the audited compliant alternatives are exhausted, official truth requires third-party substitution, access-control circumvention, or has no evidentiary path."
+    },
+    "per_game_evaluation_order": [
+      "PASS_FULL",
+      "PASS_LIMITED",
+      "STOP",
+      "HOLD"
+    ],
+    "per_game_uniqueness_rule": "Evaluate outcomes in order and stop at the first match. If no outcome matches, fail acceptance as an incomplete gate classification.",
+    "project_evaluation_order": [
+      {
+        "decision": "GO",
+        "when": "Both games are PASS_FULL."
+      },
+      {
+        "decision": "LIMITED_GO",
+        "when": "At least one game is PASS_FULL or PASS_LIMITED, and GO does not apply."
+      },
+      {
+        "decision": "HOLD",
+        "when": "No game has a pass outcome and at least one game is HOLD."
+      },
+      {
+        "decision": "STOP",
+        "when": "Both games are STOP."
+      }
+    ],
+    "uniqueness_rule": "Evaluate project rules in order and stop at the first match; exactly one project decision must be emitted.",
+    "unresolved_gate_rule": "A hidden, unclassified, or contradictory gate outcome fails acceptance."
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase2-preregistration.schema.json",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema_version", "artifact_type", "status", "frozen_at_utc", "scope_boundary", "joint_null", "calendar_policy", "global_alpha", "multiplicity_family", "test_registry", "practical_effect_registry", "effect_grids", "sample_size_grid", "monte_carlo_design", "historical_effect_interval", "alternative_generator_registry", "power_execution_rule", "power_prefix_policy", "calibration_decision_rule", "power_calendar_policy", "sensitivity_registry", "seed_derivation", "replay_artifact_profile", "replay_grid_tolerance", "qualification_scenarios", "qualification_parameters", "seed_registry", "freeze_rule", "signature"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase2_preregistration"},
+    "status": {"const": "frozen"},
+    "frozen_at_utc": {"type": "string", "format": "date-time"},
+    "scope_boundary": {"type": "object", "required": ["included", "excluded"]},
+    "joint_null": {"type": "string", "minLength": 50},
+    "calendar_policy": {"type": "string", "minLength": 20},
+    "global_alpha": {"const": 0.05},
+    "multiplicity_family": {"type": "string", "minLength": 20},
+    "test_registry": {"type": "array", "minItems": 2, "items": {"type": "object", "required": ["id", "bias_family", "label", "candidate_eligible", "effect_parameter", "statistic"], "properties": {"id": {"type": "string"}, "bias_family": {"type": "string"}, "label": {"enum": ["primary", "negative_control", "sensitivity", "exploratory"]}, "candidate_eligible": {"type": "boolean"}, "effect_parameter": {"type": "string"}, "statistic": {"type": "string"}}, "additionalProperties": true}},
+    "practical_effect_registry": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/effect"}},
+    "effect_grids": {"type": "object", "minProperties": 5, "required": ["marginal_inclusion", "set_structure", "pair_dependence", "temporal_instability", "cross_zone_dependence"], "additionalProperties": false, "patternProperties": {".*": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "number", "minimum": 0}}}},
+    "sample_size_grid": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "integer", "minimum": 2}},
+    "monte_carlo_design": {"type": "object", "required": ["mode", "interval_method", "early_stopping", "minimum_power", "confidence_level", "replication_budget", "simultaneous_power_band", "resource_budget"], "properties": {"mode": {"enum": ["fixed_replication_count", "time_uniform_sequential"]}, "interval_method": {"type": "string", "minLength": 10}, "early_stopping": {"type": "boolean"}, "minimum_power": {"const": 0.8}, "confidence_level": {"const": 0.95}, "replication_budget": {"type": "integer", "minimum": 1}, "simultaneous_power_band": {"type": "string", "minLength": 10}, "resource_budget": {"type": "object", "minProperties": 1}}, "additionalProperties": true},
+    "qualification_scenarios": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "label", "expected"]}},
+    "historical_effect_interval": {"type": "object", "required": ["method", "replications", "evaluation_replications_per_scenario", "confidence_level", "candidate_rule"]},
+    "alternative_generator_registry": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"type": "object", "required": ["bias_family", "zone", "parameter", "definition", "legal_domain", "target_effect_mapping", "boundary_projection"]}},
+    "power_execution_rule": {"type": "string", "minLength": 50},
+    "power_prefix_policy": {"type": "object", "additionalProperties": false, "required": ["non_temporal", "temporal_instability"], "properties": {"non_temporal": {"const": "generate_once_at_max_n_and_evaluate_registered_prefixes"}, "temporal_instability": {"const": "generate_independently_at_each_n_with_domain_separated_n_seed"}}},
+    "calibration_decision_rule": {"type": "string", "minLength": 50},
+    "power_calendar_policy": {"type": "object", "required": ["historical_n", "n_at_or_below_historical", "n_above_historical", "synthetic_label_rule"]},
+    "sensitivity_registry": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "applies_to", "operation", "direction_rule", "candidate_failure_semantics"]}},
+    "seed_derivation": {"type": "object", "additionalProperties": false, "required": ["algorithm", "domains"], "properties": {"algorithm": {"type": "string", "minLength": 20}, "domains": {"type": "array", "minItems": 12, "maxItems": 12, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}}},
+    "replay_artifact_profile": {"type": "object", "additionalProperties": false, "required": ["id", "source_seed_role", "included_sections", "checkpoint_projection"], "properties": {"id": {"const": "power-core-v1"}, "source_seed_role": {"const": "power_grid"}, "included_sections": {"const": ["calibration", "power_method", "grid", "delta_star", "required_n", "key_power_rows", "metrics"]}, "checkpoint_projection": {"const": "sorted scenario and aggregate_sha256 pairs"}}},
+    "replay_grid_tolerance": {"type": "object", "additionalProperties": false, "required": ["expected_point_count", "key", "rule", "required_match_rate", "per_run_familywise_alpha"], "properties": {"expected_point_count": {"const": 240}, "key": {"const": ["game", "bias_family", "effect", "sample_size"]}, "rule": {"const": "source and independent-seed simultaneous Clopper-Pearson intervals must overlap at every frozen grid point"}, "required_match_rate": {"const": 1.0}, "per_run_familywise_alpha": {"const": 0.05}}},
+    "qualification_parameters": {"type": "object", "required": ["marginal_inclusion", "set_structure", "pair_dependence", "temporal_instability", "cross_zone_dependence_mixture_q"]},
+    "seed_registry": {"type": "object", "required": ["historical_reference", "calibration_interval_and_qualification", "calibration_null_evaluation", "power_grid", "cross_zone_mapping", "replay_power_grid"], "additionalProperties": false, "properties": {"historical_reference": {"type": "integer", "minimum": 0}, "calibration_interval_and_qualification": {"type": "integer", "minimum": 0}, "calibration_null_evaluation": {"type": "integer", "minimum": 0}, "power_grid": {"type": "integer", "minimum": 0}, "cross_zone_mapping": {"type": "integer", "minimum": 0}, "replay_power_grid": {"type": "integer", "minimum": 0}}},
+    "freeze_rule": {"type": "string", "minLength": 20},
+    "signature": {"$ref": "#/$defs/signature"}
+  },
+  "$defs": {
+    "signature": {"type": "object", "required": ["signed", "signer_id", "signed_at_utc"], "additionalProperties": false, "properties": {"signed": {"const": true}, "signer_id": {"type": "string", "minLength": 1}, "signed_at_utc": {"type": "string", "format": "date-time"}}},
+    "effect": {"type": "object", "additionalProperties": false, "required": ["game", "generation_segment", "bias_family", "effect_parameter", "parameter_definition", "unit", "direction", "null_value", "practical_null_lower", "practical_null_upper", "grid_transform", "effect_grid", "threshold_rationale", "applicable_test_ids"], "properties": {"game": {"enum": ["dlt", "ssq"]}, "generation_segment": {"type": "string"}, "bias_family": {"type": "string"}, "effect_parameter": {"type": "string"}, "parameter_definition": {"type": "string"}, "unit": {"type": "string"}, "direction": {"type": "string"}, "null_value": {"type": "number"}, "practical_null_lower": {"type": "number"}, "practical_null_upper": {"type": "number"}, "grid_transform": {"const": "identity"}, "effect_grid": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "number", "minimum": 0}}, "threshold_rationale": {"type": "string"}, "applicable_test_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}}}
+  }
+}

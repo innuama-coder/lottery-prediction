@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.1.0-draft",
+  "artifact_type": "phase2_reviewer_assignment_draft",
+  "status": "candidate_slots_not_signed",
+  "required_roles": [
+    {"role": "phase_decision_owner", "candidate_id": "project-owner-to-confirm", "assignment_status": "candidate_not_frozen", "responsibility": "authorize scope and final phase decision", "authored_formal_phase2_artifacts": false},
+    {"role": "data_custodian", "candidate_id": "phase1-data-custodian-to-confirm", "assignment_status": "candidate_not_frozen", "responsibility": "attest upstream identity, counts and immutable baseline", "authored_formal_phase2_artifacts": false},
+    {"role": "statistical_research_owner", "candidate_id": "statistical-owner-to-assign", "assignment_status": "candidate_not_frozen", "responsibility": "own nulls, tests, estimands and preregistration", "authored_formal_phase2_artifacts": false},
+    {"role": "research_tool_implementer", "candidate_id": "implementation-agent-to-assign", "assignment_status": "candidate_not_frozen", "responsibility": "implement offline CLI, schemas and qualification harness", "authored_formal_phase2_artifacts": false},
+    {"role": "independent_method_reviewer", "candidate_id": "distinct-method-review-agent-to-assign", "assignment_status": "candidate_not_frozen", "responsibility": "review methods before historical results", "authored_formal_phase2_artifacts": false},
+    {"role": "independent_replay_reviewer", "candidate_id": "distinct-replay-agent-to-assign", "assignment_status": "candidate_not_frozen", "responsibility": "replay frozen evidence with independent seeds and reference calculations", "authored_formal_phase2_artifacts": false},
+    {"role": "final_acceptance_reviewer", "candidate_id": "distinct-final-review-agent-to-assign", "assignment_status": "candidate_not_frozen", "responsibility": "verify gates, evidence closure and claim boundaries", "authored_formal_phase2_artifacts": false}
+  ],
+  "forbidden_conflicts": [
+    ["statistical_research_owner", "independent_method_reviewer"],
+    ["statistical_research_owner", "independent_replay_reviewer"],
+    ["statistical_research_owner", "final_acceptance_reviewer"],
+    ["research_tool_implementer", "independent_method_reviewer"],
+    ["research_tool_implementer", "independent_replay_reviewer"],
+    ["research_tool_implementer", "final_acceptance_reviewer"]
+  ],
+  "minimum_independence_level": "procedural_agent_independence",
+  "procedural_independence_requirements": ["distinct task and agent id", "no authorship of reviewed artifacts", "read-only frozen inputs", "independent seed set where applicable", "write only own review/replay artifacts", "record task or prompt summary hash"],
+  "claim_limit": "procedural agent separation is not organizational or human independence",
+  "formalization_rule": "P2-00B must replace candidate slots with actual stable identities, conflict declarations and signatures before G0"
+}

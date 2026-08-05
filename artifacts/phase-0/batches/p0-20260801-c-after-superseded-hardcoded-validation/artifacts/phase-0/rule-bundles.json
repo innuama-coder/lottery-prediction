@@ -1,0 +1,4664 @@
+{
+  "schema_version": "1.1.0",
+  "artifact_type": "rule_bundles",
+  "contract_version": "1.3",
+  "evidence": [
+    {
+      "evidence_id": "EV-RULE-DLT-F597B8DE6679",
+      "game": "dlt",
+      "url": "https://api.js-lottery.com/tzgg/tzgg/cms/post-141661.html",
+      "publisher": "api.js-lottery.com",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-DLT-F5851E5B7431",
+      "game": "dlt",
+      "url": "https://m.lottery.gov.cn/ksjz/m/yxgz_dlt/",
+      "publisher": "m.lottery.gov.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-DLT-29A7A0B3A93E",
+      "game": "dlt",
+      "url": "https://m.lottery.gov.cn/xxgk/tzgg/dlttz/20250401/10047591.html",
+      "publisher": "m.lottery.gov.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-DLT-A185D63243B8",
+      "game": "dlt",
+      "url": "https://m.lottery.gov.cn/xxgk/tzgg/dlttz/20260428/10053457.html",
+      "publisher": "m.lottery.gov.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-DLT-9146ACF05D5B",
+      "game": "dlt",
+      "url": "https://www.gdlottery.cn/f_html/kjgg/P085_24050.html",
+      "publisher": "www.gdlottery.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-DLT-29083166C753",
+      "game": "dlt",
+      "url": "https://www.gdlottery.cn/f_html/kjgg/P085_25057.html",
+      "publisher": "www.gdlottery.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-DLT-C60A6DCEED96",
+      "game": "dlt",
+      "url": "https://www.gdlottery.cn/f_html/kjgg/P085_25058.html",
+      "publisher": "www.gdlottery.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-DLT-DAD5E59149DA",
+      "game": "dlt",
+      "url": "https://www.gdlottery.cn/f_html/kjgg/P085_26013.html",
+      "publisher": "www.gdlottery.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-DLT-DA50169828F0",
+      "game": "dlt",
+      "url": "https://www.gdlottery.cn/f_html/kjgg/P085_26014.html",
+      "publisher": "www.gdlottery.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-DLT-AAAAA2C00511",
+      "game": "dlt",
+      "url": "https://www.gdlottery.cn/html/gonggao/20240501/90180.html",
+      "publisher": "www.gdlottery.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-DLT-9748C3912936",
+      "game": "dlt",
+      "url": "https://www.gdlottery.cn/html/ticaidongtai/20260116/93540.html",
+      "publisher": "www.gdlottery.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-DLT-80C4E50E3AF4",
+      "game": "dlt",
+      "url": "https://www.mof.gov.cn/gp/xxgkml/zhs/202601/t20260116_3982042.htm",
+      "publisher": "www.mof.gov.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-SSQ-BEABEE954DCD",
+      "game": "ssq",
+      "url": "https://mzt.hunan.gov.cn/mzt/fc/fcyxfc/ssqfc/202011/t20201125_13966203.html",
+      "publisher": "mzt.hunan.gov.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-SSQ-6EEA646DEFAB",
+      "game": "ssq",
+      "url": "https://mzt.hunan.gov.cn/mzt/fc/xwzxfc/tzggfc/202601/33894962/files/9b6723ae4d8743099b90d5edfe7d39ea.pdf",
+      "publisher": "mzt.hunan.gov.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-SSQ-FF68B512F465",
+      "game": "ssq",
+      "url": "https://mzt.hunan.gov.cn/mzt/fc/xwzxfc/tzggfc/202601/t20260116_33894962.html",
+      "publisher": "mzt.hunan.gov.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-SSQ-11DD68954129",
+      "game": "ssq",
+      "url": "https://mzt.hunan.gov.cn/mzt/fc/xwzxfc/tzggfc/202602/t20260203_33909312.html",
+      "publisher": "mzt.hunan.gov.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-SSQ-6EF1B966F770",
+      "game": "ssq",
+      "url": "https://www.cwl.gov.cn/c/2025/01/02/600959.shtml",
+      "publisher": "www.cwl.gov.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-SSQ-3772ECC3B49D",
+      "game": "ssq",
+      "url": "https://www.gdfc.org.cn/datas/content/content_270602.html?subjectID=91",
+      "publisher": "www.gdfc.org.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-SSQ-AE7F0FCEDA4A",
+      "game": "ssq",
+      "url": "https://www.gdfc.org.cn/datas/content/content_271962.html?subjectID=91",
+      "publisher": "www.gdfc.org.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-SSQ-3F636D134ED9",
+      "game": "ssq",
+      "url": "https://www.gdfc.org.cn/datas/content/content_283202.html?subjectID=14",
+      "publisher": "www.gdfc.org.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    },
+    {
+      "evidence_id": "EV-RULE-SSQ-09F1499B7A8C",
+      "game": "ssq",
+      "url": "https://www.mof.gov.cn/gp/xxgkml/zhs/202601/t20260116_3982040.htm",
+      "publisher": "www.mof.gov.cn",
+      "claim": "Official rule, promotion, or issue-boundary evidence used by at least one registered bundle.",
+      "status": "verified",
+      "observed_on": "2026-08-01"
+    }
+  ],
+  "version_registry": {
+    "number_space_versions": [
+      {
+        "version_id": "DLT_NS_5OF35_2OF12_V1",
+        "game": "dlt",
+        "front_count": 5,
+        "front_min": 1,
+        "front_max": 35,
+        "back_count": 2,
+        "back_min": 1,
+        "back_max": 12,
+        "evidence_refs": [
+          "EV-RULE-DLT-F5851E5B7431"
+        ]
+      },
+      {
+        "version_id": "SSQ_NS_6OF33_1OF16_V1",
+        "game": "ssq",
+        "front_count": 6,
+        "front_min": 1,
+        "front_max": 33,
+        "back_count": 1,
+        "back_min": 1,
+        "back_max": 16,
+        "evidence_refs": [
+          "EV-RULE-SSQ-BEABEE954DCD"
+        ]
+      }
+    ],
+    "draw_process_versions": [
+      {
+        "version_id": "DLT_DRAW_MECHANICAL_FRONT_BACK_V1",
+        "game": "dlt",
+        "description": "Mechanically drawn front zone followed by back zone; device identity is outside this version axis.",
+        "evidence_refs": [
+          "EV-RULE-DLT-F5851E5B7431"
+        ]
+      },
+      {
+        "version_id": "SSQ_DRAW_MECHANICAL_RED_THEN_BLUE_V1",
+        "game": "ssq",
+        "description": "Mechanically drawn red balls followed by the blue ball; device identity is outside this version axis.",
+        "evidence_refs": [
+          "EV-RULE-SSQ-BEABEE954DCD"
+        ]
+      }
+    ],
+    "prize_rule_versions": [
+      {
+        "version_id": "DLT_PRIZE_2019_9TIER",
+        "game": "dlt",
+        "description": "DLT base nine-tier prize rules before issue 2026014.",
+        "evidence_refs": [
+          "EV-RULE-DLT-F5851E5B7431"
+        ]
+      },
+      {
+        "version_id": "DLT_PRIZE_2026_7TIER",
+        "game": "dlt",
+        "description": "DLT base seven-tier prize rules effective from issue 2026014.",
+        "evidence_refs": [
+          "EV-RULE-DLT-80C4E50E3AF4",
+          "EV-RULE-DLT-9748C3912936"
+        ]
+      },
+      {
+        "version_id": "SSQ_PRIZE_2018_6TIER",
+        "game": "ssq",
+        "description": "SSQ base six-tier prize rules before issue 2026014.",
+        "evidence_refs": [
+          "EV-RULE-SSQ-BEABEE954DCD"
+        ]
+      },
+      {
+        "version_id": "SSQ_PRIZE_2026_BASE",
+        "game": "ssq",
+        "description": "SSQ base prize rules effective from issue 2026014, separate from the Fuyun overlay.",
+        "evidence_refs": [
+          "EV-RULE-SSQ-09F1499B7A8C",
+          "EV-RULE-SSQ-6EEA646DEFAB"
+        ]
+      }
+    ]
+  },
+  "promotion_registry": [
+    {
+      "promotion_id": "DLT_2024_FIXED_TIER",
+      "game": "dlt",
+      "kind": "fixed_issue_range",
+      "effective_start_issue": "2024030",
+      "effective_end_issue": "2024062",
+      "evidence_refs": [
+        "EV-RULE-DLT-AAAAA2C00511",
+        "EV-RULE-DLT-9146ACF05D5B"
+      ],
+      "state_machine": null
+    },
+    {
+      "promotion_id": "DLT_2024_HIGH_TIER",
+      "game": "dlt",
+      "kind": "fixed_issue_range",
+      "effective_start_issue": "2024030",
+      "effective_end_issue": "2024049",
+      "evidence_refs": [
+        "EV-RULE-DLT-AAAAA2C00511",
+        "EV-RULE-DLT-F597B8DE6679"
+      ],
+      "state_machine": null
+    },
+    {
+      "promotion_id": "DLT_2025_ALL_TIER",
+      "game": "dlt",
+      "kind": "fixed_issue_range",
+      "effective_start_issue": "2025038",
+      "effective_end_issue": "2025057",
+      "evidence_refs": [
+        "EV-RULE-DLT-29A7A0B3A93E",
+        "EV-RULE-DLT-29083166C753"
+      ],
+      "state_machine": null
+    },
+    {
+      "promotion_id": "DLT_2026_FIXED_TIER",
+      "game": "dlt",
+      "kind": "fixed_issue_range",
+      "effective_start_issue": "2026050",
+      "effective_end_issue": null,
+      "evidence_refs": [
+        "EV-RULE-DLT-A185D63243B8"
+      ],
+      "state_machine": null
+    },
+    {
+      "promotion_id": "SSQ_2024_FIRST_PRIZE_SPECIAL",
+      "game": "ssq",
+      "kind": "fixed_issue_range",
+      "effective_start_issue": "2024126",
+      "effective_end_issue": "2024145",
+      "evidence_refs": [
+        "EV-RULE-SSQ-AE7F0FCEDA4A"
+      ],
+      "state_machine": null
+    },
+    {
+      "promotion_id": "SSQ_2024_SIXTH_PRIZE_DOUBLE",
+      "game": "ssq",
+      "kind": "fixed_issue_range",
+      "effective_start_issue": "2024126",
+      "effective_end_issue": "2024144",
+      "evidence_refs": [
+        "EV-RULE-SSQ-3772ECC3B49D"
+      ],
+      "state_machine": null
+    },
+    {
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "game": "ssq",
+      "kind": "state_machine",
+      "effective_start_issue": "2026014",
+      "effective_end_issue": null,
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ],
+      "state_machine": {
+        "initial_state": "inactive",
+        "states": [
+          "inactive",
+          "active"
+        ],
+        "transitions": [
+          {
+            "from_state": "inactive",
+            "to_state": "active",
+            "trigger_field": "post_draw_pool_yuan",
+            "operator": "greater_than_or_equal",
+            "threshold_yuan": 1500000000
+          },
+          {
+            "from_state": "active",
+            "to_state": "inactive",
+            "trigger_field": "post_draw_pool_yuan",
+            "operator": "less_than",
+            "threshold_yuan": 300000000
+          }
+        ]
+      }
+    }
+  ],
+  "activity_ledger": [
+    {
+      "issue_id": "2026014",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "seeded_active_by_official_issue_evidence",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026015",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026016",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026017",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026018",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026019",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026020",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026021",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026022",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026023",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026024",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026025",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026026",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026027",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026028",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026029",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026030",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026031",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026032",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026033",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026034",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026035",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026036",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026037",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026038",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026039",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026040",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026041",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026042",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026043",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026044",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026045",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026046",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026047",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026048",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026049",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    },
+    {
+      "issue_id": "2026050",
+      "promotion_id": "SSQ_2026_FUYUN_SPECIAL",
+      "active_for_issue": true,
+      "post_draw_pool_yuan": null,
+      "post_draw_pool_lower_bound_yuan": 300000000,
+      "post_draw_pool_upper_bound_yuan": null,
+      "active_for_next_issue": true,
+      "transition_reason": "remained_active_pool_not_below_exit_threshold",
+      "evidence_refs": [
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    }
+  ],
+  "bundles": [
+    {
+      "bundle_id": "dlt-2024-base-001-029",
+      "game": "dlt",
+      "number_space_version": "DLT_NS_5OF35_2OF12_V1",
+      "draw_process_version": "DLT_DRAW_MECHANICAL_FRONT_BACK_V1",
+      "prize_rule_version": "DLT_PRIZE_2019_9TIER",
+      "active_promotion_ids": [],
+      "effective_start_issue": "2024001",
+      "effective_end_issue": "2024029",
+      "evidence_refs": [
+        "EV-RULE-DLT-F5851E5B7431"
+      ]
+    },
+    {
+      "bundle_id": "dlt-2024-promo-both-030-049",
+      "game": "dlt",
+      "number_space_version": "DLT_NS_5OF35_2OF12_V1",
+      "draw_process_version": "DLT_DRAW_MECHANICAL_FRONT_BACK_V1",
+      "prize_rule_version": "DLT_PRIZE_2019_9TIER",
+      "active_promotion_ids": [
+        "DLT_2024_FIXED_TIER",
+        "DLT_2024_HIGH_TIER"
+      ],
+      "effective_start_issue": "2024030",
+      "effective_end_issue": "2024049",
+      "evidence_refs": [
+        "EV-RULE-DLT-AAAAA2C00511",
+        "EV-RULE-DLT-F597B8DE6679"
+      ]
+    },
+    {
+      "bundle_id": "dlt-2024-promo-fixed-050-062",
+      "game": "dlt",
+      "number_space_version": "DLT_NS_5OF35_2OF12_V1",
+      "draw_process_version": "DLT_DRAW_MECHANICAL_FRONT_BACK_V1",
+      "prize_rule_version": "DLT_PRIZE_2019_9TIER",
+      "active_promotion_ids": [
+        "DLT_2024_FIXED_TIER"
+      ],
+      "effective_start_issue": "2024050",
+      "effective_end_issue": "2024062",
+      "evidence_refs": [
+        "EV-RULE-DLT-9146ACF05D5B",
+        "EV-RULE-DLT-F597B8DE6679"
+      ]
+    },
+    {
+      "bundle_id": "dlt-2024-base-063-150",
+      "game": "dlt",
+      "number_space_version": "DLT_NS_5OF35_2OF12_V1",
+      "draw_process_version": "DLT_DRAW_MECHANICAL_FRONT_BACK_V1",
+      "prize_rule_version": "DLT_PRIZE_2019_9TIER",
+      "active_promotion_ids": [],
+      "effective_start_issue": "2024063",
+      "effective_end_issue": "2024150",
+      "evidence_refs": [
+        "EV-RULE-DLT-F5851E5B7431"
+      ]
+    },
+    {
+      "bundle_id": "dlt-2025-base-001-037",
+      "game": "dlt",
+      "number_space_version": "DLT_NS_5OF35_2OF12_V1",
+      "draw_process_version": "DLT_DRAW_MECHANICAL_FRONT_BACK_V1",
+      "prize_rule_version": "DLT_PRIZE_2019_9TIER",
+      "active_promotion_ids": [],
+      "effective_start_issue": "2025001",
+      "effective_end_issue": "2025037",
+      "evidence_refs": [
+        "EV-RULE-DLT-F5851E5B7431"
+      ]
+    },
+    {
+      "bundle_id": "dlt-2025-promo-038-057",
+      "game": "dlt",
+      "number_space_version": "DLT_NS_5OF35_2OF12_V1",
+      "draw_process_version": "DLT_DRAW_MECHANICAL_FRONT_BACK_V1",
+      "prize_rule_version": "DLT_PRIZE_2019_9TIER",
+      "active_promotion_ids": [
+        "DLT_2025_ALL_TIER"
+      ],
+      "effective_start_issue": "2025038",
+      "effective_end_issue": "2025057",
+      "evidence_refs": [
+        "EV-RULE-DLT-29A7A0B3A93E",
+        "EV-RULE-DLT-29083166C753"
+      ]
+    },
+    {
+      "bundle_id": "dlt-2025-base-058-150",
+      "game": "dlt",
+      "number_space_version": "DLT_NS_5OF35_2OF12_V1",
+      "draw_process_version": "DLT_DRAW_MECHANICAL_FRONT_BACK_V1",
+      "prize_rule_version": "DLT_PRIZE_2019_9TIER",
+      "active_promotion_ids": [],
+      "effective_start_issue": "2025058",
+      "effective_end_issue": "2025150",
+      "evidence_refs": [
+        "EV-RULE-DLT-F5851E5B7431",
+        "EV-RULE-DLT-C60A6DCEED96"
+      ]
+    },
+    {
+      "bundle_id": "dlt-2026-old-001-013",
+      "game": "dlt",
+      "number_space_version": "DLT_NS_5OF35_2OF12_V1",
+      "draw_process_version": "DLT_DRAW_MECHANICAL_FRONT_BACK_V1",
+      "prize_rule_version": "DLT_PRIZE_2019_9TIER",
+      "active_promotion_ids": [],
+      "effective_start_issue": "2026001",
+      "effective_end_issue": "2026013",
+      "evidence_refs": [
+        "EV-RULE-DLT-F5851E5B7431",
+        "EV-RULE-DLT-DAD5E59149DA"
+      ]
+    },
+    {
+      "bundle_id": "dlt-2026-new-014-049",
+      "game": "dlt",
+      "number_space_version": "DLT_NS_5OF35_2OF12_V1",
+      "draw_process_version": "DLT_DRAW_MECHANICAL_FRONT_BACK_V1",
+      "prize_rule_version": "DLT_PRIZE_2026_7TIER",
+      "active_promotion_ids": [],
+      "effective_start_issue": "2026014",
+      "effective_end_issue": "2026049",
+      "evidence_refs": [
+        "EV-RULE-DLT-80C4E50E3AF4",
+        "EV-RULE-DLT-9748C3912936",
+        "EV-RULE-DLT-DAD5E59149DA",
+        "EV-RULE-DLT-DA50169828F0"
+      ]
+    },
+    {
+      "bundle_id": "dlt-2026-new-promo-050",
+      "game": "dlt",
+      "number_space_version": "DLT_NS_5OF35_2OF12_V1",
+      "draw_process_version": "DLT_DRAW_MECHANICAL_FRONT_BACK_V1",
+      "prize_rule_version": "DLT_PRIZE_2026_7TIER",
+      "active_promotion_ids": [
+        "DLT_2026_FIXED_TIER"
+      ],
+      "effective_start_issue": "2026050",
+      "effective_end_issue": "2026050",
+      "evidence_refs": [
+        "EV-RULE-DLT-80C4E50E3AF4",
+        "EV-RULE-DLT-9748C3912936",
+        "EV-RULE-DLT-DAD5E59149DA",
+        "EV-RULE-DLT-DA50169828F0",
+        "EV-RULE-DLT-A185D63243B8"
+      ]
+    },
+    {
+      "bundle_id": "ssq-2024-base-001-125",
+      "game": "ssq",
+      "number_space_version": "SSQ_NS_6OF33_1OF16_V1",
+      "draw_process_version": "SSQ_DRAW_MECHANICAL_RED_THEN_BLUE_V1",
+      "prize_rule_version": "SSQ_PRIZE_2018_6TIER",
+      "active_promotion_ids": [],
+      "effective_start_issue": "2024001",
+      "effective_end_issue": "2024125",
+      "evidence_refs": [
+        "EV-RULE-SSQ-BEABEE954DCD"
+      ]
+    },
+    {
+      "bundle_id": "ssq-2024-promo-both-126-144",
+      "game": "ssq",
+      "number_space_version": "SSQ_NS_6OF33_1OF16_V1",
+      "draw_process_version": "SSQ_DRAW_MECHANICAL_RED_THEN_BLUE_V1",
+      "prize_rule_version": "SSQ_PRIZE_2018_6TIER",
+      "active_promotion_ids": [
+        "SSQ_2024_FIRST_PRIZE_SPECIAL",
+        "SSQ_2024_SIXTH_PRIZE_DOUBLE"
+      ],
+      "effective_start_issue": "2024126",
+      "effective_end_issue": "2024144",
+      "evidence_refs": [
+        "EV-RULE-SSQ-3772ECC3B49D",
+        "EV-RULE-SSQ-AE7F0FCEDA4A"
+      ]
+    },
+    {
+      "bundle_id": "ssq-2024-promo-first-145",
+      "game": "ssq",
+      "number_space_version": "SSQ_NS_6OF33_1OF16_V1",
+      "draw_process_version": "SSQ_DRAW_MECHANICAL_RED_THEN_BLUE_V1",
+      "prize_rule_version": "SSQ_PRIZE_2018_6TIER",
+      "active_promotion_ids": [
+        "SSQ_2024_FIRST_PRIZE_SPECIAL"
+      ],
+      "effective_start_issue": "2024145",
+      "effective_end_issue": "2024145",
+      "evidence_refs": [
+        "EV-RULE-SSQ-AE7F0FCEDA4A"
+      ]
+    },
+    {
+      "bundle_id": "ssq-2024-base-146-150",
+      "game": "ssq",
+      "number_space_version": "SSQ_NS_6OF33_1OF16_V1",
+      "draw_process_version": "SSQ_DRAW_MECHANICAL_RED_THEN_BLUE_V1",
+      "prize_rule_version": "SSQ_PRIZE_2018_6TIER",
+      "active_promotion_ids": [],
+      "effective_start_issue": "2024146",
+      "effective_end_issue": "2024150",
+      "evidence_refs": [
+        "EV-RULE-SSQ-BEABEE954DCD"
+      ]
+    },
+    {
+      "bundle_id": "ssq-2025-base-001-150",
+      "game": "ssq",
+      "number_space_version": "SSQ_NS_6OF33_1OF16_V1",
+      "draw_process_version": "SSQ_DRAW_MECHANICAL_RED_THEN_BLUE_V1",
+      "prize_rule_version": "SSQ_PRIZE_2018_6TIER",
+      "active_promotion_ids": [],
+      "effective_start_issue": "2025001",
+      "effective_end_issue": "2025150",
+      "evidence_refs": [
+        "EV-RULE-SSQ-BEABEE954DCD",
+        "EV-RULE-SSQ-6EF1B966F770"
+      ]
+    },
+    {
+      "bundle_id": "ssq-2026-old-001-013",
+      "game": "ssq",
+      "number_space_version": "SSQ_NS_6OF33_1OF16_V1",
+      "draw_process_version": "SSQ_DRAW_MECHANICAL_RED_THEN_BLUE_V1",
+      "prize_rule_version": "SSQ_PRIZE_2018_6TIER",
+      "active_promotion_ids": [],
+      "effective_start_issue": "2026001",
+      "effective_end_issue": "2026013",
+      "evidence_refs": [
+        "EV-RULE-SSQ-BEABEE954DCD"
+      ]
+    },
+    {
+      "bundle_id": "ssq-2026-new-fuyun-014-050",
+      "game": "ssq",
+      "number_space_version": "SSQ_NS_6OF33_1OF16_V1",
+      "draw_process_version": "SSQ_DRAW_MECHANICAL_RED_THEN_BLUE_V1",
+      "prize_rule_version": "SSQ_PRIZE_2026_BASE",
+      "active_promotion_ids": [
+        "SSQ_2026_FUYUN_SPECIAL"
+      ],
+      "effective_start_issue": "2026014",
+      "effective_end_issue": "2026050",
+      "evidence_refs": [
+        "EV-RULE-SSQ-09F1499B7A8C",
+        "EV-RULE-SSQ-FF68B512F465",
+        "EV-RULE-SSQ-6EEA646DEFAB",
+        "EV-RULE-SSQ-11DD68954129",
+        "EV-RULE-SSQ-3F636D134ED9"
+      ]
+    }
+  ],
+  "issue_mappings": [
+    {
+      "game": "dlt",
+      "issue_id": "2024001",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024002",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024003",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024004",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024005",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024006",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024007",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024008",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024009",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024010",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024011",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024012",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024013",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024014",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024015",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024016",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024017",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024018",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024019",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024020",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024021",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024022",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024023",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024024",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024025",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024026",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024027",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024028",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024029",
+      "bundle_id": "dlt-2024-base-001-029"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024030",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024031",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024032",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024033",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024034",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024035",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024036",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024037",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024038",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024039",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024040",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024041",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024042",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024043",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024044",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024045",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024046",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024047",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024048",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024049",
+      "bundle_id": "dlt-2024-promo-both-030-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024050",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024051",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024052",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024053",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024054",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024055",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024056",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024057",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024058",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024059",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024060",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024061",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024062",
+      "bundle_id": "dlt-2024-promo-fixed-050-062"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024063",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024064",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024065",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024066",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024067",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024068",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024069",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024070",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024071",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024072",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024073",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024074",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024075",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024076",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024077",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024078",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024079",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024080",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024081",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024082",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024083",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024084",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024085",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024086",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024087",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024088",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024089",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024090",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024091",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024092",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024093",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024094",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024095",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024096",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024097",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024098",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024099",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024100",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024101",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024102",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024103",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024104",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024105",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024106",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024107",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024108",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024109",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024110",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024111",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024112",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024113",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024114",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024115",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024116",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024117",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024118",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024119",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024120",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024121",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024122",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024123",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024124",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024125",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024126",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024127",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024128",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024129",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024130",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024131",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024132",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024133",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024134",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024135",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024136",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024137",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024138",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024139",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024140",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024141",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024142",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024143",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024144",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024145",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024146",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024147",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024148",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024149",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2024150",
+      "bundle_id": "dlt-2024-base-063-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025001",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025002",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025003",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025004",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025005",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025006",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025007",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025008",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025009",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025010",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025011",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025012",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025013",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025014",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025015",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025016",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025017",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025018",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025019",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025020",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025021",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025022",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025023",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025024",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025025",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025026",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025027",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025028",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025029",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025030",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025031",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025032",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025033",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025034",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025035",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025036",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025037",
+      "bundle_id": "dlt-2025-base-001-037"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025038",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025039",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025040",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025041",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025042",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025043",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025044",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025045",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025046",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025047",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025048",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025049",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025050",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025051",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025052",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025053",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025054",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025055",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025056",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025057",
+      "bundle_id": "dlt-2025-promo-038-057"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025058",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025059",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025060",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025061",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025062",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025063",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025064",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025065",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025066",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025067",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025068",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025069",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025070",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025071",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025072",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025073",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025074",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025075",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025076",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025077",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025078",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025079",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025080",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025081",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025082",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025083",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025084",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025085",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025086",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025087",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025088",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025089",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025090",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025091",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025092",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025093",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025094",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025095",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025096",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025097",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025098",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025099",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025100",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025101",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025102",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025103",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025104",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025105",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025106",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025107",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025108",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025109",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025110",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025111",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025112",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025113",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025114",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025115",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025116",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025117",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025118",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025119",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025120",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025121",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025122",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025123",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025124",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025125",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025126",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025127",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025128",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025129",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025130",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025131",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025132",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025133",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025134",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025135",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025136",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025137",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025138",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025139",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025140",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025141",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025142",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025143",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025144",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025145",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025146",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025147",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025148",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025149",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2025150",
+      "bundle_id": "dlt-2025-base-058-150"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026001",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026002",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026003",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026004",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026005",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026006",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026007",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026008",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026009",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026010",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026011",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026012",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026013",
+      "bundle_id": "dlt-2026-old-001-013"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026014",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026015",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026016",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026017",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026018",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026019",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026020",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026021",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026022",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026023",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026024",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026025",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026026",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026027",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026028",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026029",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026030",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026031",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026032",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026033",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026034",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026035",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026036",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026037",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026038",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026039",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026040",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026041",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026042",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026043",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026044",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026045",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026046",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026047",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026048",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026049",
+      "bundle_id": "dlt-2026-new-014-049"
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026050",
+      "bundle_id": "dlt-2026-new-promo-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024001",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024002",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024003",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024004",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024005",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024006",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024007",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024008",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024009",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024010",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024011",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024012",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024013",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024014",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024015",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024016",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024017",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024018",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024019",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024020",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024021",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024022",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024023",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024024",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024025",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024026",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024027",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024028",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024029",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024030",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024031",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024032",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024033",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024034",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024035",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024036",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024037",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024038",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024039",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024040",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024041",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024042",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024043",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024044",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024045",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024046",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024047",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024048",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024049",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024050",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024051",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024052",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024053",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024054",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024055",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024056",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024057",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024058",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024059",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024060",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024061",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024062",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024063",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024064",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024065",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024066",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024067",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024068",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024069",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024070",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024071",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024072",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024073",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024074",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024075",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024076",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024077",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024078",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024079",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024080",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024081",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024082",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024083",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024084",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024085",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024086",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024087",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024088",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024089",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024090",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024091",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024092",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024093",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024094",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024095",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024096",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024097",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024098",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024099",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024100",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024101",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024102",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024103",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024104",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024105",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024106",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024107",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024108",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024109",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024110",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024111",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024112",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024113",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024114",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024115",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024116",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024117",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024118",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024119",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024120",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024121",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024122",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024123",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024124",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024125",
+      "bundle_id": "ssq-2024-base-001-125"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024126",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024127",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024128",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024129",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024130",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024131",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024132",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024133",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024134",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024135",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024136",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024137",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024138",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024139",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024140",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024141",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024142",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024143",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024144",
+      "bundle_id": "ssq-2024-promo-both-126-144"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024145",
+      "bundle_id": "ssq-2024-promo-first-145"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024146",
+      "bundle_id": "ssq-2024-base-146-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024147",
+      "bundle_id": "ssq-2024-base-146-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024148",
+      "bundle_id": "ssq-2024-base-146-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024149",
+      "bundle_id": "ssq-2024-base-146-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2024150",
+      "bundle_id": "ssq-2024-base-146-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025001",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025002",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025003",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025004",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025005",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025006",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025007",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025008",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025009",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025010",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025011",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025012",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025013",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025014",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025015",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025016",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025017",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025018",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025019",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025020",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025021",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025022",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025023",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025024",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025025",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025026",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025027",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025028",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025029",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025030",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025031",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025032",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025033",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025034",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025035",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025036",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025037",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025038",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025039",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025040",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025041",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025042",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025043",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025044",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025045",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025046",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025047",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025048",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025049",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025050",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025051",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025052",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025053",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025054",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025055",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025056",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025057",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025058",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025059",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025060",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025061",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025062",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025063",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025064",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025065",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025066",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025067",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025068",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025069",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025070",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025071",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025072",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025073",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025074",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025075",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025076",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025077",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025078",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025079",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025080",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025081",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025082",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025083",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025084",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025085",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025086",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025087",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025088",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025089",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025090",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025091",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025092",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025093",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025094",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025095",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025096",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025097",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025098",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025099",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025100",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025101",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025102",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025103",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025104",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025105",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025106",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025107",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025108",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025109",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025110",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025111",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025112",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025113",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025114",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025115",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025116",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025117",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025118",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025119",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025120",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025121",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025122",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025123",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025124",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025125",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025126",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025127",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025128",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025129",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025130",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025131",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025132",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025133",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025134",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025135",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025136",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025137",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025138",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025139",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025140",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025141",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025142",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025143",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025144",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025145",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025146",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025147",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025148",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025149",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2025150",
+      "bundle_id": "ssq-2025-base-001-150"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026001",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026002",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026003",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026004",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026005",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026006",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026007",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026008",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026009",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026010",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026011",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026012",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026013",
+      "bundle_id": "ssq-2026-old-001-013"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026014",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026015",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026016",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026017",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026018",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026019",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026020",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026021",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026022",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026023",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026024",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026025",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026026",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026027",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026028",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026029",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026030",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026031",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026032",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026033",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026034",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026035",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026036",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026037",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026038",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026039",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026040",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026041",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026042",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026043",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026044",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026045",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026046",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026047",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026048",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026049",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    },
+    {
+      "game": "ssq",
+      "issue_id": "2026050",
+      "bundle_id": "ssq-2026-new-fuyun-014-050"
+    }
+  ]
+}

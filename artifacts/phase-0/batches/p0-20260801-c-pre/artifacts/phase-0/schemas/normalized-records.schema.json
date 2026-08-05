@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:autoresearch-lotte:phase0:normalized-record:1.1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "artifact_type", "record_id", "game", "issue_id",
+    "front_numbers", "back_numbers", "draw_date_local", "draw_at",
+    "page_published_at", "http_date", "first_seen_at", "retrieved_at",
+    "corrected_at", "available_at", "number_space_version",
+    "draw_process_version", "prize_rule_version", "active_promotion_ids",
+    "status", "corroboration_tier", "evidence_refs", "supersedes"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.1.0"},
+    "artifact_type": {"const": "normalized_record"},
+    "record_id": {"type": "string", "minLength": 1},
+    "game": {"enum": ["dlt", "ssq"]},
+    "issue_id": {"type": "string", "pattern": "^[0-9]{5,12}$"},
+    "front_numbers": {"type": "array", "minItems": 5, "maxItems": 6, "uniqueItems": true, "items": {"type": "string", "pattern": "^[0-9]{2}$"}},
+    "back_numbers": {"type": "array", "minItems": 1, "maxItems": 2, "uniqueItems": true, "items": {"type": "string", "pattern": "^[0-9]{2}$"}},
+    "draw_date_local": {"type": "string", "format": "date"},
+    "draw_at": {"$ref": "#/$defs/nullable_time"},
+    "page_published_at": {"$ref": "#/$defs/nullable_time"},
+    "http_date": {"$ref": "#/$defs/nullable_time"},
+    "first_seen_at": {"$ref": "#/$defs/time"},
+    "retrieved_at": {"$ref": "#/$defs/time"},
+    "corrected_at": {"$ref": "#/$defs/nullable_time"},
+    "available_at": {"$ref": "#/$defs/nullable_time"},
+    "number_space_version": {"type": "string", "minLength": 1},
+    "draw_process_version": {"type": "string", "minLength": 1},
+    "prize_rule_version": {"type": "string", "minLength": 1},
+    "active_promotion_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "status": {"enum": ["unavailable", "unverified", "verified", "conflicted", "invalid"]},
+    "corroboration_tier": {"$ref": "#/$defs/nullable_corroboration_tier"},
+    "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "supersedes": {"type": ["string", "null"]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "verified"}}},
+      "then": {
+        "properties": {
+          "available_at": {"$ref": "#/$defs/time"},
+          "corroboration_tier": {"$ref": "#/$defs/corroboration_tier"}
+        }
+      },
+      "else": {"properties": {"corroboration_tier": {"type": "null"}}}
+    }
+  ],
+  "$defs": {
+    "time": {"type": "string", "format": "date-time"},
+    "nullable_time": {"anyOf": [{"type": "string", "format": "date-time"}, {"type": "null"}]},
+    "corroboration_tier": {"enum": ["corroborated_official", "shared_upstream", "primary_only"]},
+    "nullable_corroboration_tier": {"anyOf": [{"$ref": "#/$defs/corroboration_tier"}, {"type": "null"}]}
+  }
+}

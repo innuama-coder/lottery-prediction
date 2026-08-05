@@ -1,0 +1,22 @@
+{
+  "artifact_type": "phase1_independent_review",
+  "review_scope": "data",
+  "contract_version": "3.6.0",
+  "contract_sha256": "6a941622e2de77aa5371750ceb4c9d012574ba581c2b6226851006a819243a40",
+  "reviewer": "independent-data-reviewer-20260803-contract-3.6.0",
+  "reviewed_artifact_hashes": {
+    "docs/roadmap/phase-1-acceptance-contract.json": "6a941622e2de77aa5371750ceb4c9d012574ba581c2b6226851006a819243a40",
+    "docs/data/lottery-data-spec-index.md": "c83acceb608ebd1be1fc86482b0836fa6585bd890b392ac3462e7d4d14a07ed1",
+    "docs/data/lottery-live-execution-spec-v1.3.md": "6aedb651e6ea1f1b569fd30e0e4975cfb62d5c641efd0b4c8b02fe0085733d76",
+    "docs/data/lottery-data-spec-v1.md": "55eb907eb7c2f85ec58d244eb975dac3ec4ced7492aa5d58a01e611a006b96dd",
+    "tests/phase1/fixtures/spec/spec-bundle-freeze.json": "56d443d76075acdc8914da3fa8a0b7318325aff91f222bcd181c7390f14a2c6e",
+    "config/phase1/live-source-policy.json": "9f3f7c91e73632511a588122cc6e2f7e25a1190aecef4e455c6099a28d7d53a0",
+    "schemas/phase1/run-manifest-v1.3.schema.json": "55919a70ab5f9870419dccf5e1ba8da838414b1dc2a307c66c46a8a018c9c4f2",
+    "schemas/phase1/run-event-v1.3.schema.json": "e2224d3d803e1d055b2a4d0e54b078515c752e973936921157a531ded885751e",
+    "artifacts/phase-1/releases/baseline-v1/manifest.json": "0ddcccb72dce7662af665b369995b1c1fd28c68554b32e175f4561fc9f9683d1",
+    "artifacts/phase-1/releases/baseline-v1/draws.jsonl": "f2e34a88fbd43a378d7fb6255d39deee1354216b918934f355a06ef986be60c1",
+    "artifacts/phase-1/releases/baseline-v1/observations.jsonl": "dc974863c845da1e895ecf623bc6e878ba6aa6710c902357bce68ad5e661966e",
+    "artifacts/phase-1/current-release.json": "76c2998060a8a284ba1a3e892ec853e9fdb89707cffb5d5c992a535cc56a510c"
+  },
+  "blocking_findings": []
+}

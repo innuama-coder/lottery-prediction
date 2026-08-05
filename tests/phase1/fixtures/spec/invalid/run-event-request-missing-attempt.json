@@ -1,0 +1,1 @@
+{"event_schema_version":"1.0.0","event_id":"evt-v1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","run_id":"phase1-bootstrap-001","sequence":1,"event_type":"request_started","occurred_at_utc":"2026-08-02T03:00:01Z","request_id":"snapshot-ssq","source_id":"ydniu","game":"ssq","error_code":null,"error_detail_ref":null}

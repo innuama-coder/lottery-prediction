@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.1.0",
+  "artifact_type": "field_contract",
+  "contract_version": "1.3",
+  "unicode_normalization": "preserve",
+  "time_format": "RFC3339_UTC_Z",
+  "number_encoding": "zero_padded_string",
+  "monetary_encoding": "decimal_string",
+  "fields": [
+    {"name":"record_id","json_type":"string","nullable":false,"source_semantics":"Append-only normalized record identity, not an official draw fact.","normalization":"Deterministic game/issue/evidence identity; source Unicode is preserved.","evidence_required":true},
+    {"name":"game","json_type":"string","nullable":false,"source_semantics":"Frozen game identifier: dlt or ssq.","normalization":"Lowercase controlled vocabulary.","evidence_required":true},
+    {"name":"issue_id","json_type":"string","nullable":false,"source_semantics":"Canonical four-digit-year issue identifier.","normalization":"Preserve SSQ YYYYNNN; expand official DLT YYNNN to YYYYNNN while retaining the raw issue in evidence payload.","evidence_required":true},
+    {"name":"front_numbers","json_type":"array","nullable":false,"source_semantics":"Official published winning numbers for DLT front zone or SSQ red zone, not physical draw order.","normalization":"Two-character zero-padded strings, strictly ascending, unique and range checked.","evidence_required":true},
+    {"name":"back_numbers","json_type":"array","nullable":false,"source_semantics":"Official published winning numbers for DLT back zone or SSQ blue zone, not physical draw order.","normalization":"Two-character zero-padded strings, strictly ascending, unique and range checked.","evidence_required":true},
+    {"name":"draw_date_local","json_type":"string","nullable":false,"source_semantics":"Calendar date of the draw explicitly stated by official result content in the lottery's local jurisdiction.","normalization":"Real YYYY-MM-DD local calendar date; never inferred from a URL, planned schedule, HTTP metadata, retrieval time, or publication time.","evidence_required":true},
+    {"name":"draw_at","json_type":"string","nullable":true,"source_semantics":"Actual draw event timestamp only when explicitly evidenced by official result content; a planned or customary draw time is not an actual event timestamp.","normalization":"RFC3339 UTC Z when exact official evidence exists; otherwise null. Never derived from a planned schedule, URL, HTTP metadata, retrieval time, or publication time.","evidence_required":true},
+    {"name":"page_published_at","json_type":"string","nullable":true,"source_semantics":"Timestamp explicitly published by the official page.","normalization":"RFC3339 UTC Z; null when the page only shows a date or no publication time. Never derived from URL or HTTP headers.","evidence_required":true},
+    {"name":"http_date","json_type":"string","nullable":true,"source_semantics":"HTTP Date response header for the captured response.","normalization":"RFC3339 UTC Z; null when absent; never substitutes for publication or draw time.","evidence_required":true},
+    {"name":"first_seen_at","json_type":"string","nullable":false,"source_semantics":"First valid observation by this system for the same official content.","normalization":"RFC3339 UTC Z from a clock-qualified run.","evidence_required":true},
+    {"name":"retrieved_at","json_type":"string","nullable":false,"source_semantics":"Completion time of this exact HTTP retrieval.","normalization":"RFC3339 UTC Z from a clock-qualified run.","evidence_required":true},
+    {"name":"corrected_at","json_type":"string","nullable":true,"source_semantics":"Officially evidenced correction timestamp.","normalization":"RFC3339 UTC Z; null unless the official channel supplies correction evidence.","evidence_required":true},
+    {"name":"available_at","json_type":"string","nullable":true,"source_semantics":"Conservative earliest time a verified record may be consumed downstream; non-verified records may not yet have a defensible availability instant.","normalization":"RFC3339 UTC Z and non-null for verified status; otherwise nullable. Maximum of evidence-supported availability constraints; never backfilled from draw schedule or URL date.","evidence_required":true},
+    {"name":"number_space_version","json_type":"string","nullable":false,"source_semantics":"Version of zones, ranges and count of selected numbers.","normalization":"Controlled rule-bundle identifier.","evidence_required":true},
+    {"name":"draw_process_version","json_type":"string","nullable":false,"source_semantics":"Version of the officially documented draw process, kept separate from device identity claims.","normalization":"Controlled rule-bundle identifier; no inferred process change.","evidence_required":true},
+    {"name":"prize_rule_version","json_type":"string","nullable":false,"source_semantics":"Base prize and allocation rule version.","normalization":"Controlled rule-bundle identifier; promotions remain separate.","evidence_required":true},
+    {"name":"active_promotion_ids","json_type":"array","nullable":false,"source_semantics":"Zero or more concurrent national prize-rule overlays active for the issue.","normalization":"Sorted unique controlled identifiers; provincial marketing or ticket-gift campaigns are excluded.","evidence_required":true},
+    {"name":"status","json_type":"string","nullable":false,"source_semantics":"Event-sourced validation status.","normalization":"Controlled vocabulary and frozen transition policy.","evidence_required":true},
+    {"name":"corroboration_tier","json_type":"string","nullable":true,"source_semantics":"Evidence topology tier, not a probability score; it is mandatory once status is verified.","normalization":"corroborated_official, shared_upstream, or primary_only for verified records according to actual channels; otherwise nullable.","evidence_required":true},
+    {"name":"evidence_refs","json_type":"array","nullable":false,"source_semantics":"Immutable evidence manifest identifiers supporting the record.","normalization":"Unique stable references; at least one.","evidence_required":true},
+    {"name":"supersedes","json_type":"string","nullable":true,"source_semantics":"Prior record identity superseded by this append-only revision.","normalization":"Null for initial record; otherwise exact earlier record_id.","evidence_required":true}
+  ]
+}

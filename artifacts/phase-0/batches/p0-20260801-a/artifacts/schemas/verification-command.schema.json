@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "urn:autoresearch-lotte:phase0:verification-command:1.0.0",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "contract_version", "freeze_id", "frozen_at_utc", "bootstrap_gate_command", "bootstrap_expected_exit_code", "command", "full_replay_command", "working_directory", "launcher_path", "interpreter_path", "interpreter_version", "interpreter_sha256", "interpreter_override_environment_variable", "prerequisites", "expected_exit_code", "non_interactive", "network_required", "frozen_input_hashes", "contract_sha256", "schemas_manifest_sha256", "schema_hashes", "verifier_file_hashes", "self_hash_sidecar"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"}, "artifact_type": {"const": "verification_command"}, "contract_version": {"const": "1.3"},
+    "freeze_id": {"type": "string", "pattern": "^P0-01-[A-Za-z0-9._-]+$"}, "frozen_at_utc": {"type": "string", "format": "date-time"},
+    "bootstrap_gate_command": {"const": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/phase0/verify_phase0.ps1 --contract docs/roadmap/phase-0-acceptance-contract.json --artifacts artifacts/phase-0 --stage p0-01"},
+    "bootstrap_expected_exit_code": {"const": 0},
+    "command": {"const": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/phase0/verify_phase0.ps1 --contract docs/roadmap/phase-0-acceptance-contract.json --artifacts artifacts/phase-0 --stage full"},
+    "full_replay_command": {"const": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/phase0/verify_phase0.ps1 --contract docs/roadmap/phase-0-acceptance-contract.json --artifacts artifacts/phase-0 --stage full"},
+    "working_directory": {"const": "."}, "launcher_path": {"const": "scripts/phase0/verify_phase0.ps1"},
+    "interpreter_path": {"type": "string", "pattern": "^[A-Za-z]:\\\\.+python\\.exe$"}, "interpreter_version": {"type": "string", "pattern": "^3\\.[0-9]+\\.[0-9]+$"}, "interpreter_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "interpreter_override_environment_variable": {"const": "PHASE0_PYTHON"},
+    "prerequisites": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "expected_exit_code": {"const": 0}, "non_interactive": {"const": true}, "network_required": {"const": false},
+    "frozen_input_hashes": {"type": "object", "additionalProperties": false, "required": ["scope_freeze", "observation_plan", "reviewer_assignment"], "properties": {"scope_freeze": {"$ref": "#/$defs/hash"}, "observation_plan": {"$ref": "#/$defs/hash"}, "reviewer_assignment": {"$ref": "#/$defs/hash"}}},
+    "contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "schemas_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "schema_hashes": {"type": "array", "minItems": 17, "uniqueItems": true, "items": {"$ref": "#/$defs/hashed_file"}},
+    "verifier_file_hashes": {"type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/verifier_file"}},
+    "self_hash_sidecar": {"const": "artifacts/phase-0/verification-command.json.sha256"}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "hashed_file": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string", "pattern": "^artifacts/phase-0/schemas/.+\\.schema\\.json$"}, "sha256": {"$ref": "#/$defs/hash"}}}, "verifier_file": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"enum": ["scripts/phase0/verify_phase0.ps1", "scripts/phase0/verify_phase0.py", "scripts/phase0/phase0lib.py", "scripts/phase0/hash_artifact.py"]}, "sha256": {"$ref": "#/$defs/hash"}}}}
+}

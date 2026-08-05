@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase2-method-review.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "status", "reviewer_identity", "independence_level", "reviewed_identities", "test_verdicts", "effect_parameter_verdicts", "method_verdicts", "registered_test_review_coverage", "registered_effect_parameter_review_coverage", "blocking_findings", "unresolved_nonblocking_findings", "prompt_summary_sha256", "signature"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase2_method_review"},
+    "status": {"enum": ["PASS", "HOLD", "FAIL"]},
+    "reviewer_identity": {"type": "string", "minLength": 1},
+    "independence_level": {"const": "procedural_agent_independence"},
+    "reviewed_identities": {"type": "array", "minItems": 5, "items": {"$ref": "#/$defs/pathHash"}},
+    "test_verdicts": {"type": "array", "minItems": 7, "items": {"$ref": "#/$defs/itemVerdict"}},
+    "effect_parameter_verdicts": {"type": "array", "minItems": 10, "items": {"$ref": "#/$defs/itemVerdict"}},
+    "method_verdicts": {"type": "array", "minItems": 8, "items": {"$ref": "#/$defs/itemVerdict"}},
+    "registered_test_review_coverage": {"const": 1.0},
+    "registered_effect_parameter_review_coverage": {"const": 1.0},
+    "blocking_findings": {"type": "array", "maxItems": 0},
+    "unresolved_nonblocking_findings": {"type": "array", "maxItems": 0},
+    "prompt_summary_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "signature": {"type": "object", "additionalProperties": false, "required": ["signed", "signed_at_utc"], "properties": {"signed": {"const": true}, "signed_at_utc": {"type": "string", "format": "date-time"}}}
+  },
+  "$defs": {
+    "pathHash": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}},
+    "itemVerdict": {"type": "object", "additionalProperties": false, "required": ["id", "status", "rationale"], "properties": {"id": {"type": "string"}, "status": {"const": "PASS"}, "rationale": {"type": "string", "minLength": 10}}}
+  }
+}

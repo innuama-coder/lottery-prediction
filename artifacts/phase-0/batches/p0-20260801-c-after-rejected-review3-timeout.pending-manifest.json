@@ -1,0 +1,209 @@
+{
+  "schema_version": "1.0.0-draft",
+  "artifact_type": "phase0_contract_repair_manifest_draft",
+  "repair_layer_id": "p0-20260801-c",
+  "status": "frozen_pending_independent_review",
+  "parent_lineage": {
+    "parent_repair_layer_id": "p0-20260801-b",
+    "parent_manifest_path": "artifacts/phase-0/batch-migration-p0-20260801-b.json",
+    "parent_manifest_sha256": "bd33ed1dc9e9b3c8354ae5bec7b21555bebf957e008888a2660640c5647f6240",
+    "ancestor_batch_id": "p0-20260801-a",
+    "ancestor_snapshot_manifest_path": "artifacts/phase-0/batches/p0-20260801-a/snapshot-manifest.json",
+    "ancestor_snapshot_manifest_sha256": "fb4c00754ceddc998684f0b4781cb4060899687ac2525f88ee42ffe41a3097a0",
+    "before_snapshot_batch_id": "p0-20260801-c-pre",
+    "before_snapshot_manifest_path": "artifacts/phase-0/batches/p0-20260801-c-pre/snapshot-manifest.json",
+    "before_snapshot_manifest_sha256": "ca739217be9a9c4485c8bea508e7be76a2d3b5760b1c27f9d9c129cf8e671159",
+    "supersedes_rejected_review1": {
+      "batch_id": "p0-20260801-c-after-rejected-review1",
+      "snapshot_manifest_path": "artifacts/phase-0/batches/p0-20260801-c-after-rejected-review1/snapshot-manifest.json",
+      "snapshot_manifest_sha256": "b53751efef8583190897a0b3c33016a40c67a689d17551569f681d7e458c0d20",
+      "pending_manifest_path": "artifacts/phase-0/batches/p0-20260801-c-after-rejected-review1.pending-manifest.json",
+      "pending_manifest_sha256": "9d4afcb46c942139067c869705ce70413d071afe3b10efc936919620f45f6a7c",
+      "review_outcome": "REJECTED_P1",
+      "reviewer_id": "/root/phase0_reviewer",
+      "p1_reason": "Historical C-pre repair-draft verification depended on mutable root state instead of binding the archived draft bytes to the immutable C-after snapshot; tampering of that archived historical draft was not independently failure-injected.",
+      "p1_fix_files": [
+        {
+          "path": "scripts/phase0/archive_p0_c_pre.py",
+          "rejected_review1_sha256": "fc47768a17f8ad9b244bb4102b22e011938315a005ff74d1bd4fdce5cb12af5d",
+          "repaired_sha256": "6cdcbd630296f2ab80f006e1b79f0c597824c98d87f6ee69f358387f3ea4f80a"
+        },
+        {
+          "path": "tests/phase0/test_p0_c_pre_archive.py",
+          "rejected_review1_sha256": "7b269e94a315f2229d8acd6dcbfc0facc6e376784a8216cf026af8e216401967",
+          "repaired_sha256": "9ad07ba7abc2bab1d4bb112f4566ca78535435f7b53cd5a686b8090cdc162d10"
+        },
+        {
+          "path": "tests/phase0/test_p0_07_decision.py",
+          "rejected_review1_sha256": "e53e1793ae68918feaaf847bd3c03fd7b0887508067dd675a2b5a9655f4279a3",
+          "repaired_sha256": "a406a9d927eaf66a6474768816785aac1de7574189451a9f75390bbf59f73f5a"
+        }
+      ]
+    }
+  },
+  "root_causes": [
+    {
+      "id": "P0-07-01",
+      "summary": "The verifier did not require cutoff passage and exact 24-of-24 soak reconciliation before closeout."
+    },
+    {
+      "id": "P0-07-02",
+      "summary": "The frozen full command validated pre-existing outputs instead of rebuilding derived outputs from a clean directory."
+    },
+    {
+      "id": "P0-07-03",
+      "summary": "Replay, handoff, attestation, and final-gate dependencies were cyclic or chronologically ambiguous."
+    },
+    {
+      "id": "P0-07-04",
+      "summary": "Terminal schemas and verifier checks did not bind declared hashes, evidence references, replay results, and attestations to actual artifacts."
+    },
+    {
+      "id": "P0-07-05",
+      "summary": "Project aggregation existed, but per-game outcomes were not mechanically derived from per-game gate evidence."
+    }
+  ],
+  "allowed_change_classes": [
+    "P0-07 closeout and clean-replay implementation files",
+    "terminal-artifact and auxiliary closeout schema strengthening",
+    "full-verifier semantic checks and failure-injection tests",
+    "verification-command schema/tool inventory hashes and self sidecar",
+    "new repair-lineage, closeout, replay, handoff, attestation, and acceptance artifacts produced after the repair gate"
+  ],
+  "forbidden_change_classes": [
+    "scope-freeze.json bytes or semantics",
+    "observation-plan.json bytes, 24 request IDs, trigger times, cutoff, retry/rate/resource budgets, or clock tolerance",
+    "reviewer-assignment.json bytes, reviewer identity, or role separation",
+    "acceptance-contract hard gates, fail conditions, per-game outcome definitions, evaluation order, or project decision rules",
+    "p0-06-runtime-plan.json or sidecar bytes, request mappings, network authorization, scheduler task, or installed trigger definition",
+    "existing raw payload, evidence manifest, parsed record, normalized record, coverage, reconciliation, or soak bytes",
+    "backfilling a missed scheduled request or representing post-cutoff collection as on-time"
+  ],
+  "before": {
+    "status": "captured",
+    "recorded_at_utc": "2026-08-01T08:27:40.925473Z",
+    "decision_surface_sha256": "d772e1a4d26c916b8866f6692c96280787a731e3c96d528d83ac9689ae9fce91",
+    "protected_file_hashes": {
+      "artifacts/phase-0/scope-freeze.json": "eb815e03d1f51f0c0ca8bd91dea1ab57b14d08bc654c4b1869564129655f6d34",
+      "artifacts/phase-0/observation-plan.json": "417279486152230fa931e6f1326bc8acc4818428a1da1c9a83eaa5d2c83a7c4e",
+      "artifacts/phase-0/reviewer-assignment.json": "6bb1bf78cfaf3f899d0782e56ae465f59601dfdad90292d296ac08cab08a01f2",
+      "artifacts/phase-0/p0-06-runtime-plan.json": "afce77bfc40130dd6ffa9f0a22f3487817557c21f4f262210a6f84951715eede",
+      "artifacts/phase-0/p0-06-runtime-plan.json.sha256": "5117c427423f68efa0977c8a12fd976d61acc69d96c419f8af5ebb30219f2f32",
+      "artifacts/phase-0/p0-06-scheduler-install-audit.json": "e00b1e5ad314cb6a757c2bee5fd8fa1db8c874869259acef3483829d239c3b2f",
+      "artifacts/phase-0/soak-run-log.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "all_archived_file_hashes": {
+      "artifacts/phase-0/batch-migration-p0-20260801-b.json": "bd33ed1dc9e9b3c8354ae5bec7b21555bebf957e008888a2660640c5647f6240",
+      "artifacts/phase-0/clock-check-p0-04.json": "dcb1b3ce624d25dc926d7f4f86babfb26d01e337fcaf3c1d39e21f69eeb30d29",
+      "artifacts/phase-0/coverage-report.json": "ea2a9c1d4570c5860a4576725e93a75d5968c515704af515fcbbc4f0e6c0d461",
+      "artifacts/phase-0/environment-lock.json": "6942d13330fc564b8d43d963ac1604c638f7f43d1c510164315eae03755baaa0",
+      "artifacts/phase-0/evidence-manifest.jsonl": "110f43b4482ddc332b6762795c2ca7f5edb36a2c679a2f1e2d5dfad17bf66877",
+      "artifacts/phase-0/field-contract.json": "7fdf09712307f9de73134c0f8e392991dbca6dea9199ff7322feb1a8470e79d2",
+      "artifacts/phase-0/normalized/p0-04-dlt-2026050.json": "046843a873bbd4adfe99d5c2d742ef30b24d9f376f0027965fe02cf331542d06",
+      "artifacts/phase-0/observation-plan.json": "417279486152230fa931e6f1326bc8acc4818428a1da1c9a83eaa5d2c83a7c4e",
+      "artifacts/phase-0/p0-04-evidence-migration-p0-20260801-b.json": "63e1582ee4a9e7d0a8980adf59a5d332affb844c9cb0f0c0695461a338fc7b88",
+      "artifacts/phase-0/p0-05-work-plan.json": "dc374eb1e501a2621e50f2b5dbc9a900bca0b8aaeb75ef67242877b1ca2e1ec4",
+      "artifacts/phase-0/p0-06-runtime-plan.json": "afce77bfc40130dd6ffa9f0a22f3487817557c21f4f262210a6f84951715eede",
+      "artifacts/phase-0/p0-06-runtime-plan.json.sha256": "5117c427423f68efa0977c8a12fd976d61acc69d96c419f8af5ebb30219f2f32",
+      "artifacts/phase-0/p0-06-scheduler-install-audit.json": "e00b1e5ad314cb6a757c2bee5fd8fa1db8c874869259acef3483829d239c3b2f",
+      "artifacts/phase-0/parsed/p0-04-dlt-2026050.json": "90c27c5a709082d99ad01b682ab5036c632c6c82723e62d8cfbe1eaef5625024",
+      "artifacts/phase-0/raw/p0-04-dlt-2026050.html": "89cd32a94313086fa9a7d5a039d21566934b23b72d4268fe2eb7b725147718ad",
+      "artifacts/phase-0/reconciliation.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "artifacts/phase-0/reviewer-assignment.json": "6bb1bf78cfaf3f899d0782e56ae465f59601dfdad90292d296ac08cab08a01f2",
+      "artifacts/phase-0/rule-bundles.json": "30d365020d7f858adf7b419773f0db9febad32a07623875a4206ca3160296164",
+      "artifacts/phase-0/schemas/coverage-report.schema.json": "0bca65181ae31cc05d7403367d9b138ccda4f8a0a694b97459a568b36895c9fd",
+      "artifacts/phase-0/schemas/environment-lock.schema.json": "bf65f4404e01f0f0b9423329dd272ff2a7b2655c332e9fc224f4e88145c17571",
+      "artifacts/phase-0/schemas/evidence-manifest.schema.json": "ecbcaa817baa59ab7ceec22d0183e2ff9332507fc76406813c6ec98802ac026c",
+      "artifacts/phase-0/schemas/field-contract.schema.json": "7a9dc7a8a784721ccfd3e567c025e440aca67513829917652c205cd86b1d09ab",
+      "artifacts/phase-0/schemas/normalized-records.schema.json": "2babe349f17ff714fa4daae80549419157d9e5f272816938f22f522ad502b78e",
+      "artifacts/phase-0/schemas/observation-plan.schema.json": "9fcde1f275570ccffa99b60410bb64f7419965cb306b054ceac64a2f256f21bc",
+      "artifacts/phase-0/schemas/p0-04-evidence-migration.schema.json": "af2761b04f9c81c026998c5865fc5e350327d6eb4233c41648e962a20cde6bf9",
+      "artifacts/phase-0/schemas/p0-05-work-plan.schema.json": "21aaede4f3838c3d1acd18b52d5b667fcb72523284b9b5e634480e90862a04cf",
+      "artifacts/phase-0/schemas/p0-06-runtime-plan.schema.json": "d07aa1a41b8cd0830c77c804e8ede9fa448a8113dbb3c2460d61fd6b825f5012",
+      "artifacts/phase-0/schemas/p0-06-scheduler-install-audit.schema.json": "8470103750837d8d9d06c39c34c5bf54591265383a06d53a8f43eab19a9e01a6",
+      "artifacts/phase-0/schemas/reconciliation.schema.json": "95eed8851c56c818da9d67d5db58a559079af34ec0ff85e40ef625646dc74671",
+      "artifacts/phase-0/schemas/replay-report.schema.json": "86332ba33f83c9ba130d56cb1d7c4d2ccbf585d2cd078f44b62383bcc397fb13",
+      "artifacts/phase-0/schemas/reviewer-assignment.schema.json": "565f61a23a40303a01ddc566d3186cb623295cad709ec9e8770cfff7755dbc6f",
+      "artifacts/phase-0/schemas/reviewer-attestation.schema.json": "aad9d560cb6bbfdf52c692f53f1adfa7771e3a07300d550ae6a8f2c1e4af67b5",
+      "artifacts/phase-0/schemas/revision-report.schema.json": "a86bd2e5832ad3a99fd85d0cea2026037b647fccae48733884fa3fc817e9ac7d",
+      "artifacts/phase-0/schemas/rule-bundles.schema.json": "e84e4134637ec9e4786d516adf831127babecbb8011833175a9f1804543f72de",
+      "artifacts/phase-0/schemas/scope-freeze.schema.json": "ba2ebe0eb84409357ddc260b8a593e2b36dcd3180f65eb9a7bc497702ec70363",
+      "artifacts/phase-0/schemas/soak-log.schema.json": "db38cce5f9b412a6d23dba454299ad20747fb127543ff1ca772e2ef164fa4cd7",
+      "artifacts/phase-0/schemas/source-catalog.schema.json": "5d6a296c5be110453ab6bf737a011b35508e7ac6d6489086c8411ed132560c45",
+      "artifacts/phase-0/schemas/stage1-handoff-fixture.schema.json": "af176a62b2feedfbef600da7207ba1636dac0d7a70342b6fefa20271003b1922",
+      "artifacts/phase-0/schemas/verification-command.schema.json": "ec916a18abe23cc24f5feb5f84646a4233f33d365b53d4e6400ca7ac3313e417",
+      "artifacts/phase-0/scope-freeze.json": "eb815e03d1f51f0c0ca8bd91dea1ab57b14d08bc654c4b1869564129655f6d34",
+      "artifacts/phase-0/soak-run-log.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "artifacts/phase-0/source-catalog.json": "cbafa54df87ab3ad3a2856c86f34f8accb20d2dec6be634077eda4097706a1d0",
+      "artifacts/phase-0/verification-command.json": "bbddcb6e34dd86bc4e40509e085f1f5484114c118396d3a5c33e49087fa4c6aa",
+      "artifacts/phase-0/verification-command.json.sha256": "2b3eba73ad2eb48112c95573317d36d2c7527b38c150875444b6d0f7fd743f5b",
+      "docs/roadmap/phase-0-acceptance-contract.json": "784ff08ba44925ddb668834140dc5f9841b6dd3966789efac935fb3c8ca80c12",
+      "docs/roadmap/phase-0-data-feasibility-plan.md": "9769748c90f4aeeb1f18f764d76f65a947d3148be70f1e72819eb6890774ea6a",
+      "scripts/phase0/hash_artifact.py": "1c781689a770ea7090520ccceecd9431194e6e6acc90ba56399b089b871a627a",
+      "scripts/phase0/install_p0_06_scheduled_task.ps1": "46c2219e7edea4f1655681c088c80aa52778667e50a9df7885c6245cbb566fe5",
+      "scripts/phase0/p0_04_http.py": "d5ad991d59277424dd9e4bb23fce2ebbd611ccd70a443a343c43d573d92858b2",
+      "scripts/phase0/p0_04_parser.py": "8b2bd3ef955c8f3a201480f9642ca01dd9dcefa193d9ce241e324810c17fde43",
+      "scripts/phase0/p0_04_pipeline.py": "30dcd5ad0d40b99998b50cceab77a3a30da930f30c323da624ed41101ed66013",
+      "scripts/phase0/p0_06_runner.py": "3ded6d7ebfbb019589be9bc2bbfcd933b506092b39154387c2e1b696be2dc053",
+      "scripts/phase0/phase0lib.py": "6f67b83351123e0a9174f6495bdf49e977bb64820087e9c42c9ad36796ebaa3b",
+      "scripts/phase0/verify_phase0.ps1": "2f95cd1a4a64d0e1dc567909159d245b3775c5d302fd380d289e121bce545d0e",
+      "scripts/phase0/verify_phase0.py": "2b550852146a154876c97b88f52b41d8d53332798755a35fd0a68b098fa19875"
+    },
+    "schema_count": 21,
+    "frozen_tool_count": 9,
+    "soak_log_bytes": 0
+  },
+  "after": {
+    "status": "captured_pending_independent_review",
+    "recorded_at_utc": "2026-08-01T13:30:47.121974Z",
+    "snapshot_manifest_path": "artifacts/phase-0/batches/p0-20260801-c-after/snapshot-manifest.json",
+    "snapshot_manifest_sha256": "932df819b68189b6324fd53513b3deab8b50df2b548fb0d4eb1e92517f67f178",
+    "decision_surface_sha256": "d772e1a4d26c916b8866f6692c96280787a731e3c96d528d83ac9689ae9fce91",
+    "verification_command_sha256": "21083d14b96ccd854d19537ae8f9a11b273f65f40a836d1f48d01e59f3cc646a",
+    "changed_files": {
+      "path": "artifacts/phase-0/batches/p0-20260801-c-after/changed-files.json",
+      "sha256": "284c4d29922d9663fde459112946fc4730089f2e8e6b0fb52b47de383378ad96",
+      "counts": {
+        "added": 48,
+        "modified": 9,
+        "removed": 0,
+        "total": 57
+      }
+    }
+  },
+  "tests": {
+    "status": "passed_pending_independent_review",
+    "phase_gate_stages": [
+      "p0-01",
+      "p0-02",
+      "p0-03",
+      "p0-05",
+      "p0-06"
+    ],
+    "phase_gate_exit_codes": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "unittest_command": "python -B -m unittest discover -s tests/phase0 -p test_*.py -q",
+    "unittest_count": 160,
+    "unittest_exit_code": 0,
+    "replay_before_cutoff": {
+      "status": "HOLD",
+      "exit_code": 1,
+      "network_used": false,
+      "file_diff_count": 0,
+      "directory_diff_count": 0,
+      "artifact_tree_before_sha256": "f9a3837bcef6b6be05b79def1ef04d9401ed2ac9d0efb8461cc99a19ae5f1df8",
+      "artifact_tree_after_sha256": "f9a3837bcef6b6be05b79def1ef04d9401ed2ac9d0efb8461cc99a19ae5f1df8"
+    }
+  },
+  "reviewer": {
+    "status": "pending",
+    "reviewer_id": "/root/phase0_reviewer",
+    "attestation_path": null,
+    "conclusion": null
+  }
+}

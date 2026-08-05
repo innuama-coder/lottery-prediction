@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase2_reviewer_assignment",
+  "status": "frozen",
+  "frozen_at_utc": "2026-08-05T00:08:00Z",
+  "minimum_independence_level": "procedural_agent_independence",
+  "assignments": [
+    {
+      "role": "phase_decision_owner",
+      "identity": "thread-user-explicit-phase2-authorization-20260805",
+      "responsibility": "authorize Phase 2 scope, independent subagents and continuation through final acceptance",
+      "independence_level": "not_applicable",
+      "conflict_declaration": "decision authorization only; no formal Phase 2 artifact authorship attributed",
+      "authored_artifact_paths": [],
+      "signature": {"signed": true, "signed_at_utc": "2026-08-05T00:08:00Z", "signature_type": "procedural_attestation"}
+    },
+    {
+      "role": "data_custodian",
+      "identity": "codex-root-data-custodian-20260805",
+      "responsibility": "attest Phase 1 frozen identities, counts and immutable baseline handoff",
+      "independence_level": "not_applicable",
+      "conflict_declaration": "may share root execution context; no conflict is forbidden for this role",
+      "authored_artifact_paths": ["artifacts/phase-2/contracts/input-manifest.json"],
+      "signature": {"signed": true, "signed_at_utc": "2026-08-05T00:08:00Z", "signature_type": "procedural_attestation"}
+    },
+    {
+      "role": "statistical_research_owner",
+      "identity": "codex-root-statistical-owner-20260805",
+      "responsibility": "own null hypotheses, tests, effect estimands, grids and preregistration",
+      "independence_level": "not_applicable",
+      "conflict_declaration": "will not act as method, replay or final acceptance reviewer",
+      "authored_artifact_paths": ["docs/research/phase-2-input-rule-and-time-contract.md", "artifacts/phase-2/contracts/preregistration.json", "artifacts/phase-2/results/historical-audit.json", "artifacts/phase-2/results/power-envelope.json"],
+      "signature": {"signed": true, "signed_at_utc": "2026-08-05T00:08:00Z", "signature_type": "procedural_attestation"}
+    },
+    {
+      "role": "research_tool_implementer",
+      "identity": "codex-root-tool-implementer-20260805",
+      "responsibility": "implement schemas, offline CLI, statistical engine, tests and qualification harness",
+      "independence_level": "not_applicable",
+      "conflict_declaration": "will not act as method, replay or final acceptance reviewer",
+      "authored_artifact_paths": ["src/lottery_research/phase2", "schemas/phase2", "tests/phase2", "tests/phase2_cli_contract"],
+      "signature": {"signed": true, "signed_at_utc": "2026-08-05T00:08:00Z", "signature_type": "procedural_attestation"}
+    },
+    {
+      "role": "independent_method_reviewer",
+      "identity": "/root/method_review",
+      "responsibility": "independently review frozen methods before any formal historical result exists",
+      "independence_level": "procedural_agent_independence",
+      "conflict_declaration": "distinct task and agent identity; no authorship of D2-01 through D2-04 or implementation",
+      "authored_artifact_paths": ["artifacts/phase-2/reviews/method-review.json"],
+      "signature": {"signed": true, "signed_at_utc": "2026-08-05T00:08:00Z", "signature_type": "procedural_attestation"}
+    },
+    {
+      "role": "independent_replay_reviewer",
+      "identity": "/root/replay_review",
+      "responsibility": "independently replay frozen audit and power evidence with reserved seeds and reference calculations",
+      "independence_level": "procedural_agent_independence",
+      "conflict_declaration": "distinct task and agent identity; no authorship of statistical methods, tools or source results",
+      "authored_artifact_paths": ["artifacts/phase-2/replay", "artifacts/phase-2/reviews/replay-review.json"],
+      "signature": {"signed": true, "signed_at_utc": "2026-08-05T00:08:00Z", "signature_type": "procedural_attestation"}
+    },
+    {
+      "role": "final_acceptance_reviewer",
+      "identity": "/root/final_review",
+      "responsibility": "independently verify evidence closure, gates, E2E results and Phase 2 claim boundaries",
+      "independence_level": "procedural_agent_independence",
+      "conflict_declaration": "distinct task and agent identity; no authorship of D2-01 through D2-12",
+      "authored_artifact_paths": ["artifacts/phase-2/acceptance/phase2-acceptance.json"],
+      "signature": {"signed": true, "signed_at_utc": "2026-08-05T00:08:00Z", "signature_type": "procedural_attestation"}
+    }
+  ]
+}

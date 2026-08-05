@@ -1,0 +1,8 @@
+{
+  "checked_at_utc": "2026-08-01T04:03:33Z",
+  "source": "time.windows.com/w32tm",
+  "offset_seconds": 2,
+  "maximum_offset_seconds": 5,
+  "passed": true,
+  "raw_result_sha256": "2a1e4b4a609e01325fdf6291beb00896f79f53d2a435b5fc30157e64564b1302"
+}

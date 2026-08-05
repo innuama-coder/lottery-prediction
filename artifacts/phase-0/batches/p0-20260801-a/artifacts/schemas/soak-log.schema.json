@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"urn:autoresearch-lotte:phase0:soak-log-entry:1.0.0","type":"object","additionalProperties":false,
+  "required":["schema_version","artifact_type","request_id","game","planned_at_utc","started_at_utc","completed_at_utc","clock_check_at_utc","clock_offset_seconds","attempts","result","failure_injection","evidence_ref"],
+  "properties":{"schema_version":{"const":"1.0.0"},"artifact_type":{"const":"soak_log_entry"},"request_id":{"type":"string","pattern":"^REQ-[A-Za-z0-9._-]+$"},"game":{"enum":["dlt","ssq"]},"planned_at_utc":{"type":"string","format":"date-time"},"started_at_utc":{"type":"string","format":"date-time"},"completed_at_utc":{"type":"string","format":"date-time"},"clock_check_at_utc":{"type":"string","format":"date-time"},"clock_offset_seconds":{"type":"integer"},"attempts":{"type":"integer","minimum":1},"result":{"enum":["verified","unavailable","unverified","conflicted","invalid"]},"failure_injection":{"enum":["none","timeout","http_200_empty","malformed_json","encoding_damage","dom_change","duplicate_payload"]},"evidence_ref":{"type":"string","minLength":1}}
+}

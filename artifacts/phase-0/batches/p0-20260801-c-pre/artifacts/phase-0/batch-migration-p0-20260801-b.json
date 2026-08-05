@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase0_batch_migration",
+  "from_batch_id": "p0-20260801-a",
+  "to_repair_layer_id": "p0-20260801-b",
+  "recorded_at_utc": "2026-08-01T03:11:36.9055470Z",
+  "migration_kind": "machine_contract_repair_without_decision_surface_change",
+  "prior_source_observation_disclosed": true,
+  "prior_observations": [
+    "DLT national official endpoints returned HTTP 567 in the batch-A execution environment.",
+    "SSQ national official endpoints returned HTTP 403 in the batch-A execution environment.",
+    "Guangdong official provincial DLT and SSQ pages returned HTTP 200 in low-frequency probes."
+  ],
+  "archive": {
+    "manifest_path": "artifacts/phase-0/batches/p0-20260801-a/snapshot-manifest.json",
+    "manifest_sha256": "fb4c00754ceddc998684f0b4781cb4060899687ac2525f88ee42ffe41a3097a0",
+    "all_archived_files_match": true,
+    "mismatches": []
+  },
+  "inherited_frozen_inputs": {
+    "scope-freeze.json": {
+      "batch_a_sha256": "eb815e03d1f51f0c0ca8bd91dea1ab57b14d08bc654c4b1869564129655f6d34",
+      "repair_layer_b_sha256": "eb815e03d1f51f0c0ca8bd91dea1ab57b14d08bc654c4b1869564129655f6d34",
+      "identical": true
+    },
+    "observation-plan.json": {
+      "batch_a_sha256": "417279486152230fa931e6f1326bc8acc4818428a1da1c9a83eaa5d2c83a7c4e",
+      "repair_layer_b_sha256": "417279486152230fa931e6f1326bc8acc4818428a1da1c9a83eaa5d2c83a7c4e",
+      "identical": true
+    },
+    "reviewer-assignment.json": {
+      "batch_a_sha256": "6bb1bf78cfaf3f899d0782e56ae465f59601dfdad90292d296ac08cab08a01f2",
+      "repair_layer_b_sha256": "6bb1bf78cfaf3f899d0782e56ae465f59601dfdad90292d296ac08cab08a01f2",
+      "identical": true
+    }
+  },
+  "decision_surface": {
+    "algorithm": "SHA-256 over UTF-8 sorted-key compact JSON projection",
+    "batch_a_sha256": "d7959ea51e11bbaea95e1b5b4912aef310be39b65b1ca573fe3bdb7f092949bf",
+    "repair_layer_b_sha256": "d7959ea51e11bbaea95e1b5b4912aef310be39b65b1ca573fe3bdb7f092949bf",
+    "identical": true
+  },
+  "allowed_change_classes": [
+    "normalized time nullability and verified-state constraints",
+    "source-level access and permission evidence structure",
+    "rule evidence/version/state-machine registries",
+    "semantic verifier and failure-injection tests",
+    "repair-layer verification command hashes",
+    "P0-02/P0-03 artifacts migrated to the corrected schemas"
+  ],
+  "forbidden_changes": [
+    "target or minimum interval",
+    "sample seed, universe, selected issues or sample size",
+    "request schedule, retry/rate/resource budget or cutoff",
+    "reviewer identity or role separation",
+    "hard-gate standards, fail conditions or decision order",
+    "backfilling a missed scheduled request as on-time"
+  ],
+  "defects": [
+    {
+      "defect_id": "P0-A-TIME-001",
+      "root_cause": "The normalized schema required a non-null actual draw timestamp even when official history only evidenced a local draw date.",
+      "required_fix": "Represent draw_date_local explicitly, make draw_at nullable, and reject fabricated actual times."
+    },
+    {
+      "defect_id": "P0-A-SOURCE-001",
+      "root_cause": "The source schema represented an HTTP method but not observed reachability, approved use, or source-level compliance evidence.",
+      "required_fix": "Add source-level observed_access, approved_use, evidence references, rate policy and owner/review fields."
+    },
+    {
+      "defect_id": "P0-A-RULE-001",
+      "root_cause": "Rule labels and bare URLs lacked a stable semantic registry and state-machine evidence path.",
+      "required_fix": "Add version, promotion/state-machine and stable evidence registries plus semantic verification."
+    }
+  ],
+  "migration_gate_pass": true
+}

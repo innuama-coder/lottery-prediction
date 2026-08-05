@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase2_method_review_erratum",
+  "status": "PASS",
+  "reviewer_identity": "/root/method_review",
+  "review_context": {
+    "timing": "post_result",
+    "historical_results_known_to_reviewer": true,
+    "blind_or_pre_result_review_claimed": false,
+    "scope": "Editorial correction to one review rationale; the original signed pre-result D2-05 remains immutable."
+  },
+  "original_method_review": {
+    "path": "artifacts/phase-2/reviews/method-review.json",
+    "sha256": "3b84133f2e7e245825a7ee493fad32309ef04ca068dbc4f80e194e146b5c71b1",
+    "signed_at_utc": "2026-08-05T05:09:56Z",
+    "preserved_without_modification": true
+  },
+  "correction": {
+    "target": "method_verdicts[id=M-CAL-04-SEMANTICS].rationale",
+    "incorrect_text": "CAL-04 counts only negative controls promoted to candidate_signal; raw negative-control rejection remains reported and contributes to CAL-01.",
+    "correct_text": "CAL-04 counts only negative controls promoted to candidate_signal; raw negative-control rejections are reported separately as diagnostics and do not enter CAL-01 under P2-A01.",
+    "error_class": "review_rationale_contradicted_effective_pre-G0-amendment",
+    "root_cause": "The review rationale repeated the superseded base-contract CAL-04 note instead of applying the effective P2-A01 override already frozen and implemented downstream."
+  },
+  "reviewed_identities": [
+    {"path": "artifacts/phase-2/reviews/method-review.json", "sha256": "3b84133f2e7e245825a7ee493fad32309ef04ca068dbc4f80e194e146b5c71b1"},
+    {"path": "artifacts/phase-2/contracts/pre-g0-contract-amendment.json", "sha256": "ce53ff97eefd6d7bc2e758077b4bee63eccfcdd23c89c835bfc5644d7ace7016"},
+    {"path": "artifacts/phase-2/contracts/preregistration.json", "sha256": "fc7d456bf33afc5cc815c56da1683b5b45d2b08f359c26c5f3ed25140dbf9ec7"},
+    {"path": "src/lottery_research/phase2/formal_workflows.py", "sha256": "1a099a316b661ef3f7ceb3c0b05bae097ea7b8b7ac16430d9972cb8fe7c69ae3"},
+    {"path": "artifacts/phase-2/results/power-envelope.json", "sha256": "f53b1bd17341cf3e9ded0d664ef328d7422dd6148cb14478e21ba30026ead3d4"},
+    {"path": "docs/research/phase-2-randomness-audit-power-envelope.md", "sha256": "048702b9ee524e9dd08374a0b0e774f257e4100d6cf39dcd06f12c96fb6b91d5"}
+  ],
+  "fact_checks": [
+    {
+      "id": "ERR-CAL04-P2-A01",
+      "status": "PASS",
+      "evidence": "P2-A01 says raw negative-control rejections are fully reported as diagnostics, do not enter CAL-01, and can never become candidate signals."
+    },
+    {
+      "id": "ERR-CAL04-PREREGISTRATION",
+      "status": "PASS",
+      "evidence": "The preregistration fixes the Holm and CAL-01 family at exactly ten primary game-family decisions and classifies negative controls separately."
+    },
+    {
+      "id": "ERR-CAL04-IMPLEMENTATION",
+      "status": "PASS",
+      "evidence": "formal_workflows builds the CAL-01 p-value matrix only from ten primary_keys and computes negative-control p-values in a separate diagnostic loop."
+    },
+    {
+      "id": "ERR-CAL04-RESULT",
+      "status": "PASS",
+      "evidence": "The formal power result reports family_size=10, CAL-04=0, negative_control_candidate_promotions=0, and twelve separate negative-control diagnostic rows."
+    },
+    {
+      "id": "ERR-CAL04-REPORT",
+      "status": "PASS",
+      "evidence": "D2-11 reports CAL-04 as the number of negative controls promoted to candidate signal and gives the observed value zero."
+    }
+  ],
+  "impact_assessment": {
+    "correction_type": "editorial_review_rationale_only",
+    "method_changed": false,
+    "thresholds_changed": false,
+    "seeds_changed": false,
+    "effect_grids_changed": false,
+    "sample_size_grids_changed": false,
+    "implementation_changed": false,
+    "results_changed": false,
+    "report_changed": false,
+    "phase_signal_or_delivery_verdict_changed": false
+  },
+  "blocking_findings": [],
+  "unresolved_nonblocking_findings": [],
+  "signature": {
+    "signed": true,
+    "signed_at_utc": "2026-08-05T07:59:45Z"
+  }
+}

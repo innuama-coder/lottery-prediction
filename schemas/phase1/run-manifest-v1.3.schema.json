@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autoresearch-lotte.local/schemas/phase1/run-manifest-v1.3.schema.json",
+  "title": "RunManifestLiveV1.3",
+  "description": "Write-once live-incremental manifest with exactly four static history requests and no dynamic child authorization.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_schema_version", "run_id", "mode", "source_mode", "started_at_utc",
+    "artifacts_root", "previous_release_id", "games", "request_plan", "config_files",
+    "schema_bundle_sha256", "pipeline_bundle_sha256", "python_version",
+    "bootstrap_snapshot", "incremental_watermark", "publish_policy", "replay_of_run_id"
+  ],
+  "properties": {
+    "run_schema_version": {"const": "1.3.0"},
+    "run_id": {"$ref": "#/$defs/runId"},
+    "mode": {"const": "incremental"},
+    "source_mode": {"const": "live"},
+    "started_at_utc": {"$ref": "#/$defs/utcTimestamp"},
+    "artifacts_root": {"type": "string", "minLength": 1},
+    "previous_release_id": {"$ref": "#/$defs/releaseId"},
+    "games": {"type": "array", "const": ["ssq", "dlt"]},
+    "request_plan": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "prefixItems": [
+        {"$ref": "#/$defs/ydniuSsq"},
+        {"$ref": "#/$defs/swlcSsq"},
+        {"$ref": "#/$defs/ydniuDlt"},
+        {"$ref": "#/$defs/gdlotteryDlt"}
+      ],
+      "items": false
+    },
+    "config_files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/hashedRef"}},
+    "schema_bundle_sha256": {"$ref": "#/$defs/sha256"},
+    "pipeline_bundle_sha256": {"$ref": "#/$defs/sha256"},
+    "python_version": {"type": "string", "pattern": "^3\\.12(?:\\.[0-9]+)?$"},
+    "bootstrap_snapshot": {"type": "null"},
+    "incremental_watermark": {"$ref": "#/$defs/incrementalWatermark"},
+    "publish_policy": {"$ref": "#/$defs/publishPolicy"},
+    "replay_of_run_id": {"type": "null"}
+  },
+  "$defs": {
+    "runId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "releaseId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "issueId": {"type": "string", "pattern": "^20[0-9]{5}$"},
+    "utcTimestamp": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "relativeRef": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\.\\.)(?!.*\\\\).+$"},
+    "hashedRef": {
+      "type": "object", "additionalProperties": false, "required": ["ref", "sha256"],
+      "properties": {"ref": {"$ref": "#/$defs/relativeRef"}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "htmlProfile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["expected_media_type", "max_response_bytes"],
+      "properties": {
+        "expected_media_type": {"const": "text/html"},
+        "max_response_bytes": {"const": 1048576}
+      }
+    },
+    "json2MiBProfile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["expected_media_type", "max_response_bytes"],
+      "properties": {
+        "expected_media_type": {"const": "application/json"},
+        "max_response_bytes": {"const": 2097152}
+      }
+    },
+    "ydniuSsq": {
+      "type": "object", "additionalProperties": false,
+      "required": ["request_id", "sequence", "source_id", "publisher_id", "game", "method", "url", "request_kind", "parser_id", "parser_version", "response_profile"],
+      "properties": {
+        "request_id": {"const": "live-ydniu-ssq-history"}, "sequence": {"const": 1},
+        "source_id": {"const": "ydniu"}, "publisher_id": {"const": "ydniu-publisher"},
+        "game": {"const": "ssq"}, "method": {"const": "GET"},
+        "url": {"const": "https://www.ydniu.com/open/ssq-500/1.html"}, "request_kind": {"const": "history"},
+        "parser_id": {"const": "phase1-ydniu-parser"}, "parser_version": {"const": "1.0.0"},
+        "response_profile": {"$ref": "#/$defs/htmlProfile"}
+      }
+    },
+    "swlcSsq": {
+      "type": "object", "additionalProperties": false,
+      "required": ["request_id", "sequence", "source_id", "publisher_id", "game", "method", "url", "request_kind", "parser_id", "parser_version", "response_profile"],
+      "properties": {
+        "request_id": {"const": "live-swlc-ssq-history"}, "sequence": {"const": 2},
+        "source_id": {"const": "swlc"}, "publisher_id": {"const": "swlc-publisher"},
+        "game": {"const": "ssq"}, "method": {"const": "GET"},
+        "url": {"const": "https://www.swlc.net.cn/shsflcpfxzx/lottery/ssq.html?view=previous&limit=30"}, "request_kind": {"const": "history"},
+        "parser_id": {"const": "phase1-swlc-live-parser"}, "parser_version": {"const": "1.0.0"},
+        "response_profile": {"$ref": "#/$defs/htmlProfile"}
+      }
+    },
+    "ydniuDlt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["request_id", "sequence", "source_id", "publisher_id", "game", "method", "url", "request_kind", "parser_id", "parser_version", "response_profile"],
+      "properties": {
+        "request_id": {"const": "live-ydniu-dlt-history"}, "sequence": {"const": 3},
+        "source_id": {"const": "ydniu"}, "publisher_id": {"const": "ydniu-publisher"},
+        "game": {"const": "dlt"}, "method": {"const": "GET"},
+        "url": {"const": "https://www.ydniu.com/open/dlt-500/1.html"}, "request_kind": {"const": "history"},
+        "parser_id": {"const": "phase1-ydniu-parser"}, "parser_version": {"const": "1.0.0"},
+        "response_profile": {"$ref": "#/$defs/htmlProfile"}
+      }
+    },
+    "gdlotteryDlt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["request_id", "sequence", "source_id", "publisher_id", "game", "method", "url", "request_kind", "parser_id", "parser_version", "response_profile"],
+      "properties": {
+        "request_id": {"const": "live-gdlottery-dlt-history"}, "sequence": {"const": 4},
+        "source_id": {"const": "gdlottery"}, "publisher_id": {"const": "gdlottery-publisher"},
+        "game": {"const": "dlt"}, "method": {"const": "GET"},
+        "url": {"const": "https://www.gdlottery.cn/f_html/kjgg/gameNumber.json"}, "request_kind": {"const": "history"},
+        "parser_id": {"const": "phase1-gdlottery-history-parser"}, "parser_version": {"const": "1.0.0"},
+        "response_profile": {"$ref": "#/$defs/json2MiBProfile"}
+      }
+    },
+    "incrementalWatermark": {
+      "type": "object", "additionalProperties": false,
+      "required": ["current_release_id", "latest_issue_by_game", "recheck_published_issues"],
+      "properties": {
+        "current_release_id": {"$ref": "#/$defs/releaseId"},
+        "latest_issue_by_game": {
+          "type": "object", "additionalProperties": false, "required": ["ssq", "dlt"],
+          "properties": {"ssq": {"$ref": "#/$defs/issueId"}, "dlt": {"$ref": "#/$defs/issueId"}}
+        },
+        "recheck_published_issues": {"const": 20}
+      }
+    },
+    "publishPolicy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["lock_ref", "compare_and_swap", "atomic_release_rename", "atomic_pointer_replace"],
+      "properties": {
+        "lock_ref": {"$ref": "#/$defs/relativeRef"}, "compare_and_swap": {"const": true},
+        "atomic_release_rename": {"const": true}, "atomic_pointer_replace": {"const": true}
+      }
+    }
+  }
+}

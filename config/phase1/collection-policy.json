@@ -1,0 +1,33 @@
+{
+  "policy_schema_version": "1.0.0",
+  "reviewed_at": "2026-08-02",
+  "scope": "Phase 1 internal research; production collection and redistribution require separate review",
+  "recheck_published_issues": 20,
+  "max_pages_per_run_per_game": 3,
+  "request_timeout_seconds": 30,
+  "max_attempts_per_request": 1,
+  "inter_request_delay_seconds": 0.75,
+  "normal_source_pair": ["ydniu", "eastmoney"],
+  "source_pair_publisher_rule": "selected source ids must map to different publisher ids",
+  "additional_observation_rule": "retain agreeing extras in run reconciliation; any dissent blocks publication",
+  "on_source_failure": "reject_run",
+  "on_unresolved_issue": "reject_run",
+  "fallback_rule": "only an explicitly approved issue fallback below may be used",
+  "approved_issue_fallbacks": [
+    {
+      "rule_id": "dlt-2026026-gdlottery-v1",
+      "game": "dlt",
+      "issue_id": "2026026",
+      "source_pair": ["ydniu", "gdlottery"],
+      "missing_source_id": "eastmoney"
+    },
+    {
+      "rule_id": "dlt-2026027-gdlottery-v1",
+      "game": "dlt",
+      "issue_id": "2026027",
+      "source_pair": ["ydniu", "gdlottery"],
+      "missing_source_id": "eastmoney"
+    }
+  ],
+  "known_limit": "Automatic correction discovery beyond the 20 most recent published issues is not guaranteed."
+}

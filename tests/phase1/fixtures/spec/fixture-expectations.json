@@ -1,0 +1,29 @@
+{
+  "coverage_requirements": {
+    "DatasetRelease": {"schema": "dataset-release.schema.json", "minimum_valid": 1, "minimum_invalid": 1},
+    "DrawRecord": {"schema": "draw-record.schema.json", "minimum_valid": 1, "minimum_invalid": 1},
+    "RunEvent": {"schema": "run-event.schema.json", "minimum_valid": 1, "minimum_invalid": 1},
+    "RunManifest": {"schema": "run-manifest.schema.json", "minimum_valid": 1, "minimum_invalid": 1},
+    "RunResult": {"schema": "run-result.schema.json", "minimum_valid": 1, "minimum_invalid": 1},
+    "SourceObservation": {"schema": "source-observation.schema.json", "minimum_valid": 1, "minimum_invalid": 1}
+  },
+  "fixtures": {
+    "invalid/dataset-release-rejected.json": {"object_type":"DatasetRelease","schema":"dataset-release.schema.json","schema_valid":false,"semantic_valid":null,"valid":false,"covers":["constant-status"]},
+    "invalid/draw-record-bad-evidence.json": {"object_type":"DrawRecord","schema":"draw-record.schema.json","schema_valid":false,"semantic_valid":null,"valid":false,"covers":["independent-publisher-evidence"]},
+    "invalid/draw-record-bad-revision-id.json": {"object_type":"DrawRecord","schema":"draw-record.schema.json","schema_valid":true,"semantic_valid":false,"valid":false,"covers":["derived-revision-id"]},
+    "invalid/run-event-bad-event-id.json": {"object_type":"RunEvent","schema":"run-event.schema.json","schema_valid":true,"semantic_valid":false,"valid":false,"covers":["derived-event-id"]},
+    "invalid/run-event-request-missing-attempt.json": {"object_type":"RunEvent","schema":"run-event.schema.json","schema_valid":false,"semantic_valid":null,"valid":false,"covers":["conditional-required-field"]},
+    "invalid/run-manifest-bad-mode-combination.json": {"object_type":"RunManifest","schema":"run-manifest.schema.json","schema_valid":false,"semantic_valid":null,"valid":false,"covers":["illegal-mode-condition-combination"]},
+    "invalid/run-result-bad-terminal.json": {"object_type":"RunResult","schema":"run-result.schema.json","schema_valid":false,"semantic_valid":null,"valid":false,"covers":["terminal-status-exit-code"]},
+    "invalid/run-result-type-error.json": {"object_type":"RunResult","schema":"run-result.schema.json","schema_valid":false,"semantic_valid":null,"valid":false,"covers":["generic-type-error"]},
+    "invalid/source-observation-bad-core-hash.json": {"object_type":"SourceObservation","schema":"source-observation.schema.json","schema_valid":true,"semantic_valid":false,"valid":false,"covers":["core-fact-hash"]},
+    "invalid/source-observation-bad-numbers.json": {"object_type":"SourceObservation","schema":"source-observation.schema.json","schema_valid":false,"semantic_valid":null,"valid":false,"covers":["number-range"]},
+    "invalid/source-observation-duplicate-numbers.json": {"object_type":"SourceObservation","schema":"source-observation.schema.json","schema_valid":false,"semantic_valid":null,"valid":false,"covers":["duplicate-numbers"]},
+    "valid/dataset-release.json": {"object_type":"DatasetRelease","schema":"dataset-release.schema.json","schema_valid":true,"semantic_valid":true,"valid":true,"covers":["baseline-valid"]},
+    "valid/draw-record.json": {"object_type":"DrawRecord","schema":"draw-record.schema.json","schema_valid":true,"semantic_valid":true,"valid":true,"covers":["baseline-valid","derived-revision-id"]},
+    "valid/run-event-request-started.json": {"object_type":"RunEvent","schema":"run-event.schema.json","schema_valid":true,"semantic_valid":true,"valid":true,"covers":["baseline-valid","derived-event-id"]},
+    "valid/run-manifest.json": {"object_type":"RunManifest","schema":"run-manifest.schema.json","schema_valid":true,"semantic_valid":true,"valid":true,"covers":["baseline-valid"]},
+    "valid/run-result-published.json": {"object_type":"RunResult","schema":"run-result.schema.json","schema_valid":true,"semantic_valid":true,"valid":true,"covers":["baseline-valid"]},
+    "valid/source-observation.json": {"object_type":"SourceObservation","schema":"source-observation.schema.json","schema_valid":true,"semantic_valid":true,"valid":true,"covers":["baseline-valid","derived-observation-id"]}
+  }
+}

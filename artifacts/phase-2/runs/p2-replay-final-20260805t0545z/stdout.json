@@ -1,0 +1,1 @@
+{"artifact_type":"phase2_cli_result","checks":{},"command":"replay","errors":["unexpected preflight error: 'artifacts\\\\phase-2\\\\replay\\\\power-envelope-same-seed-replay.json' is not in the subpath of 'C:\\\\Users\\\\54256213\\\\Documents\\\\github\\\\autoresearch-lotte'"],"exit_code":4,"output_written":false,"schema_version":"1.0.0","terminal":"INVALID_CONTRACT"}

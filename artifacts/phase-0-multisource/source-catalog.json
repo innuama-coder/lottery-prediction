@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "reviewed_at": "2026-08-02",
+  "purpose": "Phase 0 internal data-feasibility research; no source-page republication",
+  "sources": [
+    {
+      "source_id": "ydniu",
+      "publisher": "深圳市傲雷科技发展有限公司",
+      "publisher_role": "professional lottery portal",
+      "truth_upstream_group": "national_official_draw_publication",
+      "collection_approved_for_phase0_internal_research": true,
+      "policy_basis": "Public history pages require no login; /open/ssq-500 and /open/dlt-500 are not disallowed by the observed robots.txt; low-rate snapshot only.",
+      "policy_evidence_urls": [
+        "https://www.ydniu.com/robots.txt",
+        "https://www.ydniu.com/about.aspx"
+      ],
+      "games": {
+        "ssq": {"pages": 9, "url_template": "https://www.ydniu.com/open/ssq-500/{page}.html"},
+        "dlt": {"pages": 9, "url_template": "https://www.ydniu.com/open/dlt-500/{page}.html"}
+      }
+    },
+    {
+      "source_id": "eastmoney",
+      "publisher": "东方财富信息股份有限公司",
+      "publisher_role": "major financial portal lottery channel",
+      "truth_upstream_group": "national_official_draw_publication",
+      "collection_approved_for_phase0_internal_research": true,
+      "policy_basis": "Public ordinary history pages require no login; the observed root robots.txt allows /; only five normal pages per game are captured at low rate for internal factual verification.",
+      "policy_evidence_urls": [
+        "https://www.eastmoney.com/robots.txt",
+        "https://about.eastmoney.com/about",
+        "https://about.eastmoney.com/home/disclaimer"
+      ],
+      "known_quality_limits": [
+        "The current page can lag newer issues.",
+        "An early DLT date defect exists outside the frozen recent-200 window; dates must be reconciled, not trusted alone."
+      ],
+      "games": {
+        "ssq": {"pages": 5, "url_template": "https://caipiao.eastmoney.com/Result/History/ssq?page={page}"},
+        "dlt": {"pages": 5, "url_template": "https://caipiao.eastmoney.com/Result/History/dlt?page={page}"}
+      }
+    },
+    {
+      "source_id": "gdlottery",
+      "publisher": "广东省体育彩票中心",
+      "publisher_role": "provincial official lottery publisher",
+      "truth_upstream_group": "national_official_draw_publication",
+      "collection_approved_for_phase0_internal_research": true,
+      "policy_basis": "Two ordinary static official announcement pages are fetched at low rate to resolve deterministic gaps in the portal archive; no bulk endpoint, login, or access-control bypass is used.",
+      "policy_evidence_urls": [
+        "https://www.gdlottery.cn/html/help/20210219/81472.html",
+        "https://www.gdlottery.cn/robots.txt"
+      ],
+      "fixed_requests": [
+        {"game": "dlt", "url": "https://www.gdlottery.cn/f_html/kjgg/P085_26026.html"},
+        {"game": "dlt", "url": "https://www.gdlottery.cn/f_html/kjgg/P085_26027.html"}
+      ]
+    }
+  ],
+  "excluded_sources": [
+    {
+      "source_id": "500star_bulk",
+      "reason": "The discovered /newinc/ bulk path is explicitly disallowed by robots.txt and was not used."
+    },
+    {
+      "source_id": "17500_api",
+      "reason": "The discovered /api/ path is explicitly disallowed by robots.txt and was not used."
+    },
+    {
+      "source_id": "gdfc_ssq_200",
+      "reason": "The official provincial page terms require authorization before reuse; it remains a manual spot-check candidate only."
+    }
+  ]
+}

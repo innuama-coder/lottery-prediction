@@ -1,0 +1,1460 @@
+{
+  "schema_version": "2.0",
+  "schema_path": "tasks/research/v1.0.0-lottery-autoresearch-roadmap/roadmap.schema.json",
+  "roadmap_id": "lottery-autoresearch-research-roadmap",
+  "status": "ready_to_start_task_001_p0_01",
+  "tooling_independent": true,
+  "purpose": "把彩票 Autoresearch 的研究路线分解为有明确入口、真实产物、直接验收方法、停止条件和下游交接的阶段；本路线图不依赖任何任务执行平台。",
+  "current_boundary": {
+    "included": [
+      "官方开奖数据可行性实证",
+      "数据与时间契约",
+      "随机性与统计功效研究",
+      "序贯评估协议",
+      "模型与特征研究",
+      "Autoresearch 治理设计",
+      "合成基准协议",
+      "前瞻影子验证协议",
+      "研究转 PRD/HLD 准入评审"
+    ],
+    "excluded": [
+      "生产系统实现",
+      "真实自动购彩",
+      "收益或中奖保证",
+      "把历史拟合解释为可逼近 100% 的预测能力"
+    ],
+    "truth_statement": "除 TASK-001 外，本路线图规划的是研究报告和协议，不声称这些报告所定义的未来系统、合成基准或前瞻影子期已经执行。TASK-001 是数据可行性实证任务，必须产生阶段 0 合同要求的机器证据。"
+  },
+  "source_documents": [
+    "docs/research/lottery-autoresearch-technical-strategy.md",
+    "docs/roadmap/phase-0-data-feasibility-plan.md",
+    "docs/roadmap/phase-0-acceptance-contract.json",
+    "用户确认的 roadmap 及阶段独立验收要求"
+  ],
+  "global_principles": [
+    "M0 均匀无放回模型永久保留为默认 Champion。",
+    "Top-1000 是输出和长期观察面，不是主要模型选择指标。",
+    "所有预测输入必须满足 point-in-time 可得性。",
+    "所有非均匀模型必须经合成基准和真实前瞻证据才能晋级。",
+    "研究协议、已执行证据和生产实现必须明确区分。",
+    "任务是否可开始只由领域依赖和入口条件决定，不由代码托管或任务调度工具决定。"
+  ],
+  "task_state_contract": {
+    "states": [
+      "planned",
+      "in_progress",
+      "passed",
+      "held",
+      "stopped",
+      "skipped_terminal"
+    ],
+    "allowed_transitions": {
+      "planned": [
+        "in_progress",
+        "skipped_terminal"
+      ],
+      "in_progress": [
+        "passed",
+        "held",
+        "stopped"
+      ],
+      "held": [
+        "in_progress",
+        "stopped"
+      ],
+      "passed": [],
+      "stopped": [],
+      "skipped_terminal": []
+    },
+    "terminal_evidence_rule": "held、stopped 和 skipped_terminal 都必须记录 run_id、原因、触发任务、证据路径、责任人和 UTC 时间；不得删除或覆盖历史状态事件。",
+    "resume_rule": "TASK-999 收口前 held 可在同一 run 转回 in_progress；TASK-999 收口后，任何补证或恢复必须创建新 run_id 和全新状态记录，旧 run 的 passed、stopped、skipped_terminal 记录保持不可变。"
+  },
+  "game_scope_contract": {
+    "source_task": "TASK-001",
+    "source_evidence": "artifacts/phase-0/stage1-handoff-fixture.json",
+    "games": [
+      "dlt",
+      "ssq"
+    ],
+    "eligible_outcomes": [
+      "PASS_FULL",
+      "PASS_LIMITED"
+    ],
+    "derivation": "active_games 只包含 TASK-001 结论为 PASS_FULL 或 PASS_LIMITED 的彩种；HOLD/STOP 彩种进入 excluded_games。",
+    "downstream_rule": "TASK-002 至 TASK-999 必须逐彩种声明 active_games、excluded_games、coverage_tier、corroboration_tier 和 evidence_ref；不得把一个彩种的结论推广到另一个彩种，也不得把 primary_only 或 shared_upstream 表述为独立佐证。",
+    "zero_active_games_rule": "如果 active_games 为空，立即触发终止 finalizer，TASK-002 至 TASK-008 标记 skipped_terminal。"
+  },
+  "terminal_flow": {
+    "finalizer_task": "TASK-999",
+    "state_record_path_template": "artifacts/research/task-states/{run_id}/{task_id}.json",
+    "normal_entry": "TASK-001 至 TASK-008 全部 passed。",
+    "short_circuit_entry": "任一任务 held 或 stopped，且所有未执行下游任务已记录为 skipped_terminal。",
+    "finalizer_rule": "TASK-999 在正常完成和终止短路两种情况下都必须执行并输出唯一决策。",
+    "skip_record_required_fields": [
+      "run_id",
+      "task_id",
+      "trigger_task_id",
+      "trigger_status",
+      "reason",
+      "evidence_refs",
+      "actor",
+      "recorded_at_utc"
+    ]
+  },
+  "stages": [
+    {
+      "stage_id": "R0",
+      "plain_language_goal": "先证明官方开奖数据确实拿得到、解释得对、出错能发现、事后能重放。",
+      "task_ids": [
+        "TASK-001"
+      ],
+      "exit": "TASK-001 按彩种得到 PASS_FULL、PASS_LIMITED、HOLD 或 STOP，并生成唯一项目决策。"
+    },
+    {
+      "stage_id": "R1",
+      "plain_language_goal": "把哪些数据能进入训练、何时算可用、如何处理更正写成无歧义契约。",
+      "task_ids": [
+        "TASK-002"
+      ],
+      "exit": "数据字典、时间语义、修订规则和 point-in-time join 契约通过独立审查。"
+    },
+    {
+      "stage_id": "R2",
+      "plain_language_goal": "算清历史样本到底能发现多小的偏差，避免拿噪声当规律。",
+      "task_ids": [
+        "TASK-003"
+      ],
+      "exit": "可复现实验给出误报率、功效、最小可检测效应和所需期数。"
+    },
+    {
+      "stage_id": "R3",
+      "plain_language_goal": "冻结模型怎么比较、先研究哪些模型和特征、谁有权批准晋级。",
+      "task_ids": [
+        "TASK-004",
+        "TASK-005",
+        "TASK-006"
+      ],
+      "exit": "评估协议、模型/特征注册表和治理边界相互一致且均通过独立验收。"
+    },
+    {
+      "stage_id": "R4",
+      "plain_language_goal": "先把未来系统放进哪些真假世界、如何判定误报和漏检写成可执行协议。",
+      "task_ids": [
+        "TASK-007"
+      ],
+      "exit": "合成场景、隐藏答案、指标和二元资格门被事前冻结；不声称基准已经运行。"
+    },
+    {
+      "stage_id": "R5",
+      "plain_language_goal": "规定真实开奖前如何锁定预测、开奖后如何评分，以及什么证据才允许进入产品设计。",
+      "task_ids": [
+        "TASK-008"
+      ],
+      "exit": "前瞻影子协议和 GO/HOLD/STOP 模板完成，但不声称已累积真实前瞻证据。"
+    },
+    {
+      "stage_id": "RG",
+      "plain_language_goal": "检查全部研究结论是否足以进入 PRD/HLD，而不是假装系统已经实现。",
+      "task_ids": [
+        "TASK-999"
+      ],
+      "exit": "最终报告输出 GO、HOLD 或 STOP；GO 只准入后续产品和架构设计。"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-001",
+      "stage_id": "R0",
+      "title": "官方数据源、规则版本与可得性实证",
+      "plain_language_goal": "真的跑完阶段 0：冻结口径、低频采集两种彩票、保存证据、处理故障和更正，再让独立复核人从零重放。",
+      "work_kind": "data_feasibility_execution",
+      "status": "planned",
+      "dependencies": [],
+      "source_refs": [
+        "docs/research/lottery-autoresearch-technical-strategy.md",
+        "docs/roadmap/phase-0-data-feasibility-plan.md",
+        "docs/roadmap/phase-0-acceptance-contract.json",
+        "体彩与福彩官方规则页、开奖公告和可合规访问的历史入口"
+      ],
+      "game_scope": {
+        "mode": "producer",
+        "output_evidence": "artifacts/phase-0/stage1-handoff-fixture.json",
+        "required_fields": [
+          "active_games",
+          "excluded_games",
+          "per_game_outcome",
+          "coverage_tier",
+          "corroboration_tier",
+          "evidence_ref"
+        ]
+      },
+      "review": {
+        "owner_role": "阶段 0 数据可行性负责人",
+        "reviewer_role": "未编写解析器且未修改被审证据的独立复核人",
+        "identity_freeze": "P0-01 结束前冻结实名或稳定主体 ID。",
+        "independence_rule": "复核人不得编写解析器、修改 raw/normalized/manifest 或调整验收阈值。",
+        "assignment_path": "artifacts/phase-0/reviewer-assignment.json",
+        "attestation_path": "artifacts/phase-0/reviewer-attestation.json"
+      },
+      "execution": {
+        "effort_class": "multi_cycle_observation",
+        "resource_budget_policy": "P0-01 冻结请求、重试、存储、计算和人工复核预算。",
+        "timeout_or_hold_rule": "到 acceptance_cutoff_utc 仍未完成最少观察周期或关键来源持续不可用时必须 HOLD，不得延长截止时间掩盖失败。"
+      },
+      "entry_conditions": [
+        "只允许启动 P0-01；P0-02 必须等待 scope-freeze、observation-plan 和 reviewer-assignment 完成且无空值；reviewer-attestation 只能在 P0-07 重放后签署。",
+        "访问方式不得绕过登录、验证码、令牌、限流或其他访问控制。",
+        "阶段 0 验收合同版本固定为 1.3，变更合同必须创建新批次。"
+      ],
+      "work_packages": [
+        "P0-01 冻结范围、合同和验收工具",
+        "P0-02 来源、权限和条款审计",
+        "P0-03 规则与时间边界",
+        "P0-04 最小数据探针与确定性解析",
+        "P0-05 历史覆盖与核对",
+        "P0-06 在线观察、失败注入与修订恢复",
+        "P0-07 独立重放、交接验证与阶段验收"
+      ],
+      "output_paths": [
+        "docs/research/TASK-001-official-data-source-feasibility.md",
+        "artifacts/phase-0/",
+        "scripts/phase0/",
+        "tests/phase0/"
+      ],
+      "required_artifact_keys": [
+        "artifact_schemas",
+        "scope_freeze",
+        "source_catalog",
+        "field_contract",
+        "rule_bundles",
+        "observation_plan",
+        "reviewer_assignment",
+        "environment_lock",
+        "verification_command",
+        "evidence_manifest",
+        "raw_snapshots",
+        "normalized_records",
+        "reconciliation",
+        "coverage_report",
+        "revision_report",
+        "soak_log",
+        "replay_report",
+        "reviewer_attestation",
+        "stage1_handoff_fixture",
+        "acceptance_report"
+      ],
+      "allowed_scope": [
+        "创建阶段 0 专用的采集、解析、Schema 校验、故障注入、重放和验收工具。",
+        "写入 artifacts/phase-0 下的不可变证据和派生结果。",
+        "创建阶段 0 工具的单元、夹具、属性和重放测试。",
+        "创建或更新唯一研究总结报告。"
+      ],
+      "forbidden_scope": [
+        "修改未来生产服务、模型训练或预测输出代码。",
+        "绕过官方来源访问控制。",
+        "用第三方号码替代官方真值。",
+        "在观察结果后缩短区间、换样本或放宽预算。"
+      ],
+      "steps": [
+        "严格按 docs/roadmap/phase-0-data-feasibility-plan.md 的 P0-01 至 P0-07 顺序执行。",
+        "全部机器产物先通过冻结 Schema，再参与语义硬门。",
+        "由未参与解析器编写的人执行冻结验证命令。",
+        "分别判定两个彩种，再聚合唯一项目决策。"
+      ],
+      "acceptance": [
+        {
+          "id": "TASK-001-AC-01",
+          "criterion": "验收合同定义的 14 个硬门对每个彩种都有可追溯的 PASS 或 FAIL 证据。",
+          "evidence": [
+            "artifacts/phase-0/phase-0-acceptance-report.md",
+            "artifacts/phase-0/replay-report.json"
+          ]
+        },
+        {
+          "id": "TASK-001-AC-02",
+          "criterion": "全部 required_artifact_keys 存在、通过对应 Schema，并可回到实际存储的官方原始载荷。",
+          "evidence": [
+            "artifacts/phase-0/schemas/",
+            "artifacts/phase-0/evidence-manifest.jsonl"
+          ]
+        },
+        {
+          "id": "TASK-001-AC-03",
+          "criterion": "独立复核人从空派生目录得到相同规范记录哈希、覆盖结果、修订视图、硬门结论和唯一项目决策。",
+          "evidence": [
+            "artifacts/phase-0/reviewer-attestation.json",
+            "artifacts/phase-0/replay-report.json"
+          ]
+        },
+        {
+          "id": "TASK-001-AC-04",
+          "criterion": "研究总结报告如实区分 PASS_FULL、PASS_LIMITED、HOLD、STOP 和尚未验证事实。",
+          "evidence": [
+            "docs/research/TASK-001-official-data-source-feasibility.md"
+          ]
+        }
+      ],
+      "verification": [
+        {
+          "kind": "phase_gate",
+          "command": "python scripts/phase0/verify_phase0.py --contract docs/roadmap/phase-0-acceptance-contract.json --artifacts artifacts/phase-0",
+          "availability": "created_by_this_task",
+          "covers_acceptance_ids": [
+            "TASK-001-AC-01",
+            "TASK-001-AC-02",
+            "TASK-001-AC-03"
+          ],
+          "pass_condition": "退出码为 0，且输出 14 个硬门、两个彩种结论和唯一项目决策。"
+        },
+        {
+          "kind": "report_quality",
+          "command": "python tasks/research/v1.0.0-lottery-autoresearch-roadmap/validate_research_report_quality.py --planning tasks/research/v1.0.0-lottery-autoresearch-roadmap/research-planning.json docs/research/TASK-001-official-data-source-feasibility.md",
+          "availability": "available_now",
+          "covers_acceptance_ids": [
+            "TASK-001-AC-04"
+          ],
+          "pass_condition": "退出码为 0。"
+        }
+      ],
+      "stop_conditions": [
+        "权威核心号码只能通过绕过访问控制取得。",
+        "穷尽已审计合规替代方案后仍不存在官方证据路径。",
+        "范围冻结发生在来源观察之后。",
+        "独立重放无法复现核心号码或硬门结论。"
+      ],
+      "handoff": "仅把 verified 记录、冻结合同、规则/时间语义、支持区间、证据引用和未关闭风险交给 TASK-002。"
+    },
+    {
+      "task_id": "TASK-002",
+      "stage_id": "R1",
+      "title": "规范数据集、时间语义与数据血缘契约",
+      "plain_language_goal": "规定训练数据长什么样、什么时候可用、官方更正后怎样保留历史，确保未来模型看不到开奖后的信息。",
+      "work_kind": "research_contract",
+      "status": "planned",
+      "dependencies": [
+        "TASK-001"
+      ],
+      "source_refs": [
+        "docs/research/lottery-autoresearch-technical-strategy.md",
+        "docs/roadmap/phase-0-data-feasibility-plan.md",
+        "docs/roadmap/phase-0-acceptance-contract.json",
+        "docs/research/TASK-001-official-data-source-feasibility.md"
+      ],
+      "game_scope": {
+        "mode": "consumer",
+        "input_evidence": "artifacts/phase-0/stage1-handoff-fixture.json",
+        "output_rule": "报告按 active_games 分节；excluded_games 只能记录阻塞原因，不得生成数据契约通过结论。"
+      },
+      "review": {
+        "owner_role": "数据契约研究负责人",
+        "reviewer_role": "未参与合同撰写的 point-in-time 数据审计人",
+        "identity_freeze": "任务开始前登记主体 ID。",
+        "independence_rule": "复核人不得修改报告正文、TASK-001 证据或验收阈值。",
+        "attestation_path": "artifacts/research/reviews/TASK-002-review.json"
+      },
+      "execution": {
+        "effort_class": "contract_review",
+        "resource_budget_policy": "任务开始前冻结审查轮次、样例数量和复核工时。",
+        "timeout_or_hold_rule": "关键字段无法建立 available_at 或两轮审查后仍有高风险泄漏争议时 HOLD。"
+      },
+      "entry_conditions": [
+        "TASK-001 至少有一个彩种 PASS_FULL 或 PASS_LIMITED。",
+        "只能使用 TASK-001 已验收的来源、字段和规则边界。"
+      ],
+      "output_paths": [
+        "docs/research/TASK-002-canonical-dataset-provenance-contract.md",
+        "artifacts/research/reviews/TASK-002-review.json"
+      ],
+      "allowed_scope": [
+        "数据字典、时间语义、状态/修订模型、point-in-time join 和预测快照契约。"
+      ],
+      "forbidden_scope": [
+        "生产数据库实现、migration 和训练代码。",
+        "扩展 TASK-001 未验证的字段或历史区间。"
+      ],
+      "steps": [
+        "逐表定义主键、类型、空值、来源、available_at 和版本策略。",
+        "定义三个单值规则轴和 active_promotion_ids。",
+        "用正常期、更正、重处理、规则切换和重叠活动做纸面重放。",
+        "完成独立 point-in-time 泄漏审查。"
+      ],
+      "acceptance": [
+        {
+          "id": "TASK-002-AC-01",
+          "criterion": "每个训练字段都能证明在预测锁定前可用，开奖后字段不能进入特征快照。",
+          "evidence": [
+            "docs/research/TASK-002-canonical-dataset-provenance-contract.md",
+            "artifacts/research/reviews/TASK-002-review.json"
+          ]
+        },
+        {
+          "id": "TASK-002-AC-02",
+          "criterion": "状态、修订、supersession、当前视图和历史视图规则均确定且可重放。",
+          "evidence": [
+            "docs/research/TASK-002-canonical-dataset-provenance-contract.md"
+          ]
+        },
+        {
+          "id": "TASK-002-AC-03",
+          "criterion": "所有字段和规则只引用 TASK-001 已验收证据，不存在人工核心号码改写路径。",
+          "evidence": [
+            "docs/research/TASK-002-canonical-dataset-provenance-contract.md"
+          ]
+        }
+      ],
+      "verification": [
+        {
+          "kind": "report_quality",
+          "command": "python tasks/research/v1.0.0-lottery-autoresearch-roadmap/validate_research_report_quality.py --planning tasks/research/v1.0.0-lottery-autoresearch-roadmap/research-planning.json docs/research/TASK-002-canonical-dataset-provenance-contract.md",
+          "availability": "available_now",
+          "covers_acceptance_ids": [
+            "TASK-002-AC-01",
+            "TASK-002-AC-02",
+            "TASK-002-AC-03"
+          ],
+          "pass_condition": "退出码为 0，且独立审查记录无未解决泄漏。"
+        }
+      ],
+      "stop_conditions": [
+        "TASK-001 核心字段来源或规则边界未通过。",
+        "无法为预测输入建立可靠 available_at。",
+        "修订不能保留原始证据和历史视图。"
+      ],
+      "handoff": "向 TASK-003 至 TASK-006 提供冻结的数据、时间和血缘口径。"
+    },
+    {
+      "task_id": "TASK-003",
+      "stage_id": "R2",
+      "title": "随机性审计与可检测性/功效边界",
+      "plain_language_goal": "用可复现模拟回答：现有样本能识别多大的偏差，哪些所谓规律根本没有足够证据。",
+      "work_kind": "empirical_research",
+      "status": "planned",
+      "dependencies": [
+        "TASK-002"
+      ],
+      "source_refs": [
+        "docs/research/lottery-autoresearch-technical-strategy.md",
+        "docs/research/TASK-001-official-data-source-feasibility.md",
+        "docs/research/TASK-002-canonical-dataset-provenance-contract.md"
+      ],
+      "game_scope": {
+        "mode": "consumer",
+        "input_evidence": "artifacts/phase-0/stage1-handoff-fixture.json",
+        "output_rule": "功效、delta-star 和不可判定区间必须逐 active_game 计算；excluded_games 只记录排除原因，不得合并两个彩种样本扩大功效。"
+      },
+      "review": {
+        "owner_role": "统计功效研究负责人",
+        "reviewer_role": "未编写主仿真代码的独立统计复核人",
+        "identity_freeze": "预注册冻结前登记主体 ID。",
+        "independence_rule": "复核人使用不同随机种子，不得修改主结果、阈值或选择性删除场景。",
+        "attestation_path": "artifacts/research/TASK-003/reviewer-attestation.json"
+      },
+      "execution": {
+        "effort_class": "monte_carlo_research",
+        "resource_budget_policy": "预注册中冻结场景数、参数网格、每格模拟次数、随机种子层级和最大计算预算。",
+        "timeout_or_hold_rule": "预算内 Monte Carlo 区间仍宽到无法判定目标误差或关键结果不能重放时 HOLD。"
+      },
+      "entry_conditions": [
+        "TASK-002 数据、时间和规则分段契约通过。",
+        "检验族、alpha、多重性范围和随机种子在查看结果前冻结。"
+      ],
+      "output_paths": [
+        "docs/research/TASK-003-randomness-audit-power-envelope.md",
+        "artifacts/research/TASK-003/",
+        "scripts/research/TASK-003/",
+        "tests/research/TASK-003/"
+      ],
+      "allowed_scope": [
+        "创建统计模拟、负控、功效曲线和结果复算所需的研究代码与制品。",
+        "不得修改生产系统或阶段 0 原始证据。"
+      ],
+      "forbidden_scope": [
+        "结果出来后改变检验族或显著性阈值。",
+        "把不拒绝零假设写成证明绝对随机。"
+      ],
+      "steps": [
+        "冻结均匀无放回零假设、检验族、多重性层级和效应参数化。",
+        "运行均匀世界与静态、动态、交互、机制偏差注入模拟。",
+        "报告 Monte Carlo 不确定性、误报率、功效、delta-star 和所需期数。",
+        "由独立复核使用不同种子重算关键结果。"
+      ],
+      "acceptance": [
+        {
+          "id": "TASK-003-AC-01",
+          "criterion": "均匀世界误报率和各偏差场景检出率均由可复现实验估计，并报告 Monte Carlo 区间。",
+          "evidence": [
+            "artifacts/research/TASK-003/",
+            "docs/research/TASK-003-randomness-audit-power-envelope.md"
+          ]
+        },
+        {
+          "id": "TASK-003-AC-02",
+          "criterion": "每类偏差给出 delta-star、目标功效不低于 0.80、所需样本和当前样本位置。",
+          "evidence": [
+            "docs/research/TASK-003-randomness-audit-power-envelope.md"
+          ]
+        },
+        {
+          "id": "TASK-003-AC-03",
+          "criterion": "相同配置可复算，独立种子结果落在预注册容差内。",
+          "evidence": [
+            "artifacts/research/TASK-003/replay-report.json",
+            "artifacts/research/TASK-003/reviewer-attestation.json"
+          ]
+        }
+      ],
+      "verification": [
+        {
+          "kind": "empirical_replay",
+          "command": "python scripts/research/TASK-003/verify_power_study.py --artifacts artifacts/research/TASK-003",
+          "availability": "created_by_this_task",
+          "covers_acceptance_ids": [
+            "TASK-003-AC-01",
+            "TASK-003-AC-02",
+            "TASK-003-AC-03"
+          ],
+          "pass_condition": "退出码为 0，误报率、功效和重放容差全部满足预注册标准。"
+        },
+        {
+          "kind": "report_quality",
+          "command": "python tasks/research/v1.0.0-lottery-autoresearch-roadmap/validate_research_report_quality.py --planning tasks/research/v1.0.0-lottery-autoresearch-roadmap/research-planning.json docs/research/TASK-003-randomness-audit-power-envelope.md",
+          "availability": "available_now",
+          "covers_acceptance_ids": [
+            "TASK-003-AC-01",
+            "TASK-003-AC-02",
+            "TASK-003-AC-03"
+          ],
+          "pass_condition": "退出码为 0。"
+        }
+      ],
+      "stop_conditions": [
+        "数据契约无法形成无泄漏输入。",
+        "预注册配置缺失或在查看结果后改变。",
+        "关键结果不能独立复算。"
+      ],
+      "handoff": "向 TASK-004、TASK-005 和 TASK-007 交付 delta-star、功效期数、误报边界和不可判定区域。"
+    },
+    {
+      "task_id": "TASK-004",
+      "stage_id": "R3",
+      "title": "序贯评估、校准与 Champion 治理协议",
+      "plain_language_goal": "规定模型在持续开奖和持续试验中怎样比较，避免反复试到偶然胜出。",
+      "work_kind": "research_protocol",
+      "status": "planned",
+      "dependencies": [
+        "TASK-002",
+        "TASK-003"
+      ],
+      "source_refs": [
+        "docs/research/lottery-autoresearch-technical-strategy.md",
+        "docs/research/TASK-002-canonical-dataset-provenance-contract.md",
+        "docs/research/TASK-003-randomness-audit-power-envelope.md"
+      ],
+      "game_scope": {
+        "mode": "consumer",
+        "input_evidence": "artifacts/phase-0/stage1-handoff-fixture.json",
+        "output_rule": "指标、序贯证据和晋级结论按 active_game 及规则版本分层；excluded_games 不参与证据累积，禁止跨彩种合并证据。"
+      },
+      "review": {
+        "owner_role": "序贯评估协议负责人",
+        "reviewer_role": "未参与协议撰写的统计治理复核人",
+        "identity_freeze": "任务开始前登记主体 ID。",
+        "independence_rule": "复核人不得调整 alpha、e-value、在线 FDR、功效期数或裁剪规则。",
+        "attestation_path": "artifacts/research/reviews/TASK-004-review.json"
+      },
+      "execution": {
+        "effort_class": "protocol_review",
+        "resource_budget_policy": "冻结协议例题数量、审查轮次和统计复核工时。",
+        "timeout_or_hold_rule": "两轮审查后仍存在可选停止或多重性漏洞时 HOLD。"
+      },
+      "entry_conditions": [
+        "TASK-002 point-in-time 契约通过。",
+        "TASK-003 已给出 delta-star、功效期数和误报边界。"
+      ],
+      "output_paths": [
+        "docs/research/TASK-004-sequential-evaluation-governance.md",
+        "artifacts/research/reviews/TASK-004-review.json"
+      ],
+      "allowed_scope": [
+        "联合 log score、校准、anytime-valid 证据、在线 FDR、晋级、冻结和回滚协议。"
+      ],
+      "forbidden_scope": [
+        "运行真实模型晋级。",
+        "用 Top-1000 命中代替主要概率评分。"
+      ],
+      "steps": [
+        "冻结主指标、裁剪和概率下界。",
+        "定义单模型序贯证据与模型族在线多重性。",
+        "定义 GO/HOLD/STOP/ROLLBACK 和负控触发。",
+        "用合成分数序列做协议级例题验证。"
+      ],
+      "acceptance": [
+        {
+          "id": "TASK-004-AC-01",
+          "criterion": "主指标为逐期联合 log score 差；序贯单模型使用 alpha=0.05、e-value 至少 20，模型族在线 FDR q=0.05；校准、负控和 TASK-003 功效期数共同形成无矛盾决策表。",
+          "evidence": [
+            "docs/research/TASK-004-sequential-evaluation-governance.md",
+            "artifacts/research/reviews/TASK-004-review.json"
+          ]
+        },
+        {
+          "id": "TASK-004-AC-02",
+          "criterion": "同一开奖不能同时用于调参与最终证据，可选停止不会破坏声明错误率。",
+          "evidence": [
+            "docs/research/TASK-004-sequential-evaluation-governance.md"
+          ]
+        }
+      ],
+      "verification": [
+        {
+          "kind": "report_quality",
+          "command": "python tasks/research/v1.0.0-lottery-autoresearch-roadmap/validate_research_report_quality.py --planning tasks/research/v1.0.0-lottery-autoresearch-roadmap/research-planning.json docs/research/TASK-004-sequential-evaluation-governance.md",
+          "availability": "available_now",
+          "covers_acceptance_ids": [
+            "TASK-004-AC-01",
+            "TASK-004-AC-02"
+          ],
+          "pass_condition": "退出码为 0，且决策表示例无重叠或空档。"
+        }
+      ],
+      "stop_conditions": [
+        "TASK-003 未给出功效边界。",
+        "无法定义 anytime-valid 或等价的可选停止控制。",
+        "模型族多重性没有控制。"
+      ],
+      "handoff": "向 TASK-005 至 TASK-008 提供唯一模型比较和晋级口径。"
+    },
+    {
+      "task_id": "TASK-005",
+      "stage_id": "R3",
+      "title": "模型族、特征注册表与模型烘焙方案",
+      "plain_language_goal": "明确先研究什么模型、为什么研究、什么证据才允许增加复杂度。",
+      "work_kind": "research_design",
+      "status": "planned",
+      "dependencies": [
+        "TASK-002",
+        "TASK-003",
+        "TASK-004"
+      ],
+      "source_refs": [
+        "docs/research/lottery-autoresearch-technical-strategy.md",
+        "docs/research/TASK-002-canonical-dataset-provenance-contract.md",
+        "docs/research/TASK-003-randomness-audit-power-envelope.md",
+        "docs/research/TASK-004-sequential-evaluation-governance.md"
+      ],
+      "game_scope": {
+        "mode": "consumer",
+        "input_evidence": "artifacts/phase-0/stage1-handoff-fixture.json",
+        "output_rule": "模型规格、特征状态、先验、校准和 Top-1000 生成规则逐 active_game 定义；excluded_games 不得产生候选模型或预测结论。"
+      },
+      "review": {
+        "owner_role": "模型与特征研究负责人",
+        "reviewer_role": "未参与模型清单与特征筛选的独立方法复核人",
+        "identity_freeze": "任务开始前登记主体 ID。",
+        "independence_rule": "复核人不得增删候选模型、修改特征状态、阈值或验收正文。",
+        "attestation_path": "artifacts/research/reviews/TASK-005-review.json"
+      },
+      "execution": {
+        "effort_class": "model_registry_review",
+        "resource_budget_policy": "任务开始前冻结候选模型数、特征组数、审查轮次和复核工时。",
+        "timeout_or_hold_rule": "两轮审查后仍存在无机制依据特征、泄漏风险或复杂模型开放条件争议时 HOLD。"
+      },
+      "entry_conditions": [
+        "数据契约、功效边界和序贯评估协议均通过。"
+      ],
+      "output_paths": [
+        "docs/research/TASK-005-model-feature-selection-study.md",
+        "artifacts/research/reviews/TASK-005-review.json"
+      ],
+      "allowed_scope": [
+        "M0 至 M4 数学规格、特征注册表、先验、收缩、消融、校准和 Top-1000 生成方法。"
+      ],
+      "forbidden_scope": [
+        "实现生产训练系统。",
+        "未经证据开放深度模型或强化学习。",
+        "把事后字段注册为可用特征。"
+      ],
+      "steps": [
+        "完整定义 M0 和首个 challenger M1。",
+        "按机制可信度登记特征、来源、available_at、泄漏风险和消融组。",
+        "定义 M2 至 M4 的开放证据门和淘汰条件。",
+        "证明候选模型能输出合法归一化联合概率。"
+      ],
+      "acceptance": [
+        {
+          "id": "TASK-005-AC-01",
+          "criterion": "M0 永久保留，M1 数学规格、先验、后验和合法组合概率完整。",
+          "evidence": [
+            "docs/research/TASK-005-model-feature-selection-study.md",
+            "artifacts/research/reviews/TASK-005-review.json"
+          ]
+        },
+        {
+          "id": "TASK-005-AC-02",
+          "criterion": "每个特征包含定义、来源、available_at、机制理由、泄漏风险、消融组和状态。",
+          "evidence": [
+            "docs/research/TASK-005-model-feature-selection-study.md"
+          ]
+        },
+        {
+          "id": "TASK-005-AC-03",
+          "criterion": "复杂模型开放条件引用 TASK-003/004，不能凭开发集微小提升开放。",
+          "evidence": [
+            "docs/research/TASK-005-model-feature-selection-study.md"
+          ]
+        }
+      ],
+      "verification": [
+        {
+          "kind": "report_quality",
+          "command": "python tasks/research/v1.0.0-lottery-autoresearch-roadmap/validate_research_report_quality.py --planning tasks/research/v1.0.0-lottery-autoresearch-roadmap/research-planning.json docs/research/TASK-005-model-feature-selection-study.md",
+          "availability": "available_now",
+          "covers_acceptance_ids": [
+            "TASK-005-AC-01",
+            "TASK-005-AC-02",
+            "TASK-005-AC-03"
+          ],
+          "pass_condition": "退出码为 0，且模型概率合法性纸面例证通过。"
+        }
+      ],
+      "stop_conditions": [
+        "候选模型不能输出归一化联合概率。",
+        "特征无法建立 point-in-time 可得性。",
+        "复杂度开放门与功效/错误率协议冲突。"
+      ],
+      "handoff": "向 TASK-006/007/008 提供冻结模型族、特征注册表和复杂度开放门。"
+    },
+    {
+      "task_id": "TASK-006",
+      "stage_id": "R3",
+      "title": "Autoresearch 架构、安全边界与独立复核",
+      "plain_language_goal": "规定谁提出实验、谁运行、谁复核、谁批准，防止系统自己证明自己正确。",
+      "work_kind": "architecture_protocol",
+      "status": "planned",
+      "dependencies": [
+        "TASK-004",
+        "TASK-005"
+      ],
+      "source_refs": [
+        "docs/research/lottery-autoresearch-technical-strategy.md",
+        "docs/research/TASK-004-sequential-evaluation-governance.md",
+        "docs/research/TASK-005-model-feature-selection-study.md"
+      ],
+      "game_scope": {
+        "mode": "consumer",
+        "input_evidence": "artifacts/phase-0/stage1-handoff-fixture.json",
+        "output_rule": "治理、权限、审计和回滚规则覆盖每个 active_game；excluded_games 保持冻结且不能进入实验队列。"
+      },
+      "review": {
+        "owner_role": "Autoresearch 架构与治理负责人",
+        "reviewer_role": "未参与架构设计的独立安全治理复核人",
+        "identity_freeze": "任务开始前登记主体 ID。",
+        "independence_rule": "复核人不得兼任提案、训练、评估或晋级角色，不得修改被审设计。",
+        "attestation_path": "artifacts/research/reviews/TASK-006-review.json"
+      },
+      "execution": {
+        "effort_class": "architecture_threat_review",
+        "resource_budget_policy": "冻结威胁场景数、权限矩阵审查轮次、回滚演练例数和复核工时。",
+        "timeout_or_hold_rule": "关键职责无法分离、审计事件不能完整追踪或回滚责任不明确时 HOLD。"
+      },
+      "entry_conditions": [
+        "评估器、模型族和晋级规则已冻结。"
+      ],
+      "output_paths": [
+        "docs/research/TASK-006-autoresearch-architecture-safety.md",
+        "artifacts/research/reviews/TASK-006-review.json"
+      ],
+      "allowed_scope": [
+        "角色权限、实验 manifest、失败记忆、预算、沙箱、复现、人工批准和禁止自动购彩边界。"
+      ],
+      "forbidden_scope": [
+        "实现运行时系统。",
+        "允许同一角色提出、验证并批准自己的晋级。",
+        "允许研究代理修改评估器或最终影子集。"
+      ],
+      "steps": [
+        "分离假设、实验、复核和晋级权限。",
+        "定义不可变实验与失败账本。",
+        "定义最小网络/秘密/依赖权限和资源预算。",
+        "定义异常、回滚和人工批准路径。"
+      ],
+      "acceptance": [
+        {
+          "id": "TASK-006-AC-01",
+          "criterion": "四类权限分离，同一主体不能自证晋级。",
+          "evidence": [
+            "docs/research/TASK-006-autoresearch-architecture-safety.md",
+            "artifacts/research/reviews/TASK-006-review.json"
+          ]
+        },
+        {
+          "id": "TASK-006-AC-02",
+          "criterion": "每个实验的输入、代码/配置/环境摘要、种子、预算、指标和成功/失败结果不可变留存。",
+          "evidence": [
+            "docs/research/TASK-006-autoresearch-architecture-safety.md"
+          ]
+        },
+        {
+          "id": "TASK-006-AC-03",
+          "criterion": "独立复核、最小权限、回滚和禁止自动购彩均有明确强制点。",
+          "evidence": [
+            "docs/research/TASK-006-autoresearch-architecture-safety.md"
+          ]
+        }
+      ],
+      "verification": [
+        {
+          "kind": "report_quality",
+          "command": "python tasks/research/v1.0.0-lottery-autoresearch-roadmap/validate_research_report_quality.py --planning tasks/research/v1.0.0-lottery-autoresearch-roadmap/research-planning.json docs/research/TASK-006-autoresearch-architecture-safety.md",
+          "availability": "available_now",
+          "covers_acceptance_ids": [
+            "TASK-006-AC-01",
+            "TASK-006-AC-02",
+            "TASK-006-AC-03"
+          ],
+          "pass_condition": "退出码为 0，且权限矩阵不存在自证晋级路径。"
+        }
+      ],
+      "stop_conditions": [
+        "评估器或影子证据可被研究角色修改。",
+        "无法实现独立复核。",
+        "安全边界允许购彩或收益承诺。"
+      ],
+      "handoff": "向 TASK-007/008 提供研究系统的权限、证据和失败处理合同。"
+    },
+    {
+      "task_id": "TASK-007",
+      "stage_id": "R4",
+      "title": "合成基准与 Autoresearch 元评估协议",
+      "plain_language_goal": "冻结未来系统必须通过的真假世界、隐藏答案、指标和门槛；本任务设计协议，不宣称基准已经执行。",
+      "work_kind": "benchmark_protocol",
+      "status": "planned",
+      "dependencies": [
+        "TASK-003",
+        "TASK-004",
+        "TASK-005",
+        "TASK-006"
+      ],
+      "source_refs": [
+        "docs/research/lottery-autoresearch-technical-strategy.md",
+        "docs/research/TASK-003-randomness-audit-power-envelope.md",
+        "docs/research/TASK-004-sequential-evaluation-governance.md",
+        "docs/research/TASK-005-model-feature-selection-study.md",
+        "docs/research/TASK-006-autoresearch-architecture-safety.md"
+      ],
+      "game_scope": {
+        "mode": "consumer",
+        "input_evidence": "artifacts/phase-0/stage1-handoff-fixture.json",
+        "output_rule": "合成世界、效应阈值、泄漏陷阱和资格门逐 active_game 及规则空间冻结；excluded_games 不执行基准，不得用一个彩种的结果替代另一个。"
+      },
+      "review": {
+        "owner_role": "合成基准协议负责人",
+        "reviewer_role": "无法访问隐藏答案且未设计场景的独立基准复核人",
+        "identity_freeze": "协议冻结前登记主体 ID。",
+        "independence_rule": "复核人不得修改生成参数、隐藏答案、判定容差或资格阈值。",
+        "attestation_path": "artifacts/research/reviews/TASK-007-review.json"
+      },
+      "execution": {
+        "effort_class": "benchmark_protocol_review",
+        "resource_budget_policy": "冻结场景矩阵、重复次数上限、隐藏答案管理方式、复核轮次和未来执行预算边界。",
+        "timeout_or_hold_rule": "协议无法在执行前冻结隐藏答案、容差或二元资格门时 HOLD。"
+      },
+      "entry_conditions": [
+        "功效边界、评估规则、模型族和治理合同均已冻结。"
+      ],
+      "output_paths": [
+        "docs/research/TASK-007-synthetic-benchmark-protocol.md",
+        "artifacts/research/reviews/TASK-007-review.json"
+      ],
+      "allowed_scope": [
+        "定义均匀、静态偏差、漂移、机制偏差、交互、规则变更和泄漏陷阱场景。",
+        "定义未来实现必须达到的误报、功效、检测时延、校准、恢复和重放门槛。"
+      ],
+      "forbidden_scope": [
+        "声称尚未实现的系统已经通过基准。",
+        "在看到未来基准结果后改变隐藏答案或门槛。"
+      ],
+      "steps": [
+        "定义场景生成合同、种子分层、难度和隐藏答案隔离。",
+        "将 TASK-003 的 delta-star 与 TASK-004 错误率合同映射为门槛。",
+        "定义泄漏陷阱和任一漏检即失败规则。",
+        "定义未来实现阶段的执行、独立复核和制品清单。"
+      ],
+      "acceptance": [
+        {
+          "id": "TASK-007-AC-01",
+          "criterion": "协议规定均匀世界错误率不超过 0.05，并说明使用 Monte Carlo 区间判定。",
+          "evidence": [
+            "docs/research/TASK-007-synthetic-benchmark-protocol.md"
+          ]
+        },
+        {
+          "id": "TASK-007-AC-02",
+          "criterion": "协议规定 delta-star 及以上效应目标功效不低于 0.80，低于 delta-star 标为功效不足。",
+          "evidence": [
+            "docs/research/TASK-007-synthetic-benchmark-protocol.md"
+          ]
+        },
+        {
+          "id": "TASK-007-AC-03",
+          "criterion": "所有泄漏陷阱、隐藏答案、复核容差和进入真实影子期的二元门槛均在执行前冻结。",
+          "evidence": [
+            "docs/research/TASK-007-synthetic-benchmark-protocol.md",
+            "artifacts/research/reviews/TASK-007-review.json"
+          ]
+        },
+        {
+          "id": "TASK-007-AC-04",
+          "criterion": "报告明确标注这是待未来实现执行的协议，不包含虚构运行结果。",
+          "evidence": [
+            "docs/research/TASK-007-synthetic-benchmark-protocol.md"
+          ]
+        }
+      ],
+      "verification": [
+        {
+          "kind": "report_quality",
+          "command": "python tasks/research/v1.0.0-lottery-autoresearch-roadmap/validate_research_report_quality.py --planning tasks/research/v1.0.0-lottery-autoresearch-roadmap/research-planning.json docs/research/TASK-007-synthetic-benchmark-protocol.md",
+          "availability": "available_now",
+          "covers_acceptance_ids": [
+            "TASK-007-AC-01",
+            "TASK-007-AC-02",
+            "TASK-007-AC-03",
+            "TASK-007-AC-04"
+          ],
+          "pass_condition": "退出码为 0，场景—指标—门槛矩阵无缺口，且没有已运行声明。"
+        }
+      ],
+      "stop_conditions": [
+        "TASK-003 的 delta-star 或 TASK-004 错误率合同缺失。",
+        "隐藏答案不能与未来研究角色隔离。",
+        "泄漏陷阱没有硬失败规则。"
+      ],
+      "handoff": "向 TASK-008 和未来实现规划交付冻结的合成资格协议。"
+    },
+    {
+      "task_id": "TASK-008",
+      "stage_id": "R5",
+      "title": "前瞻影子验证与研究转产品决策协议",
+      "plain_language_goal": "规定未来真实预测怎样在开奖前锁死、开奖后怎样评分，以及积累多少证据才有资格讨论产品化。",
+      "work_kind": "prospective_protocol",
+      "status": "planned",
+      "dependencies": [
+        "TASK-001",
+        "TASK-004",
+        "TASK-005",
+        "TASK-006",
+        "TASK-007"
+      ],
+      "source_refs": [
+        "docs/research/lottery-autoresearch-technical-strategy.md",
+        "docs/research/TASK-001-official-data-source-feasibility.md",
+        "docs/research/TASK-004-sequential-evaluation-governance.md",
+        "docs/research/TASK-005-model-feature-selection-study.md",
+        "docs/research/TASK-006-autoresearch-architecture-safety.md",
+        "docs/research/TASK-007-synthetic-benchmark-protocol.md"
+      ],
+      "game_scope": {
+        "mode": "consumer",
+        "input_evidence": "artifacts/phase-0/stage1-handoff-fixture.json",
+        "output_rule": "预测锁定、评分、证据累积和 GO/HOLD/STOP 判断逐 active_game 独立运行；excluded_games 不得生成预测批次。"
+      },
+      "review": {
+        "owner_role": "前瞻影子验证协议负责人",
+        "reviewer_role": "不参与预测生成且无法事后改写锁定记录的独立复核人",
+        "identity_freeze": "协议冻结前登记主体 ID。",
+        "independence_rule": "复核人不得修改预测、开奖事实、评分规则、最小期数或决策阈值。",
+        "attestation_path": "artifacts/research/reviews/TASK-008-review.json"
+      },
+      "execution": {
+        "effort_class": "prospective_protocol_review",
+        "resource_budget_policy": "冻结影子期最小/最大期数、每期计算预算、存储预算、异常复核时限和停止规则。",
+        "timeout_or_hold_rule": "无法保证截止前不可变锁定、独立评分或官方修订可追踪时 HOLD，不得启动影子期。"
+      },
+      "entry_conditions": [
+        "官方事实账本、序贯评估、模型族、治理和合成基准协议均通过。"
+      ],
+      "output_paths": [
+        "docs/research/TASK-008-prospective-shadow-validation-protocol.md",
+        "artifacts/research/reviews/TASK-008-review.json"
+      ],
+      "allowed_scope": [
+        "forecast lock、时间戳/哈希、开奖后评分、异常/回滚及 GO/HOLD/STOP 模板。"
+      ],
+      "forbidden_scope": [
+        "声称真实前瞻期已经完成。",
+        "在最小功效期数前批准非均匀模型。",
+        "允许开奖后改写预测。"
+      ],
+      "steps": [
+        "定义预测锁定、公开/审计留痕和开奖后追加评分。",
+        "分别治理两个彩种和规则版本。",
+        "映射 TASK-004 决策门、TASK-007 合成资格和独立复核。",
+        "定义无模型胜出时 M0 只读研究产品的诚实表达。"
+      ],
+      "acceptance": [
+        {
+          "id": "TASK-008-AC-01",
+          "criterion": "预测在官方停售或开奖前不可变锁定，开奖后只允许追加评分和官方修订事件。",
+          "evidence": [
+            "docs/research/TASK-008-prospective-shadow-validation-protocol.md"
+          ]
+        },
+        {
+          "id": "TASK-008-AC-02",
+          "criterion": "GO 同时依赖最小功效期数、序贯证据、合成资格、独立重放和无未解决数据异常。",
+          "evidence": [
+            "docs/research/TASK-008-prospective-shadow-validation-protocol.md",
+            "artifacts/research/reviews/TASK-008-review.json"
+          ]
+        },
+        {
+          "id": "TASK-008-AC-03",
+          "criterion": "报告明确这是未来影子运行协议，不虚构真实前瞻结果。",
+          "evidence": [
+            "docs/research/TASK-008-prospective-shadow-validation-protocol.md"
+          ]
+        }
+      ],
+      "verification": [
+        {
+          "kind": "report_quality",
+          "command": "python tasks/research/v1.0.0-lottery-autoresearch-roadmap/validate_research_report_quality.py --planning tasks/research/v1.0.0-lottery-autoresearch-roadmap/research-planning.json docs/research/TASK-008-prospective-shadow-validation-protocol.md",
+          "availability": "available_now",
+          "covers_acceptance_ids": [
+            "TASK-008-AC-01",
+            "TASK-008-AC-02",
+            "TASK-008-AC-03"
+          ],
+          "pass_condition": "退出码为 0，决策模板唯一且没有已运行声明。"
+        }
+      ],
+      "stop_conditions": [
+        "预测锁定不能证明发生在开奖前。",
+        "合成资格或独立重放可被绕过。",
+        "协议允许把 M0 包装为高概率选号。"
+      ],
+      "handoff": "向 TASK-999 交付未来前瞻证据的唯一采信和决策协议。"
+    },
+    {
+      "task_id": "TASK-999",
+      "stage_id": "RG",
+      "title": "最终研究验收与实施准入评审",
+      "plain_language_goal": "确认研究问题、证据、阈值和协议是否足够清楚，决定能否开始 PRD/HLD；不把研究设计完成写成系统完成。",
+      "work_kind": "research_acceptance",
+      "status": "planned",
+      "dependencies": [],
+      "finalizer_dependencies": [
+        "TASK-001",
+        "TASK-002",
+        "TASK-003",
+        "TASK-004",
+        "TASK-005",
+        "TASK-006",
+        "TASK-007",
+        "TASK-008"
+      ],
+      "dependency_policy": {
+        "mode": "all_passed_or_terminal_short_circuit",
+        "normal_requires": "TASK-001 至 TASK-008 全部 passed。",
+        "short_circuit_requires": "至少一个任务 held 或 stopped，且所有因此不再执行的后续任务均有 skipped_terminal 记录。",
+        "evidence_source": "artifacts/research/task-states/{run_id}/{task_id}.json 和各任务验收/跳过记录"
+      },
+      "source_refs": [
+        "docs/research/lottery-autoresearch-technical-strategy.md",
+        "artifacts/research/task-states/",
+        "docs/research/TASK-001-official-data-source-feasibility.md",
+        "docs/research/TASK-002-canonical-dataset-provenance-contract.md",
+        "docs/research/TASK-003-randomness-audit-power-envelope.md",
+        "docs/research/TASK-004-sequential-evaluation-governance.md",
+        "docs/research/TASK-005-model-feature-selection-study.md",
+        "docs/research/TASK-006-autoresearch-architecture-safety.md",
+        "docs/research/TASK-007-synthetic-benchmark-protocol.md",
+        "docs/research/TASK-008-prospective-shadow-validation-protocol.md"
+      ],
+      "game_scope": {
+        "mode": "consumer",
+        "input_evidence": "artifacts/phase-0/stage1-handoff-fixture.json",
+        "output_rule": "最终报告分别列出每个 active_game 的证据状态和每个 excluded_game 的阻塞原因；项目决策不得掩盖彩种级差异。"
+      },
+      "review": {
+        "owner_role": "最终研究验收负责人",
+        "reviewer_role": "未担任 TASK-001 至 TASK-008 负责人且无权修改其证据的独立验收人",
+        "identity_freeze": "TASK-999 开始前登记主体 ID。",
+        "independence_rule": "验收人只能核对冻结证据和生成决策，不得补写前置结果、改阈值或删除失败记录。",
+        "attestation_path": "artifacts/research/reviews/TASK-999-review.json"
+      },
+      "execution": {
+        "effort_class": "cross_report_acceptance",
+        "resource_budget_policy": "冻结报告清单、交叉核对项、复核轮次和异议处理时限。",
+        "timeout_or_hold_rule": "正常路径证据不完整但不存在硬失败时 HOLD；硬失败或 stopped 记录触发 STOP；不得无限等待以延迟结论。"
+      },
+      "entry_conditions": [
+        "正常入口：TASK-001 至 TASK-008 全部 passed 且证据齐全。",
+        "短路入口：至少一个任务 held 或 stopped，未执行的后续任务均已记录 skipped_terminal。",
+        "两种入口都要求任何 HOLD/STOP/skipped_terminal 均未被隐藏。"
+      ],
+      "output_paths": [
+        "docs/research/TASK-999-lottery-autoresearch-research-acceptance.md",
+        "artifacts/research/finalization/TASK-999-decision.json",
+        "artifacts/research/reviews/TASK-999-review.json"
+      ],
+      "allowed_scope": [
+        "跨报告术语、依赖、阈值、证据、风险和下一阶段准入评审。"
+      ],
+      "forbidden_scope": [
+        "补写缺失的前置研究结果。",
+        "把协议通过写成合成基准或真实前瞻运行通过。",
+        "声称系统已经实现或彩票已经可预测。"
+      ],
+      "steps": [
+        "逐任务复核入口、输出、验收、验证和停止条件。",
+        "核对数据、功效、评估、模型、治理、合成和前瞻协议的一致性。",
+        "分别登记事实证据、研究结论和未来协议。",
+        "输出唯一 GO、HOLD 或 STOP。"
+      ],
+      "acceptance": [
+        {
+          "id": "TASK-999-AC-01",
+          "criterion": "TASK-001 至 TASK-008 均有通过、暂停、停止或终止跳过记录；已有报告的术语和阈值一致。",
+          "evidence": [
+            "docs/research/TASK-999-lottery-autoresearch-research-acceptance.md",
+            "artifacts/research/reviews/TASK-999-review.json"
+          ]
+        },
+        {
+          "id": "TASK-999-AC-02",
+          "criterion": "报告明确区分已执行证据、研究设计和未来系统协议。",
+          "evidence": [
+            "docs/research/TASK-999-lottery-autoresearch-research-acceptance.md"
+          ]
+        },
+        {
+          "id": "TASK-999-AC-03",
+          "criterion": "只有证据完整时才 GO；证据不足为 HOLD；硬失败为 STOP；GO 仅准入 PRD/HLD。",
+          "evidence": [
+            "docs/research/TASK-999-lottery-autoresearch-research-acceptance.md",
+            "artifacts/research/finalization/TASK-999-decision.json"
+          ]
+        }
+      ],
+      "verification": [
+        {
+          "kind": "roadmap_integrity",
+          "command": "python tasks/research/v1.0.0-lottery-autoresearch-roadmap/validate_roadmap.py --roadmap tasks/research/v1.0.0-lottery-autoresearch-roadmap/research-planning.json --contract docs/roadmap/phase-0-acceptance-contract.json",
+          "availability": "available_now",
+          "covers_acceptance_ids": [
+            "TASK-999-AC-01",
+            "TASK-999-AC-03"
+          ],
+          "pass_condition": "退出码为 0。"
+        },
+        {
+          "kind": "acceptance_report_quality",
+          "command": "python tasks/research/v1.0.0-lottery-autoresearch-roadmap/validate_research_report_quality.py --planning tasks/research/v1.0.0-lottery-autoresearch-roadmap/research-planning.json --acceptance docs/research/TASK-999-lottery-autoresearch-research-acceptance.md",
+          "availability": "available_now",
+          "covers_acceptance_ids": [
+            "TASK-999-AC-02"
+          ],
+          "pass_condition": "退出码为 0。"
+        }
+      ],
+      "stop_conditions": [
+        "任一必需任务缺少证据或验收结论。",
+        "跨报告核心口径冲突。",
+        "已执行事实和未来协议被混写。",
+        "存在未关闭的来源、泄漏、重放、错误率或治理硬失败。"
+      ],
+      "handoff": "GO 时只交付冻结研究基线和 PRD/HLD 输入；HOLD/STOP 时交付 required fixes，不启动产品实现。"
+    }
+  ],
+  "dag": {
+    "edges": [
+      {
+        "from": "TASK-001",
+        "to": "TASK-002",
+        "reason": "数据契约只能使用已实证的来源、字段和规则边界。"
+      },
+      {
+        "from": "TASK-002",
+        "to": "TASK-003",
+        "reason": "统计研究需要无泄漏、可重放的数据契约。"
+      },
+      {
+        "from": "TASK-002",
+        "to": "TASK-004",
+        "reason": "评估协议依赖 point-in-time 数据和修订语义。"
+      },
+      {
+        "from": "TASK-003",
+        "to": "TASK-004",
+        "reason": "序贯门槛需要功效期数和误报边界。"
+      },
+      {
+        "from": "TASK-002",
+        "to": "TASK-005",
+        "reason": "模型和特征只能使用冻结数据契约。"
+      },
+      {
+        "from": "TASK-003",
+        "to": "TASK-005",
+        "reason": "模型复杂度必须受可检测性约束。"
+      },
+      {
+        "from": "TASK-004",
+        "to": "TASK-005",
+        "reason": "模型选择必须遵守冻结评估规则。"
+      },
+      {
+        "from": "TASK-004",
+        "to": "TASK-006",
+        "reason": "架构必须保护不可变评估器和晋级门。"
+      },
+      {
+        "from": "TASK-005",
+        "to": "TASK-006",
+        "reason": "架构需要知道允许搜索的模型和特征边界。"
+      },
+      {
+        "from": "TASK-003",
+        "to": "TASK-007",
+        "reason": "合成门槛需要 delta-star 和功效目标。"
+      },
+      {
+        "from": "TASK-004",
+        "to": "TASK-007",
+        "reason": "合成基准必须验证序贯错误率控制。"
+      },
+      {
+        "from": "TASK-005",
+        "to": "TASK-007",
+        "reason": "场景必须覆盖开放模型对应机制。"
+      },
+      {
+        "from": "TASK-006",
+        "to": "TASK-007",
+        "reason": "基准需要独立复核和隐藏答案隔离。"
+      },
+      {
+        "from": "TASK-001",
+        "to": "TASK-008",
+        "reason": "真实影子评分需要官方事实账本。"
+      },
+      {
+        "from": "TASK-004",
+        "to": "TASK-008",
+        "reason": "影子决策使用冻结序贯规则。"
+      },
+      {
+        "from": "TASK-005",
+        "to": "TASK-008",
+        "reason": "影子协议需要冻结 Champion/Challenger 候选边界。"
+      },
+      {
+        "from": "TASK-006",
+        "to": "TASK-008",
+        "reason": "影子运行需要不可变预测和独立治理。"
+      },
+      {
+        "from": "TASK-007",
+        "to": "TASK-008",
+        "reason": "进入真实影子期前必须先定义合成资格门。"
+      }
+    ],
+    "finalizer_edges": [
+      {
+        "from": "TASK-001",
+        "to": "TASK-999",
+        "mode": "completion_or_terminal",
+        "reason": "最终验收必须读取阶段 0 的通过、暂停或停止证据。"
+      },
+      {
+        "from": "TASK-002",
+        "to": "TASK-999",
+        "mode": "completion_or_terminal",
+        "reason": "最终验收读取数据契约结论或终止跳过记录。"
+      },
+      {
+        "from": "TASK-003",
+        "to": "TASK-999",
+        "mode": "completion_or_terminal",
+        "reason": "最终验收读取功效边界结论或终止跳过记录。"
+      },
+      {
+        "from": "TASK-004",
+        "to": "TASK-999",
+        "mode": "completion_or_terminal",
+        "reason": "最终验收读取评估协议结论或终止跳过记录。"
+      },
+      {
+        "from": "TASK-005",
+        "to": "TASK-999",
+        "mode": "completion_or_terminal",
+        "reason": "最终验收读取模型特征结论或终止跳过记录。"
+      },
+      {
+        "from": "TASK-006",
+        "to": "TASK-999",
+        "mode": "completion_or_terminal",
+        "reason": "最终验收读取治理结论或终止跳过记录。"
+      },
+      {
+        "from": "TASK-007",
+        "to": "TASK-999",
+        "mode": "completion_or_terminal",
+        "reason": "最终验收读取合成协议结论或终止跳过记录。"
+      },
+      {
+        "from": "TASK-008",
+        "to": "TASK-999",
+        "mode": "completion_or_terminal",
+        "reason": "最终验收读取前瞻协议结论或终止跳过记录。"
+      }
+    ],
+    "execution_order": [
+      [
+        "TASK-001"
+      ],
+      [
+        "TASK-002"
+      ],
+      [
+        "TASK-003"
+      ],
+      [
+        "TASK-004"
+      ],
+      [
+        "TASK-005"
+      ],
+      [
+        "TASK-006"
+      ],
+      [
+        "TASK-007"
+      ],
+      [
+        "TASK-008"
+      ],
+      [
+        "TASK-999"
+      ]
+    ]
+  },
+  "phase_0_coverage": [
+    {
+      "work_package": "P0-01",
+      "task_id": "TASK-001",
+      "artifact_keys": [
+        "scope_freeze",
+        "observation_plan",
+        "reviewer_assignment",
+        "artifact_schemas",
+        "verification_command"
+      ],
+      "gate_ids": [
+        "G-SCOPE",
+        "G-SCHEMA"
+      ]
+    },
+    {
+      "work_package": "P0-02",
+      "task_id": "TASK-001",
+      "artifact_keys": [
+        "source_catalog"
+      ],
+      "gate_ids": [
+        "G-AUTHORITY",
+        "G-COMPLIANCE"
+      ]
+    },
+    {
+      "work_package": "P0-03",
+      "task_id": "TASK-001",
+      "artifact_keys": [
+        "field_contract",
+        "rule_bundles"
+      ],
+      "gate_ids": [
+        "G-RULES",
+        "G-TIME"
+      ]
+    },
+    {
+      "work_package": "P0-04",
+      "task_id": "TASK-001",
+      "artifact_keys": [
+        "environment_lock",
+        "evidence_manifest",
+        "raw_snapshots",
+        "normalized_records"
+      ],
+      "gate_ids": [
+        "G-PROVENANCE",
+        "G-PARSE"
+      ]
+    },
+    {
+      "work_package": "P0-05",
+      "task_id": "TASK-001",
+      "artifact_keys": [
+        "reconciliation",
+        "coverage_report"
+      ],
+      "gate_ids": [
+        "G-CORRECTNESS",
+        "G-COVERAGE"
+      ]
+    },
+    {
+      "work_package": "P0-06",
+      "task_id": "TASK-001",
+      "artifact_keys": [
+        "revision_report",
+        "soak_log"
+      ],
+      "gate_ids": [
+        "G-REVISION",
+        "G-RECOVERY"
+      ]
+    },
+    {
+      "work_package": "P0-07",
+      "task_id": "TASK-001",
+      "artifact_keys": [
+        "replay_report",
+        "reviewer_attestation",
+        "stage1_handoff_fixture",
+        "acceptance_report"
+      ],
+      "gate_ids": [
+        "G-REPRODUCIBILITY",
+        "G-HANDOFF"
+      ]
+    }
+  ],
+  "final_acceptance": {
+    "task_id": "TASK-999",
+    "decision_logic": {
+      "evaluation_order": [
+        "STOP",
+        "GO",
+        "HOLD"
+      ],
+      "STOP": "任一前置任务为 stopped，或存在未关闭的来源、泄漏、重放、错误率、合规或治理硬失败。",
+      "GO": "TASK-001 至 TASK-008 全部 passed，全部必需证据和独立复核齐全，且不存在 held、stopped、skipped_terminal 或未关闭硬失败。",
+      "HOLD": "未触发 STOP，但至少一个任务为 held、skipped_terminal、证据不完整或存在可修复的不确定性。",
+      "uniqueness_rule": "按 evaluation_order 返回第一个满足条件的结果；若三个条件均不满足则配置错误并失败，不得默认 GO。"
+    },
+    "go_means": "研究基线足以开始 PRD/HLD 和后续实现规划。",
+    "go_does_not_mean": "系统已经实现、合成基准已经通过、真实前瞻优势已经成立或彩票已经可预测。",
+      "required_evidence": [
+        "TASK-001 至 TASK-008 的输出和独立验收记录",
+        "artifacts/research/task-states/ 下 TASK-001 至 TASK-008 的状态记录",
+      "阶段 0 的机器证据与唯一决策",
+      "TASK-003 的可复现功效实验",
+      "跨报告一致性矩阵",
+      "全部未关闭风险和 required fixes"
+    ]
+  }
+}

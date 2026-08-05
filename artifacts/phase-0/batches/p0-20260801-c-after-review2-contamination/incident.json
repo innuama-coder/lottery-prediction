@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase0_review_contamination_incident",
+  "incident_id": "p0-20260801-c-after-review2-contamination",
+  "recorded_at_utc": "2026-08-01T14:18:35.7422908Z",
+  "reviewer_id": "/root/phase0_reviewer2",
+  "affected_path": "artifacts/phase-0/p0-06-scheduler-install-audit.json",
+  "cause": "The read-only review invoked the scheduler verifier with AuditPath, which rewrote the audit artifact while leaving the Windows scheduled task unchanged.",
+  "polluted_copy_path": "artifacts/phase-0/batches/p0-20260801-c-after-review2-contamination/p0-06-scheduler-install-audit.polluted.json",
+  "polluted_sha256": "854c0d64f6a0e7230e8d679774daf3561611577b37fa3ec1952d59488b3f948b",
+  "restoration_source_path": "artifacts/phase-0/batches/p0-20260801-c-after/artifacts/phase-0/p0-06-scheduler-install-audit.json",
+  "restored_sha256": "e00b1e5ad314cb6a757c2bee5fd8fa1db8c874869259acef3483829d239c3b2f",
+  "scheduled_task_mutated": false,
+  "review_outcome": "INVALIDATED_NO_PASS_ARTIFACT",
+  "recovery": "The polluted bytes were preserved, then the protected artifact was restored byte-for-byte from the canonical C-after archive. A fresh independent review is required."
+}

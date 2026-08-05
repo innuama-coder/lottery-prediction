@@ -1,0 +1,61 @@
+{
+  "fixture_schema_version": "1.0.0",
+  "case_id": "E2E-04",
+  "snapshot_id": "20260802T025000Z",
+  "snapshot_artifact_hashes_sha256": "ff454d301fd21b8a3192ba5b9e79f63781e5f3c8af033d9e3aa74629d3574d16",
+  "snapshot_capture_manifest_sha256": "1eb53d642c0a1e9f2b7f5300e83b3ac019bd4957509bba48555f849ead975ba3",
+  "expected_release_draws_sha256": "f2e34a88fbd43a378d7fb6255d39deee1354216b918934f355a06ef986be60c1",
+  "expected_release_observations_sha256": "dc974863c845da1e895ecf623bc6e878ba6aa6710c902357bce68ad5e661966e",
+  "issues": [
+    {
+      "game": "dlt",
+      "issue_id": "2026026",
+      "core_fact_sha256": "f27d85502fcd4bd9b2805dee621aa24d2c965ff0ea4e01b1870be7565227e8d7",
+      "fallback_rule_id": "dlt-2026026-gdlottery-v1",
+      "missing_source_id": "eastmoney",
+      "sources": [
+        {
+          "source_id": "ydniu",
+          "publisher_id": "ydniu-publisher",
+          "observation_id": "obs-v1:b4b6ad3a719db1fb3f58653a14a8c1e25be12139aa01791358e9c9de65e853b0",
+          "raw_ref": "raw/ydniu/dlt/page-003.html",
+          "raw_sha256": "b8f7cda4a3bcf531acbed0ca2e0edf6f1d59ca84ed1328ac0bdd3d1674155552",
+          "url": "https://www.ydniu.com/open/dlt-500/3.html"
+        },
+        {
+          "source_id": "gdlottery",
+          "publisher_id": "gdlottery-publisher",
+          "observation_id": "obs-v1:91f6b66d42851634247f90bf22621cc9ec07db2ff02abdb2b0dd77c17bb8c79f",
+          "raw_ref": "raw/gdlottery/dlt/page-001.html",
+          "raw_sha256": "719043831f79f38f18faeb96d55a8e2cde0587cb60c14a0235a77cce80da92ce",
+          "url": "https://www.gdlottery.cn/f_html/kjgg/P085_26026.html"
+        }
+      ]
+    },
+    {
+      "game": "dlt",
+      "issue_id": "2026027",
+      "core_fact_sha256": "acd2a672629334e50317dc3dbe3aa6b609e3d66783f8fa57af86b5b89024c3bb",
+      "fallback_rule_id": "dlt-2026027-gdlottery-v1",
+      "missing_source_id": "eastmoney",
+      "sources": [
+        {
+          "source_id": "ydniu",
+          "publisher_id": "ydniu-publisher",
+          "observation_id": "obs-v1:86549f625622d54f42e9ad32b922e91a49bb588ce55e3c7374040661e96247ca",
+          "raw_ref": "raw/ydniu/dlt/page-002.html",
+          "raw_sha256": "835c416a9ed678c0906121499ee6794890ed6410d5e839a18fa50f5aebd60463",
+          "url": "https://www.ydniu.com/open/dlt-500/2.html"
+        },
+        {
+          "source_id": "gdlottery",
+          "publisher_id": "gdlottery-publisher",
+          "observation_id": "obs-v1:00d36a62e315d7ae738c3f3f63bfabde65461c576283d9b0c5b88368b1f84a7f",
+          "raw_ref": "raw/gdlottery/dlt/page-002.html",
+          "raw_sha256": "753e8cfaaa475b69e7a15809b05585a39857f6bff264db7501e58721dddaafd8",
+          "url": "https://www.gdlottery.cn/f_html/kjgg/P085_26027.html"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase2-run-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "run_id", "command", "terminal", "exit_code", "started_at_utc", "finished_at_utc", "request_identity", "input_identities", "output_identities", "metrics", "errors"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase2_run_result"},
+    "run_id": {"type": "string", "minLength": 1},
+    "command": {"enum": ["validate-input", "qualify-harness", "audit", "power", "replay", "accept"]},
+    "terminal": {"enum": ["PASS", "REJECTED", "ENVIRONMENT_FAILURE", "INVALID_CONTRACT", "EVIDENCE_MISMATCH", "HOLD"]},
+    "exit_code": {"enum": [0, 2, 3, 4, 5, 20]},
+    "started_at_utc": {"type": "string", "format": "date-time"},
+    "finished_at_utc": {"type": "string", "format": "date-time"},
+    "request_identity": {"$ref": "#/$defs/pathHash"},
+    "input_identities": {"type": "array", "items": {"$ref": "#/$defs/pathHash"}},
+    "output_identities": {"type": "array", "items": {"$ref": "#/$defs/pathHash"}},
+    "metrics": {"type": "object"},
+    "errors": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {"pathHash": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}}
+}

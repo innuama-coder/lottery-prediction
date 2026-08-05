@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase2_pre_g0_contract_amendment",
+  "amendment_id": "P2-A01",
+  "status": "frozen_before_g0",
+  "frozen_at_utc": "2026-08-05T00:12:00Z",
+  "base_contract": {
+    "path": "docs/roadmap/phase-2-acceptance-contract.json",
+    "version": "1.3.0",
+    "sha256": "9f5456ca5d8fb041d755fb0e00d668a0e8d4fe424c9c983f7ec8224033f3a8e6"
+  },
+  "effective_overrides": [
+    {
+      "path": "metric_registry.calibration.CAL-04.note",
+      "old": "raw negative-control rejections remain reported and count toward CAL-01",
+      "new": "raw negative-control rejections are fully reported as diagnostics but do not enter CAL-01; negative controls can never become candidate signals"
+    }
+  ],
+  "clarification": {
+    "CAL-01": "FWER is the probability that at least one of the ten primary candidate decisions is falsely rejected under a complete null world; the exact historical Holm family is reused",
+    "CAL-04": "negative-control candidate promotions must equal zero by an executed classification guard; raw negative-control p-values and rejection frequencies are reported separately"
+  },
+  "root_cause": "the base note contradicted the CAL-01 definition and would either force an approximately ten-percent raw-control union error or silently change the historical ten-primary Holm family",
+  "change_control": "no formal historical statistic or D2-07/D2-08/D2-09 existed when this amendment was frozen; all downstream identities must include both base contract and P2-A01",
+  "signature": {"signed": true, "signer_id": "codex-root-statistical-owner-20260805", "signed_at_utc": "2026-08-05T00:12:00Z"}
+}

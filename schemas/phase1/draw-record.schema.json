@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autoresearch-lotte.local/schemas/phase1/draw-record.schema.json",
+  "title": "DrawRecord",
+  "description": "The verified current-view revision of one canonical lottery draw.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_schema_version",
+    "game",
+    "issue_id",
+    "draw_date_local",
+    "front_numbers",
+    "back_numbers",
+    "status",
+    "core_fact_profile",
+    "core_fact_sha256",
+    "evidence_links",
+    "revision_id",
+    "supersedes_revision_id",
+    "knowledge_class",
+    "available_at_utc"
+  ],
+  "properties": {
+    "record_schema_version": {"const": "1.0.0"},
+    "game": {"$ref": "#/$defs/game"},
+    "issue_id": {"$ref": "#/$defs/issueId"},
+    "draw_date_local": {"$ref": "#/$defs/localDate"},
+    "front_numbers": {"type": "array", "items": {"type": "integer"}, "uniqueItems": true},
+    "back_numbers": {"type": "array", "items": {"type": "integer"}, "uniqueItems": true},
+    "status": {"const": "verified"},
+    "core_fact_profile": {"const": "phase0-core-fact-v1"},
+    "core_fact_sha256": {"$ref": "#/$defs/sha256"},
+    "evidence_links": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/evidenceLink"}
+    },
+    "revision_id": {"type": "string", "pattern": "^rev-v1:[0-9a-f]{64}$"},
+    "supersedes_revision_id": {"type": ["string", "null"], "pattern": "^rev-v1:[0-9a-f]{64}$"},
+    "knowledge_class": {"type": "string", "enum": ["retrospective_current_view", "prospective_as_observed"]},
+    "available_at_utc": {"oneOf": [{"$ref": "#/$defs/utcTimestamp"}, {"type": "null"}]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"game": {"const": "ssq"}}, "required": ["game"]},
+      "then": {
+        "properties": {
+          "front_numbers": {"minItems": 6, "maxItems": 6, "items": {"type": "integer", "minimum": 1, "maximum": 33}, "uniqueItems": true},
+          "back_numbers": {"minItems": 1, "maxItems": 1, "items": {"type": "integer", "minimum": 1, "maximum": 16}, "uniqueItems": true}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"game": {"const": "dlt"}}, "required": ["game"]},
+      "then": {
+        "properties": {
+          "front_numbers": {"minItems": 5, "maxItems": 5, "items": {"type": "integer", "minimum": 1, "maximum": 35}, "uniqueItems": true},
+          "back_numbers": {"minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 1, "maximum": 12}, "uniqueItems": true}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "game": {"type": "string", "enum": ["ssq", "dlt"]},
+    "issueId": {"type": "string", "pattern": "^20[0-9]{5}$"},
+    "localDate": {"type": "string", "format": "date", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "utcTimestamp": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "stableId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"},
+    "relativeRef": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\.\\.)(?!.*\\\\).+$"},
+    "evidenceLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "publisher_id", "observation_id", "raw_ref", "raw_sha256"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/stableId"},
+        "publisher_id": {"$ref": "#/$defs/stableId"},
+        "observation_id": {"type": "string", "pattern": "^obs-v1:[0-9a-f]{64}$"},
+        "raw_ref": {"$ref": "#/$defs/relativeRef"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

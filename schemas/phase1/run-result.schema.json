@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autoresearch-lotte.local/schemas/phase1/run-result.schema.json",
+  "title": "RunResult",
+  "description": "The single terminal decision and counters for one run.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "result_schema_version",
+    "run_id",
+    "mode",
+    "status",
+    "started_at_utc",
+    "completed_at_utc",
+    "request_stats",
+    "observation_stats",
+    "candidate_stats",
+    "change_stats",
+    "exit_code",
+    "release_id",
+    "manifest_ref",
+    "events_ref",
+    "quality_report_ref",
+    "error_refs",
+    "deterministic_artifact_hashes"
+  ],
+  "properties": {
+    "result_schema_version": {"const": "1.0.0"},
+    "run_id": {"$ref": "#/$defs/runId"},
+    "mode": {"type": "string", "enum": ["bootstrap", "incremental"]},
+    "status": {"type": "string", "enum": ["published", "no_change", "rejected", "interrupted"]},
+    "started_at_utc": {"$ref": "#/$defs/utcTimestamp"},
+    "completed_at_utc": {"$ref": "#/$defs/utcTimestamp"},
+    "request_stats": {"$ref": "#/$defs/requestStats"},
+    "observation_stats": {"$ref": "#/$defs/observationStats"},
+    "candidate_stats": {"$ref": "#/$defs/candidateStats"},
+    "change_stats": {"$ref": "#/$defs/changeStats"},
+    "exit_code": {"type": ["integer", "null"], "enum": [0, 2, 3, 4, 5, 6, 10, null]},
+    "release_id": {"oneOf": [{"$ref": "#/$defs/releaseId"}, {"type": "null"}]},
+    "manifest_ref": {"$ref": "#/$defs/relativeRef"},
+    "events_ref": {"$ref": "#/$defs/relativeRef"},
+    "quality_report_ref": {"$ref": "#/$defs/relativeRef"},
+    "error_refs": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/relativeRef"}},
+    "deterministic_artifact_hashes": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {"pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,255}$"},
+      "additionalProperties": {"$ref": "#/$defs/sha256"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "published"}}, "required": ["status"]},
+      "then": {"properties": {"exit_code": {"const": 0}, "release_id": {"$ref": "#/$defs/releaseId"}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "no_change"}}, "required": ["status"]},
+      "then": {"properties": {"exit_code": {"const": 0}, "release_id": {"type": "null"}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "rejected"}}, "required": ["status"]},
+      "then": {"properties": {"exit_code": {"type": "integer", "enum": [2, 3, 4, 5, 6, 10]}, "release_id": {"type": "null"}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "interrupted"}}, "required": ["status"]},
+      "then": {"properties": {"exit_code": {"type": ["integer", "null"], "enum": [10, null]}, "release_id": {"type": "null"}}}
+    }
+  ],
+  "$defs": {
+    "runId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "releaseId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "utcTimestamp": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "relativeRef": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\.\\.)(?!.*\\\\).+$"},
+    "requestStats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["planned", "started", "succeeded", "failed", "not_started"],
+      "properties": {
+        "planned": {"type": "integer", "minimum": 0}, "started": {"type": "integer", "minimum": 0},
+        "succeeded": {"type": "integer", "minimum": 0}, "failed": {"type": "integer", "minimum": 0},
+        "not_started": {"type": "integer", "minimum": 0}
+      }
+    },
+    "observationStats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parsed", "valid", "invalid", "missing", "duplicate", "conflict"],
+      "properties": {
+        "parsed": {"type": "integer", "minimum": 0}, "valid": {"type": "integer", "minimum": 0},
+        "invalid": {"type": "integer", "minimum": 0}, "missing": {"type": "integer", "minimum": 0},
+        "duplicate": {"type": "integer", "minimum": 0}, "conflict": {"type": "integer", "minimum": 0}
+      }
+    },
+    "candidateStats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observed", "eligible", "unresolved"],
+      "properties": {
+        "observed": {"type": "integer", "minimum": 0}, "eligible": {"type": "integer", "minimum": 0},
+        "unresolved": {"type": "integer", "minimum": 0}
+      }
+    },
+    "changeStats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["added", "revised", "unchanged", "conflict", "invalid", "duplicate", "manual_core_edit"],
+      "properties": {
+        "added": {"type": "integer", "minimum": 0}, "revised": {"type": "integer", "minimum": 0},
+        "unchanged": {"type": "integer", "minimum": 0}, "conflict": {"type": "integer", "minimum": 0},
+        "invalid": {"type": "integer", "minimum": 0}, "duplicate": {"type": "integer", "minimum": 0},
+        "manual_core_edit": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

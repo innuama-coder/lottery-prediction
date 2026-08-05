@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:autoresearch-lotte:phase0:p0-04-evidence-migration:1.0.0",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "migration_id", "archive_id", "source_schema_version", "target_schema_version", "archive_manifest_path", "archive_manifest_sha256", "canonical_old_manifest_sha256", "canonical_new_manifest_sha256", "old_line_count", "new_line_count", "blockers_resolved", "invariants", "replay", "status"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"}, "artifact_type": {"const": "p0_04_evidence_migration"},
+    "migration_id": {"const": "p0-04-evidence-migration-p0-20260801-b"}, "archive_id": {"const": "p0-04-20260801-a"},
+    "source_schema_version": {"const": "1.1.0"}, "target_schema_version": {"const": "1.2.0"},
+    "archive_manifest_path": {"const": "artifacts/phase-0/batches/p0-04-20260801-a/artifacts/phase-0/evidence-manifest.jsonl"},
+    "archive_manifest_sha256": {"$ref": "#/$defs/hash"}, "canonical_old_manifest_sha256": {"$ref": "#/$defs/hash"},
+    "canonical_new_manifest_sha256": {"$ref": "#/$defs/hash"}, "old_line_count": {"type": "integer", "minimum": 1},
+    "new_line_count": {"type": "integer", "minimum": 1},
+    "blockers_resolved": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"enum": ["P0-04-REQUEST-METHOD-MISSING", "P0-04-DECODE-LAYERS-CONFLATED"]}},
+    "invariants": {"type": "array", "minItems": 5, "items": {"$ref": "#/$defs/invariant"}},
+    "replay": {"type": "object", "additionalProperties": false, "required": ["status", "verified_entries", "network_used"], "properties": {"status": {"const": "PASS"}, "verified_entries": {"type": "integer", "minimum": 1}, "network_used": {"const": false}}},
+    "status": {"const": "PASS"}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "invariant": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "archive_path", "before_sha256", "after_sha256", "archive_sha256", "unchanged"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1}, "archive_path": {"type": "string", "minLength": 1},
+        "before_sha256": {"$ref": "#/$defs/hash"}, "after_sha256": {"$ref": "#/$defs/hash"}, "archive_sha256": {"$ref": "#/$defs/hash"},
+        "unchanged": {"const": true}
+      }
+    }
+  }
+}

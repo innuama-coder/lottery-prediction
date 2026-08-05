@@ -1,0 +1,531 @@
+{
+  "contract_version": "1.3.0",
+  "artifact_type": "phase2_randomness_audit_acceptance_contract",
+  "status": "planned_not_executed",
+  "plan_ref": "docs/roadmap/phase-2-randomness-audit-plan.md",
+  "upstream": {
+    "phase1_contract_ref": "docs/roadmap/phase-1-acceptance-contract.json",
+    "phase1_contract_version": "3.6.0",
+    "phase1_contract_sha256": "6a941622e2de77aa5371750ceb4c9d012574ba581c2b6226851006a819243a40",
+    "phase1_final_ref": "artifacts/phase-1/acceptance/phase1-acceptance.json",
+    "phase1_final_sha256": "959b1dddacf453dbff347786d572de4cd8c52d1b7eb2e7a3805cffa2a166bb18",
+    "baseline": {
+      "draws_ref": "artifacts/phase-1/baseline-v1/draws.jsonl",
+      "draws_sha256": "f2e34a88fbd43a378d7fb6255d39deee1354216b918934f355a06ef986be60c1",
+      "draw_count": 400,
+      "draw_count_by_game": {"dlt": 200, "ssq": 200},
+      "observations_ref": "artifacts/phase-1/baseline-v1/observations.jsonl",
+      "observations_sha256": "dc974863c845da1e895ecf623bc6e878ba6aa6710c902357bce68ad5e661966e",
+      "observation_count": 800,
+      "manifest_ref": "artifacts/phase-1/baseline-v1/manifest.json",
+      "manifest_sha256": "0ddcccb72dce7662af665b369995b1c1fd28c68554b32e175f4561fc9f9683d1",
+      "statistical_unit_rule": "one DrawRecord is one draw; SourceObservation rows are provenance and must never inflate n"
+    }
+  },
+  "objective": "Estimate false-positive behavior, power, minimum detectable effects and required draw counts for preregistered randomness audits, separately for DLT and SSQ.",
+  "success_semantics": {
+    "phase_pass_means": "the research process and evidence are valid and reproducible",
+    "phase_pass_does_not_mean": "a predictable or non-random signal exists",
+    "signal_status_enum": ["candidate_signal", "no_detectable_signal", "indeterminate"]
+  },
+  "active_games": ["dlt", "ssq"],
+  "boundaries": {
+    "included": [
+      "phase1-to-phase2 evidence handoff",
+      "rule segmentation and retrospective-use contract",
+      "preregistered randomness tests",
+      "offline historical audit",
+      "Monte Carlo false-positive and power study",
+      "independent replay and final acceptance"
+    ],
+    "excluded": [
+      "prediction model training or promotion",
+      "feature search or selection",
+      "Top-1000 number generation",
+      "WebUI, online API, scheduler, database service or production deployment",
+      "automatic betting, return claims or claims of approaching 100 percent prediction"
+    ]
+  },
+  "pre_gate_readiness": {
+    "id": "P2-R00",
+    "purpose": "machine-verifiable P2-00A to P2-01 handoff; not a D2 deliverable and not evidence that G0 or G1 passed",
+    "schema_path": "schemas/phase2-readiness/p2-00a-readiness.schema.json",
+    "validator_path": "scripts/validate_phase2_readiness.py",
+    "readiness_path": "artifacts/phase-2/readiness/p2-00a-readiness.json",
+    "draft_paths": [
+      "artifacts/phase-2/readiness/drafts/input-manifest.draft.json",
+      "artifacts/phase-2/readiness/drafts/input-rule-and-time-contract.draft.md",
+      "artifacts/phase-2/readiness/drafts/preregistration.draft.json",
+      "artifacts/phase-2/readiness/drafts/reviewer-assignment.draft.json"
+    ],
+    "validation_argv": [
+      "{python}",
+      "scripts/validate_phase2_readiness.py",
+      "--contract",
+      "docs/roadmap/phase-2-acceptance-contract.json",
+      "--readiness",
+      "artifacts/phase-2/readiness/p2-00a-readiness.json"
+    ],
+    "required_fields": [
+      "terminal",
+      "upstream_identities",
+      "R2_source_path_and_sha256",
+      "draft_path_sha256_inventory",
+      "generation_rule_join_count",
+      "unresolved_generation_null_blockers",
+      "required_draft_field_coverage",
+      "formal_D2_path_occupancy_count",
+      "formal_historical_result_count",
+      "validator_identity",
+      "reviewer_identity"
+    ],
+    "ready_conditions": {
+      "terminal": "P2-00A-READY",
+      "validation_exit_code": 0,
+      "upstream_hash_match_rate": 1.0,
+      "draft_path_hash_coverage": 1.0,
+      "generation_rule_join_count": 400,
+      "required_draft_field_coverage": 1.0,
+      "unresolved_generation_null_blockers": 0,
+      "formal_D2_path_occupancy_count": 0,
+      "formal_historical_result_count": 0
+    },
+    "exit_codes": {"READY": 0, "INVALID_CONTRACT": 4, "EVIDENCE_MISMATCH": 5, "HOLD": 20},
+    "p2_01_start_requires_ready": true
+  },
+  "statistical_contract": {
+    "global_alpha": 0.05,
+    "minimum_target_power": 0.80,
+    "confidence_level": 0.95,
+    "game_separation_required": true,
+    "rule_segment_separation_required": true,
+    "draw_order_available": false,
+    "retrospective_records_are_labels_only": true,
+    "preregistration_must_precede_historical_results": true,
+    "cross_draw_joint_null": "conditional on game, number_space_version and documented_draw_process_version, observed draws are independent across issues and each draw follows its fixed-cardinality without-replacement uniform null",
+    "temporal_null_generation": "preserve the exact observed issue calendar, missing issues and generation-segment membership; regenerate numbers only and never synthesize unobserved draws",
+    "documented_process_semantics": "documented_draw_process_version represents only publicly evidenced procedure and never asserts unknown physical machine or ball-set identity",
+    "unknown_mechanism_metadata_rule": "unknown machine or ball-set metadata blocks mechanism attribution only, not otherwise valid marginal, set or temporal-consistency audits",
+    "practical_effect_registry": {
+      "key": ["game", "generation_segment", "bias_family", "effect_parameter"],
+      "required_fields": ["parameter_definition", "unit", "direction", "null_value", "practical_null_lower", "practical_null_upper", "grid_transform", "threshold_rationale", "applicable_test_ids"],
+      "candidate_eligible_entry_coverage": 1.0,
+      "global_unscaled_delta_min_allowed": false,
+      "shared_standardized_scale_rule": "allowed only with an invertible preregistered transform and retained thresholds in original units",
+      "symmetric_interval_shorthand": "delta_min may be used only within one registry entry when its practical-null interval is symmetric around the null value"
+    },
+    "delta_star_definition": "for each game, generation segment, bias family and effect parameter, the smallest preregistered effect-grid point whose simultaneous 95 percent Monte Carlo power lower confidence band is at least 0.80",
+    "required_n_definition": "for each registered effect point, the smallest preregistered sample-size-grid point whose simultaneous 95 percent Monte Carlo power lower confidence band is at least 0.80",
+    "not_identified_rules": {
+      "effect_grid": "not_identified_within_effect_grid",
+      "sample_size_grid": "not_identified_within_n_grid",
+      "interpolation_outside_simulated_grid_allowed": false,
+      "cross_game_or_cross_generation_segment_n_pooling_allowed": false
+    },
+    "monte_carlo_validity": {
+      "allowed_modes": ["fixed_replication_count", "time_uniform_sequential"],
+      "fixed_mode_rule": "batch checkpoints never permit data-dependent early stopping with ordinary fixed-sample intervals",
+      "sequential_mode_rule": "method must be explicitly named, reproducible and provide time-uniform coverage with frozen maximum budget and error allocation",
+      "power_grid_rule": "simultaneous confidence bands or an equivalently valid preregistered gridwise error-allocation method are required across the effect by sample-size grid for delta-star and required-n selection",
+      "mode_and_method_frozen_at": "G0"
+    },
+    "monte_carlo_acceptance_thresholds": {
+      "null_false_positive_one_sided_upper_bound_max": 0.06,
+      "key_false_positive_interval_half_width_max": 0.005,
+      "key_power_interval_half_width_max": 0.03
+    }
+  },
+  "signal_classification": {
+    "classification_unit": ["game", "generation_segment", "primary_test_family"],
+    "candidate_signal": {
+      "all_required": [
+        "multiplicity-adjusted p-value is at most 0.05",
+        "95 percent effect interval lies entirely outside the practical-effect registry interval [practical_null_lower, practical_null_upper] for that effect parameter",
+        "at the registered practical-effect boundary, not the observed effect, power at the actual generation-segment sample size has simultaneous 95 percent lower bound at least 0.80",
+        "result is not a negative control",
+        "100 percent of required sensitivity analyses preserve direction",
+        "independent deterministic recomputation matches exactly"
+      ]
+    },
+    "no_detectable_signal": "no candidate_signal exists and the power 95 percent lower bound is at least 0.80 at the registered practical-effect boundary for that effect parameter",
+    "indeterminate": "no candidate_signal exists and power at the registered practical-effect boundary is below 0.80, or a key Monte Carlo interval exceeds its precision limit",
+    "aggregate_rule": {
+      "candidate_signal": "at least one classification unit is candidate_signal",
+      "no_detectable_signal": "every candidate-eligible classification unit is no_detectable_signal",
+      "indeterminate": "all other cases; a powered unit cannot mask an underpowered unit"
+    },
+    "affects_phase_pass": false
+  },
+  "metric_registry": {
+    "input_integrity": {
+      "IN-01": {"definition": "formal input SHA-256 match rate", "operator": "eq", "threshold": 1.0},
+      "IN-02": {"definition": "independent DrawRecord statistical units", "expected_total": 400, "expected_by_game": {"dlt": 200, "ssq": 200}, "source_observation_sample_inflation": 0},
+      "IN-03": {"definition": "legal draw records rate", "operator": "eq", "threshold": 1.0},
+      "IN-04": {"definition": "draws mapped to exactly one number-space segment and one draw-process segment", "operator": "eq", "threshold": 1.0, "undeclared_mixing_count": 0},
+      "IN-05": {"definition": "forbidden or future-information fields entering a statistical matrix", "operator": "eq", "threshold": 0},
+      "IN-06": {"definition": "unauthorized changes after preregistration freeze", "operator": "eq", "threshold": 0},
+      "IN-07": {"definition": "practical-effect registry coverage and dimensional completeness", "candidate_eligible_entry_coverage": 1.0, "missing_required_fields": 0, "unjustified_global_cross_parameter_thresholds": 0, "standardized_entries_must_retain_invertible_transform_and_original_unit_thresholds": true}
+    },
+    "calibration": {
+      "CAL-01": {"definition": "empirical FWER under registered null worlds", "family_scope": "union of every primary candidate decision across both games, with per-game diagnostics also reported; samples and effects remain separate", "formula": "null worlds with at least one false rejection in the acceptance family / total null worlds", "one_sided_95_upper_max": 0.06},
+      "CAL-02": {"definition": "key FWER Monte Carlo interval half width", "max": 0.005},
+      "CAL-03": {"definition": "empirical coverage of nominal 95 percent intervals in each registered interval-method and scenario family", "one_sided_95_lower_min": 0.93},
+      "CAL-04": {"definition": "negative controls promoted to candidate_signal", "max": 0, "note": "raw negative-control rejections remain reported and count toward CAL-01"}
+    },
+    "qualification": {
+      "QUAL-01": {"definition": "preregistered known-strong-positive recovery rate", "operator": "eq", "threshold": 1.0, "direction_must_match": true, "minimum_rule": "every implemented core generator/test path has at least one qualification_positive scenario whose expected result is signed before execution"}
+    },
+    "power": {
+      "POW-01": {"definition": "registered bias-family scenario coverage", "operator": "eq", "threshold": 1.0},
+      "POW-02": {"definition": "detectable-effect rule", "power_interval_95_lower_min": 0.80},
+      "POW-03": {"definition": "key power Monte Carlo interval half width", "max": 0.03},
+      "POW-04": {"definition": "delta-star rule by bias family and effect parameter", "rule": "smallest registered effect-grid point whose simultaneous 95 percent power lower confidence band passes POW-02, else not_identified_within_effect_grid"},
+      "POW-05": {"definition": "power direction consistency", "reverse_jumps_beyond_joint_monte_carlo_uncertainty_max": 0, "candidate_only_required_sensitivity_direction_consistency": 1.0, "noncandidate_direction_changes": "report but do not fail the phase solely for direction change"},
+      "POW-06": {"definition": "minimum required draw count coverage by registered effect point", "required_n_or_not_identified_coverage": 1.0, "selection_rule": "smallest registered sample-size-grid point whose simultaneous 95 percent power lower confidence band passes POW-02", "not_identified_state": "not_identified_within_n_grid", "unsimulated_n_interpolation_count": 0, "cross_game_or_cross_generation_segment_n_pooling_count": 0}
+    },
+    "reproducibility": {
+      "REP-01": {"definition": "normalized artifact hash match with identical input, code, environment and seed", "operator": "eq", "threshold": 1.0},
+      "REP-02": {"definition": "independent historical deterministic-statistic exact match rate", "operator": "eq", "threshold": 1.0},
+      "REP-03": {"definition": "different-seed estimates and simultaneous bands within preregistered joint Monte Carlo tolerance", "operator": "eq", "threshold": 1.0},
+      "REP-04": {"definition": "delta-star and required-n replay state and corresponding-grid-step compatibility", "both_identified_max_corresponding_grid_steps": 1, "both_same_not_identified_state": "PASS", "identified_status_mismatch": "HOLD"},
+      "REP-05": {"definition": "interruption-resume integrity", "missing_batches": 0, "duplicate_batches": 0, "normalized_hash_matches_uninterrupted_run": true}
+    },
+    "completeness": {
+      "COV-01": {"definition": "preregistered historical-test result coverage", "operator": "eq", "threshold": 1.0, "unexplained_missing": 0},
+      "COV-02": {"definition": "preregistered power-scenario result coverage", "operator": "eq", "threshold": 1.0, "unexplained_missing": 0},
+      "COV-03": {"definition": "final deliverable and evidence-lineage coverage", "pre_accept_evidence_hash_closure": "D2-01 through D2-12 at 100 percent", "post_accept_deliverable_presence": "D2-01 through D2-13 at 100 percent", "D2-13_self_hash_required": false},
+      "COV-04": {"definition": "selective deletion, exploratory-primary mixing and cross-game merging counts", "each_max": 0},
+      "COV-05": {"definition": "unresolved blocking findings", "max": 0},
+      "COV-06": {"definition": "prerequisite acceptance gates passing before final accept", "required": ["G0", "G1", "G2", "G3", "G4", "G5"], "G6_rule": "mechanically derived by final accept after all remaining metrics pass"},
+      "COV-07": {"definition": "required E2E expected-outcome coverage", "required_case_count": 10, "expected_outcome_rate": 1.0, "missing_cases": 0, "duplicate_aggregate_results": 0, "unbound_gate_references": 0}
+    }
+  },
+  "role_separation": {
+    "roles": [
+      "phase_decision_owner",
+      "data_custodian",
+      "statistical_research_owner",
+      "research_tool_implementer",
+      "independent_method_reviewer",
+      "independent_replay_reviewer",
+      "final_acceptance_reviewer"
+    ],
+    "conflicts_forbidden": [
+      ["statistical_research_owner", "independent_method_reviewer"],
+      ["statistical_research_owner", "independent_replay_reviewer"],
+      ["statistical_research_owner", "final_acceptance_reviewer"],
+      ["research_tool_implementer", "independent_method_reviewer"],
+      ["research_tool_implementer", "independent_replay_reviewer"],
+      ["research_tool_implementer", "final_acceptance_reviewer"]
+    ],
+    "independence_levels": {
+      "procedural_agent_independence": {
+        "minimum_requirements": ["distinct task and agent id", "no authorship of reviewed artifacts", "read-only frozen inputs", "independent seed set", "writes only its own review or replay artifacts", "task or prompt summary hash recorded"],
+        "claim_limit": "must not be described as organizational or human independence"
+      },
+      "organizational_independence": {
+        "minimum_requirements": ["different natural person", "no authorship of reviewed artifacts", "conflict declaration", "frozen evidence only"]
+      }
+    },
+    "minimum_phase_level": "procedural_agent_independence",
+    "same_code_replay_semantics": "proves reproducibility only; REP-02 additionally requires an independent reference calculation path for critical deterministic statistics"
+  },
+  "deliverables": [
+    {
+      "id": "D2-01",
+      "paths": ["docs/research/phase-2-input-rule-and-time-contract.md"],
+      "kind": "research_contract",
+      "definition": "human-readable frozen input, statistical-unit, public rule timeline, documented draw-process semantics, mechanism-metadata status and point-in-time use contract with machine-checkable section and assertion IDs",
+      "required_metrics": ["IN-04", "IN-05"],
+      "quantitative_pass": {"required_section_and_assertion_id_coverage": 1.0, "evidence_reference_closure": 1.0, "draw_rule_mapping_rate": 1.0, "unknown_physical_mechanism_rows_explicitly_labeled_rate": 1.0, "prize_or_promotion_changes_used_as_generation_splits_without_evidence": 0},
+      "acceptance_methods": ["document-contract checker", "per-draw rule join", "D2-02, Phase 1 and schema-freeze cross-check", "independent method review"]
+    },
+    {
+      "id": "D2-02",
+      "paths": ["artifacts/phase-2/contracts/input-manifest.json"],
+      "kind": "machine_contract",
+      "definition": "complete machine inventory of input paths, hashes, counts, games, issues, segments and upstream identities",
+      "required_metrics": ["IN-01", "IN-02", "IN-03", "IN-04", "IN-05"],
+      "acceptance_methods": ["validate-input", "hash and count recomputation", "unsafe-reference scan"]
+    },
+    {
+      "id": "D2-03",
+      "paths": ["artifacts/phase-2/contracts/preregistration.json"],
+      "kind": "machine_contract",
+      "definition": "frozen registry of the cross-draw joint null, calendar policy, tests, labels, multiplicity, per-effect-parameter practical-effect thresholds, effect and sample-size grids, qualification positives, seeds, fixed or time-uniform Monte Carlo mode, simultaneous power band, budget and precision rules",
+      "required_metrics": ["IN-06", "IN-07"],
+      "quantitative_pass": {"required_field_coverage": 1.0, "practical_effect_registry_coverage": 1.0, "planned_test_registry_coverage": 1.0, "planned_scenario_registry_coverage": 1.0, "planned_sample_size_grid_coverage": 1.0, "post_result_unauthorized_changes": 0},
+      "acceptance_methods": ["P2-00B schema validation", "signature and hash ordering", "G3 and G4 registry-result bidirectional set comparison"]
+    },
+    {
+      "id": "D2-04",
+      "paths": ["artifacts/phase-2/contracts/reviewer-assignment.json"],
+      "kind": "machine_contract",
+      "definition": "identity, responsibility, conflict declaration and signature record for all required roles",
+      "quantitative_pass": {"required_role_assignment_rate": 1.0, "forbidden_role_conflicts": 0, "missing_signatures": 0, "independence_level_and_identity_record_rate": 1.0},
+      "acceptance_methods": ["machine conflict validator", "final reviewer inspection"]
+    },
+    {
+      "id": "D2-05",
+      "paths": ["artifacts/phase-2/reviews/method-review.json"],
+      "kind": "independent_review",
+      "definition": "independent pre-result review of nulls, statistics, multiplicity, practical-effect registry, effect and sample-size grids, budget and stopping",
+      "quantitative_pass": {"registered_test_review_coverage": 1.0, "registered_effect_parameter_review_coverage": 1.0, "blocking_findings": 0, "unresolved_nonblocking_findings": 0},
+      "acceptance_methods": ["signed item-level verdicts", "D2-04 independence check"]
+    },
+    {
+      "id": "D2-06",
+      "paths": ["src/lottery_research/phase2", "schemas/phase2", "requirements/phase2.lock", "artifacts/phase-2/contracts/environment-lock.json"],
+      "kind": "offline_cli",
+      "definition": "offline Phase 2 CLI, schemas, isolated dependency lock and stable exit-code implementation",
+      "quantitative_pass": {"contract_commands": 6, "contract_and_schema_test_pass_rate": 1.0, "accepted_invalid_argument_combinations": 0, "silent_phase1_dependency_changes": 0, "actual_hardware_benchmark_present": true, "formal_historical_result_artifacts_before_G0": 0},
+      "acceptance_methods": ["offline CLI contract tests", "error-path tests", "environment rebuild", "dependency diff", "synthetic-only actual-hardware benchmark"]
+    },
+    {
+      "id": "D2-07",
+      "paths": ["tests/phase2", "artifacts/phase-2/qualification/harness-qualification.json"],
+      "kind": "qualification_report",
+      "definition": "known-answer, null, injected-bias, negative-control, leakage, tamper, mixing and recovery qualification evidence",
+      "required_metrics": ["CAL-03", "CAL-04", "QUAL-01", "REP-01"],
+      "quantitative_pass": {"exact_probability_normalization_absolute_error_max": 1e-12, "illegal_generated_combinations": 0, "missed_leakage_or_tamper_injections": 0, "qualification_positive_recovery_rate": 1.0, "qualification_positive_direction_match_rate": 1.0},
+      "acceptance_methods": ["exact enumeration", "fixed-seed replay", "fault injection", "Monte Carlo coverage calibration"]
+    },
+    {
+      "id": "D2-08",
+      "paths": ["artifacts/phase-2/results/historical-audit.json"],
+      "kind": "research_result",
+      "definition": "all preregistered historical statistics, effects, intervals, adjusted evidence and limitations by game and segment",
+      "required_metrics": ["COV-01", "COV-04"],
+      "acceptance_methods": ["registry-result anti-join", "schema validation", "deterministic-statistic recomputation", "G3 review"]
+    },
+    {
+      "id": "D2-09",
+      "paths": ["artifacts/phase-2/results/power-envelope.json"],
+      "kind": "research_result",
+      "definition": "registered FWER, valid Monte Carlo intervals, simultaneous power bands, delta-star, required-n and actual generation-segment sample-size envelopes for every bias family and effect parameter",
+      "required_metrics": ["CAL-01", "CAL-02", "CAL-03", "QUAL-01", "POW-01", "POW-02", "POW-03", "POW-04", "POW-05", "POW-06"],
+      "acceptance_methods": ["fixed-count or time-uniform simulation", "simultaneous-band and effect-by-sample-size-grid completeness check", "required-n registry anti-join and recomputation", "monotonicity diagnostics", "independent-seed recomputation"]
+    },
+    {
+      "id": "D2-10",
+      "paths": ["artifacts/phase-2/reviews/replay-review.json"],
+      "kind": "independent_review",
+      "definition": "same-code reproducibility replay, independent-reference deterministic recomputation and different-seed delta-star and required-n replay report with declared independence level",
+      "required_metrics": ["REP-01", "REP-02", "REP-03", "REP-04", "REP-05", "COV-05"],
+      "acceptance_methods": ["offline same-code replay", "independent reference calculation for critical deterministic statistics", "item-level difference and state-machine report", "D2-04 independence-level check"]
+    },
+    {
+      "id": "D2-11",
+      "paths": ["docs/research/phase-2-randomness-audit-power-envelope.md"],
+      "kind": "research_report",
+      "definition": "human-readable method, limitations, audit, calibration, per-effect practical threshold, power envelope, delta-star, required-n or not-identified state, signal classification and supported-conclusion report",
+      "quantitative_pass": {"primary_conclusion_evidence_link_rate": 1.0, "prohibited_claims": 0, "cross_game_merged_conclusions": 0, "omitted_material_limitations": 0},
+      "acceptance_methods": ["conclusion-to-evidence closure", "prohibited-claim scan", "independent manual review"]
+    },
+    {
+      "id": "D2-12",
+      "paths": ["artifacts/phase-2/contracts/final-evidence-manifest.json"],
+      "kind": "evidence_selection",
+      "definition": "unique explicit selection of formal audit, power and replay run IDs, identities, paths and hashes",
+      "required_metrics": ["COV-03"],
+      "quantitative_pass": {"implicit_latest_or_wildcard_references": 0, "duplicate_run_id_conflicts": 0, "missing_hashes": 0},
+      "acceptance_methods": ["manifest schema validation", "full rehash", "run-manifest reverse check"]
+    },
+    {
+      "id": "D2-13",
+      "paths": ["artifacts/phase-2/acceptance/phase2-acceptance.json"],
+      "kind": "final_acceptance",
+      "definition": "machine-readable final verdict for all deliverables, gates, delivery status and independent scientific signal status",
+      "required_metrics": ["COV-01", "COV-02", "COV-03", "COV-04", "COV-05", "COV-06", "COV-07"],
+      "quantitative_pass": {"pre_accept_D2_01_through_D2_12_evidence_hash_closure": 1.0, "required_e2e_expected_outcome_rate": 1.0, "post_accept_D2_01_through_D2_13_presence": 1.0, "D2-13_self_hash_required": false, "blocking_findings": 0, "unexplained_missing_results": 0},
+      "acceptance_methods": ["fixed accept command", "exit code zero", "independent final reviewer signature"]
+    }
+  ],
+  "gates": [
+    {
+      "id": "G0",
+      "name": "entry_and_preregistration",
+      "required_metrics": ["IN-01", "IN-02", "IN-04", "IN-06", "IN-07"],
+      "required_e2e_ids": [],
+      "pass_conditions": [
+        "P2-R00 validation exits zero with terminal P2-00A-READY before P2-01 starts",
+        "P2-01 schemas and validate-input are executable before this gate is signed",
+        "phase1 identity and baseline hashes match",
+        "input manifest and active game scope are frozen",
+        "each of the 400 draws maps to exactly one number-space segment and exactly one draw-process segment",
+        "retrospective use and forbidden-field rules are explicit",
+        "cross-draw joint null, calendar policy, per-effect practical-effect registry, test families, multiplicity, qualification positives, effect and sample-size grids, seeds, fixed-count or time-uniform Monte Carlo method, simultaneous power band, error allocation and resource budget are frozen",
+        "reviewer assignment satisfies role separation",
+        "independent method review has zero blocking findings"
+      ]
+    },
+    {
+      "id": "G1",
+      "name": "input_and_rule_integrity",
+      "required_metrics": ["IN-01", "IN-02", "IN-03", "IN-04", "IN-05", "IN-06"],
+      "required_e2e_ids": ["E2E-P2-02-input-tamper", "E2E-P2-03-observation-count-inflation", "E2E-P2-04-rule-segment-mixing", "E2E-P2-05-point-in-time-leakage"],
+      "pass_conditions": [
+        "exactly 200 DLT and 200 SSQ DrawRecord rows are statistical units",
+        "800 SourceObservation rows are used only as provenance",
+        "no live or post-freeze release is read",
+        "schemas, hashes, issue mappings and current-view revisions close",
+        "no available_at-null non-label field enters a predictive feature matrix"
+      ]
+    },
+    {
+      "id": "G2",
+      "name": "harness_qualification",
+      "required_metrics": ["CAL-03", "CAL-04", "QUAL-01", "REP-01"],
+      "required_e2e_ids": [],
+      "pass_conditions": [
+        "small combinatorial worlds match exact enumeration",
+        "fixed seeds reproduce canonical outputs",
+        "all generated tickets obey range, cardinality and uniqueness invariants",
+        "leakage, rule mixing, config tampering and input mutation fail closed",
+        "negative tests cannot be recorded as PASS",
+        "every qualification_positive scenario is recovered in the preregistered direction"
+      ]
+    },
+    {
+      "id": "G3",
+      "name": "historical_audit",
+      "required_metrics": ["COV-01", "COV-04"],
+      "required_e2e_ids": [],
+      "pass_conditions": [
+        "all preregistered primary, negative-control and sensitivity analyses are accounted for",
+        "effect sizes, 95 percent intervals and multiplicity-adjusted evidence are present",
+        "DLT and SSQ are reported separately",
+        "exploratory findings are isolated from primary conclusions",
+        "missing draw order and mechanism metadata are reported as limitations"
+      ]
+    },
+    {
+      "id": "G4",
+      "name": "false_positive_and_power",
+      "required_metrics": ["CAL-01", "CAL-02", "CAL-03", "CAL-04", "QUAL-01", "POW-01", "POW-02", "POW-03", "POW-04", "POW-05", "POW-06"],
+      "required_e2e_ids": ["E2E-P2-07-uniform-calibration", "E2E-P2-08-injected-bias-recovery"],
+      "pass_conditions": [
+        "uniform-world FWER one-sided 95 percent upper bound is at most 0.06",
+        "key FWER Monte Carlo interval half width is at most 0.005",
+        "nominal 95 percent interval coverage one-sided 95 percent lower bound is at least 0.93",
+        "every registered bias family has power estimates and Monte Carlo intervals",
+        "each bias family and effect parameter has delta-star selected from a simultaneous 95 percent power lower confidence band or not_identified_within_effect_grid",
+        "each registered effect point has the smallest qualifying sample-size-grid required-n or not_identified_within_n_grid, with 100 percent result coverage and no unsimulated interpolation",
+        "the actual n for every game and generation segment is placed on its applicable power envelope; n=200 is allowed only when one generation segment covers the full game",
+        "key simultaneous power interval half width is at most 0.03; wider intervals trigger HOLD rather than unsupported interpolation"
+      ]
+    },
+    {
+      "id": "G5",
+      "name": "independent_replay",
+      "required_metrics": ["REP-01", "REP-02", "REP-03", "REP-04", "REP-05", "COV-05"],
+      "required_e2e_ids": ["E2E-P2-06-post-result-preregistration-tamper", "E2E-P2-09-independent-seed-replay", "E2E-P2-10-interruption-and-idempotent-resume"],
+      "pass_conditions": [
+        "independent replay uses identical frozen inputs and preregistration with a different seed set",
+        "same-code deterministic artifacts match exactly and critical deterministic statistics match an independent reference calculation path",
+        "Monte Carlo results satisfy frozen replay tolerance",
+        "delta-star and required-n state comparison follows REP-04: both identified differ by at most the corresponding one grid step, both share the same not-identified state to pass, and a state mismatch holds",
+        "replay review has zero blocking findings"
+      ]
+    },
+    {
+      "id": "G6",
+      "name": "final_acceptance",
+      "required_metrics": ["COV-01", "COV-02", "COV-03", "COV-04", "COV-05", "COV-06", "COV-07"],
+      "required_e2e_ids": ["E2E-P2-01-normal-full-chain"],
+      "pass_conditions": [
+        "before accept, D2-01 through D2-12 exist and their evidence hashes close",
+        "G0 through G5 are PASS",
+        "the final evidence manifest explicitly selects audit, power and replay run IDs and hashes without a latest pointer",
+        "all ten required E2E cases have exactly one aggregate result and meet their registered expected outcomes",
+        "the report separates delivery status from signal status",
+        "no prediction, betting, randomness-proof or 100-percent claim is present",
+        "accept atomically writes D2-13 only to artifacts/phase-2/acceptance/phase2-acceptance.json, after which D2-01 through D2-13 all exist",
+        "D2-13 is not required to contain its own hash"
+      ]
+    }
+  ],
+  "required_e2e_cases": [
+    {"id": "E2E-P2-01-normal-full-chain", "owner": "P2-06-final-acceptance", "gate": "G6", "expected_exit_code": 0, "expected_terminal": "PASS"},
+    {"id": "E2E-P2-02-input-tamper", "owner": "P2-00B-entry-freeze", "gate": "G1", "expected_exit_code": 5, "expected_terminal": "EVIDENCE_MISMATCH"},
+    {"id": "E2E-P2-03-observation-count-inflation", "owner": "P2-00B-entry-freeze", "gate": "G1", "expected_exit_code": 2, "expected_terminal": "REJECTED"},
+    {"id": "E2E-P2-04-rule-segment-mixing", "owner": "P2-00B-entry-freeze", "gate": "G1", "expected_exit_code": 2, "expected_terminal": "REJECTED", "note": "a real missing external rule source is HOLD 20 and is not this injected wrong-mapping case"},
+    {"id": "E2E-P2-05-point-in-time-leakage", "owner": "P2-00B-entry-freeze", "gate": "G1", "expected_exit_code": 2, "expected_terminal": "REJECTED"},
+    {"id": "E2E-P2-06-post-result-preregistration-tamper", "owner": "P2-05-independent-replay", "gate": "G5", "expected_exit_code": 5, "expected_terminal": "EVIDENCE_MISMATCH", "tamper_scope": ["alpha", "joint_null", "test_registry", "practical_effect_registry", "effect_grid", "sample_size_grid", "monte_carlo_method"]},
+    {"id": "E2E-P2-07-uniform-calibration", "owner": "P2-04-power-envelope", "gate": "G4", "expected_exit_code": 0, "expected_terminal": "PASS"},
+    {"id": "E2E-P2-08-injected-bias-recovery", "owner": "P2-04-power-envelope", "contributing_work_packages": ["P2-02-harness-qualification"], "gate": "G4", "expected_exit_code": 0, "expected_terminal": "PASS", "required_n_or_not_identified_coverage": 1.0},
+    {"id": "E2E-P2-09-independent-seed-replay", "owner": "P2-05-independent-replay", "gate": "G5", "expected_exit_code": 0, "expected_terminal": "PASS", "incompatible_result": {"exit_code": 20, "terminal": "HOLD"}},
+    {"id": "E2E-P2-10-interruption-and-idempotent-resume", "owner": "P2-05-independent-replay", "gate": "G5", "expected_exit_code": 0, "expected_terminal": "PASS", "first_process": "controlled interruption with no normal exit"}
+  ],
+  "e2e_execution_contract": {
+    "isolated_artifacts_root_required": true,
+    "phase1_baseline_mutation_allowed": false,
+    "formal_phase2_run_or_deliverable_mutation_allowed": false,
+    "fault_injection_rule": "use temporary controlled copies only",
+    "full_chain_rule": "E2E-P2-01 writes a test acceptance under its isolated root; G6 later performs the sole formal accept"
+  },
+  "work_packages": [
+    {"id": "P2-00A-entry-design", "depends_on": [], "inputs": ["phase1 accepted evidence", "R2 objective"], "readiness_outputs": ["P2-R00"], "deliverables": [], "primary_e2e_ids": [], "completion": "fixed P2-R00 validation exits zero with terminal P2-00A-READY; draft hash coverage and generation-rule join coverage are 100 percent; formal D2 path occupancy and formal historical result counts are zero"},
+    {"id": "P2-01-cli-and-schemas", "depends_on": ["P2-00A-entry-design"], "inputs": ["P2-R00 terminal P2-00A-READY", "artifacts/phase-2/readiness/p2-00a-readiness.json", "P2-R00 fixed-path interface drafts"], "deliverables": ["D2-06"], "primary_e2e_ids": [], "start_condition": "rerun P2-R00 validation and require exit zero plus P2-00A-READY", "completion": "CLI, schema, error-path and actual-hardware benchmark tests pass; no G0 or G1 claim"},
+    {"id": "P2-00B-entry-freeze", "depends_on": ["P2-01-cli-and-schemas"], "inputs": ["P2-00A drafts", "D2-06"], "deliverables": ["D2-01", "D2-02", "D2-03", "D2-04", "D2-05"], "primary_e2e_ids": ["E2E-P2-02-input-tamper", "E2E-P2-03-observation-count-inflation", "E2E-P2-04-rule-segment-mixing", "E2E-P2-05-point-in-time-leakage"], "gates": ["G0", "G1"]},
+    {"id": "P2-02-harness-qualification", "depends_on": ["P2-00B-entry-freeze"], "inputs": ["D2-01", "D2-02", "D2-03", "D2-04", "D2-05", "D2-06"], "deliverables": ["D2-07"], "primary_e2e_ids": [], "contributes_to_e2e_ids": ["E2E-P2-08-injected-bias-recovery"], "gates": ["G2"]},
+    {"id": "P2-03-historical-audit", "depends_on": ["P2-02-harness-qualification"], "inputs": ["D2-01", "D2-02", "D2-03", "D2-04", "D2-05", "D2-06", "D2-07"], "deliverables": ["D2-08"], "primary_e2e_ids": [], "gates": ["G3"]},
+    {"id": "P2-04-power-envelope", "depends_on": ["P2-02-harness-qualification"], "inputs": ["D2-01", "D2-02", "D2-03", "D2-04", "D2-05", "D2-06", "D2-07"], "deliverables": ["D2-09"], "primary_e2e_ids": ["E2E-P2-07-uniform-calibration", "E2E-P2-08-injected-bias-recovery"], "gates": ["G4"]},
+    {"id": "P2-05-independent-replay", "depends_on": ["P2-03-historical-audit", "P2-04-power-envelope"], "inputs": ["D2-01", "D2-02", "D2-03", "D2-04", "D2-05", "D2-06", "D2-07", "D2-08", "D2-09"], "deliverables": ["D2-10"], "primary_e2e_ids": ["E2E-P2-06-post-result-preregistration-tamper", "E2E-P2-09-independent-seed-replay", "E2E-P2-10-interruption-and-idempotent-resume"], "gates": ["G5"]},
+    {"id": "P2-06-final-acceptance", "depends_on": ["P2-05-independent-replay"], "inputs": ["D2-01", "D2-02", "D2-03", "D2-04", "D2-05", "D2-06", "D2-07", "D2-08", "D2-09", "D2-10"], "deliverables": ["D2-11", "D2-12", "D2-13"], "primary_e2e_ids": ["E2E-P2-01-normal-full-chain"], "aggregate_all_e2e": true, "gates": ["G6"]}
+  ],
+  "resource_estimation_contract": {
+    "current_environment_baseline": {"python": "3.12", "logical_processors_observed": 4},
+    "benchmark_owner": "P2-01-cli-and-schemas",
+    "benchmark_units": ["wall seconds per 1000 null worlds", "wall seconds per 1000 bias worlds", "peak memory bytes", "artifact bytes"],
+    "formal_estimate_owner": "P2-00B-entry-freeze",
+    "formal_estimate_formula": "benchmark unit cost times frozen scenario/world count times measured parallel-efficiency factor",
+    "prebenchmark_total_wall_clock_commitment_allowed": false,
+    "normal_approximation_sanity_only": "at p approximately 0.05, 95 percent half width 0.005 is about 7300 worlds; the registered valid interval method determines the formal count"
+  },
+  "planned_cli": {
+    "module": "lottery_research.phase2",
+    "commands": ["validate-input", "qualify-harness", "audit", "power", "replay", "accept"],
+    "exit_codes": {"PASS": 0, "REJECTED": 2, "ENVIRONMENT_FAILURE": 3, "INVALID_CONTRACT": 4, "EVIDENCE_MISMATCH": 5, "HOLD": 20},
+    "final_argv": [
+      "{python}",
+      "-m",
+      "lottery_research.phase2",
+      "accept",
+      "--contract",
+      "docs/roadmap/phase-2-acceptance-contract.json",
+      "--evidence-manifest",
+      "artifacts/phase-2/contracts/final-evidence-manifest.json",
+      "--output",
+      "artifacts/phase-2/acceptance/phase2-acceptance.json"
+    ]
+  },
+  "decision_rules": {
+    "aggregation": "non_compensable_hard_gates; no weighted score",
+    "phase_pass_formula": "all IN metrics AND all CAL metrics AND all QUAL metrics AND harness qualification AND all POW metrics AND all REP metrics AND all COV metrics",
+    "GO": "G0 through G6 PASS, all required metrics PASS and independent reviews have zero blocking findings",
+    "HOLD": "required evidence, rule mapping, Monte Carlo precision, budget or replay tolerance is incomplete but recoverable",
+    "FAIL": "tampering, leakage, selective deletion, invalid known-answer behavior or role-independence violation is detected",
+    "not_identified_states_can_pass": {
+      "allowed": true,
+      "conditions": [
+        "the registered effect and sample-size grids are complete",
+        "the result uses not_identified_within_effect_grid or not_identified_within_n_grid as applicable",
+        "the result is honestly reported",
+        "frozen Monte Carlo precision is met",
+        "the scientific status is indeterminate"
+      ]
+    },
+    "scientific_result_is_not_gate_result": true
+  },
+  "execution_order": [
+    "P2-00A-entry-design",
+    "P2-01-cli-and-schemas",
+    "P2-00B-entry-freeze",
+    "P2-02-harness-qualification",
+    ["P2-03-historical-audit", "P2-04-power-envelope"],
+    "P2-05-independent-replay",
+    "P2-06-final-acceptance"
+  ],
+  "implementation_state": "No Phase 2 runtime or result is claimed by this planning contract. All CLI commands and downstream deliverables are future work."
+}

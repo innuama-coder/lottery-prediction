@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "algorithm": "sha256",
+  "bundle_profile": "canonical JSON array of sorted {path,sha256} entries with one trailing LF",
+  "self_inclusion_policy": "this freeze manifest is excluded to prevent self-reference",
+  "files": [
+    {"path": "docs/data/lottery-data-spec-v1.md", "sha256": "55eb907eb7c2f85ec58d244eb975dac3ec4ced7492aa5d58a01e611a006b96dd"},
+    {"path": "schemas/phase1/dataset-release.schema.json", "sha256": "05526d4f81ccce548e97c216b9aaa1dff0e87bd1e426955721c968041a108e4e"},
+    {"path": "schemas/phase1/draw-record.schema.json", "sha256": "6e977acb866c3310f3bd53c33f425a7d206cdef1fab6b5335e7ebea6fc01bf5a"},
+    {"path": "schemas/phase1/run-event.schema.json", "sha256": "df9c784d0c6216fbbf54d67ea61f9e5140ad1e5d4a780a23d5425c969cb61ad2"},
+    {"path": "schemas/phase1/run-manifest.schema.json", "sha256": "a686052b84f69faee8f8a37b6f5792c5891fd859bb45b8a66e4dff0a8e421cd8"},
+    {"path": "schemas/phase1/run-result.schema.json", "sha256": "2b828d75344d643d95fbd444a1928e7877aa237bda806414a4ede9f61c5cfb55"},
+    {"path": "schemas/phase1/source-observation.schema.json", "sha256": "f4a8de948312b423b79ea6f38c0d8f6b15e047011476ab865c7f238660dd5a04"},
+    {"path": "tests/phase1/fixtures/spec/hash-vectors.json", "sha256": "1a5f46f8a014a9411f48609edd304e8187a2de4de02438b71fd046744eadd608"}
+  ],
+  "expected_bundle_sha256": "7c6e7f6b9c0014ab638c14640bb21c4cde7769d9dd7d747ca6ae8b7cfadf9571"
+}

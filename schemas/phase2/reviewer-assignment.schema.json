@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase2-reviewer-assignment.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "status", "frozen_at_utc", "minimum_independence_level", "assignments"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase2_reviewer_assignment"},
+    "status": {"const": "frozen"},
+    "frozen_at_utc": {"type": "string", "format": "date-time"},
+    "minimum_independence_level": {"const": "procedural_agent_independence"},
+    "assignments": {"type": "array", "minItems": 7, "maxItems": 7, "items": {"$ref": "#/$defs/assignment"}}
+  },
+  "$defs": {
+    "assignment": {"type": "object", "additionalProperties": false, "required": ["role", "identity", "responsibility", "independence_level", "conflict_declaration", "authored_artifact_paths", "signature"], "properties": {"role": {"enum": ["phase_decision_owner", "data_custodian", "statistical_research_owner", "research_tool_implementer", "independent_method_reviewer", "independent_replay_reviewer", "final_acceptance_reviewer"]}, "identity": {"type": "string", "minLength": 1}, "responsibility": {"type": "string", "minLength": 5}, "independence_level": {"enum": ["not_applicable", "procedural_agent_independence", "organizational_independence"]}, "conflict_declaration": {"type": "string", "minLength": 5}, "authored_artifact_paths": {"type": "array", "items": {"type": "string"}}, "signature": {"type": "object", "additionalProperties": false, "required": ["signed", "signed_at_utc", "signature_type"], "properties": {"signed": {"const": true}, "signed_at_utc": {"type": "string", "format": "date-time"}, "signature_type": {"enum": ["procedural_attestation", "human_attestation"]}}}}}
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase2_replay_evidence_manifest",
+  "status": "frozen",
+  "evidence": [
+    {"path": "docs/roadmap/phase-2-acceptance-contract.json", "sha256": "9f5456ca5d8fb041d755fb0e00d668a0e8d4fe424c9c983f7ec8224033f3a8e6"},
+    {"path": "docs/research/phase-2-input-rule-and-time-contract.md", "sha256": "851b5ddc18f8d538cb6b87e4fe3110226a071685cc5546912645c4875dc033bb"},
+    {"path": "artifacts/phase-2/contracts/pre-g0-contract-amendment.json", "sha256": "ce53ff97eefd6d7bc2e758077b4bee63eccfcdd23c89c835bfc5644d7ace7016"},
+    {"path": "artifacts/phase-2/contracts/input-manifest.json", "sha256": "36ad90a204a2d0ebab5ddbfff3a4246f267e02cdd2cfe961200e515c27ef90ad"},
+    {"path": "artifacts/phase-2/contracts/preregistration.json", "sha256": "fc7d456bf33afc5cc815c56da1683b5b45d2b08f359c26c5f3ed25140dbf9ec7"},
+    {"path": "artifacts/phase-2/contracts/reviewer-assignment.json", "sha256": "7be089375889c2e7ab92aa0010787a375761a9e96a5b82843e25e84c1d56f5ee"},
+    {"path": "artifacts/phase-2/reviews/method-review.json", "sha256": "3b84133f2e7e245825a7ee493fad32309ef04ca068dbc4f80e194e146b5c71b1"},
+    {"path": "artifacts/phase-2/reviews/nonstatistical-patch-review.json", "sha256": "199d492ba55af555e532b4143d304882d616007c74a3d778519507afaeb5ecdd"},
+    {"path": "artifacts/phase-2/contracts/environment-lock.json", "sha256": "b6cbbb459ea4b4c44f71e70bcdb299eccd38ca0dce870c6be4b89ef75f2fab8d"},
+    {"path": "artifacts/phase-2/gates/g0-g1.json", "sha256": "a9bf2a8f766332d913f9eb5741a19e6088c422a82f0f5908fc7a9c790d76e9d9"},
+    {"path": "artifacts/phase-2/qualification/harness-qualification.json", "sha256": "cd4f12854bc27814a504f0e26e881084612efdc135b59c351ab1259eac07f132"},
+    {"path": "artifacts/phase-2/qualification/reference-null.bin", "sha256": "ef14ef3b25b260fc0b49bc661041fad2d978e02020de74dd52dd8d6839eddaa5"},
+    {"path": "artifacts/phase-2/qualification/evaluation-null.bin", "sha256": "171652883c1e0eccf6858b6d339eed790f9d6f83ef9ea35c5af4e81301e0ec1b"},
+    {"path": "artifacts/phase-2/qualification/effect-interval-calibration.json", "sha256": "c31bd2c92d3ad7d4b4760f791016d452ac36fe18523cf118a68ce23a2baf002f"},
+    {"path": "artifacts/phase-2/results/historical-audit.json", "sha256": "952213369d1236b8c8298de7f42fed513f2e3abc94b34660d1f0832c877af075"},
+    {"path": "artifacts/phase-2/results/power-envelope.json", "sha256": "f53b1bd17341cf3e9ded0d664ef328d7422dd6148cb14478e21ba30026ead3d4"},
+    {"path": "artifacts/phase-2/runs/p2-audit-refreeze-20260805t0652z/request.json", "sha256": "362567b944ff2083f0c8ae6d4e61621c5584bdb24b8b57aba212ff1656b95ffe"},
+    {"path": "artifacts/phase-2/runs/p2-audit-refreeze-20260805t0652z/result.json", "sha256": "2b80d4e8b7e8a160f7ca5304d86eba2ab43eb8cfcf640fd291ab23d8f72ce488"},
+    {"path": "artifacts/phase-2/runs/p2-power-refreeze-20260805t0652z/request.json", "sha256": "2859c3f57ff6c4e642bbb2661d58ff76e88987a0470346fe58884c4b81ebb8ac"},
+    {"path": "artifacts/phase-2/runs/p2-power-refreeze-20260805t0652z/result.json", "sha256": "07f8dac1763fc2fd6f0e5ba562d81b3c798e63e02401c0a51a469a68b32c0397"}
+  ]
+}

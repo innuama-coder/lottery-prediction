@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "p2-00a-readiness.schema.json",
+  "title": "Phase 2 P2-00A readiness evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "terminal",
+    "evaluated_at_utc",
+    "contract_identity",
+    "upstream_identities",
+    "R2_source_path_and_sha256",
+    "draft_path_sha256_inventory",
+    "generation_rule_join_count",
+    "unresolved_generation_null_blockers",
+    "required_draft_field_coverage",
+    "formal_D2_path_occupancy_count",
+    "formal_historical_result_count",
+    "validator_identity",
+    "reviewer_identity"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase2_p2_00a_readiness"},
+    "terminal": {"enum": ["P2-00A-READY", "HOLD"]},
+    "evaluated_at_utc": {"type": "string", "format": "date-time"},
+    "contract_identity": {"$ref": "#/$defs/pathHash"},
+    "upstream_identities": {
+      "type": "array",
+      "minItems": 6,
+      "items": {"$ref": "#/$defs/pathHash"}
+    },
+    "R2_source_path_and_sha256": {"$ref": "#/$defs/pathHash"},
+    "draft_path_sha256_inventory": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {"$ref": "#/$defs/pathHash"}
+    },
+    "generation_rule_join_count": {"type": "integer", "minimum": 0},
+    "unresolved_generation_null_blockers": {"type": "integer", "minimum": 0},
+    "required_draft_field_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+    "formal_D2_path_occupancy_count": {"type": "integer", "minimum": 0},
+    "formal_historical_result_count": {"type": "integer", "minimum": 0},
+    "validator_identity": {"$ref": "#/$defs/pathHash"},
+    "reviewer_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer_id", "review_type", "independence_claim"],
+      "properties": {
+        "reviewer_id": {"type": "string", "minLength": 1},
+        "review_type": {"const": "deterministic_self_check"},
+        "independence_claim": {"const": "none; independent method review remains P2-00B work"}
+      }
+    },
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "pathHash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

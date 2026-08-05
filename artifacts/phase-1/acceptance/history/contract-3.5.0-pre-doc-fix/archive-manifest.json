@@ -1,0 +1,67 @@
+﻿{
+    "archive_schema_version":  "1.0.0",
+    "contract_version":  "3.5.0",
+    "purpose":  "pre-documentation-and-final-report-path-fix",
+    "files":  [
+                  {
+                      "path":  "docs/roadmap/phase-1-acceptance-contract.json",
+                      "sha256":  "2e5dee8f9921d54fab2311db9514fbb70aca4ea1c38d5eb9c658aade688c0652",
+                      "size_bytes":  36015
+                  },
+                  {
+                      "path":  "artifacts/phase-1/acceptance/g1.json",
+                      "sha256":  "863300af0da9e595a0384e4d1b2baf4eb515de58d06de549c3972842caa7d3e4",
+                      "size_bytes":  1813
+                  },
+                  {
+                      "path":  "artifacts/phase-1/acceptance/g2.json",
+                      "sha256":  "db240f100db5c2deb2237b4041e88333e3a3c73d690b96893a48a297afd388af",
+                      "size_bytes":  168294
+                  },
+                  {
+                      "path":  "artifacts/phase-1/acceptance/g3.json",
+                      "sha256":  "f5718930697d98d0230c21f88d677c037a176af6bd0fcb65cb07897162e03275",
+                      "size_bytes":  176415
+                  },
+                  {
+                      "path":  "artifacts/phase-1/acceptance/all.json",
+                      "sha256":  "8f517ccad4fcbee9787112fea62c007c3cc7c04edf9fe754883b5834f3533ef6",
+                      "size_bytes":  19099
+                  },
+                  {
+                      "path":  "artifacts/phase-1/reviews/data-review.json",
+                      "sha256":  "78dd169ac581765bfd86c86da758db4d2547a48cd8375a3220231babc74d2c86",
+                      "size_bytes":  950
+                  },
+                  {
+                      "path":  "artifacts/phase-1/reviews/workflow-review.json",
+                      "sha256":  "5c83c0bab99c6fc372e11ec2adfc3951aa5b1895695e72de2d1813ba65b2b2bd",
+                      "size_bytes":  1659
+                  },
+                  {
+                      "path":  "tests/phase1/run_acceptance.py",
+                      "sha256":  "0fd000c7d4b3fc121153856b22b73fdc414a8b0e024eea9396a0690576b9be71",
+                      "size_bytes":  108359
+                  },
+                  {
+                      "path":  "tests/phase1/test_acceptance_g3.py",
+                      "sha256":  "a8c101700f06d00ed01ac9dfe51b7e0369a71adccd92d22fe10a175c5cf47e2a",
+                      "size_bytes":  28033
+                  },
+                  {
+                      "path":  "tests/phase1/test_specification.py",
+                      "sha256":  "3af76852691a8a244da92aa90ea69b49d152297cf3f70999c1decfe00d93f9e1",
+                      "size_bytes":  16470
+                  },
+                  {
+                      "path":  "tests/phase1/test_workflow_unit.py",
+                      "sha256":  "dd7d97f8f48ce623cbfc97cb751dc59bcf66f28c986d58c070b90bbc1ecab06c",
+                      "size_bytes":  3476
+                  },
+                  {
+                      "path":  "tests/phase1/test_workflow_e2e.py",
+                      "sha256":  "ce0de60c442e7573c080bf4de91de904ad76d6a13a4b73243d83f627b6844355",
+                      "size_bytes":  3328
+                  }
+              ]
+}

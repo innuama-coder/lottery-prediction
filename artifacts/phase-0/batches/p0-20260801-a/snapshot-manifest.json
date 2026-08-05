@@ -1,0 +1,199 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase0_batch_snapshot_manifest",
+  "batch_id": "p0-20260801-a",
+  "snapshot_created_at_utc": "2026-08-01T03:07:27.9245552Z",
+  "reason": "Preserve superseded batch A before correcting machine-contract defects; source intervals, samples, budgets and observations remain immutable.",
+  "files": [
+    {
+      "path": "artifacts/field-contract.json",
+      "size": 5691,
+      "sha256": "58a5fa7f88f778083d2998ba3a1c04e4e6e5158464c83b24a07b20dc86c7bc5d"
+    },
+    {
+      "path": "artifacts/observation-plan.json",
+      "size": 8033,
+      "sha256": "417279486152230fa931e6f1326bc8acc4818428a1da1c9a83eaa5d2c83a7c4e"
+    },
+    {
+      "path": "artifacts/reviewer-assignment.json",
+      "size": 1710,
+      "sha256": "6bb1bf78cfaf3f899d0782e56ae465f59601dfdad90292d296ac08cab08a01f2"
+    },
+    {
+      "path": "artifacts/rule-bundles.json",
+      "size": 88311,
+      "sha256": "6f367769851d3122aac8abc6531220a67d0eb1da25c935246b0dd4654d44507d"
+    },
+    {
+      "path": "artifacts/schemas/coverage-report.schema.json",
+      "size": 1839,
+      "sha256": "0bca65181ae31cc05d7403367d9b138ccda4f8a0a694b97459a568b36895c9fd"
+    },
+    {
+      "path": "artifacts/schemas/environment-lock.schema.json",
+      "size": 1391,
+      "sha256": "bf65f4404e01f0f0b9423329dd272ff2a7b2655c332e9fc224f4e88145c17571"
+    },
+    {
+      "path": "artifacts/schemas/evidence-manifest.schema.json",
+      "size": 2521,
+      "sha256": "3731c7500069c8e6df3aee8b6cf91074648d5c7d9c6b79bb5f914996b25daec3"
+    },
+    {
+      "path": "artifacts/schemas/field-contract.schema.json",
+      "size": 1175,
+      "sha256": "6fe3d33b1745090e2d83186b1fa7cc4d48714a0a9af16f3dbe91a2e3ef8942d3"
+    },
+    {
+      "path": "artifacts/schemas/normalized-records.schema.json",
+      "size": 2030,
+      "sha256": "98c82672ed786267dbb2ab427a4bd44c4634717f2902ce8aedbed7870687de3f"
+    },
+    {
+      "path": "artifacts/schemas/observation-plan.schema.json",
+      "size": 4128,
+      "sha256": "9fcde1f275570ccffa99b60410bb64f7419965cb306b054ceac64a2f256f21bc"
+    },
+    {
+      "path": "artifacts/schemas/reconciliation.schema.json",
+      "size": 1088,
+      "sha256": "95eed8851c56c818da9d67d5db58a559079af34ec0ff85e40ef625646dc74671"
+    },
+    {
+      "path": "artifacts/schemas/replay-report.schema.json",
+      "size": 1647,
+      "sha256": "86332ba33f83c9ba130d56cb1d7c4d2ccbf585d2cd078f44b62383bcc397fb13"
+    },
+    {
+      "path": "artifacts/schemas/reviewer-assignment.schema.json",
+      "size": 2387,
+      "sha256": "565f61a23a40303a01ddc566d3186cb623295cad709ec9e8770cfff7755dbc6f"
+    },
+    {
+      "path": "artifacts/schemas/reviewer-attestation.schema.json",
+      "size": 1136,
+      "sha256": "aad9d560cb6bbfdf52c692f53f1adfa7771e3a07300d550ae6a8f2c1e4af67b5"
+    },
+    {
+      "path": "artifacts/schemas/revision-report.schema.json",
+      "size": 2031,
+      "sha256": "a86bd2e5832ad3a99fd85d0cea2026037b647fccae48733884fa3fc817e9ac7d"
+    },
+    {
+      "path": "artifacts/schemas/rule-bundles.schema.json",
+      "size": 1632,
+      "sha256": "1b85580f4208471480cb54549564db95194786cdc8aae8e521e0bfc57dbfb2fd"
+    },
+    {
+      "path": "artifacts/schemas/scope-freeze.schema.json",
+      "size": 5570,
+      "sha256": "ba2ebe0eb84409357ddc260b8a593e2b36dcd3180f65eb9a7bc497702ec70363"
+    },
+    {
+      "path": "artifacts/schemas/soak-log.schema.json",
+      "size": 1154,
+      "sha256": "6d99ee4b092c087025586c88cd03a86f04884103b71217eb15e87ce7ee73b09d"
+    },
+    {
+      "path": "artifacts/schemas/source-catalog.schema.json",
+      "size": 2251,
+      "sha256": "28af2f41fbad0b98aaf1b394a5e3a3fae3f30c2c6d0c22d2cacfd0b741c4f87b"
+    },
+    {
+      "path": "artifacts/schemas/stage1-handoff-fixture.schema.json",
+      "size": 1875,
+      "sha256": "af176a62b2feedfbef600da7207ba1636dac0d7a70342b6fefa20271003b1922"
+    },
+    {
+      "path": "artifacts/schemas/verification-command.schema.json",
+      "size": 3813,
+      "sha256": "f15b5662513e4d805c43026ab0377c18c2b18afecd31bb0c864b2d6b350af691"
+    },
+    {
+      "path": "artifacts/scope-freeze.json",
+      "size": 27915,
+      "sha256": "eb815e03d1f51f0c0ca8bd91dea1ab57b14d08bc654c4b1869564129655f6d34"
+    },
+    {
+      "path": "artifacts/source-catalog.json",
+      "size": 4530,
+      "sha256": "8b2f7d5d2cfc25a799617b9de1a41c841e793b2233f4add7a4ebb7b9e4e77010"
+    },
+    {
+      "path": "artifacts/verification-command.json",
+      "size": 6077,
+      "sha256": "fbc9e9f8ebb8d05afeb6120ae65c1db189e3d844760d495ac0ea8fd78d2a29c4"
+    },
+    {
+      "path": "artifacts/verification-command.json.sha256",
+      "size": 65,
+      "sha256": "fbe701707aed1cc7923a252fe5159628fdb48fc9dd41c9d77387bf4903a47f82"
+    },
+    {
+      "path": "docs/phase-0-acceptance-contract.json",
+      "size": 19769,
+      "sha256": "784ff08ba44925ddb668834140dc5f9841b6dd3966789efac935fb3c8ca80c12"
+    },
+    {
+      "path": "docs/phase-0-data-feasibility-plan.md",
+      "size": 27193,
+      "sha256": "9769748c90f4aeeb1f18f764d76f65a947d3148be70f1e72819eb6890774ea6a"
+    },
+    {
+      "path": "docs/TASK-001-official-data-source-feasibility.md",
+      "size": 8597,
+      "sha256": "cae339f1e665c476249fce699a72dc39f6d9a96009655bac0ee7f1dfd71a80b2"
+    },
+    {
+      "path": "scripts/build_p0_03_artifacts.py",
+      "size": 6218,
+      "sha256": "ce4d44e8bb92ffe5f9a04cbcf5bf5cf3df3d9ddc52849a16b43ad2bd9022847a"
+    },
+    {
+      "path": "scripts/hash_artifact.py",
+      "size": 844,
+      "sha256": "1c781689a770ea7090520ccceecd9431194e6e6acc90ba56399b089b871a627a"
+    },
+    {
+      "path": "scripts/p0_04_http.py",
+      "size": 9622,
+      "sha256": "d5ad991d59277424dd9e4bb23fce2ebbd611ccd70a443a343c43d573d92858b2"
+    },
+    {
+      "path": "scripts/p0_04_parser.py",
+      "size": 8940,
+      "sha256": "8b2bd3ef955c8f3a201480f9642ca01dd9dcefa193d9ce241e324810c17fde43"
+    },
+    {
+      "path": "scripts/p0_04_pipeline.py",
+      "size": 13880,
+      "sha256": "e83a9188255235799852a14e4f99130802e3b10628c1d14aeec4a8569e1f199a"
+    },
+    {
+      "path": "scripts/phase0lib.py",
+      "size": 13788,
+      "sha256": "09d192831de891f6d4937276a858e0426fbd2d401836ae6f426e395555524025"
+    },
+    {
+      "path": "scripts/verify_phase0.ps1",
+      "size": 769,
+      "sha256": "2f95cd1a4a64d0e1dc567909159d245b3775c5d302fd380d289e121bce545d0e"
+    },
+    {
+      "path": "scripts/verify_phase0.py",
+      "size": 23080,
+      "sha256": "3ac8a43dd04b53d446b37c69fe9424f1dc843636bcba43c6419232a00b0afcb1"
+    },
+    {
+      "path": "tests/test_p0_04.py",
+      "size": 10975,
+      "sha256": "8695a9bca282cd5ac7c2583514c508d2390a1767a3b7430fc89ddc8be67480c8"
+    },
+    {
+      "path": "tests/test_phase0_tools.py",
+      "size": 10417,
+      "sha256": "012802c1aead752b283ddf350873f9a7e7fcc11ff7286867003fca9cbad28ce9"
+    }
+  ]
+}

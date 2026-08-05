@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:autoresearch-lotte:phase0:evidence-manifest-entry:1.1.0",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "evidence_id", "game", "issue_id", "requested_url", "redirect_chain", "final_url", "retrieved_at", "last_clock_check_at", "clock_offset_seconds", "stored_payload_path", "stored_payload_sha256", "content_decoding_applied", "response_headers", "redacted_header_names", "redaction_policy_version", "parser_artifact_sha256", "environment_lock_sha256", "normalized_record_ref", "normalized_record_sha256", "status", "corroboration_tier"],
+  "properties": {
+    "schema_version": {"const": "1.1.0"}, "artifact_type": {"const": "evidence_manifest_entry"},
+    "evidence_id": {"type": "string", "minLength": 1}, "game": {"enum": ["dlt", "ssq"]},
+    "issue_id": {"type": "string", "pattern": "^[0-9]{5,12}$"}, "requested_url": {"type": "string", "pattern": "^https://"},
+    "redirect_chain": {"type": "array", "items": {"$ref": "#/$defs/hop"}}, "final_url": {"type": "string", "pattern": "^https://"},
+    "retrieved_at": {"type": "string", "format": "date-time"}, "last_clock_check_at": {"type": "string", "format": "date-time"},
+    "clock_offset_seconds": {"type": "integer"}, "stored_payload_path": {"type": "string", "pattern": "^artifacts/phase-0/raw/"},
+    "stored_payload_sha256": {"$ref": "#/$defs/hash"}, "content_decoding_applied": {"type": "boolean"},
+    "response_headers": {"type": "array", "items": {"$ref": "#/$defs/header"}},
+    "redacted_header_names": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "redaction_policy_version": {"type": "string", "minLength": 1}, "parser_artifact_sha256": {"$ref": "#/$defs/hash"},
+    "environment_lock_sha256": {"$ref": "#/$defs/hash"}, "normalized_record_ref": {"type": "string", "pattern": "^artifacts/phase-0/normalized/"},
+    "normalized_record_sha256": {"$ref": "#/$defs/hash"}, "status": {"enum": ["unavailable", "unverified", "verified", "conflicted", "invalid"]},
+    "corroboration_tier": {"$ref": "#/$defs/nullable_corroboration_tier"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "verified"}}},
+      "then": {"properties": {"corroboration_tier": {"$ref": "#/$defs/corroboration_tier"}}},
+      "else": {"properties": {"corroboration_tier": {"type": "null"}}}
+    }
+  ],
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "corroboration_tier": {"enum": ["corroborated_official", "shared_upstream", "primary_only"]},
+    "nullable_corroboration_tier": {"anyOf": [{"$ref": "#/$defs/corroboration_tier"}, {"type": "null"}]},
+    "hop": {"type": "object", "additionalProperties": false, "required": ["url", "status"], "properties": {"url": {"type": "string", "pattern": "^https://"}, "status": {"type": "integer", "minimum": 100, "maximum": 599}}},
+    "header": {"type": "object", "additionalProperties": false, "required": ["name", "value"], "properties": {"name": {"enum": ["Content-Type", "Content-Length", "Content-Encoding", "Date", "ETag", "Last-Modified", "Cache-Control", "Location"]}, "value": {"type": "string"}}}
+  }
+}

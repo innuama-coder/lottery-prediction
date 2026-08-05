@@ -1,6 +1,6 @@
 # Phase 2.1 Restart and VPS Execution Design
 
-Status: approved design; implementation plan pending
+Status: approved design; VPS preparation plan available
 
 ## 1. Purpose
 
@@ -192,4 +192,3 @@ identity verification, dependency/wheelhouse inventory, no-live-input policy,
 benchmark budget derivation, and two-sided evidence-bundle hash verification.
 The detailed preparation plan assigns each check an owner, exact command,
 expected terminal state, and retained artifact.
-

@@ -18,6 +18,7 @@ SCHEMAS = {
     "review": "review.schema.json",
     "e2e_registry": "e2e-registry.schema.json",
     "acceptance": "acceptance.schema.json",
+    "verification_receipt": "verification-receipt.schema.json",
 }
 
 

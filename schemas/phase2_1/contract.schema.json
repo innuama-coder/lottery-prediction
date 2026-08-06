@@ -3,13 +3,15 @@
   "$id": "https://example.invalid/phase2.1/contract.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_type", "run_label", "baseline_sha", "release_id", "status", "resource_policy", "source_identity", "frozen_inputs", "registered_games", "registered_families", "effect_grids", "sample_size_grid", "formal_sequence", "gates", "e2e_cases", "scientific_classification"],
+  "required": ["schema_version", "artifact_type", "run_label", "baseline_sha", "release_id", "iteration", "supersedes_rejected_release", "status", "resource_policy", "source_identity", "task_input_identities", "expected_formal_historical_result_count", "frozen_inputs", "registered_games", "registered_families", "effect_grids", "sample_size_grid", "formal_sequence", "gates", "e2e_cases", "scientific_classification"],
   "properties": {
     "schema_version": {"const": "2.1.0"},
     "artifact_type": {"const": "phase2_1_acceptance_contract"},
     "run_label": {"const": "P2.1-R00"},
     "baseline_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-    "release_id": {"type": "string", "pattern": "^P2\\.1-R00-[0-9a-f]{12}$"},
+    "release_id": {"const": "P2.1-R00-60d02be4dbe9-i02"},
+    "iteration": {"const": "i02"},
+    "supersedes_rejected_release": {"const": "P2.1-R00-60d02be4dbe9"},
     "status": {"const": "frozen"},
     "resource_policy": {
       "type": "object", "additionalProperties": false,
@@ -22,6 +24,8 @@
       }
     },
     "source_identity": {"type": "object", "required": ["baseline_sha_rule", "bundle_digest_profile"]},
+    "task_input_identities": {"type": "object", "required": ["prompt.md", "iteration-01.md", "iteration-02.md"], "additionalProperties": false, "patternProperties": {".*": {"pattern": "^[0-9a-f]{64}$"}}},
+    "expected_formal_historical_result_count": {"const": 0},
     "frozen_inputs": {"type": "array", "minItems": 3, "items": {"type": "string"}, "uniqueItems": true},
     "registered_games": {"const": ["dlt", "ssq"]},
     "registered_families": {"type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true, "items": {"enum": ["marginal_inclusion", "set_structure", "pair_dependence", "slow_drift", "cross_zone_dependence"]}},

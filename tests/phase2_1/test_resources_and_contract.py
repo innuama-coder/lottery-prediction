@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from lottery_research.phase2_1 import BASELINE_SHA, RELEASE_ID, RUN_LABEL
+from lottery_research.phase2_1 import BASELINE_SHA, ITERATION, RELEASE_ID, RUN_LABEL
 from lottery_research.phase2_1.resources import resource_facts, wheelhouse_facts
 from lottery_research.phase2_1.schema import validate
-from lottery_research.phase2_1.workflow import project_root, source_manifest
+from lottery_research.phase2_1.workflow import SOURCE_PATHS, project_root, source_manifest
 
 
 ROOT = project_root()
@@ -17,7 +18,7 @@ ROOT = project_root()
 
 class ResourceAndContractTests(unittest.TestCase):
     def test_release_identity_is_baseline_derived(self) -> None:
-        self.assertEqual(RELEASE_ID, f"{RUN_LABEL}-{BASELINE_SHA[:12]}")
+        self.assertEqual(RELEASE_ID, f"{RUN_LABEL}-{BASELINE_SHA[:12]}-{ITERATION}")
 
     def test_contract_has_no_generic_resource_thresholds(self) -> None:
         contract = json.loads((ROOT / "docs/roadmap/phase-2.1-acceptance-contract.json").read_text(encoding="utf-8"))
@@ -48,6 +49,38 @@ class ResourceAndContractTests(unittest.TestCase):
         self.assertEqual(paths, sorted(paths))
         self.assertGreater(manifest["file_count"], 10)
         self.assertRegex(manifest["sha256"], r"^[0-9a-f]{64}$")
+        self.assertTrue(any(path.startswith("src/lottery_research/phase2/") for path in paths))
+
+    def test_source_manifest_rejects_missing_phase2_runtime(self) -> None:
+        from lottery_research.phase2_1.workflow import _verify_source
+
+        manifest = source_manifest(ROOT)
+        manifest["files"] = [row for row in manifest["files"] if not row["path"].startswith("src/lottery_research/phase2/")]
+        manifest["file_count"] = len(manifest["files"])
+        import hashlib
+        from lottery_research.phase2_1.serialization import canonical_json_bytes
+        manifest["sha256"] = hashlib.sha256(canonical_json_bytes(manifest["files"])).hexdigest()
+        with self.assertRaisesRegex(ValueError, "complete registered runtime closure"):
+            _verify_source(ROOT, manifest)
+
+    def test_source_manifest_rejects_modified_phase2_runtime_file(self) -> None:
+        from lottery_research.phase2_1.workflow import _verify_source
+
+        with tempfile.TemporaryDirectory() as raw:
+            clone = Path(raw)
+            for relative in SOURCE_PATHS:
+                source = ROOT / relative
+                target = clone / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                if source.is_dir():
+                    shutil.copytree(source, target)
+                else:
+                    shutil.copyfile(source, target)
+            manifest = source_manifest(clone)
+            victim = next((clone / "src/lottery_research/phase2").glob("*.py"))
+            victim.write_bytes(victim.read_bytes() + b"\n# isolated tamper\n")
+            with self.assertRaisesRegex(ValueError, "identity mismatch"):
+                _verify_source(clone, manifest)
 
 
 if __name__ == "__main__":

@@ -8,6 +8,7 @@ import platform
 import random
 import shutil
 import statistics
+import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -16,11 +17,19 @@ from typing import Any, Iterable
 import numpy as np
 
 from lottery_research.phase2.draws import load_frozen_draws
-from lottery_research.phase2.formal_workflows import _grid_summaries
-from lottery_research.phase2.intervals import clopper_pearson
-from lottery_research.phase2.research_engine import domain_seed, empirical_p, holm_adjust_matrix, read_array_bundle
+from lottery_research.phase2.formal_workflows import _signed_component
+from lottery_research.phase2.intervals import clopper_pearson, clopper_pearson_one_sided
+from lottery_research.phase2.research_engine import (
+    domain_seed,
+    empirical_p,
+    holm_adjust_matrix,
+    neyman_grid_confidence_set,
+    read_array_bundle,
+    scenario_generator_effect,
+    simulate_prefix_statistics,
+)
 from lottery_research.phase2.statistics import PRIMARY_FAMILIES, _cramers_v, _tercile_cuts, calculate_statistics, holm_adjust
-from lottery_research.phase2.vectorized import calculate_statistics_batch, precompute_combination_space
+from lottery_research.phase2.vectorized import calculate_statistics_batch, generate_batch, precompute_combination_space
 
 from . import BASELINE_SHA, RELEASE_ID, RUN_LABEL
 from .resources import dependency_facts, resource_facts, wheelhouse_facts
@@ -33,6 +42,7 @@ FAMILIES = ("marginal_inclusion", "set_structure", "pair_dependence", "slow_drif
 PHASE2_NAME = {"slow_drift": "temporal_instability"}
 SOURCE_PATHS = (
     "src/lottery_research/phase2_1",
+    "src/lottery_research/phase2",
     "schemas/phase2_1",
     "scripts/phase2_1",
     "tests/phase2_1",
@@ -90,6 +100,49 @@ def _verify_source(root: Path, manifest: dict[str, Any]) -> None:
     expected = hashlib.sha256(canonical_json_bytes(manifest["files"])).hexdigest()
     if expected != manifest["sha256"] or len(manifest["files"]) != manifest["file_count"]:
         raise ValueError("source manifest closure mismatch")
+    current = source_manifest(root)
+    if current != manifest:
+        raise ValueError("source manifest does not enumerate the complete registered runtime closure")
+
+
+def scan_formal_history(root: Path, destination: Path, task_input_dir: Path) -> dict[str, Any]:
+    """Count pre-readiness formal results for this exact release identity."""
+    roots = [
+        destination / "results",
+        root / "artifacts/phase-2.1-protected-results" / RELEASE_ID,
+        task_input_dir / "results",
+    ]
+    discovered: list[str] = []
+    for scan_root in roots:
+        if not scan_root.is_dir():
+            continue
+        for path in sorted(scan_root.rglob("*.json")):
+            try:
+                value = load_json(path)
+            except (OSError, ValueError):
+                continue
+            if value.get("release_id") == RELEASE_ID and value.get("artifact_type") in {
+                "phase2_1_historical_audit", "phase2_1_power", "phase2_1_replay"
+            }:
+                discovered.append(path.resolve().as_posix())
+    return {
+        "profile": "exact-release formal audit/power/replay JSON in release, task-input, and protected result roots",
+        "roots": [path.resolve().as_posix() for path in roots],
+        "discovered": discovered,
+        "count": len(discovered),
+    }
+
+
+def validate_task_inputs(task_input_dir: Path, expected: dict[str, str]) -> list[Path]:
+    validated = []
+    for name, expected_hash in expected.items():
+        source = task_input_dir / name
+        if not source.is_file():
+            raise FileNotFoundError(f"task input snapshot missing: {source}")
+        if sha256(source) != expected_hash:
+            raise ValueError(f"task input identity mismatch: {name}")
+        validated.append(source)
+    return validated
 
 
 def _benchmark() -> dict[str, Any]:
@@ -110,7 +163,7 @@ def _benchmark() -> dict[str, Any]:
     return {"status": "PASS", "synthetic_only": True, "worlds": 2000, "wall_seconds": elapsed, "peak_memory_bytes": peak, "checksum": checksum}
 
 
-def prepare_release(root: Path, wheelhouse: Path, task_input_dir: Path) -> dict[str, Any]:
+def prepare_release(root: Path, wheelhouse: Path, task_input_dir: Path, corpus_root: Path) -> dict[str, Any]:
     root = root.resolve()
     destination = bundle_path(root)
     if destination.exists():
@@ -127,10 +180,8 @@ def prepare_release(root: Path, wheelhouse: Path, task_input_dir: Path) -> dict[
         raise ValueError("immutable release identity does not match the frozen baseline")
     (destination / "contracts/acceptance-contract.json").write_bytes(contract_source.read_bytes())
     (destination / "contracts/preregistration.json").write_bytes(prereg_source.read_bytes())
-    for name in ("prompt.md", "iteration-01.md"):
-        source = task_input_dir / name
-        if not source.is_file():
-            raise FileNotFoundError(f"task input snapshot missing: {source}")
+    for source in validate_task_inputs(task_input_dir, contract["task_input_identities"]):
+        name = source.name
         (destination / "inputs" / name).write_bytes(source.read_bytes())
 
     # Snapshot upstream evidence into this release; historical Phase 2 remains untouched.
@@ -140,16 +191,15 @@ def prepare_release(root: Path, wheelhouse: Path, task_input_dir: Path) -> dict[
         "phase1-draws.jsonl": root / "artifacts/phase-1/baseline-v1/draws.jsonl",
         "phase1-manifest.json": root / "artifacts/phase-1/baseline-v1/manifest.json",
         "phase2-input-manifest.json": root / "artifacts/phase-2/contracts/input-manifest.json",
-        "phase2-historical-audit.json": root / "artifacts/phase-2/results/historical-audit.json",
-        "phase2-power-envelope.json": root / "artifacts/phase-2/results/power-envelope.json",
-        "phase2-power-replay.json": root / "artifacts/phase-2/replay/power-envelope-replay.json",
-        "phase2-qualification.json": root / "artifacts/phase-2/qualification/harness-qualification.json",
+        "phase2-effect-interval-calibration.json": root / "artifacts/phase-2/qualification/effect-interval-calibration.json",
+        "reference-null.bin": corpus_root / "reference-null.bin",
+        "evaluation-null.bin": corpus_root / "evaluation-null.bin",
     }
     for name, source in upstream_paths.items():
         (upstream / name).write_bytes(source.read_bytes())
 
-    frozen = [identity(root, root / path) for path in contract["frozen_inputs"]]
-    frozen.extend(identity(root, destination / "inputs" / name) for name in ("prompt.md", "iteration-01.md"))
+    frozen = [identity(destination, path) for path in sorted((destination / "inputs").rglob("*")) if path.is_file()]
+    frozen.extend(identity(destination, path) for path in sorted((destination / "contracts").glob("*.json")))
     source = source_manifest(root)
     lock_path = root / "requirements/phase2_1.lock"
     wheels = wheelhouse_facts(lock_path, wheelhouse)
@@ -158,6 +208,10 @@ def prepare_release(root: Path, wheelhouse: Path, task_input_dir: Path) -> dict[
     benchmark = _benchmark()
 
     canary = canonical_json_bytes({"release_id": RELEASE_ID, "nonce": hashlib.sha256(os.urandom(32)).hexdigest()})
+    history_scan = scan_formal_history(root, destination, task_input_dir)
+    if history_scan["count"] != contract["expected_formal_historical_result_count"]:
+        raise ValueError("formal historical result scan does not match the contract")
+
     workspace = root / "artifacts/phase-2.1-workspaces" / RELEASE_ID
     workspace.mkdir(parents=True, exist_ok=False)
     outbound = workspace / "evidence-return-canary.json"
@@ -189,6 +243,7 @@ def prepare_release(root: Path, wheelhouse: Path, task_input_dir: Path) -> dict[
         "isolated_workspace": {"path": workspace.as_posix(), "unique_release_directory": True, "outside_historical_phase2": True},
         "evidence_return": {"round_trip_match": True, "sha256": sha256(returned)},
         "formal_historical_result_count": 0,
+        "formal_history_scan": history_scan,
     }
     validate("readiness", readiness)
     write_new_json(destination / "readiness/readiness.json", readiness)
@@ -203,16 +258,49 @@ def validate_readiness(root: Path, destination: Path | None = None) -> dict[str,
     if readiness["release_id"] != RELEASE_ID:
         raise ValueError("readiness release identity mismatch")
     _verify_source(root, readiness["source_manifest"])
-    for row in readiness["frozen_input_identities"]:
-        target = Path(row["path"])
-        if not target.is_absolute():
-            target = root / target
-        if not target.is_file() or sha256(target) != row["sha256"]:
-            raise ValueError(f"frozen input mismatch: {row['path']}")
+    _verify_identities(destination, readiness["frozen_input_identities"])
+    if readiness["formal_historical_result_count"] != readiness["formal_history_scan"]["count"]:
+        raise ValueError("formal historical result count does not match its scan receipt")
+    if readiness["formal_history_scan"]["discovered"]:
+        raise ValueError("formal historical results existed before readiness")
     canary = destination / "readiness/evidence-return-canary.json"
     if sha256(canary) != readiness["evidence_return"]["sha256"]:
         raise ValueError("evidence return canary mismatch")
     return readiness
+
+
+def validate_preregistration(root: Path, destination: Path) -> dict[str, Any]:
+    readiness = validate_readiness(root, destination)
+    prereg = load_json(destination / "contracts/preregistration.json")
+    contract = load_json(destination / "contracts/acceptance-contract.json")
+    validate("contract", contract)
+    if prereg.get("release_id") != contract.get("release_id") or contract.get("release_id") != RELEASE_ID:
+        raise ValueError("preregistration release identity mismatch")
+    frozen = {row["path"]: row["sha256"] for row in readiness["frozen_input_identities"]}
+    for relative in ("contracts/acceptance-contract.json", "contracts/preregistration.json"):
+        if frozen.get(relative) != sha256(destination / relative):
+            raise ValueError(f"frozen contract identity mismatch: {relative}")
+    return prereg
+
+
+def validate_runtime_evidence(root: Path, destination: Path) -> dict[str, Any]:
+    validate_preregistration(root, destination)
+    required = {
+        "gates/g0-g1.json": "phase2_1_gate_evidence",
+        "qualification/qualification.json": "phase2_1_qualification",
+        "results/historical-audit.json": "phase2_1_historical_audit",
+        "results/power.json": "phase2_1_power",
+        "replay/replay.json": "phase2_1_replay",
+        "reviews/independent-method-review.json": "phase2_1_review",
+        "reviews/independent-replay-review.json": "phase2_1_review",
+    }
+    checked = []
+    for relative, artifact_type in required.items():
+        value = _require_pass(destination / relative, artifact=artifact_type)
+        if value.get("release_id") != RELEASE_ID:
+            raise ValueError(f"release identity mismatch: {relative}")
+        checked.append(relative)
+    return {"status": "PASS", "checked": checked}
 
 
 def freeze_g0_g1(root: Path, destination: Path | None = None) -> dict[str, Any]:
@@ -274,8 +362,8 @@ def _maps(destination: Path) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]
 def qualify(destination: Path) -> dict[str, Any]:
     _require_pass(destination / "reviews/independent-method-review.json")
     _, maps = _maps(destination)
-    old = load_json(destination / "inputs/upstream/phase2-qualification.json")
     prereg = load_json(destination / "contracts/preregistration.json")
+    reference = read_array_bundle(destination / "inputs/upstream/reference-null.bin")
     known: list[dict[str, Any]] = []
     illegal = 0
     for game, rule in maps.items():
@@ -289,13 +377,18 @@ def qualify(destination: Path) -> dict[str, Any]:
     gradual = bool(np.all(np.diff(profile) < 0)) and len(np.unique(profile)) == 200 and abs(gap - 0.06) <= 1e-12
     known.append({"id": "KA-SLOW-DRIFT-LINEAR-PROFILE", "status": "PASS" if gradual else "FAIL", "unique_probabilities": len(np.unique(profile)), "half_mean_difference": gap, "target": 0.06})
 
-    old_rows = {row["id"]: row for row in old["scenarios"]}
     strong: list[dict[str, Any]] = []
-    labels = {"marginal_inclusion": "MARGINAL", "set_structure": "STRUCTURE", "pair_dependence": "PAIR", "cross_zone_dependence": "CROSSZONE"}
+    parameters = {"marginal_inclusion": 0.4, "set_structure": 30.0, "pair_dependence": 0.4, "cross_zone_dependence": 1.0}
+    expected_components = {"marginal_inclusion": "front:1", "set_structure": "front", "pair_dependence": "front:1-2", "cross_zone_dependence": "zone_sum_covariance"}
     for game, rule in maps.items():
         for family in ("marginal_inclusion", "set_structure", "pair_dependence", "cross_zone_dependence"):
-            row = old_rows[f"Q-{game.upper()}-{labels[family]}-STRONG"]
-            strong.append({"game": game, "family": family, "status": row["status"], "direction_match": bool(row["direction_match"]), "source_scenario": row["id"]})
+            seed = domain_seed(prereg["seeds"]["qualification"], f"qualification:{game}:{family}")
+            batch = generate_batch(rule, worlds=1, draws=200, family=family, effect=parameters[family], seed=seed)
+            measured = calculate_statistics(batch.scalar_world(0), rule)[family]
+            p_value = float(empirical_p(reference[f"reference.{game}.n200.{family}.statistic"], np.array([measured["statistic"]]))[0])
+            direction = measured["selected_component"] == expected_components[family] and float(measured["signed_effect"]) > 0
+            passed = p_value <= 0.001 and direction
+            strong.append({"game": game, "family": family, "status": "PASS" if passed else "FAIL", "direction_match": direction, "p_value": p_value, "seed": seed, "measured_component": measured["selected_component"]})
         batch = generate_slow_drift_batch(rule, worlds=128, draws=200, effect=0.12, seed=domain_seed(prereg["seeds"]["qualification"], game))
         stats = calculate_statistics_batch(batch, rule)["temporal_instability"]
         midpoint = 100
@@ -312,41 +405,58 @@ def qualify(destination: Path) -> dict[str, Any]:
         "status": "PASS" if pass_known == pass_strong == direction_rate == 1.0 and illegal == 0 else "FAIL", "gate": "G2",
         "generator_known_answers": known, "strong_positive_results": strong,
         "metrics": {"known_answer_pass_rate": pass_known, "strong_positive_recovery_rate": pass_strong, "direction_match_rate": direction_rate, "illegal_generated_combinations": illegal},
-        "input_identities": [identity(destination, destination / "contracts/preregistration.json"), identity(destination, destination / "inputs/upstream/phase2-qualification.json"), identity(destination, destination / "reviews/independent-method-review.json")],
+        "input_identities": [identity(destination, destination / "contracts/preregistration.json"), identity(destination, destination / "inputs/upstream/reference-null.bin"), identity(destination, destination / "reviews/independent-method-review.json")],
     }
     validate("qualification", payload)
     write_new_json(destination / "qualification/qualification.json", payload)
     return payload
 
 
-def historical_audit(destination: Path) -> dict[str, Any]:
+def historical_audit(destination: Path, *, root: Path) -> dict[str, Any]:
     _require_pass(destination / "qualification/qualification.json")
-    old = load_json(destination / "inputs/upstream/phase2-historical-audit.json")
     prereg = load_json(destination / "contracts/preregistration.json")
-    transformed = []
+    manifest, maps = _maps(destination)
+    draws = load_frozen_draws(root, manifest)
+    reference_path = destination / "inputs/upstream/reference-null.bin"
+    reference = read_array_bundle(reference_path)
+    interval = load_json(destination / "inputs/upstream/phase2-effect-interval-calibration.json")
+    observed = {game: calculate_statistics(draws[game], maps[game]) for game in ("dlt", "ssq")}
     raw: dict[str, float] = {}
-    for row in old["primary_results"]:
-        family = "slow_drift" if row["bias_family"] == "temporal_instability" else row["bias_family"]
-        key = f"{row['game']}.{family}"
-        raw[key] = float(row["raw_p_value"])
-        transformed.append({
-            "game": row["game"], "family": family, "test_id": prereg["test_ids"][family], "n": row["n"],
-            "raw_p_value": row["raw_p_value"], "holm_adjusted_p_value": 0.0,
-            "effect_estimate": row["effect_estimate"], "practical_boundary": prereg["practical_boundaries"][family],
-            "candidate_eligible": True, "sensitivity_direction_consistency": bool(row["sensitivity"]["direction_preserved"]),
-            "selected_component": row["selected_component"], "confidence_set": row["effect_grid_confidence_set_95"],
-        })
+    for game in ("dlt", "ssq"):
+        for family in FAMILIES:
+            phase2_family = PHASE2_NAME.get(family, family)
+            statistic = observed[game][phase2_family]["statistic"]
+            raw[f"{game}.{family}"] = float(empirical_p(reference[f"reference.{game}.n200.{phase2_family}.statistic"], np.array([statistic]))[0])
     adjusted = holm_adjust(raw)
-    for row in transformed:
-        row["holm_adjusted_p_value"] = adjusted[f"{row['game']}.{row['family']}"]
+    transformed = []
+    negative = []
+    for game in ("dlt", "ssq"):
+        trimmed = draws[game][:-max(1, len(draws[game]) // 10)]
+        for family in FAMILIES:
+            phase2_family = PHASE2_NAME.get(family, family)
+            row = observed[game][phase2_family]
+            bands = [item for item in interval["acceptance_bands"] if item["game"] == game and item["bias_family"] == phase2_family]
+            confidence = neyman_grid_confidence_set(float(row["effect"]), bands)
+            sensitivity = _signed_component(trimmed, maps[game], phase2_family, row["selected_component"])
+            direction = bool(row["signed_effect"] and sensitivity and (row["signed_effect"] > 0) == (sensitivity > 0))
+            transformed.append({
+                "game": game, "family": family, "test_id": prereg["test_ids"][family], "n": len(draws[game]),
+                "raw_p_value": raw[f"{game}.{family}"], "holm_adjusted_p_value": adjusted[f"{game}.{family}"],
+                "effect_estimate": float(row["effect"]), "practical_boundary": prereg["practical_boundaries"][family],
+                "candidate_eligible": True, "sensitivity_direction_consistency": direction,
+                "selected_component": row["selected_component"], "confidence_set": confidence,
+            })
+        value = observed[game]["negative_control"]["statistic"]
+        p_value = float(empirical_p(reference[f"reference.{game}.n200.negative_control.statistic"], np.array([value]))[0])
+        negative.append({"game": game, "test_id": "NC-ISSUE-PARITY", "candidate_eligible": False, "statistic": value, "raw_p_value": p_value, "signal_status": "not_candidate_eligible"})
     payload = {
         "schema_version": "2.1.0", "artifact_type": "phase2_1_historical_audit", "release_id": RELEASE_ID,
         "status": "PASS", "gate": "G3",
-        "method": {"null": "uniform legal tickets over the frozen observed calendar", "reference_replications": 9999, "multiplicity": "Holm across ten primary decisions", "slow_drift_note": "the historical half-contrast statistic and complete-null distribution are unchanged; only the registered alternative generator is replaced by linear drift"},
+        "method": {"null": "uniform legal tickets over the frozen observed calendar", "reference_replications": len(reference["reference.dlt.n200.marginal_inclusion.statistic"]), "multiplicity": "Holm across ten primary decisions", "seed": prereg["seeds"]["historical"], "execution": "all observed statistics, p-values, Holm adjustments, sensitivities and negative controls recomputed for this release", "slow_drift_note": "the registered historical statistic is the calendar-ordered half contrast; the alternative power generator is linear drift"},
         "primary_results": transformed,
-        "negative_controls": old["negative_control_results"],
+        "negative_controls": negative,
         "metrics": {"registered": 10, "reported": len(transformed), "coverage": len(transformed) / 10, "games_separate": len({row["game"] for row in transformed}) == 2, "selective_deletion": 0},
-        "input_identities": [identity(destination, destination / "contracts/preregistration.json"), identity(destination, destination / "qualification/qualification.json"), identity(destination, destination / "inputs/upstream/phase2-historical-audit.json")],
+        "input_identities": [identity(destination, destination / "contracts/preregistration.json"), identity(destination, destination / "qualification/qualification.json"), identity(destination, destination / "inputs/upstream/phase1-draws.jsonl"), identity(destination, reference_path)],
         "limitations": ["No draw order or physical machine identity is available.", "Failure to reject is not proof of randomness.", "Slow drift is one registered alternative family, not a complete model of all mechanism changes."],
     }
     validate("historical_audit", payload)
@@ -372,7 +482,21 @@ def _evaluation_p_matrices(reference: dict[str, np.ndarray], evaluation: dict[st
     }
 
 
-def _slow_drift_grid(
+def _corpora(destination: Path, lfs_root: Path) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray]]:
+    bundled = destination / "inputs/upstream"
+    for name in ("reference-null.bin", "evaluation-null.bin"):
+        external = lfs_root / name
+        if not external.is_file() or sha256(external) != sha256(bundled / name):
+            raise ValueError(f"local corpus identity mismatch: {name}")
+    return read_array_bundle(bundled / "reference-null.bin"), read_array_bundle(bundled / "evaluation-null.bin")
+
+
+def _cross_mapping(destination: Path, game: str) -> dict[float, float]:
+    calibration = load_json(destination / "inputs/upstream/phase2-effect-interval-calibration.json")
+    return {float(row["target_v"]): float(row["mixture_q"]) for row in calibration["cross_zone_mappings"] if row["game"] == game}
+
+
+def _power_grid(
     root: Path,
     destination: Path,
     *,
@@ -382,8 +506,7 @@ def _slow_drift_grid(
     prereg = load_json(destination / "contracts/preregistration.json")
     manifest, maps = _maps(destination)
     draws_by_game = load_frozen_draws(root, manifest)
-    reference = read_array_bundle(lfs_root / "reference-null.bin")
-    evaluation = read_array_bundle(lfs_root / "evaluation-null.bin")
+    reference, evaluation = _corpora(destination, lfs_root)
     sizes = list(prereg["sample_size_grid"])
     evaluation_p = _evaluation_p_matrices(reference, evaluation, sizes)
     replications = int(prereg["power_replications_per_grid_point"])
@@ -391,40 +514,48 @@ def _slow_drift_grid(
     rows: list[dict[str, Any]] = []
     for game, rule in maps.items():
         game_offset = 0 if game == "dlt" else 5
-        for effect in prereg["effect_grids"]["slow_drift"]:
-            scenario_seed = domain_seed(seed, f"phase2.1-slow-drift:{game}:{effect}")
-            for n in sizes:
-                cell_seed = domain_seed(scenario_seed, f"n={n}")
-                batch = generate_slow_drift_batch(
-                    rule,
-                    worlds=replications,
-                    draws=n,
-                    effect=float(effect),
-                    seed=cell_seed,
-                    issue_ids=_issue_ids(draws_by_game[game], n),
-                )
-                statistics_by_family = calculate_statistics_batch(batch, rule)
-                target_p = np.column_stack([
-                    empirical_p(
-                        reference[f"reference.{game}.n{n}.{family}.statistic"],
-                        statistics_by_family[family]["statistic"],
+        mapping = _cross_mapping(destination, game)
+        for family_index, family in enumerate(FAMILIES):
+            for effect in prereg["effect_grids"][family]:
+                scenario_seed = domain_seed(seed, f"phase2.1-power-grid:{game}:{family}:{effect}")
+                generated: dict[int, dict[str, dict[str, np.ndarray]]] = {}
+                if family == "slow_drift":
+                    for n in sizes:
+                        cell_seed = domain_seed(scenario_seed, f"n={n}")
+                        batch = generate_slow_drift_batch(rule, worlds=replications, draws=n, effect=float(effect), seed=cell_seed, issue_ids=_issue_ids(draws_by_game[game], n))
+                        generated[n] = calculate_statistics_batch(batch, rule)
+                else:
+                    phase2_family = PHASE2_NAME.get(family, family)
+                    generated = simulate_prefix_statistics(
+                        rule,
+                        worlds=replications,
+                        sample_sizes=sizes,
+                        family=phase2_family,
+                        effect=scenario_generator_effect(phase2_family, float(effect), mapping),
+                        seed=scenario_seed,
+                        issue_ids_by_n={n: _issue_ids(draws_by_game[game], n) for n in sizes},
                     )
-                    for family in PRIMARY_FAMILIES
-                ])
-                rng = np.random.default_rng(domain_seed(cell_seed, "other-game-null"))
-                selected = rng.integers(0, len(evaluation_p[n]), size=replications)
-                full = evaluation_p[n][selected].copy()
-                full[:, game_offset:game_offset + 5] = target_p
-                adjusted = holm_adjust_matrix(full)
-                successes = int(np.count_nonzero(adjusted[:, game_offset + 3] <= 0.05))
-                lower, upper = clopper_pearson(successes, replications, alpha=simultaneous_alpha)
-                rows.append({
-                    "game": game, "family": "slow_drift", "effect": effect, "sample_size": n,
-                    "successes": successes, "replications": replications, "power": successes / replications,
-                    "simultaneous_95_lower": lower, "simultaneous_95_upper": upper,
-                    "interval_half_width": (upper - lower) / 2,
-                    "generator": "linear_inclusion_probability_drift",
-                })
+                for n in sizes:
+                    target_p = np.column_stack([
+                        empirical_p(reference[f"reference.{game}.n{n}.{name}.statistic"], generated[n][name]["statistic"])
+                        for name in PRIMARY_FAMILIES
+                    ])
+                    cell_seed = domain_seed(scenario_seed, f"n={n}")
+                    rng = np.random.default_rng(domain_seed(cell_seed, "other-game-null"))
+                    selected = rng.integers(0, len(evaluation_p[n]), size=replications)
+                    full = evaluation_p[n][selected].copy()
+                    full[:, game_offset:game_offset + 5] = target_p
+                    adjusted = holm_adjust_matrix(full)
+                    successes = int(np.count_nonzero(adjusted[:, game_offset + family_index] <= 0.05))
+                    lower, upper = clopper_pearson(successes, replications, alpha=simultaneous_alpha)
+                    rows.append({
+                        "game": game, "family": family, "effect": effect, "sample_size": n,
+                        "successes": successes, "replications": replications, "power": successes / replications,
+                        "simultaneous_95_lower": lower, "simultaneous_95_upper": upper,
+                        "interval_half_width": (upper - lower) / 2,
+                        "generator": "linear_inclusion_probability_drift" if family == "slow_drift" else f"phase2_legal_ticket_{family}",
+                        "seed": cell_seed,
+                    })
     return rows
 
 
@@ -455,21 +586,33 @@ def _power_core_hash(payload: dict[str, Any]) -> str:
     return hashlib.sha256(canonical_json_bytes(core)).hexdigest()
 
 
+def _recompute_calibration(destination: Path, lfs_root: Path, sizes: list[int]) -> tuple[dict[str, Any], dict[str, Any]]:
+    reference, evaluation = _corpora(destination, lfs_root)
+    evaluation_p = _evaluation_p_matrices(reference, evaluation, sizes)
+    rows = []
+    coverages = []
+    for n in sizes:
+        matrix = evaluation_p[n]
+        rejected = np.any(holm_adjust_matrix(matrix) <= 0.05, axis=1)
+        successes = int(rejected.sum())
+        one_lower, one_upper = clopper_pearson_one_sided(successes, len(rejected))
+        two_lower, two_upper = clopper_pearson(successes, len(rejected))
+        rows.append({"sample_size": n, "false_rejections": successes, "worlds": len(rejected), "empirical_fwer": successes / len(rejected), "one_sided_95_lower": one_lower, "one_sided_95_upper": one_upper, "two_sided_95_interval": [two_lower, two_upper], "interval_half_width": (two_upper - two_lower) / 2})
+        for game in ("dlt", "ssq"):
+            for family in PRIMARY_FAMILIES:
+                reference_effect = reference[f"reference.{game}.n{n}.{family}.effect"]
+                lower, upper = np.quantile(reference_effect, [0.025, 0.975], method="inverted_cdf")
+                evaluation_effect = evaluation[f"evaluation.{game}.n{n}.{family}.effect"]
+                coverages.append(float(np.mean((evaluation_effect >= lower) & (evaluation_effect <= upper))))
+    acceptance = next(row for row in rows if row["sample_size"] == 200)
+    metrics = {"CAL-01": acceptance["one_sided_95_upper"], "CAL-02": acceptance["interval_half_width"], "CAL-03": min(coverages), "CAL-04": 0}
+    return {"source": "recomputed from frozen reference and independent evaluation corpora", "by_sample_size": rows, "family_size": 10, "interval_coverage_min": min(coverages)}, metrics
+
+
 def power(destination: Path, *, root: Path, lfs_root: Path) -> dict[str, Any]:
     _require_pass(destination / "results/historical-audit.json")
-    old = load_json(destination / "inputs/upstream/phase2-power-envelope.json")
     prereg = load_json(destination / "contracts/preregistration.json")
-    grid = []
-    for row in old["grid"]:
-        if row["bias_family"] == "temporal_instability":
-            continue
-        grid.append({
-            "game": row["game"], "family": row["bias_family"], "effect": row["effect"], "sample_size": row["sample_size"],
-            "successes": row["successes"], "replications": row["replications"], "power": row["power"],
-            "simultaneous_95_lower": row["simultaneous_95_lower"], "simultaneous_95_upper": row["simultaneous_95_upper"],
-            "interval_half_width": row["interval_half_width"], "generator": "phase2_legal_ticket_generator_unchanged",
-        })
-    grid.extend(_slow_drift_grid(root, destination, lfs_root=lfs_root, seed=prereg["seeds"]["power"]))
+    grid = _power_grid(root, destination, lfs_root=lfs_root, seed=prereg["seeds"]["power"])
     grid.sort(key=lambda row: (row["game"], FAMILIES.index(row["family"]), float(row["effect"]), row["sample_size"]))
     delta, required, reverse = _summarize_grid(prereg, grid)
     expected = {(game, family, float(effect), n) for game in ("dlt", "ssq") for family in FAMILIES for effect in prereg["effect_grids"][family] for n in prereg["sample_size_grid"]}
@@ -480,25 +623,26 @@ def power(destination: Path, *, root: Path, lfs_root: Path) -> dict[str, Any]:
             candidates = [row for row in grid if row["game"] == game and row["family"] == family]
             key_rows.append(min(candidates, key=lambda row: abs(row["power"] - 0.8)))
     max_key_half = max(row["interval_half_width"] for row in key_rows)
-    old_metrics = old["metrics"]
-    calibration = old["calibration"]
+    calibration, calibration_metrics = _recompute_calibration(destination, lfs_root, list(prereg["sample_size_grid"]))
     payload = {
         "schema_version": "2.1.0", "artifact_type": "phase2_1_power", "release_id": RELEASE_ID,
         "status": "PASS", "gate": "G4",
-        "method": {"non_slow_families": "frozen Phase 2 legal-ticket Monte Carlo replayed into this release", "slow_drift": "4000 legal-ticket worlds per registered cell with a distinct linear probability at every draw", "multiplicity": "Holm across ten primary decisions", "interval": "Clopper-Pearson Bonferroni simultaneous 95 percent over 240 points"},
+        "method": {"execution": "all five registered families and all 240 cells simulated in this release", "seed": prereg["seeds"]["power"], "replications_per_cell": prereg["power_replications_per_grid_point"], "slow_drift": "legal-ticket worlds with a distinct linear probability at every draw", "multiplicity": "Holm across ten primary decisions", "interval": "Clopper-Pearson Bonferroni simultaneous 95 percent over 240 points"},
         "calibration": calibration, "grid": grid, "delta_star": delta, "required_n": required,
         "metrics": {
-            "CAL-01": old_metrics["CAL-01"], "CAL-02": old_metrics["CAL-02"], "CAL-03": old_metrics["CAL-03"], "CAL-04": old_metrics["CAL-04"],
+            **calibration_metrics,
             "POW-01": len(actual) / len(expected), "POW-02": 0.8, "POW-03": max_key_half,
             "POW-04": len(delta) / 10, "POW-05": {"reverse_jumps_beyond_joint_uncertainty": reverse},
             "POW-06": {"coverage": len(required) / 40, "unsimulated_interpolation": 0, "cross_game_pooling": 0},
         },
         "normalized_sha256": "0" * 64,
-        "input_identities": [identity(destination, destination / "contracts/preregistration.json"), identity(destination, destination / "qualification/qualification.json"), identity(destination, destination / "results/historical-audit.json"), identity(destination, destination / "inputs/upstream/phase2-power-envelope.json")],
+        "input_identities": [identity(destination, destination / "contracts/preregistration.json"), identity(destination, destination / "qualification/qualification.json"), identity(destination, destination / "results/historical-audit.json"), identity(destination, destination / "inputs/upstream/reference-null.bin"), identity(destination, destination / "inputs/upstream/evaluation-null.bin")],
     }
     if actual != expected or len(grid) != 240 or len(delta) != 10 or len(required) != 40:
         payload["status"] = "FAIL"
     if reverse or max_key_half > 0.03:
+        payload["status"] = "FAIL"
+    if calibration_metrics["CAL-01"] > 0.06 or calibration_metrics["CAL-02"] > 0.005 or calibration_metrics["CAL-03"] < 0.93 or calibration_metrics["CAL-04"] != 0:
         payload["status"] = "FAIL"
     payload["normalized_sha256"] = _power_core_hash(payload)
     validate("power", payload)
@@ -545,18 +689,7 @@ def _independent_effects(draws: list[dict[str, Any]], rule: dict[str, Any]) -> d
 def replay(destination: Path, *, root: Path, lfs_root: Path) -> dict[str, Any]:
     source = _require_pass(destination / "results/power.json")
     prereg = load_json(destination / "contracts/preregistration.json")
-    old = load_json(destination / "inputs/upstream/phase2-power-replay.json")
-    replay_grid: list[dict[str, Any]] = []
-    for row in old["grid"]:
-        if row["bias_family"] == "temporal_instability":
-            continue
-        replay_grid.append({
-            "game": row["game"], "family": row["bias_family"], "effect": row["effect"], "sample_size": row["sample_size"],
-            "successes": row["successes"], "replications": row["replications"], "power": row["power"],
-            "simultaneous_95_lower": row["simultaneous_95_lower"], "simultaneous_95_upper": row["simultaneous_95_upper"],
-            "interval_half_width": row["interval_half_width"], "generator": "phase2_legal_ticket_generator_unchanged",
-        })
-    replay_grid.extend(_slow_drift_grid(root, destination, lfs_root=lfs_root, seed=prereg["seeds"]["independent_replay"]))
+    replay_grid = _power_grid(root, destination, lfs_root=lfs_root, seed=prereg["seeds"]["independent_replay"])
     replay_grid.sort(key=lambda row: (row["game"], FAMILIES.index(row["family"]), float(row["effect"]), row["sample_size"]))
     source_rows = {(row["game"], row["family"], float(row["effect"]), row["sample_size"]): row for row in source["grid"]}
     replay_rows = {(row["game"], row["family"], float(row["effect"]), row["sample_size"]): row for row in replay_grid}
@@ -638,20 +771,43 @@ def independent_replay_review(destination: Path) -> dict[str, Any]:
     return payload
 
 
-def run_e2e(destination: Path) -> dict[str, Any]:
+def verification_receipt(operation: str, verifier: Any) -> dict[str, Any]:
+    started = now()
+    try:
+        verifier()
+        terminal, code, error = "PASS", 0, None
+    except FileExistsError as exc:
+        terminal, code, error = "INVALID_CONTRACT", 4, str(exc)
+    except (ValueError, KeyError) as exc:
+        terminal, code, error = "EVIDENCE_MISMATCH", 5, str(exc)
+    except (OSError, RuntimeError) as exc:
+        terminal, code, error = "ENVIRONMENT_FAILURE", 3, str(exc)
+    receipt = {
+        "schema_version": "2.1.0", "artifact_type": "phase2_1_verification_receipt", "release_id": RELEASE_ID,
+        "operation": operation, "status": "PASS" if code == 0 else "FAIL", "terminal": terminal,
+        "exit_code": code, "started_at_utc": started, "finished_at_utc": now(), "error": error,
+    }
+    validate("verification_receipt", receipt)
+    return receipt
+
+
+def run_e2e(destination: Path, *, root: Path) -> dict[str, Any]:
     prereg = load_json(destination / "contracts/preregistration.json")
     cases: list[dict[str, Any]] = []
 
     def add(identifier: str, expected: str, observed: str, evidence: dict[str, Any]) -> None:
         cases.append({"id": identifier, "expected_terminal": expected, "observed_terminal": observed, "status": "PASS" if expected == observed else "FAIL", "evidence": evidence})
 
-    normal = all((destination / path).is_file() for path in ("gates/g0-g1.json", "qualification/qualification.json", "results/historical-audit.json", "results/power.json", "replay/replay.json"))
-    add("E2E-P2.1-01-normal-full-chain", "PASS", "PASS" if normal else "FAIL", {"required_outputs_present": normal})
+    normal_receipt = verification_receipt("runtime-evidence", lambda: validate_runtime_evidence(root, destination))
+    add("E2E-P2.1-01-normal-full-chain", "PASS", normal_receipt["terminal"], {"production_verification_receipt": normal_receipt})
 
-    input_path = destination / "inputs/upstream/phase1-draws.jsonl"
-    expected_input = sha256(input_path)
-    tampered_input_hash = hashlib.sha256(input_path.read_bytes() + b"tamper").hexdigest()
-    add("E2E-P2.1-02-input-tamper", "EVIDENCE_MISMATCH", "EVIDENCE_MISMATCH" if tampered_input_hash != expected_input else "PASS", {"original_sha256": expected_input, "tampered_sha256": tampered_input_hash})
+    with tempfile.TemporaryDirectory() as raw:
+        isolated = Path(raw) / RELEASE_ID
+        shutil.copytree(destination, isolated)
+        input_path = isolated / "inputs/upstream/phase1-draws.jsonl"
+        input_path.write_bytes(input_path.read_bytes() + b"tamper")
+        tamper_receipt = verification_receipt("readiness-input-identity", lambda: validate_readiness(root, isolated))
+    add("E2E-P2.1-02-input-tamper", "EVIDENCE_MISMATCH", tamper_receipt["terminal"], {"production_verification_receipt": tamper_receipt, "isolated_copy_mutated": True})
 
     wrong_release = RELEASE_ID[:-1] + ("0" if RELEASE_ID[-1] != "0" else "1")
     add("E2E-P2.1-03-release-mismatch", "INVALID_CONTRACT", "INVALID_CONTRACT" if wrong_release != prereg["release_id"] else "PASS", {"injected_release_id": wrong_release})
@@ -673,11 +829,15 @@ def run_e2e(destination: Path) -> dict[str, Any]:
         temporary.rmdir()
     add("E2E-P2.1-05-wheelhouse-missing", "ENVIRONMENT_FAILURE", "ENVIRONMENT_FAILURE" if missing_error else "PASS", {"actual_wheelhouse_operation_failed": missing_error})
 
-    prereg_hash = sha256(destination / "contracts/preregistration.json")
-    tampered_prereg = dict(prereg)
-    tampered_prereg["global_alpha"] = 0.051
-    tampered_hash = hashlib.sha256(canonical_json_bytes(tampered_prereg)).hexdigest()
-    add("E2E-P2.1-06-preregistration-tamper", "EVIDENCE_MISMATCH", "EVIDENCE_MISMATCH" if tampered_hash != prereg_hash else "PASS", {"original_sha256": prereg_hash, "tampered_sha256": tampered_hash})
+    with tempfile.TemporaryDirectory() as raw:
+        isolated = Path(raw) / RELEASE_ID
+        shutil.copytree(destination, isolated)
+        prereg_path = isolated / "contracts/preregistration.json"
+        tampered_prereg = load_json(prereg_path)
+        tampered_prereg["global_alpha"] = 0.051
+        prereg_path.write_bytes(canonical_json_bytes(tampered_prereg))
+        prereg_receipt = verification_receipt("preregistration-identity", lambda: validate_preregistration(root, isolated))
+    add("E2E-P2.1-06-preregistration-tamper", "EVIDENCE_MISMATCH", prereg_receipt["terminal"], {"production_verification_receipt": prereg_receipt, "isolated_copy_mutated": True})
 
     profile = slow_drift_probabilities(6 / 33, 0.04, 200)
     gradual = len(np.unique(profile)) == 200 and np.all(np.diff(profile) < 0) and abs(float(profile[:100].mean() - profile[100:].mean()) - 0.04) <= 1e-12
@@ -692,10 +852,14 @@ def run_e2e(destination: Path) -> dict[str, Any]:
         rejected = True
     add("E2E-P2.1-08-result-schema-rejection", "INVALID_CONTRACT", "INVALID_CONTRACT" if rejected else "PASS", {"missing_required_status_rejected": rejected})
 
-    audit_path = destination / "results/historical-audit.json"
-    audit_hash = sha256(audit_path)
-    injected = hashlib.sha256(audit_path.read_bytes() + b"tamper").hexdigest()
-    add("E2E-P2.1-09-recursive-hash-tamper", "EVIDENCE_MISMATCH", "EVIDENCE_MISMATCH" if injected != audit_hash else "PASS", {"original_sha256": audit_hash, "tampered_sha256": injected})
+    with tempfile.TemporaryDirectory() as raw:
+        isolated = Path(raw) / RELEASE_ID
+        shutil.copytree(destination, isolated)
+        manifest = build_evidence_manifest(isolated)
+        audit_path = isolated / "results/historical-audit.json"
+        audit_path.write_bytes(audit_path.read_bytes() + b"tamper")
+        manifest_receipt = verification_receipt("recursive-evidence-manifest", lambda: verify_evidence_manifest(isolated, manifest))
+    add("E2E-P2.1-09-recursive-hash-tamper", "EVIDENCE_MISMATCH", manifest_receipt["terminal"], {"production_verification_receipt": manifest_receipt, "isolated_copy_mutated": True})
 
     replay_payload = load_json(destination / "replay/replay.json")
     replay_ok = replay_payload["status"] == "PASS" and replay_payload["metrics"]["independent_replay_consistency_rate"] == 1.0
@@ -713,6 +877,7 @@ def run_e2e(destination: Path) -> dict[str, Any]:
         write_new_json(destination / "e2e" / f"{row['id']}.json", row)
     validate("e2e_registry", registry)
     write_new_json(destination / "e2e/registry.json", registry)
+    run_final_validation_negative_suite(root, destination)
     return registry
 
 
@@ -724,7 +889,7 @@ def build_evidence_manifest(destination: Path) -> dict[str, Any]:
     payload = {
         "schema_version": "2.1.0", "artifact_type": "phase2_1_recursive_evidence_manifest",
         "release_id": RELEASE_ID, "status": "frozen", "created_at_utc": now(),
-        "profile": "every release file before manifest and final acceptance; acceptance is self-exempt",
+        "profile": "exact recursive inventory; only acceptance/manifest.json and acceptance/acceptance.json are fixed semantic-validation exclusions",
         "file_count": len(rows), "files": rows,
         "inventory_sha256": hashlib.sha256(canonical_json_bytes(rows)).hexdigest(),
     }
@@ -733,7 +898,22 @@ def build_evidence_manifest(destination: Path) -> dict[str, Any]:
 
 
 def verify_evidence_manifest(destination: Path, manifest: dict[str, Any]) -> float:
+    if manifest.get("artifact_type") != "phase2_1_recursive_evidence_manifest" or manifest.get("release_id") != RELEASE_ID:
+        raise ValueError("recursive manifest identity mismatch")
     rows = manifest["files"]
+    paths = [row["path"] for row in rows]
+    if paths != sorted(paths) or len(paths) != len(set(paths)):
+        raise ValueError("recursive manifest paths are not a unique sorted inventory")
+    excluded = {"acceptance/manifest.json", "acceptance/acceptance.json"}
+    actual = {
+        path.relative_to(destination).as_posix()
+        for path in destination.rglob("*")
+        if path.is_file() and path.relative_to(destination).as_posix() not in excluded
+    }
+    if actual != set(paths):
+        missing = sorted(set(paths) - actual)
+        extra = sorted(actual - set(paths))
+        raise ValueError(f"recursive manifest directory inventory mismatch: missing={missing}, extra={extra}")
     matches = 0
     for row in rows:
         path = destination / row["path"]
@@ -763,18 +943,18 @@ def _scientific_classification(audit: dict[str, Any], power_payload: dict[str, A
     return "indeterminate"
 
 
-def accept(destination: Path) -> dict[str, Any]:
-    readiness = _require_pass(destination / "readiness/readiness.json")
-    gates = _require_pass(destination / "gates/g0-g1.json")
-    method = _require_pass(destination / "reviews/independent-method-review.json")
-    qualification = _require_pass(destination / "qualification/qualification.json")
-    audit = _require_pass(destination / "results/historical-audit.json")
-    power_payload = _require_pass(destination / "results/power.json")
-    replay_payload = _require_pass(destination / "replay/replay.json")
-    replay_review = _require_pass(destination / "reviews/independent-replay-review.json")
-    e2e = _require_pass(destination / "e2e/registry.json")
+def derive_acceptance(root: Path, destination: Path, *, accepted_at_utc: str) -> dict[str, Any]:
+    readiness = load_json(destination / "readiness/readiness.json")
+    gates = load_json(destination / "gates/g0-g1.json")
+    method = load_json(destination / "reviews/independent-method-review.json")
+    qualification = load_json(destination / "qualification/qualification.json")
+    audit = load_json(destination / "results/historical-audit.json")
+    power_payload = load_json(destination / "results/power.json")
+    replay_payload = load_json(destination / "replay/replay.json")
+    replay_review = load_json(destination / "reviews/independent-replay-review.json")
+    e2e = load_json(destination / "e2e/registry.json")
+    negative_suite = load_json(destination / "reviews/final-validator-negative-tests.json")
     manifest = load_json(destination / "acceptance/manifest.json")
-    closure = verify_evidence_manifest(destination, manifest)
     prereg = load_json(destination / "contracts/preregistration.json")
 
     expected_historical = {(game, family) for game in ("dlt", "ssq") for family in FAMILIES}
@@ -783,18 +963,60 @@ def accept(destination: Path) -> dict[str, Any]:
     actual_grid = {(row["game"], row["family"], float(row["effect"]), row["sample_size"]) for row in power_payload["grid"]}
     historical_coverage = len(actual_historical & expected_historical) / len(expected_historical)
     power_coverage = len(actual_grid & expected_grid) / len(expected_grid)
-    replay_rate = sum(row["compatible"] for row in replay_payload["grid_comparisons"]) / 240
-    e2e_rate = sum(row["expected_terminal"] == row["observed_terminal"] for row in e2e["cases"]) / 10
-    blocking = method["blocking_findings"] + replay_review["blocking_findings"]
+    replay_keys = {tuple(row["key"]) for row in replay_payload["grid_comparisons"]}
+    replay_rate = sum(bool(row["compatible"]) for row in replay_payload["grid_comparisons"]) / len(expected_grid)
+    registered_e2e = set(load_json(destination / "contracts/acceptance-contract.json")["e2e_cases"])
+    actual_e2e = {row["id"] for row in e2e["cases"]}
+    e2e_rate = sum(row["expected_terminal"] == row["observed_terminal"] and row["status"] == "PASS" for row in e2e["cases"]) / len(registered_e2e)
+    blocking = sum(row.get("status") != "PASS" for review in (method, replay_review) for row in review["findings"])
+    try:
+        closure = verify_evidence_manifest(destination, manifest)
+    except (OSError, ValueError, KeyError):
+        closure = 0.0
     scientific = _scientific_classification(audit, power_payload, prereg)
-    gate_verdicts = {
-        "G0": gates["gates"]["G0"], "G1": gates["gates"]["G1"], "G2": qualification["status"],
-        "G3": audit["status"], "G4": power_payload["status"], "G5": replay_payload["status"],
-        "G6": "PASS" if closure == historical_coverage == power_coverage == replay_rate == e2e_rate == 1.0 and blocking == 0 else "FAIL",
+    identities_ok = all(value.get("release_id") == RELEASE_ID for value in (readiness, gates, method, qualification, audit, power_payload, replay_payload, replay_review, e2e, negative_suite, manifest, prereg))
+
+    try:
+        validate_readiness(root, destination)
+        readiness_ok = readiness["status"] == "READY" and all(value == "PASS" for value in readiness["checks"].values())
+    except (OSError, ValueError, KeyError):
+        readiness_ok = False
+    g0_g1 = readiness_ok and gates.get("status") == "PASS" and gates.get("gates") == {"G0": "PASS", "G1": "PASS"}
+    known = qualification["generator_known_answers"]
+    strong = qualification["strong_positive_results"]
+    qualification_ok = qualification.get("status") == "PASS" and len(known) >= 3 and len(strong) == 10 and all(row["status"] == "PASS" for row in known + strong) and all(row["direction_match"] for row in strong) and qualification["metrics"] == {
+        "known_answer_pass_rate": 1.0, "strong_positive_recovery_rate": 1.0, "direction_match_rate": 1.0, "illegal_generated_combinations": 0
     }
+    raw = {f"{row['game']}.{row['family']}": float(row["raw_p_value"]) for row in audit["primary_results"]}
+    adjusted = holm_adjust(raw)
+    audit_arithmetic = all(abs(float(row["holm_adjusted_p_value"]) - adjusted[f"{row['game']}.{row['family']}"]) <= 1e-15 for row in audit["primary_results"])
+    manifest_input, maps = _maps(destination)
+    draws = load_frozen_draws(root, manifest_input)
+    reference = read_array_bundle(destination / "inputs/upstream/reference-null.bin")
+    audit_recomputed = True
+    for row in audit["primary_results"]:
+        phase2_family = PHASE2_NAME.get(row["family"], row["family"])
+        observed = calculate_statistics(draws[row["game"]], maps[row["game"]])[phase2_family]
+        p_value = float(empirical_p(reference[f"reference.{row['game']}.n200.{phase2_family}.statistic"], np.array([observed["statistic"]]))[0])
+        audit_recomputed &= abs(float(row["effect_estimate"]) - float(observed["effect"])) <= 1e-15 and abs(float(row["raw_p_value"]) - p_value) <= 1e-15
+    audit_ok = audit.get("status") == "PASS" and len(audit["primary_results"]) == 10 and actual_historical == expected_historical and audit_arithmetic and audit_recomputed and len(audit["negative_controls"]) == 2 and all(not row["candidate_eligible"] for row in audit["negative_controls"])
+    delta, required, reverse = _summarize_grid(prereg, power_payload["grid"])
+    power_arithmetic = all(row["successes"] <= row["replications"] and abs(row["power"] - row["successes"] / row["replications"]) <= 1e-15 for row in power_payload["grid"])
+    power_metrics = power_payload["metrics"]
+    power_ok = power_payload.get("status") == "PASS" and len(power_payload["grid"]) == len(expected_grid) and actual_grid == expected_grid and power_arithmetic and power_payload["normalized_sha256"] == _power_core_hash(power_payload) and len(delta) == 10 and len(required) == 40 and reverse == 0 and power_metrics["CAL-01"] <= 0.06 and power_metrics["CAL-02"] <= 0.005 and power_metrics["CAL-03"] >= 0.93 and power_metrics["CAL-04"] == 0 and power_metrics["POW-01"] == power_metrics["POW-04"] == 1.0 and power_metrics["POW-03"] <= 0.03 and power_metrics["POW-06"] == {"coverage": 1.0, "unsimulated_interpolation": 0, "cross_game_pooling": 0}
+    replay_ok = replay_payload.get("status") == "PASS" and len(replay_payload["grid_comparisons"]) == len(expected_grid) and replay_keys == expected_grid and all(row["compatible"] for row in replay_payload["grid_comparisons"]) and len(replay_payload["deterministic_statistic_comparisons"]) == 10 and all(row["match"] for row in replay_payload["deterministic_statistic_comparisons"]) and replay_payload["metrics"]["missing_batches"] == replay_payload["metrics"]["duplicate_batches"] == 0
+    negative_suite_ok = negative_suite.get("status") == "PASS" and len(negative_suite.get("cases", [])) == 5 and all(row.get("status") == "PASS" and row.get("production_verification_receipt", {}).get("exit_code", 0) != 0 for row in negative_suite["cases"])
+    reviews_ok = blocking == 0 and method["status"] == replay_review["status"] == "PASS" and negative_suite_ok
+    e2e_ok = e2e.get("status") == "PASS" and len(e2e["cases"]) == len(registered_e2e) and actual_e2e == registered_e2e and e2e_rate == 1.0
+    gate_verdicts = {
+        "G0": "PASS" if g0_g1 else "FAIL", "G1": "PASS" if g0_g1 else "FAIL", "G2": "PASS" if qualification_ok else "FAIL",
+        "G3": "PASS" if audit_ok else "FAIL", "G4": "PASS" if power_ok else "FAIL", "G5": "PASS" if replay_ok else "FAIL",
+        "G6": "PASS" if closure == historical_coverage == power_coverage == replay_rate == e2e_rate == 1.0 and reviews_ok and e2e_ok and identities_ok else "FAIL",
+    }
+    passed = all(value == "PASS" for value in gate_verdicts.values())
     payload = {
         "schema_version": "2.1.0", "artifact_type": "phase2_1_acceptance", "release_id": RELEASE_ID,
-        "status": "PASS", "delivery_status": "GO", "scientific_classification": scientific, "accepted_at_utc": now(),
+        "status": "PASS" if passed else "FAIL", "delivery_status": "GO" if passed else "NO-GO", "scientific_classification": scientific, "accepted_at_utc": accepted_at_utc,
         "gate_verdicts": gate_verdicts,
         "recomputed_metrics": {"evidence_hash_closure": closure, "historical_result_coverage": historical_coverage, "power_grid_coverage": power_coverage, "independent_replay_consistency": replay_rate, "e2e_expected_terminal_coverage": e2e_rate, "blocking_findings": blocking},
         "blocking_findings": blocking,
@@ -803,5 +1025,70 @@ def accept(destination: Path) -> dict[str, Any]:
         "limitations": ["indeterminate is not proof of randomness", "physical device and ball-set identities are unavailable", "independent reviews are procedural process independence, not an external organizational audit", "power is limited to the registered families and grids"],
     }
     validate("acceptance", payload)
+    return payload
+
+
+def accept(root: Path, destination: Path) -> dict[str, Any]:
+    payload = derive_acceptance(root, destination, accepted_at_utc=now())
     write_new_json(destination / "acceptance/acceptance.json", payload)
+    return payload
+
+
+def validate_final_bundle(root: Path, destination: Path) -> dict[str, Any]:
+    acceptance = load_json(destination / "acceptance/acceptance.json")
+    validate("acceptance", acceptance)
+    expected = derive_acceptance(root, destination, accepted_at_utc=acceptance["accepted_at_utc"])
+    if canonical_json_bytes(acceptance) != canonical_json_bytes(expected):
+        raise ValueError("final acceptance differs from independently recomputed bottom-up acceptance")
+    if acceptance["status"] != "PASS" or acceptance["delivery_status"] != "GO":
+        raise ValueError("final bundle is NO-GO")
+    return expected
+
+
+def run_final_validation_negative_suite(root: Path, destination: Path) -> dict[str, Any]:
+    identifiers = ("acceptance", "g6_receipt", "metrics", "manifest", "unregistered_file")
+    with tempfile.TemporaryDirectory() as raw:
+        isolated = Path(raw) / RELEASE_ID
+        shutil.copytree(destination, isolated)
+        seed_suite = {
+            "schema_version": "2.1.0", "artifact_type": "phase2_1_final_validator_negative_suite", "release_id": RELEASE_ID,
+            "status": "PASS", "cases": [{"id": identifier, "status": "PASS", "production_verification_receipt": {"exit_code": 5}} for identifier in identifiers],
+        }
+        write_new_json(isolated / "reviews/final-validator-negative-tests.json", seed_suite)
+        build_evidence_manifest(isolated)
+        accept(root, isolated)
+        validate_final_bundle(root, isolated)
+
+        targets = {
+            "acceptance": isolated / "acceptance/acceptance.json",
+            "g6_receipt": isolated / "e2e/registry.json",
+            "metrics": isolated / "results/power.json",
+            "manifest": isolated / "acceptance/manifest.json",
+        }
+        original = {name: path.read_bytes() for name, path in targets.items()}
+        receipts = []
+        for identifier in identifiers:
+            if identifier == "acceptance":
+                value = load_json(targets[identifier]); value["delivery_status"] = "NO-GO"
+                targets[identifier].write_bytes(canonical_json_bytes(value))
+            elif identifier == "g6_receipt":
+                value = load_json(targets[identifier]); value["status"] = "FAIL"
+                targets[identifier].write_bytes(canonical_json_bytes(value))
+            elif identifier == "metrics":
+                value = load_json(targets[identifier]); value["metrics"]["POW-01"] = 0.5
+                targets[identifier].write_bytes(canonical_json_bytes(value))
+            elif identifier == "manifest":
+                value = load_json(targets[identifier]); value["inventory_sha256"] = "0" * 64
+                targets[identifier].write_bytes(canonical_json_bytes(value))
+            else:
+                (isolated / "unregistered.txt").write_text("not in manifest", encoding="utf-8")
+            receipt = verification_receipt(f"final-validator-{identifier}", lambda: validate_final_bundle(root, isolated))
+            receipts.append({"id": identifier, "status": "PASS" if receipt["exit_code"] != 0 else "FAIL", "production_verification_receipt": receipt})
+            if identifier in original:
+                targets[identifier].write_bytes(original[identifier])
+            else:
+                (isolated / "unregistered.txt").unlink()
+        status = "PASS" if all(row["status"] == "PASS" for row in receipts) else "FAIL"
+    payload = {"schema_version": "2.1.0", "artifact_type": "phase2_1_final_validator_negative_suite", "release_id": RELEASE_ID, "status": status, "cases": receipts}
+    write_new_json(destination / "reviews/final-validator-negative-tests.json", payload)
     return payload

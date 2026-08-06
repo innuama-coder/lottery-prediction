@@ -21,7 +21,7 @@ python3 -m venv .phase2_1/venv
 先设置 `PIP_NO_INDEX=1`，然后严格执行：
 
 ```bash
-.phase2_1/venv/bin/python scripts/phase2_1/prepare_phase2_1.py
+.phase2_1/venv/bin/python scripts/phase2_1/prepare_phase2_1.py --wheelhouse .phase2_1/wheelhouse --task-input-dir /path/to/task-input --corpus-root .phase2_1/lfs
 python3 scripts/phase2_1/validate_phase2_1_readiness.py
 .phase2_1/venv/bin/python -m lottery_research.phase2_1 gates
 python3 scripts/phase2_1/independent_method_review.py
@@ -44,9 +44,8 @@ python3 scripts/phase2_1/validate_final_bundle.py
 仓库使用 setuptools 的 `pyproject.toml`，没有独立 linter 配置。因此实际 build 是离线 wheel 构建，实际 lint 是对 Python 源、脚本和测试执行 `compileall` 加 `git diff --check`：
 
 ```bash
-.phase2_1/venv/bin/python -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel
-.phase2_1/venv/bin/python -m compileall -q src scripts tests
-git diff --check
+python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i02
+python3 -m compileall -q src scripts tests && git diff --check
 ```
 
-正式结果之后不得再安装或下载依赖。命令日志进入 release 的 `logs/` 后才冻结递归 manifest。
+上述命令由 `logs` 在已激活隔离环境中真实执行；每条 receipt 记录原命令、开始/结束时间、stdout/stderr 摘要与哈希、真实退出码。预放置伪 receipt 会因不可覆盖写入而失败，任一未执行或非零命令使 logs 为 FAIL。正式结果之后不得再安装或下载依赖。命令日志进入 release 的 `logs/` 后才冻结递归 manifest。

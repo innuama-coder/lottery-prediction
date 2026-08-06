@@ -47,8 +47,8 @@ python3 scripts/phase2_1/validate_final_bundle.py
 仓库使用 setuptools 的 `pyproject.toml`，没有独立 linter 配置。因此实际 build 是离线 wheel 构建，实际 lint 是对 Python 源、脚本和测试执行 `compileall` 加 `git diff --check`：
 
 ```bash
-python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i06
-python3 -m compileall -q src scripts tests && git diff --check
+python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i07
+python3 -m compileall -q src scripts tests && git diff --check 61a99a2c3732be0ade1f370e681d9af236902dcb
 ```
 
 上述命令由 `logs` 在已激活隔离环境中真实执行；每条 receipt 记录原命令、开始/结束时间、stdout/stderr 摘要与哈希、真实退出码。预放置伪 receipt 会因不可覆盖写入而失败，任一未执行或非零命令使 logs 为 FAIL。正式结果之后不得再安装或下载依赖。命令日志进入 release 的 `logs/` 后才冻结递归 manifest。

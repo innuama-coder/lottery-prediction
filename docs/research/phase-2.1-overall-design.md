@@ -2,7 +2,7 @@
 
 版本：2.1.0
 运行标签：`P2.1-R00`
-不可变 release：`P2.1-R00-60d02be4dbe9-i06`
+不可变 release：`P2.1-R00-61a99a2c3732-i07`
 
 ## 目标与边界
 
@@ -10,7 +10,7 @@ Phase 2.1 是对 Phase 2 统计与验收缺陷的版本化修复。它不原地�
 
 ## 不可变身份与证据流
 
-本轮 release ID 在原始 release 身份后追加 iteration-06 标记：`P2.1-R00-60d02be4dbe9-i06`。它与第六轮基线 `5e1aa70…`、rejected evidence `P2.1-R00-60d02be4dbe9` 及旧 iteration bundle 的关系固定在合同中，旧 release 不覆盖、不修复。readiness 固化 Phase 2.1 与实际导入的完整 Phase 2 运行时代码、Schema/合同摘要、Phase 1 输入、2.1 补充预注册、七个任务输入及预期哈希、隔离目录、依赖锁、wheelhouse 清单、benchmark、正式输出白名单和证据回传 canary。完成 bundle 的公开 readiness 命令使用独立只读路径，从底层重算身份、正式历史结果计数和输出白名单，且不创建或覆盖正式命令 receipt。
+本轮 release ID 绑定 rejected PR head 并追加 iteration-07 标记：`P2.1-R00-61a99a2c3732-i07`。它与精确基线 `61a99a2…`、被拒的 i06 evidence 及更早 iteration bundle 的关系固定在合同中，旧 release 不覆盖、不修复。readiness 固化 Phase 2.1 与实际导入的完整 Phase 2 运行时代码、Schema/合同摘要、Phase 1 输入、2.1 补充预注册、九个任务输入及预期哈希、隔离目录、依赖锁、wheelhouse 清单、benchmark、正式输出白名单和证据回传 canary。完成 bundle 的公开 readiness 命令使用独立只读路径，从底层重算身份、原始任务输入结果根的正式历史结果计数和输出白名单，且不创建或覆盖正式命令 receipt；final validator 也必须执行同一只读重扫并把结果纳入 G0/G6。
 
 负向验证使用独立 staging 副本及与真实 power 命令 receipt、power identity、冻结输入和源码清单绑定的只读基准证据。各负向用例复用该基准并在进入昂贵网格重算前完成 Schema、身份、目录闭包和 receipt 一致性拒绝；正式 final validator 不接受隐式缓存，仍从冻结语料完整重算 240 个 power cells。
 
@@ -18,7 +18,7 @@ readiness 扫描当前 release、任务输入结果目录和按当前 release ID
 
 最终 manifest 对实际目录做精确枚举并记录 SHA-256；唯一固定排除是 `acceptance/manifest.json` 与 `acceptance/acceptance.json`。新增未登记文件、缺失文件、重复路径或哈希变化都失败。manifest 自身由规范化 inventory digest 校验，acceptance 则由只读 final validator 从底层 evidence 逐字段重新推导后比较，因此这两个循环排除项不能成为旁路。
 
-输入、预注册和 manifest 的验证是可调用生产路径。E2E 02、06、09 在临时隔离副本中修改真实文件，再调用这些路径并保存 Schema 合法、非零退出码的 verification receipt。正常链同样调用生产 runtime verifier，而不是手工构造 PASS。
+输入、预注册和 manifest 的验证是可调用生产路径。冻结合同按顺序固定十个 E2E 的 ID、预期终态、场景、生产操作、命令和退出码类别；每个用例都保存 Schema 合法且终态/状态/退出码一致的 production verification receipt。final validator 不从 registry 选择场景，而是在新的 disposable staging 副本中按源码与冻结合同独立执行十个规范场景并比较结果。五条外部验证命令也由冻结合同按 ID、顺序、字面命令、项目根 scope、离线策略和成功预期生成 receipt，调用方不能替换任意命令。
 
 ## 资源预检
 

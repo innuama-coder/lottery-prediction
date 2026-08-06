@@ -1,8 +1,8 @@
 """Versioned Phase 2.1 research and acceptance workflow."""
 
 RUN_LABEL = "P2.1-R00"
-BASELINE_SHA = "5e1aa705c2e0b9f33fb3ef2698e8af55301919dd"
-ITERATION = "i06"
-RELEASE_ID = "P2.1-R00-60d02be4dbe9-i06"
+BASELINE_SHA = "61a99a2c3732be0ade1f370e681d9af236902dcb"
+ITERATION = "i07"
+RELEASE_ID = "P2.1-R00-61a99a2c3732-i07"
 
 __all__ = ["BASELINE_SHA", "ITERATION", "RELEASE_ID", "RUN_LABEL"]

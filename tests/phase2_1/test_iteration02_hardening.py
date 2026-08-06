@@ -4,6 +4,8 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from lottery_research.phase2_1 import RELEASE_ID
 from lottery_research.phase2_1.cli import execute_external_commands
@@ -44,12 +46,20 @@ class Iteration02HardeningTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as raw:
             destination = Path(raw)
             (destination / "logs").mkdir()
-            receipts = execute_external_commands(ROOT, destination, ["python3 -c 'raise SystemExit(7)'"])
+            (destination / "contracts").mkdir()
+            (destination / "contracts/acceptance-contract.json").write_bytes(
+                (ROOT / "docs/roadmap/phase-2.1-acceptance-contract.json").read_bytes()
+            )
+            completed = [SimpleNamespace(returncode=7, stdout=b"", stderr=b"expected")]
+            completed.extend(SimpleNamespace(returncode=0, stdout=b"", stderr=b"") for _ in range(4))
+            with patch("lottery_research.phase2_1.cli.subprocess.run", side_effect=completed):
+                receipts = execute_external_commands(ROOT, destination)
             self.assertTrue(receipts[0]["executed"])
             self.assertEqual(receipts[0]["exit_code"], 7)
             self.assertEqual(sha256(destination / "logs/external-01.json"), sha256(destination / "logs/external-01.json"))
             with self.assertRaises(FileExistsError):
-                execute_external_commands(ROOT, destination, ["python3 -c 'raise SystemExit(0)'"])
+                with patch("lottery_research.phase2_1.cli.subprocess.run", return_value=SimpleNamespace(returncode=0, stdout=b"", stderr=b"")):
+                    execute_external_commands(ROOT, destination)
 
 
 if __name__ == "__main__":

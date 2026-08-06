@@ -4,9 +4,10 @@ import hashlib
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
-from lottery_research.phase2_1 import RELEASE_ID
+from lottery_research.phase2_1 import BASELINE_SHA, RELEASE_ID
 from lottery_research.phase2_1.cli import execute_external_commands, write_command_receipt
 from lottery_research.phase2_1.schema import SCHEMAS, validate
 from lottery_research.phase2_1.serialization import canonical_json_bytes, identity
@@ -62,10 +63,16 @@ class Iteration03ClosureTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as raw:
             destination = Path(raw)
             (destination / "logs").mkdir()
-            commands = [f"python3 -c 'raise SystemExit({code})'" for code in (2, 3, 4, 5)]
-            receipts = execute_external_commands(ROOT, destination, commands)
-            self.assertEqual([row["exit_code"] for row in receipts], [2, 3, 4, 5])
-            self.assertTrue(all(row["status"] == row["terminal"] == "FAIL" for row in receipts))
+            (destination / "contracts").mkdir()
+            (destination / "contracts/acceptance-contract.json").write_bytes(
+                (ROOT / "docs/roadmap/phase-2.1-acceptance-contract.json").read_bytes()
+            )
+            completed = [SimpleNamespace(returncode=code, stdout=b"", stderr=b"expected") for code in (2, 3, 4, 5)]
+            completed.append(SimpleNamespace(returncode=0, stdout=b"", stderr=b""))
+            with patch("lottery_research.phase2_1.cli.subprocess.run", side_effect=completed):
+                receipts = execute_external_commands(ROOT, destination)
+            self.assertEqual([row["exit_code"] for row in receipts], [2, 3, 4, 5, 0])
+            self.assertTrue(all(row["status"] == row["terminal"] == "FAIL" for row in receipts[:4]))
 
     def test_formal_command_receipt_preserves_failure_exit_code(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -127,7 +134,7 @@ class Iteration03ClosureTests(unittest.TestCase):
                 "working_directory": raw, "executed": True, "network_access": False,
                 "stdout_summary": "PASS", "stderr_summary": "", "stdout_sha256": "2" * 64, "stderr_sha256": "3" * 64,
                 "input_identity": {
-                    "release_id": RELEASE_ID, "baseline_sha": "5e1aa705c2e0b9f33fb3ef2698e8af55301919dd",
+                    "release_id": RELEASE_ID, "baseline_sha": BASELINE_SHA,
                     "phase1_frozen": [], "phase2_frozen": [], "task_inputs": {}, "task_input_aggregate_sha256": "0" * 64,
                 },
             }

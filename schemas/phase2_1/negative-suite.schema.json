@@ -6,7 +6,7 @@
   "properties": {
     "schema_version": {"const": "2.1.0"},
     "artifact_type": {"const": "phase2_1_final_validator_negative_suite"},
-    "release_id": {"const": "P2.1-R00-60d02be4dbe9-i06"},
+    "release_id": {"const": "P2.1-R00-61a99a2c3732-i07"},
     "status": {"const": "PASS"},
     "baseline_validation": {
       "type": "object", "additionalProperties": false,
@@ -23,8 +23,8 @@
     },
     "cases": {
       "type": "array",
-      "minItems": 10,
-      "maxItems": 10,
+      "minItems": 23,
+      "maxItems": 23,
       "items": {
         "type": "object",
         "additionalProperties": false,

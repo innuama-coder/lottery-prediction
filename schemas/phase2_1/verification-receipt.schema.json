@@ -6,10 +6,10 @@
   "properties": {
     "schema_version": {"const": "2.1.0"},
     "artifact_type": {"const": "phase2_1_verification_receipt"},
-    "release_id": {"const": "P2.1-R00-60d02be4dbe9-i06"},
+    "release_id": {"const": "P2.1-R00-61a99a2c3732-i07"},
     "operation": {"type": "string", "minLength": 1},
     "status": {"enum": ["PASS", "FAIL"]},
-    "terminal": {"enum": ["PASS", "EVIDENCE_MISMATCH", "INVALID_CONTRACT", "ENVIRONMENT_FAILURE"]},
+    "terminal": {"enum": ["PASS", "READY", "EVIDENCE_MISMATCH", "INVALID_CONTRACT", "ENVIRONMENT_FAILURE"]},
     "exit_code": {"type": "integer", "minimum": 0},
     "started_at_utc": {"type": "string", "format": "date-time"},
     "finished_at_utc": {"type": "string", "format": "date-time"},
@@ -17,10 +17,11 @@
   },
   "allOf": [
     {"if": {"properties": {"terminal": {"const": "PASS"}}}, "then": {"properties": {"status": {"const": "PASS"}, "exit_code": {"const": 0}, "error": {"type": "null"}}}},
+    {"if": {"properties": {"terminal": {"const": "READY"}}}, "then": {"properties": {"status": {"const": "PASS"}, "exit_code": {"const": 0}, "error": {"type": "null"}}}},
     {"if": {"properties": {"terminal": {"const": "ENVIRONMENT_FAILURE"}}}, "then": {"properties": {"status": {"const": "FAIL"}, "exit_code": {"const": 3}, "error": {"type": "string"}}}},
     {"if": {"properties": {"terminal": {"const": "INVALID_CONTRACT"}}}, "then": {"properties": {"status": {"const": "FAIL"}, "exit_code": {"const": 4}, "error": {"type": "string"}}}},
     {"if": {"properties": {"terminal": {"const": "EVIDENCE_MISMATCH"}}}, "then": {"properties": {"status": {"const": "FAIL"}, "exit_code": {"const": 5}, "error": {"type": "string"}}}},
-    {"if": {"properties": {"status": {"const": "PASS"}}}, "then": {"properties": {"terminal": {"const": "PASS"}, "exit_code": {"const": 0}}}},
+    {"if": {"properties": {"status": {"const": "PASS"}}}, "then": {"properties": {"terminal": {"enum": ["PASS", "READY"]}, "exit_code": {"const": 0}}}},
     {"if": {"properties": {"status": {"const": "FAIL"}}}, "then": {"properties": {"terminal": {"enum": ["EVIDENCE_MISMATCH", "INVALID_CONTRACT", "ENVIRONMENT_FAILURE"]}, "exit_code": {"minimum": 1}}}}
   ]
 }

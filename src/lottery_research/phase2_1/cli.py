@@ -12,6 +12,7 @@ from . import BASELINE_SHA, RELEASE_ID
 from .serialization import canonical_json_bytes, load_json, write_new_json
 from .schema import validate
 from .workflow import (
+    _canonical_external_command_contract,
     accept,
     build_evidence_manifest,
     bundle_path,
@@ -49,18 +50,23 @@ def receipt_input_identity(destination: Path) -> dict[str, object]:
     }
 
 
-def execute_external_commands(root: Path, destination: Path, commands: Sequence[str]) -> list[dict[str, object]]:
+def execute_external_commands(root: Path, destination: Path) -> list[dict[str, object]]:
     environment = os.environ.copy()
     environment["PATH"] = f"{root / '.phase2_1/venv/bin'}{os.pathsep}{environment.get('PATH', '')}"
+    environment["PIP_NO_INDEX"] = "1"
     receipts = []
-    for index, external_command in enumerate(commands, start=1):
+    for definition in _canonical_external_command_contract(destination):
         external_started = now()
-        completed = subprocess.run(["bash", "-c", external_command], cwd=root, env=environment, capture_output=True, check=False)
+        completed = subprocess.run(["bash", "-c", definition["command"]], cwd=root, env=environment, capture_output=True, check=False)
         stdout = completed.stdout.decode("utf-8", errors="replace")
         stderr = completed.stderr.decode("utf-8", errors="replace")
         receipt = {
             "schema_version": "2.1.0", "artifact_type": "phase2_1_external_command_receipt", "release_id": RELEASE_ID,
-            "command": external_command, "started_at_utc": external_started, "finished_at_utc": now(), "exit_code": completed.returncode,
+            "command_id": definition["id"], "order": definition["order"], "command": definition["command"],
+            "working_directory_scope": definition["working_directory_scope"], "working_directory": root.resolve().as_posix(),
+            "offline_policy": definition["offline_policy"], "expected_status": definition["expected_status"],
+            "expected_exit_code": definition["expected_exit_code"],
+            "started_at_utc": external_started, "finished_at_utc": now(), "exit_code": completed.returncode,
             "status": "PASS" if completed.returncode == 0 else "FAIL",
             "terminal": "PASS" if completed.returncode == 0 else "FAIL",
             "stdout_summary": stdout[-4000:], "stderr_summary": stderr[-4000:],
@@ -69,7 +75,7 @@ def execute_external_commands(root: Path, destination: Path, commands: Sequence[
             "input_identity": receipt_input_identity(destination),
         }
         validate("external_command_receipt", receipt)
-        write_new_json(destination / "logs" / f"external-{index:02d}.json", receipt)
+        write_new_json(destination / "logs" / f"external-{definition['order']:02d}.json", receipt)
         receipts.append(receipt)
     return receipts
 
@@ -162,14 +168,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             staging = args.staging_bundle.resolve() if args.staging_bundle else None
             result = run_e2e(destination, root=root, staging_bundle=staging)
         elif command == "logs":
-            commands_to_run = [
-                "PYTHONPATH=src python3 -m unittest discover -s tests/phase2_1 -p \"test_*.py\" -v",
-                "PYTHONPATH=src python3 -m unittest discover -s tests/phase2 -p \"test_*.py\" -v",
-                "PYTHONPATH=src python3 -m lottery_research.phase2_1 --project-root . verify --scope readiness",
-                "python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i06",
-                "python3 -m compileall -q src scripts tests && git diff --check",
-            ]
-            external = execute_external_commands(root, destination, commands_to_run)
+            external = execute_external_commands(root, destination)
             records = [load_json(path) for path in sorted((destination / "logs").glob("[0-9][0-9]-*.json"))]
             passed = all(row["executed"] and row["exit_code"] == 0 for row in external)
             result = {

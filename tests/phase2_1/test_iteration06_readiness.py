@@ -32,7 +32,7 @@ def inventory(bundle: Path) -> list[dict[str, object]]:
 
 def copy_source_tree(root: Path) -> None:
     copied: set[str] = set()
-    for relative in (*SOURCE_PATHS, "scripts/phase2_1/bootstrap.py"):
+    for relative in (*SOURCE_PATHS, "src/lottery_research/__init__.py", "scripts/phase2_1/bootstrap.py"):
         if relative in copied:
             continue
         copied.add(relative)
@@ -59,6 +59,9 @@ def complete_bundle_fixture(root: Path) -> Path:
 
     iteration_06 = destination / "inputs/iteration-06.md"
     iteration_06.write_bytes(b"immutable readiness fixture\n")
+    fixture_inputs = ROOT / "tests/phase2_1/fixtures/i07"
+    for name in ("iteration-07.md", "iteration-07-run-02-correction.md"):
+        (destination / "inputs" / name).write_bytes((fixture_inputs / name).read_bytes())
     contract_path = destination / "contracts/acceptance-contract.json"
     contract = load_json(contract_path)
     contract["task_input_identities"]["iteration-06.md"] = hashlib.sha256(iteration_06.read_bytes()).hexdigest()
@@ -70,15 +73,18 @@ def complete_bundle_fixture(root: Path) -> Path:
     readiness["source_manifest"] = source_manifest(root)
     readiness["input_identity"] = _input_identity(destination, contract)
     frozen_paths = [row["path"] for row in readiness["frozen_input_identities"]]
-    if "inputs/iteration-06.md" not in frozen_paths:
-        readiness["frozen_input_identities"].append({"path": "inputs/iteration-06.md", "sha256": "0" * 64})
+    for relative in ("inputs/iteration-06.md", "inputs/iteration-07.md", "inputs/iteration-07-run-02-correction.md"):
+        if relative not in frozen_paths:
+            readiness["frozen_input_identities"].append({"path": relative, "sha256": "0" * 64})
     readiness["frozen_input_identities"] = [
         identity(destination, destination / row["path"])
         for row in readiness["frozen_input_identities"]
     ]
     snapshot = readiness["formal_output_snapshot"]
-    if not any(row["path"] == "inputs/iteration-06.md" for row in snapshot["existing_files"]):
-        snapshot["existing_files"].append({"path": "inputs/iteration-06.md", "sha256": "0" * 64})
+    existing_paths = {row["path"] for row in snapshot["existing_files"]}
+    for relative in ("inputs/iteration-06.md", "inputs/iteration-07.md", "inputs/iteration-07-run-02-correction.md"):
+        if relative not in existing_paths:
+            snapshot["existing_files"].append({"path": relative, "sha256": "0" * 64})
     snapshot["existing_files"] = [
         identity(destination, destination / row["path"])
         for row in snapshot["existing_files"]
@@ -87,7 +93,9 @@ def complete_bundle_fixture(root: Path) -> Path:
     snapshot["existing_inventory_sha256"] = hashlib.sha256(
         canonical_json_bytes(snapshot["existing_files"])
     ).hexdigest()
-    snapshot["allowed_final_paths"] = sorted(set(snapshot["allowed_final_paths"]) | {"inputs/iteration-06.md"})
+    snapshot["allowed_final_paths"] = sorted(set(snapshot["allowed_final_paths"]) | {
+        "inputs/iteration-06.md", "inputs/iteration-07.md", "inputs/iteration-07-run-02-correction.md",
+    })
     snapshot["allowed_final_paths_sha256"] = hashlib.sha256(
         canonical_json_bytes(snapshot["allowed_final_paths"])
     ).hexdigest()
@@ -110,6 +118,7 @@ class Iteration06ReadinessTests(unittest.TestCase):
             before = inventory(bundle)
             environment = os.environ.copy()
             environment["PYTHONDONTWRITEBYTECODE"] = "1"
+            environment["PYTHONPATH"] = str(root / "src")
             command = [sys.executable, str(root / "scripts/phase2_1/validate_phase2_1_readiness.py")]
             first = subprocess.run(command, cwd=root, env=environment, capture_output=True, check=False)
             between = inventory(bundle)

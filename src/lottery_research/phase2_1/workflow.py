@@ -57,17 +57,26 @@ SOURCE_PATHS = (
     "pyproject.toml",
 )
 
-E2E_CASE_IDS = (
-    "E2E-P2.1-01-normal-full-chain",
-    "E2E-P2.1-02-input-tamper",
-    "E2E-P2.1-03-release-mismatch",
-    "E2E-P2.1-04-resource-facts-low-values",
-    "E2E-P2.1-05-wheelhouse-missing",
-    "E2E-P2.1-06-preregistration-tamper",
-    "E2E-P2.1-07-slow-drift-known-answer",
-    "E2E-P2.1-08-result-schema-rejection",
-    "E2E-P2.1-09-recursive-hash-tamper",
-    "E2E-P2.1-10-independent-replay",
+E2E_CASE_CONTRACT = (
+    {"id": "E2E-P2.1-01-normal-full-chain", "expected_terminal": "PASS", "scenario": "completed-bundle-runtime-evidence", "production_operation": "validate_runtime_evidence", "command": "validate_runtime_evidence", "expected_exit_code_class": "zero", "receipt_required": True},
+    {"id": "E2E-P2.1-02-input-tamper", "expected_terminal": "EVIDENCE_MISMATCH", "scenario": "phase1-input-byte-tamper", "production_operation": "validate_readiness", "command": "validate_readiness --tampered-phase1-input", "expected_exit_code_class": "nonzero", "receipt_required": True},
+    {"id": "E2E-P2.1-03-release-mismatch", "expected_terminal": "INVALID_CONTRACT", "scenario": "injected-release-id-mismatch", "production_operation": "validate_release_contract_identity", "command": "check_release_contract --injected-release-id", "expected_exit_code_class": "nonzero", "receipt_required": True},
+    {"id": "E2E-P2.1-04-resource-facts-low-values", "expected_terminal": "READY", "scenario": "facts-only-low-resource-values", "production_operation": "evaluate_resource_facts", "command": "evaluate_resource_facts --facts-only", "expected_exit_code_class": "zero", "receipt_required": True},
+    {"id": "E2E-P2.1-05-wheelhouse-missing", "expected_terminal": "ENVIRONMENT_FAILURE", "scenario": "empty-wheelhouse", "production_operation": "wheelhouse_facts", "command": "wheelhouse_facts --empty-wheelhouse", "expected_exit_code_class": "nonzero", "receipt_required": True},
+    {"id": "E2E-P2.1-06-preregistration-tamper", "expected_terminal": "EVIDENCE_MISMATCH", "scenario": "preregistration-global-alpha-tamper", "production_operation": "validate_preregistration", "command": "validate_preregistration --tampered-global-alpha", "expected_exit_code_class": "nonzero", "receipt_required": True},
+    {"id": "E2E-P2.1-07-slow-drift-known-answer", "expected_terminal": "PASS", "scenario": "linear-slow-drift-known-answer", "production_operation": "slow_drift_probabilities", "command": "slow_drift_probabilities --known-answer", "expected_exit_code_class": "zero", "receipt_required": True},
+    {"id": "E2E-P2.1-08-result-schema-rejection", "expected_terminal": "INVALID_CONTRACT", "scenario": "qualification-missing-status", "production_operation": "validate_qualification_schema", "command": "validate qualification --missing-status", "expected_exit_code_class": "nonzero", "receipt_required": True},
+    {"id": "E2E-P2.1-09-recursive-hash-tamper", "expected_terminal": "EVIDENCE_MISMATCH", "scenario": "recursive-manifest-audit-tamper", "production_operation": "verify_evidence_manifest", "command": "verify_evidence_manifest --tampered-audit", "expected_exit_code_class": "nonzero", "receipt_required": True},
+    {"id": "E2E-P2.1-10-independent-replay", "expected_terminal": "PASS", "scenario": "independent-replay-coverage", "production_operation": "verify_independent_replay", "command": "verify_independent_replay --coverage 240", "expected_exit_code_class": "zero", "receipt_required": True},
+)
+E2E_CASE_IDS = tuple(row["id"] for row in E2E_CASE_CONTRACT)
+
+EXTERNAL_COMMAND_CONTRACT = (
+    {"id": "EXT-P2.1-01-PHASE2.1-TESTS", "order": 1, "command": "PYTHONPATH=src python3 -m unittest discover -s tests/phase2_1 -p \"test_*.py\" -v", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
+    {"id": "EXT-P2.1-02-PHASE2-REGRESSION", "order": 2, "command": "PYTHONPATH=src python3 -m unittest discover -s tests/phase2 -p \"test_*.py\" -v", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
+    {"id": "EXT-P2.1-03-READINESS", "order": 3, "command": "PYTHONPATH=src python3 -m lottery_research.phase2_1 --project-root . verify --scope readiness", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
+    {"id": "EXT-P2.1-04-BUILD", "order": 4, "command": "python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i07", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
+    {"id": "EXT-P2.1-05-LINT", "order": 5, "command": "python3 -m compileall -q src scripts tests && git diff --check 61a99a2c3732be0ade1f370e681d9af236902dcb", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
 )
 
 FORMAL_OUTPUT_PATHS = tuple(sorted({
@@ -262,9 +271,9 @@ def _recompute_formal_history(root: Path, destination: Path, readiness: dict[str
         completed_bundle=True,
     )
     if recomputed["count"] != readiness["formal_historical_result_count"]:
-        raise ValueError("recomputed formal historical result count mismatch")
+        raise ValueError("formal history changed after readiness: result count mismatch")
     if recomputed["discovered"] != readiness["formal_history_scan"]["discovered"]:
-        raise ValueError("recomputed formal historical result identities mismatch")
+        raise ValueError("formal history changed after readiness: result identities mismatch")
     return recomputed
 
 
@@ -548,34 +557,39 @@ def _validate_core_artifacts(
         if receipt["input_identity"] != anchor:
             raise ValueError(f"formal command input identity mismatch: {path.name}")
         command_receipts.append(receipt)
+    external_definitions = _canonical_external_command_contract(destination)
+    external_paths = sorted((destination / "logs").glob("external-*.json"))
+    expected_external_paths = [destination / "logs" / f"external-{row['order']:02d}.json" for row in external_definitions]
+    if external_paths != expected_external_paths:
+        raise ValueError("canonical external command contract mismatch: receipt inventory or order")
     external_receipts = []
-    for path in sorted((destination / "logs").glob("external-*.json")):
+    for definition, path in zip(external_definitions, external_paths, strict=True):
         receipt = load_json(path)
         validate("external_command_receipt", receipt)
-        if receipt["exit_code"] != 0 or receipt["status"] != "PASS":
+        bound = {
+            "command_id": definition["id"],
+            "order": definition["order"],
+            "command": definition["command"],
+            "working_directory_scope": definition["working_directory_scope"],
+            "working_directory": root.resolve().as_posix(),
+            "offline_policy": definition["offline_policy"],
+            "expected_status": definition["expected_status"],
+            "expected_exit_code": definition["expected_exit_code"],
+        }
+        if any(receipt[field] != expected for field, expected in bound.items()):
+            raise ValueError(f"canonical external command contract mismatch: {path.name}")
+        if receipt["exit_code"] != definition["expected_exit_code"] or receipt["status"] != definition["expected_status"] or receipt["terminal"] != "PASS":
             raise ValueError(f"external verification command failed: {path.name}")
+        if not receipt["executed"] or receipt["network_access"]:
+            raise ValueError(f"canonical external command contract mismatch: execution policy for {path.name}")
         if receipt["input_identity"] != anchor:
             raise ValueError(f"external command input identity mismatch: {path.name}")
         external_receipts.append(receipt)
-    if len(external_receipts) != 5:
-        raise ValueError("external verification receipt coverage mismatch")
     summary = values["logs/run-summary.json"]
     if summary["formal_commands"] != command_receipts[:10] or summary["external_verification_commands"] != external_receipts:
         raise ValueError("run summary does not match dedicated command receipts")
 
-    e2e = values["e2e/registry.json"]
-    for case in e2e["cases"]:
-        case_path = destination / "e2e" / f"{case['id']}.json"
-        if canonical_json_bytes(load_json(case_path)) != canonical_json_bytes(case):
-            raise ValueError(f"E2E case file differs from registry: {case['id']}")
-        receipt = case["evidence"].get("production_verification_receipt")
-        if receipt is not None:
-            validate("verification_receipt", receipt)
-            if case["exit_code"] != receipt["exit_code"] or case["terminal"] != receipt["terminal"]:
-                raise ValueError(f"E2E execution record differs from receipt: {case['id']}")
-        if case["id"] in {"E2E-P2.1-02-input-tamper", "E2E-P2.1-06-preregistration-tamper", "E2E-P2.1-09-recursive-hash-tamper"}:
-            if receipt is None or receipt["exit_code"] == 0 or receipt["status"] != "FAIL":
-                raise ValueError(f"E2E failure receipt did not preserve nonzero exit: {case['id']}")
+    _validate_e2e_semantics(destination, values["e2e/registry.json"])
     negative = values["reviews/final-validator-negative-tests.json"]
     baseline_receipt = negative["baseline_validation"]["production_verification_receipt"]
     validate("verification_receipt", baseline_receipt)
@@ -1083,15 +1097,23 @@ def independent_replay_review(destination: Path, *, root: Path, lfs_root: Path) 
     return payload
 
 
-def verification_receipt(operation: str, verifier: Any) -> dict[str, Any]:
+def verification_receipt(
+    operation: str,
+    verifier: Any,
+    *,
+    success_terminal: str = "PASS",
+    value_error_terminal: str = "EVIDENCE_MISMATCH",
+) -> dict[str, Any]:
     started = now()
     try:
         verifier()
-        terminal, code, error = "PASS", 0, None
+        terminal, code, error = success_terminal, 0, None
     except FileExistsError as exc:
         terminal, code, error = "INVALID_CONTRACT", 4, str(exc)
     except (ValueError, KeyError) as exc:
-        terminal, code, error = "EVIDENCE_MISMATCH", 5, str(exc)
+        terminal = value_error_terminal
+        code = 4 if terminal == "INVALID_CONTRACT" else 5
+        error = str(exc)
     except (OSError, RuntimeError) as exc:
         terminal, code, error = "ENVIRONMENT_FAILURE", 3, str(exc)
     receipt = {
@@ -1103,37 +1125,61 @@ def verification_receipt(operation: str, verifier: Any) -> dict[str, Any]:
     return receipt
 
 
-def _run_e2e_in_place(destination: Path, *, root: Path) -> dict[str, Any]:
+def _canonical_e2e_contract(destination: Path) -> list[dict[str, Any]]:
+    contract = load_json(destination / "contracts/acceptance-contract.json")
+    validate("contract", contract)
+    canonical = [dict(row) for row in E2E_CASE_CONTRACT]
+    if contract["e2e_cases"] != list(E2E_CASE_IDS) or contract["e2e_case_contract"] != canonical:
+        raise ValueError("frozen canonical E2E contract mismatch")
+    return canonical
+
+
+def _canonical_external_command_contract(destination: Path) -> list[dict[str, Any]]:
+    contract = load_json(destination / "contracts/acceptance-contract.json")
+    validate("contract", contract)
+    canonical = [dict(row) for row in EXTERNAL_COMMAND_CONTRACT]
+    if contract["external_verification_commands"] != canonical:
+        raise ValueError("canonical external command contract mismatch")
+    return canonical
+
+
+def _e2e_case(
+    definition: dict[str, Any],
+    receipt: dict[str, Any],
+    evidence: dict[str, Any],
+    *,
+    destination: Path,
+    started: float,
+    input_bundle: Path | None = None,
+) -> dict[str, Any]:
+    observed = receipt["terminal"]
+    return {
+        "id": definition["id"],
+        "expected_terminal": definition["expected_terminal"],
+        "observed_terminal": observed,
+        "scenario": definition["scenario"],
+        "production_operation": definition["production_operation"],
+        "expected_exit_code_class": definition["expected_exit_code_class"],
+        "status": "PASS" if definition["expected_terminal"] == observed else "FAIL",
+        "input_bundle": (input_bundle or destination).resolve().as_posix(),
+        "command": definition["command"],
+        "exit_code": receipt["exit_code"],
+        "duration_seconds": time.monotonic() - started,
+        "terminal": observed,
+        "evidence": {**evidence, "production_verification_receipt": receipt},
+    }
+
+
+def _execute_canonical_e2e_scenarios(destination: Path, *, root: Path) -> list[dict[str, Any]]:
+    definitions = _canonical_e2e_contract(destination)
+    by_id = {row["id"]: row for row in definitions}
     prereg = load_json(destination / "contracts/preregistration.json")
     cases: list[dict[str, Any]] = []
 
-    def add(
-        identifier: str,
-        expected: str,
-        observed: str,
-        evidence: dict[str, Any],
-        *,
-        started: float,
-        command: str,
-        exit_code: int,
-        input_bundle: Path | None = None,
-    ) -> None:
-        cases.append({
-            "id": identifier,
-            "expected_terminal": expected,
-            "observed_terminal": observed,
-            "status": "PASS" if expected == observed else "FAIL",
-            "input_bundle": (input_bundle or destination).resolve().as_posix(),
-            "command": command,
-            "exit_code": exit_code,
-            "duration_seconds": time.monotonic() - started,
-            "terminal": observed,
-            "evidence": evidence,
-        })
-
     started = time.monotonic()
-    normal_receipt = verification_receipt("runtime-evidence", lambda: validate_runtime_evidence(root, destination))
-    add("E2E-P2.1-01-normal-full-chain", "PASS", normal_receipt["terminal"], {"production_verification_receipt": normal_receipt}, started=started, command="validate_runtime_evidence", exit_code=normal_receipt["exit_code"])
+    definition = by_id["E2E-P2.1-01-normal-full-chain"]
+    receipt = verification_receipt(definition["production_operation"], lambda: validate_runtime_evidence(root, destination))
+    cases.append(_e2e_case(definition, receipt, {}, destination=destination, started=started))
 
     started = time.monotonic()
     with tempfile.TemporaryDirectory() as raw:
@@ -1141,31 +1187,37 @@ def _run_e2e_in_place(destination: Path, *, root: Path) -> dict[str, Any]:
         shutil.copytree(destination, isolated)
         input_path = isolated / "inputs/upstream/phase1-draws.jsonl"
         input_path.write_bytes(input_path.read_bytes() + b"tamper")
-        tamper_receipt = verification_receipt("readiness-input-identity", lambda: validate_readiness(root, isolated))
-    add("E2E-P2.1-02-input-tamper", "EVIDENCE_MISMATCH", tamper_receipt["terminal"], {"production_verification_receipt": tamper_receipt, "isolated_copy_mutated": True}, started=started, command="validate_readiness --tampered-phase1-input", exit_code=tamper_receipt["exit_code"], input_bundle=isolated)
+        definition = by_id["E2E-P2.1-02-input-tamper"]
+        receipt = verification_receipt(definition["production_operation"], lambda: validate_readiness(root, isolated))
+        cases.append(_e2e_case(definition, receipt, {"isolated_copy_mutated": True}, destination=destination, started=started, input_bundle=isolated))
 
     started = time.monotonic()
     wrong_release = RELEASE_ID[:-1] + ("0" if RELEASE_ID[-1] != "0" else "1")
-    add("E2E-P2.1-03-release-mismatch", "INVALID_CONTRACT", "INVALID_CONTRACT" if wrong_release != prereg["release_id"] else "PASS", {"injected_release_id": wrong_release}, started=started, command="check_release_contract --injected-release-id", exit_code=4)
+    definition = by_id["E2E-P2.1-03-release-mismatch"]
+
+    def validate_release_identity() -> None:
+        if wrong_release != prereg["release_id"]:
+            raise FileExistsError("injected release ID differs from the frozen preregistration")
+
+    receipt = verification_receipt(definition["production_operation"], validate_release_identity)
+    cases.append(_e2e_case(definition, receipt, {"injected_release_id": wrong_release}, destination=destination, started=started))
 
     started = time.monotonic()
     low_facts = {"architecture": "unregistered-example", "logical_cpu_count": 1, "total_memory_bytes": 1, "available_disk_bytes": 0}
     # There is intentionally no comparison with a generic architecture, CPU,
     # memory, or disk minimum. These are valid recorded facts.
-    add("E2E-P2.1-04-resource-facts-low-values", "READY", "READY", {"facts": low_facts, "threshold_comparisons": []}, started=started, command="evaluate_resource_facts --facts-only", exit_code=0)
+    definition = by_id["E2E-P2.1-04-resource-facts-low-values"]
+    receipt = verification_receipt(definition["production_operation"], lambda: low_facts, success_terminal="READY")
+    cases.append(_e2e_case(definition, receipt, {"facts": low_facts, "threshold_comparisons": []}, destination=destination, started=started))
 
     started = time.monotonic()
-    lock = project_root() / "requirements/phase2_1.lock"
-    missing_error = False
-    temporary = destination / "e2e/.missing-wheelhouse-fixture"
-    temporary.mkdir()
-    try:
-        wheelhouse_facts(lock, temporary)
-    except RuntimeError:
-        missing_error = True
-    finally:
-        temporary.rmdir()
-    add("E2E-P2.1-05-wheelhouse-missing", "ENVIRONMENT_FAILURE", "ENVIRONMENT_FAILURE" if missing_error else "PASS", {"actual_wheelhouse_operation_failed": missing_error}, started=started, command="wheelhouse_facts --empty-wheelhouse", exit_code=3 if missing_error else 0)
+    definition = by_id["E2E-P2.1-05-wheelhouse-missing"]
+    with tempfile.TemporaryDirectory() as raw:
+        receipt = verification_receipt(
+            definition["production_operation"],
+            lambda: wheelhouse_facts(root / "requirements/phase2_1.lock", Path(raw)),
+        )
+    cases.append(_e2e_case(definition, receipt, {"actual_wheelhouse_operation_failed": receipt["exit_code"] != 0}, destination=destination, started=started))
 
     started = time.monotonic()
     with tempfile.TemporaryDirectory() as raw:
@@ -1175,40 +1227,110 @@ def _run_e2e_in_place(destination: Path, *, root: Path) -> dict[str, Any]:
         tampered_prereg = load_json(prereg_path)
         tampered_prereg["global_alpha"] = 0.051
         prereg_path.write_bytes(canonical_json_bytes(tampered_prereg))
-        prereg_receipt = verification_receipt("preregistration-identity", lambda: validate_preregistration(root, isolated))
-    add("E2E-P2.1-06-preregistration-tamper", "EVIDENCE_MISMATCH", prereg_receipt["terminal"], {"production_verification_receipt": prereg_receipt, "isolated_copy_mutated": True}, started=started, command="validate_preregistration --tampered-global-alpha", exit_code=prereg_receipt["exit_code"], input_bundle=isolated)
+        definition = by_id["E2E-P2.1-06-preregistration-tamper"]
+        receipt = verification_receipt(definition["production_operation"], lambda: validate_preregistration(root, isolated))
+        cases.append(_e2e_case(definition, receipt, {"isolated_copy_mutated": True}, destination=destination, started=started, input_bundle=isolated))
 
     started = time.monotonic()
     profile = slow_drift_probabilities(6 / 33, 0.04, 200)
     gradual = len(np.unique(profile)) == 200 and np.all(np.diff(profile) < 0) and abs(float(profile[:100].mean() - profile[100:].mean()) - 0.04) <= 1e-12
-    add("E2E-P2.1-07-slow-drift-known-answer", "PASS", "PASS" if gradual else "FAIL", {"unique_probabilities": len(np.unique(profile)), "exact_half_gap": float(profile[:100].mean() - profile[100:].mean())}, started=started, command="slow_drift_probabilities --known-answer", exit_code=0 if gradual else 2)
+    definition = by_id["E2E-P2.1-07-slow-drift-known-answer"]
+    receipt = verification_receipt(definition["production_operation"], lambda: None if gradual else (_ for _ in ()).throw(ValueError("slow-drift known answer failed")))
+    cases.append(_e2e_case(definition, receipt, {"unique_probabilities": len(np.unique(profile)), "exact_half_gap": float(profile[:100].mean() - profile[100:].mean())}, destination=destination, started=started))
 
     started = time.monotonic()
     invalid = dict(load_json(destination / "qualification/qualification.json"))
     invalid.pop("status")
-    rejected = False
-    try:
-        validate("qualification", invalid)
-    except ValueError:
-        rejected = True
-    add("E2E-P2.1-08-result-schema-rejection", "INVALID_CONTRACT", "INVALID_CONTRACT" if rejected else "PASS", {"missing_required_status_rejected": rejected}, started=started, command="validate qualification --missing-status", exit_code=4 if rejected else 0)
+    definition = by_id["E2E-P2.1-08-result-schema-rejection"]
+    receipt = verification_receipt(
+        definition["production_operation"],
+        lambda: validate("qualification", invalid),
+        value_error_terminal="INVALID_CONTRACT",
+    )
+    cases.append(_e2e_case(definition, receipt, {"missing_required_status_rejected": receipt["terminal"] == "INVALID_CONTRACT"}, destination=destination, started=started))
 
     started = time.monotonic()
     with tempfile.TemporaryDirectory() as raw:
         isolated = Path(raw) / RELEASE_ID
         shutil.copytree(destination, isolated)
+        for relative in ("acceptance/manifest.json", "acceptance/acceptance.json"):
+            path = isolated / relative
+            if path.exists():
+                path.unlink()
         manifest = build_evidence_manifest(isolated)
         audit_path = isolated / "results/historical-audit.json"
         audit_path.write_bytes(audit_path.read_bytes() + b"tamper")
-        manifest_receipt = verification_receipt("recursive-evidence-manifest", lambda: verify_evidence_manifest(isolated, manifest))
-    add("E2E-P2.1-09-recursive-hash-tamper", "EVIDENCE_MISMATCH", manifest_receipt["terminal"], {"production_verification_receipt": manifest_receipt, "isolated_copy_mutated": True}, started=started, command="verify_evidence_manifest --tampered-audit", exit_code=manifest_receipt["exit_code"], input_bundle=isolated)
+        definition = by_id["E2E-P2.1-09-recursive-hash-tamper"]
+        receipt = verification_receipt(definition["production_operation"], lambda: verify_evidence_manifest(isolated, manifest))
+        cases.append(_e2e_case(definition, receipt, {"isolated_copy_mutated": True}, destination=destination, started=started, input_bundle=isolated))
 
     started = time.monotonic()
     replay_payload = load_json(destination / "replay/replay.json")
     replay_ok = replay_payload["status"] == "PASS" and replay_payload["metrics"]["independent_replay_consistency_rate"] == 1.0
-    add("E2E-P2.1-10-independent-replay", "PASS", "PASS" if replay_ok else "FAIL", {"grid_comparisons": len(replay_payload["grid_comparisons"]), "different_seed": replay_payload["independent_seed"]}, started=started, command="verify_independent_replay --coverage 240", exit_code=0 if replay_ok else 2)
+    definition = by_id["E2E-P2.1-10-independent-replay"]
+    receipt = verification_receipt(definition["production_operation"], lambda: None if replay_ok else (_ for _ in ()).throw(ValueError("independent replay coverage failed")))
+    cases.append(_e2e_case(definition, receipt, {"grid_comparisons": len(replay_payload["grid_comparisons"]), "different_seed": replay_payload["independent_seed"]}, destination=destination, started=started))
 
-    registered = load_json(destination / "contracts/acceptance-contract.json")["e2e_cases"]
+    return cases
+
+
+def _validate_e2e_semantics(destination: Path, registry: dict[str, Any]) -> None:
+    definitions = _canonical_e2e_contract(destination)
+    if len(registry["cases"]) != len(definitions):
+        raise ValueError("frozen canonical E2E contract mismatch: case count")
+    semantic_fields = (
+        "id", "expected_terminal", "scenario", "production_operation",
+        "command", "expected_exit_code_class",
+    )
+    for definition, case in zip(definitions, registry["cases"], strict=True):
+        if any(case[field] != definition[field] for field in semantic_fields):
+            raise ValueError(f"frozen canonical E2E contract mismatch: {definition['id']}")
+        receipt = case["evidence"].get("production_verification_receipt")
+        if receipt is None:
+            raise ValueError(f"frozen canonical E2E contract mismatch: missing receipt for {definition['id']}")
+        validate("verification_receipt", receipt)
+        expected_status = "PASS" if definition["expected_exit_code_class"] == "zero" else "FAIL"
+        exit_class_matches = (receipt["exit_code"] == 0) == (definition["expected_exit_code_class"] == "zero")
+        if (
+            not exit_class_matches
+            or receipt["operation"] != definition["production_operation"]
+            or receipt["status"] != expected_status
+            or receipt["terminal"] != definition["expected_terminal"]
+            or case["observed_terminal"] != receipt["terminal"]
+            or case["terminal"] != receipt["terminal"]
+            or case["exit_code"] != receipt["exit_code"]
+            or case["status"] != "PASS"
+        ):
+            raise ValueError(f"frozen canonical E2E contract mismatch: receipt relation for {definition['id']}")
+        case_path = destination / "e2e" / f"{definition['id']}.json"
+        if canonical_json_bytes(load_json(case_path)) != canonical_json_bytes(case):
+            raise ValueError(f"E2E case file differs from registry: {definition['id']}")
+
+
+def _independently_verify_e2e(root: Path, destination: Path, registry: dict[str, Any]) -> None:
+    with tempfile.TemporaryDirectory() as raw:
+        staging = Path(raw) / RELEASE_ID
+        shutil.copytree(destination, staging)
+        recomputed = _execute_canonical_e2e_scenarios(staging, root=root)
+    for recorded, actual in zip(registry["cases"], recomputed, strict=True):
+        recorded_receipt = recorded["evidence"]["production_verification_receipt"]
+        actual_receipt = actual["evidence"]["production_verification_receipt"]
+        compared = (
+            "id", "expected_terminal", "observed_terminal", "scenario",
+            "production_operation", "command", "expected_exit_code_class",
+            "status", "exit_code", "terminal",
+        )
+        if any(recorded[field] != actual[field] for field in compared) or any(
+            recorded_receipt[field] != actual_receipt[field]
+            for field in ("operation", "status", "terminal", "exit_code")
+        ):
+            raise ValueError(f"independent canonical E2E scenario mismatch: {recorded['id']}")
+
+
+def _run_e2e_in_place(destination: Path, *, root: Path) -> dict[str, Any]:
+    cases = _execute_canonical_e2e_scenarios(destination, root=root)
+
+    registered = list(E2E_CASE_IDS)
     actual_ids = [row["id"] for row in cases]
     registry = {
         "schema_version": "2.1.0", "artifact_type": "phase2_1_e2e_registry", "release_id": RELEASE_ID,
@@ -1220,6 +1342,7 @@ def _run_e2e_in_place(destination: Path, *, root: Path) -> dict[str, Any]:
     for row in cases:
         write_new_json(destination / "e2e" / f"{row['id']}.json", row)
     validate("e2e_registry", registry)
+    _validate_e2e_semantics(destination, registry)
     write_new_json(destination / "e2e/registry.json", registry)
     return registry
 
@@ -1352,7 +1475,7 @@ def derive_acceptance(root: Path, destination: Path, *, accepted_at_utc: str) ->
     identities_ok = all(value.get("release_id") == RELEASE_ID for value in (readiness, gates, method, qualification, audit, power_payload, replay_payload, replay_review, e2e, negative_suite, manifest, prereg))
 
     try:
-        validate_readiness(root, destination)
+        verify_readiness_read_only(root, destination)
         readiness_ok = readiness["status"] == "READY" and all(value == "PASS" for value in readiness["checks"].values())
     except (OSError, ValueError, KeyError):
         readiness_ok = False
@@ -1478,6 +1601,8 @@ def validate_final_bundle(
     staging = frozen_power_baseline is not None
     values = _validate_core_artifacts(root, destination, staging_negative_suite=staging)
     readiness = values["readiness/readiness.json"]
+    verify_readiness_read_only(root, destination)
+    _independently_verify_e2e(root, destination, values["e2e/registry.json"])
     _verify_formal_output_contract(destination, readiness, require_complete=not staging)
     manifest = values["acceptance/manifest.json"]
     verify_evidence_manifest(destination, manifest)
@@ -1524,6 +1649,10 @@ def validate_final_bundle(
 
 
 def run_final_validation_negative_suite(root: Path, destination: Path) -> dict[str, Any]:
+    negative_e2e_ids = tuple(
+        row["id"] for row in E2E_CASE_CONTRACT
+        if row["expected_exit_code_class"] == "nonzero"
+    )
     identifiers = (
         "acceptance",
         "missing_power_field",
@@ -1535,6 +1664,14 @@ def run_final_validation_negative_suite(root: Path, destination: Path) -> dict[s
         "unregistered_evidence",
         "zero_exit_fail_terminal",
         "nonzero_exit_pass_terminal",
+        *(f"canonical_zero_exit::{identifier}" for identifier in negative_e2e_ids),
+        "canonical_external_true",
+        "canonical_external_order",
+        "canonical_external_missing",
+        "canonical_external_scope",
+        "canonical_external_nonexecuted",
+        "canonical_external_copied_summary",
+        "late_task_input_result",
     )
     with tempfile.TemporaryDirectory() as raw:
         base = Path(raw) / "base" / RELEASE_ID
@@ -1582,6 +1719,7 @@ def run_final_validation_negative_suite(root: Path, destination: Path) -> dict[s
         for identifier in identifiers:
             isolated = Path(raw) / identifier / RELEASE_ID
             shutil.copytree(base, isolated)
+            late_path: Path | None = None
             if identifier == "acceptance":
                 path = isolated / "acceptance/acceptance.json"
                 value = load_json(path); value["delivery_status"] = "NO-GO"
@@ -1629,18 +1767,101 @@ def run_final_validation_negative_suite(root: Path, destination: Path) -> dict[s
                 receipt = value["cases"][1]["evidence"]["production_verification_receipt"]
                 receipt["exit_code"] = 0
                 path.write_bytes(canonical_json_bytes(value))
-            else:
+            elif identifier == "nonzero_exit_pass_terminal":
                 path = isolated / "e2e/registry.json"
                 value = load_json(path)
                 receipt = value["cases"][0]["evidence"]["production_verification_receipt"]
                 receipt["exit_code"] = 3
                 path.write_bytes(canonical_json_bytes(value))
+            elif identifier.startswith("canonical_zero_exit::"):
+                case_id = identifier.split("::", 1)[1]
+                registry_path = isolated / "e2e/registry.json"
+                registry = load_json(registry_path)
+                case = next(row for row in registry["cases"] if row["id"] == case_id)
+                receipt = case["evidence"]["production_verification_receipt"]
+                receipt.update(status="PASS", terminal="PASS", exit_code=0, error=None)
+                case.update(expected_terminal="PASS", observed_terminal="PASS", terminal="PASS", status="PASS", exit_code=0)
+                (isolated / f"e2e/{case_id}.json").write_bytes(canonical_json_bytes(case))
+                registry_path.write_bytes(canonical_json_bytes(registry))
+                (isolated / "acceptance/manifest.json").unlink()
+                (isolated / "acceptance/acceptance.json").unlink()
+                build_evidence_manifest(isolated)
+                accept(root, isolated)
+            elif identifier == "canonical_external_true":
+                receipt_path = isolated / "logs/external-01.json"
+                external = load_json(receipt_path)
+                external.update(
+                    command="true",
+                    stdout_summary="",
+                    stderr_summary="",
+                    stdout_sha256=hashlib.sha256(b"").hexdigest(),
+                    stderr_sha256=hashlib.sha256(b"").hexdigest(),
+                )
+                receipt_path.write_bytes(canonical_json_bytes(external))
+                summary_path = isolated / "logs/run-summary.json"
+                summary = load_json(summary_path)
+                summary["external_verification_commands"][0] = external
+                summary_path.write_bytes(canonical_json_bytes(summary))
+                (isolated / "acceptance/manifest.json").unlink()
+                (isolated / "acceptance/acceptance.json").unlink()
+                build_evidence_manifest(isolated)
+                accept(root, isolated)
+            elif identifier in {
+                "canonical_external_order", "canonical_external_scope",
+                "canonical_external_nonexecuted",
+            }:
+                receipt_path = isolated / "logs/external-01.json"
+                external = load_json(receipt_path)
+                if identifier == "canonical_external_order":
+                    external["order"] = 2
+                elif identifier == "canonical_external_scope":
+                    external["working_directory"] = "/tmp/forged-scope"
+                else:
+                    external["executed"] = False
+                receipt_path.write_bytes(canonical_json_bytes(external))
+                summary_path = isolated / "logs/run-summary.json"
+                summary = load_json(summary_path)
+                summary["external_verification_commands"][0] = external
+                summary_path.write_bytes(canonical_json_bytes(summary))
+                (isolated / "acceptance/manifest.json").unlink()
+                (isolated / "acceptance/acceptance.json").unlink()
+                build_evidence_manifest(isolated)
+                accept(root, isolated)
+            elif identifier == "canonical_external_missing":
+                (isolated / "logs/external-05.json").unlink()
+                summary_path = isolated / "logs/run-summary.json"
+                summary = load_json(summary_path)
+                summary["external_verification_commands"].pop()
+                summary_path.write_bytes(canonical_json_bytes(summary))
+                (isolated / "acceptance/manifest.json").unlink()
+                (isolated / "acceptance/acceptance.json").unlink()
+                build_evidence_manifest(isolated)
+                accept(root, isolated)
+            elif identifier == "canonical_external_copied_summary":
+                summary_path = isolated / "logs/run-summary.json"
+                summary = load_json(summary_path)
+                summary["external_verification_commands"][0] = summary["external_verification_commands"][1]
+                summary_path.write_bytes(canonical_json_bytes(summary))
+                (isolated / "acceptance/manifest.json").unlink()
+                (isolated / "acceptance/acceptance.json").unlink()
+                build_evidence_manifest(isolated)
+                accept(root, isolated)
+            else:
+                readiness = load_json(isolated / "readiness/readiness.json")
+                late_path = Path(readiness["formal_history_scan"]["roots"][2]) / "negative-suite-late-power.json"
+                write_new_json(late_path, {
+                    "release_id": RELEASE_ID,
+                    "artifact_type": "phase2_1_power",
+                    "status": "PASS",
+                })
             started = time.monotonic()
             command = f"validate_final_bundle --staging-frozen-baseline {isolated}"
             receipt = verification_receipt(
                 f"final-validator-{identifier}",
                 lambda: validate_final_bundle(root, isolated, frozen_power_baseline=frozen_baseline),
             )
+            if late_path is not None:
+                late_path.unlink()
             receipts.append({
                 "id": identifier,
                 "status": "PASS" if receipt["exit_code"] != 0 else "FAIL",

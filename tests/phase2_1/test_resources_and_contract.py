@@ -18,9 +18,9 @@ ROOT = project_root()
 
 class ResourceAndContractTests(unittest.TestCase):
     def test_release_and_iteration_baseline_identities_are_explicit(self) -> None:
-        self.assertEqual(RELEASE_ID, "P2.1-R00-60d02be4dbe9-i05")
-        self.assertEqual(BASELINE_SHA, "b5ce8cf112dcd2889018ebcdf0fc7f08ec8d20e2")
-        self.assertEqual((RUN_LABEL, ITERATION), ("P2.1-R00", "i05"))
+        self.assertEqual(RELEASE_ID, "P2.1-R00-60d02be4dbe9-i06")
+        self.assertEqual(BASELINE_SHA, "5e1aa705c2e0b9f33fb3ef2698e8af55301919dd")
+        self.assertEqual((RUN_LABEL, ITERATION), ("P2.1-R00", "i06"))
 
     def test_contract_has_no_generic_resource_thresholds(self) -> None:
         contract = json.loads((ROOT / "docs/roadmap/phase-2.1-acceptance-contract.json").read_text(encoding="utf-8"))

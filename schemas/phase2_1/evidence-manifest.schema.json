@@ -6,7 +6,7 @@
   "properties": {
     "schema_version": {"const": "2.1.0"},
     "artifact_type": {"const": "phase2_1_recursive_evidence_manifest"},
-    "release_id": {"const": "P2.1-R00-60d02be4dbe9-i05"},
+    "release_id": {"const": "P2.1-R00-60d02be4dbe9-i06"},
     "status": {"const": "frozen"},
     "created_at_utc": {"type": "string", "format": "date-time"},
     "profile": {"type": "string"},

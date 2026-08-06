@@ -127,7 +127,7 @@ class Iteration03ClosureTests(unittest.TestCase):
                 "working_directory": raw, "executed": True, "network_access": False,
                 "stdout_summary": "PASS", "stderr_summary": "", "stdout_sha256": "2" * 64, "stderr_sha256": "3" * 64,
                 "input_identity": {
-                    "release_id": RELEASE_ID, "baseline_sha": "b5ce8cf112dcd2889018ebcdf0fc7f08ec8d20e2",
+                    "release_id": RELEASE_ID, "baseline_sha": "5e1aa705c2e0b9f33fb3ef2698e8af55301919dd",
                     "phase1_frozen": [], "phase2_frozen": [], "task_inputs": {}, "task_input_aggregate_sha256": "0" * 64,
                 },
             }

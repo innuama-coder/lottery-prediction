@@ -18,23 +18,25 @@ python3 -m venv .phase2_1/venv
 
 ## 正式顺序（无公网依赖）
 
-先设置 `PIP_NO_INDEX=1`，然后严格执行：
+先激活 release-local venv，设置 `PIP_NO_INDEX=1`，然后严格执行。公开 readiness 验证命令走只读重验路径，不创建正式命令 receipt，因此在完成并冻结的 bundle 上可重复执行：
 
 ```bash
-.phase2_1/venv/bin/python scripts/phase2_1/prepare_phase2_1.py --wheelhouse .phase2_1/wheelhouse --task-input-dir /path/to/task-input --corpus-root .phase2_1/lfs
+source .phase2_1/venv/bin/activate
+export PIP_NO_INDEX=1
+python3 scripts/phase2_1/prepare_phase2_1.py --wheelhouse .phase2_1/wheelhouse --task-input-dir /path/to/task-input --corpus-root .phase2_1/lfs
 python3 scripts/phase2_1/validate_phase2_1_readiness.py
-.phase2_1/venv/bin/python -m lottery_research.phase2_1 gates
+python3 -m lottery_research.phase2_1 gates
 python3 scripts/phase2_1/independent_method_review.py
-.phase2_1/venv/bin/python -m lottery_research.phase2_1 qualification
-.phase2_1/venv/bin/python -m lottery_research.phase2_1 audit
-.phase2_1/venv/bin/python -m lottery_research.phase2_1 power --lfs-root .phase2_1/lfs
-.phase2_1/venv/bin/python -m lottery_research.phase2_1 replay --lfs-root .phase2_1/lfs
+python3 -m lottery_research.phase2_1 qualification
+python3 -m lottery_research.phase2_1 audit
+python3 -m lottery_research.phase2_1 power --lfs-root .phase2_1/lfs
+python3 -m lottery_research.phase2_1 replay --lfs-root .phase2_1/lfs
 python3 scripts/phase2_1/independent_replay_review.py --lfs-root .phase2_1/lfs
 python3 scripts/phase2_1/run_phase2_1_e2e.py
-.phase2_1/venv/bin/python -m lottery_research.phase2_1 logs
-.phase2_1/venv/bin/python -m lottery_research.phase2_1 negative-suite
-.phase2_1/venv/bin/python -m lottery_research.phase2_1 manifest
-.phase2_1/venv/bin/python -m lottery_research.phase2_1 accept
+python3 -m lottery_research.phase2_1 logs
+python3 -m lottery_research.phase2_1 negative-suite
+python3 -m lottery_research.phase2_1 manifest
+python3 -m lottery_research.phase2_1 accept
 python3 scripts/phase2_1/validate_final_bundle.py
 ```
 
@@ -45,7 +47,7 @@ python3 scripts/phase2_1/validate_final_bundle.py
 仓库使用 setuptools 的 `pyproject.toml`，没有独立 linter 配置。因此实际 build 是离线 wheel 构建，实际 lint 是对 Python 源、脚本和测试执行 `compileall` 加 `git diff --check`：
 
 ```bash
-python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i05
+python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i06
 python3 -m compileall -q src scripts tests && git diff --check
 ```
 

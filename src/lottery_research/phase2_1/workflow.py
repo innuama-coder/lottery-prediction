@@ -202,7 +202,13 @@ def _verify_formal_output_contract(destination: Path, readiness: dict[str, Any],
         raise ValueError(f"final directory is not the registered readiness closure: missing={sorted(set(allowed) - set(actual))}")
 
 
-def scan_formal_history(root: Path, destination: Path, task_input_dir: Path) -> dict[str, Any]:
+def scan_formal_history(
+    root: Path,
+    destination: Path,
+    task_input_dir: Path,
+    *,
+    completed_bundle: bool = False,
+) -> dict[str, Any]:
     """Count pre-readiness formal results for this exact release identity."""
     roots = [
         destination / "results",
@@ -210,10 +216,16 @@ def scan_formal_history(root: Path, destination: Path, task_input_dir: Path) -> 
         task_input_dir / "results",
     ]
     discovered: list[str] = []
+    completed_outputs = {
+        (destination / "results/historical-audit.json").resolve(),
+        (destination / "results/power.json").resolve(),
+    } if completed_bundle else set()
     for scan_root in roots:
         if not scan_root.is_dir():
             continue
         for path in sorted(scan_root.rglob("*.json")):
+            if path.resolve() in completed_outputs:
+                continue
             try:
                 value = load_json(path)
             except (OSError, ValueError):
@@ -228,6 +240,32 @@ def scan_formal_history(root: Path, destination: Path, task_input_dir: Path) -> 
         "discovered": discovered,
         "count": len(discovered),
     }
+
+
+def _recompute_formal_history(root: Path, destination: Path, readiness: dict[str, Any]) -> dict[str, Any]:
+    recorded_roots = readiness["formal_history_scan"]["roots"]
+    if len(recorded_roots) != 3:
+        raise ValueError("readiness formal history root coverage mismatch")
+    expected_fixed_roots = [
+        (destination / "results").resolve().as_posix(),
+        (root / "artifacts/phase-2.1-protected-results" / RELEASE_ID).resolve().as_posix(),
+    ]
+    if recorded_roots[:2] != expected_fixed_roots:
+        raise ValueError("readiness formal history roots do not match this release")
+    task_results = Path(recorded_roots[2]).resolve()
+    if task_results.name != "results":
+        raise ValueError("readiness task-input history root is invalid")
+    recomputed = scan_formal_history(
+        root,
+        destination,
+        task_results.parent,
+        completed_bundle=True,
+    )
+    if recomputed["count"] != readiness["formal_historical_result_count"]:
+        raise ValueError("recomputed formal historical result count mismatch")
+    if recomputed["discovered"] != readiness["formal_history_scan"]["discovered"]:
+        raise ValueError("recomputed formal historical result identities mismatch")
+    return recomputed
 
 
 def validate_task_inputs(task_input_dir: Path, expected: dict[str, str]) -> list[Path]:
@@ -371,6 +409,15 @@ def validate_readiness(root: Path, destination: Path | None = None) -> dict[str,
     if sha256(canary) != readiness["evidence_return"]["sha256"]:
         raise ValueError("evidence return canary mismatch")
     _verify_formal_output_contract(destination, readiness, require_complete=False)
+    return readiness
+
+
+def verify_readiness_read_only(root: Path, destination: Path | None = None) -> dict[str, Any]:
+    """Revalidate readiness bottom-up without writing a formal command receipt."""
+    root = root.resolve()
+    destination = (destination or bundle_path(root)).resolve()
+    readiness = validate_readiness(root, destination)
+    _recompute_formal_history(root, destination, readiness)
     return readiness
 
 

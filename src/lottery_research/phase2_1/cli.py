@@ -29,6 +29,7 @@ from .workflow import (
     validate_final_bundle,
     validate_preregistration,
     validate_readiness,
+    verify_readiness_read_only,
     verify_evidence_manifest,
     now,
 )
@@ -81,7 +82,7 @@ def parser() -> argparse.ArgumentParser:
     prepare.add_argument("--wheelhouse", type=Path, required=True)
     prepare.add_argument("--task-input-dir", type=Path, required=True)
     prepare.add_argument("--corpus-root", type=Path, required=True)
-    for name in ("readiness", "gates", "method-review", "qualification", "audit", "power", "replay", "replay-review", "e2e", "logs", "negative-suite", "manifest", "accept", "verify"):
+    for name in ("readiness", "verify-readiness", "gates", "method-review", "qualification", "audit", "power", "replay", "replay-review", "e2e", "logs", "negative-suite", "manifest", "accept", "verify"):
         command = commands.add_parser(name)
         command.add_argument("--bundle", type=Path)
         if name in ("power", "replay", "replay-review"):
@@ -141,6 +142,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             result = prepare_release(root, args.wheelhouse.resolve(), args.task_input_dir.resolve(), args.corpus_root.resolve())
         elif command == "readiness":
             result = validate_readiness(root, destination)
+        elif command == "verify-readiness":
+            result = verify_readiness_read_only(root, destination)
         elif command == "gates":
             result = freeze_g0_g1(root, destination)
         elif command == "method-review":
@@ -163,7 +166,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "PYTHONPATH=src python3 -m unittest discover -s tests/phase2_1 -p \"test_*.py\" -v",
                 "PYTHONPATH=src python3 -m unittest discover -s tests/phase2 -p \"test_*.py\" -v",
                 "PYTHONPATH=src python3 -m lottery_research.phase2_1 --project-root . verify --scope readiness",
-                "python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i05",
+                "python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i06",
                 "python3 -m compileall -q src scripts tests && git diff --check",
             ]
             external = execute_external_commands(root, destination, commands_to_run)
@@ -187,7 +190,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             result = accept(root, destination)
         else:
             if args.scope == "readiness":
-                result = validate_readiness(root, destination)
+                result = verify_readiness_read_only(root, destination)
             elif args.scope == "preregistration":
                 result = validate_preregistration(root, destination)
             elif args.scope == "manifest":

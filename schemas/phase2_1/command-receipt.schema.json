@@ -6,7 +6,7 @@
   "properties": {
     "schema_version": {"const": "2.1.0"},
     "artifact_type": {"const": "phase2_1_command_record"},
-    "release_id": {"const": "P2.1-R00-60d02be4dbe9-i05"},
+    "release_id": {"const": "P2.1-R00-60d02be4dbe9-i06"},
     "command": {"type": "string"},
     "argv": {"type": "array", "items": {"type": "string"}},
     "status": {"enum": ["PASS", "FAIL"]},

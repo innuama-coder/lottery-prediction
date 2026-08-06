@@ -6,4 +6,4 @@ ROOT = activate()
 
 from lottery_research.phase2_1.cli import main
 
-raise SystemExit(main(["--project-root", str(ROOT), "readiness"]))
+raise SystemExit(main(["--project-root", str(ROOT), "verify-readiness"]))

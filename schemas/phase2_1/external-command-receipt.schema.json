@@ -4,7 +4,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "artifact_type", "release_id", "command", "status", "terminal", "started_at_utc", "finished_at_utc", "exit_code", "stdout_summary", "stderr_summary", "stdout_sha256", "stderr_sha256", "executed", "network_access", "input_identity"],
   "properties": {
-    "schema_version": {"const": "2.1.0"}, "artifact_type": {"const": "phase2_1_external_command_receipt"}, "release_id": {"const": "P2.1-R00-60d02be4dbe9-i05"},
+    "schema_version": {"const": "2.1.0"}, "artifact_type": {"const": "phase2_1_external_command_receipt"}, "release_id": {"const": "P2.1-R00-60d02be4dbe9-i06"},
     "command": {"type": "string"}, "status": {"enum": ["PASS", "FAIL"]}, "terminal": {"enum": ["PASS", "FAIL"]},
     "started_at_utc": {"type": "string", "format": "date-time"}, "finished_at_utc": {"type": "string", "format": "date-time"}, "exit_code": {"type": "integer", "minimum": 0},
     "stdout_summary": {"type": "string"}, "stderr_summary": {"type": "string"}, "stdout_sha256": {"pattern": "^[0-9a-f]{64}$"}, "stderr_sha256": {"pattern": "^[0-9a-f]{64}$"}, "executed": {"const": true}, "network_access": {"const": false},

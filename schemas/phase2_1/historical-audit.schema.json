@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "release_id", "status", "gate", "method", "primary_results", "negative_controls", "metrics", "input_identities", "input_identity", "limitations"],
+  "properties": {
+    "schema_version": {"const": "2.1.0"}, "artifact_type": {"const": "phase2_1_historical_audit"}, "release_id": {"type": "string"}, "status": {"const": "PASS"}, "gate": {"const": "G3"},
+    "method": {"type": "object"},
+    "primary_results": {"type": "array", "minItems": 10, "maxItems": 10, "items": {"type": "object", "required": ["game", "family", "test_id", "n", "raw_p_value", "holm_adjusted_p_value", "effect_estimate", "practical_boundary", "candidate_eligible", "sensitivity_direction_consistency"], "properties": {"game": {"enum": ["dlt", "ssq"]}, "family": {"enum": ["marginal_inclusion", "set_structure", "pair_dependence", "slow_drift", "cross_zone_dependence"]}, "candidate_eligible": {"const": true}, "n": {"const": 200}, "raw_p_value": {"type": "number", "minimum": 0, "maximum": 1}, "holm_adjusted_p_value": {"type": "number", "minimum": 0, "maximum": 1}}}},
+    "negative_controls": {"type": "array", "minItems": 2}, "metrics": {"type": "object"}, "input_identities": {"type": "array", "minItems": 3}, "input_identity": {"type": "object", "required": ["release_id", "baseline_sha", "phase1_frozen", "phase2_frozen", "task_inputs", "task_input_aggregate_sha256"]}, "limitations": {"type": "array", "minItems": 1}
+  }
+}

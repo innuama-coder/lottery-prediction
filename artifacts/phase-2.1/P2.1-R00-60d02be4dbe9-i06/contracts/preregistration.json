@@ -1,0 +1,58 @@
+{
+  "schema_version": "2.1.0",
+  "artifact_type": "phase2_1_preregistration",
+  "status": "frozen_before_phase2_1_results",
+  "release_id": "P2.1-R00-60d02be4dbe9-i06",
+  "iteration": "i06",
+  "global_alpha": 0.05,
+  "target_power": 0.8,
+  "games": ["dlt", "ssq"],
+  "families": ["marginal_inclusion", "set_structure", "pair_dependence", "slow_drift", "cross_zone_dependence"],
+  "test_ids": {
+    "marginal_inclusion": "T-MARGINAL",
+    "set_structure": "T-STRUCTURE",
+    "pair_dependence": "T-PAIR",
+    "slow_drift": "T-SLOW-DRIFT",
+    "cross_zone_dependence": "T-CROSSZONE"
+  },
+  "practical_boundaries": {
+    "marginal_inclusion": 0.01,
+    "set_structure": 1.0,
+    "pair_dependence": 0.005,
+    "slow_drift": 0.02,
+    "cross_zone_dependence": 0.1
+  },
+  "effect_grids": {
+    "marginal_inclusion": [0.0, 0.01, 0.02, 0.03],
+    "set_structure": [0.0, 1.0, 2.0, 3.0],
+    "pair_dependence": [0.0, 0.005, 0.01, 0.015],
+    "slow_drift": [0.0, 0.02, 0.04, 0.06],
+    "cross_zone_dependence": [0.0, 0.1, 0.2, 0.3]
+  },
+  "sample_size_grid": [50, 100, 200, 500, 1000, 2000],
+  "historical_reference_replications": 9999,
+  "calibration_replications": 20000,
+  "power_replications_per_grid_point": 4000,
+  "seeds": {
+    "qualification": 21080511,
+    "historical": 24080501,
+    "power": 24080521,
+    "independent_replay": 24080612
+  },
+  "slow_drift_model": {
+    "name": "linear_inclusion_probability_drift",
+    "target_number": 1,
+    "effect_parameter": "early_half_mean_inclusion_probability_minus_late_half_mean_inclusion_probability",
+    "profile": "linearly spaced probabilities over every calendar-ordered draw, scaled so the two half means differ by the registered effect",
+    "step_alternative_retained_as": "temporal_step_sensitivity_only",
+    "formal_power_family": "slow_drift"
+  },
+  "multiplicity": "Holm step-down across exactly ten primary decisions",
+  "power_interval": "two-sided Clopper-Pearson with Bonferroni allocation over 240 registered grid points",
+  "classification_rule": {
+    "candidate_signal": "Holm-adjusted p <= 0.05, candidate eligible, effect confidence set excludes practical null, and sensitivity direction is consistent",
+    "no_detectable_signal": "not candidate_signal and simultaneous 95 percent power lower bound at the practical boundary is at least 0.80",
+    "indeterminate": "all remaining cases; explicitly not proof of randomness"
+  },
+  "formal_network_policy": "no network access or dependency downloads after readiness begins"
+}

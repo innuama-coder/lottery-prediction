@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase2_1_non_mutating_readiness_revalidation",
+  "release_id": "P2.1-R00-60d02be4dbe9-i06",
+  "bundle": "artifacts/phase-2.1/P2.1-R00-60d02be4dbe9-i06",
+  "inventory_profile": "SHA-256 of canonical JSON sorted file rows containing path, bytes and sha256",
+  "before": {
+    "file_count": 56,
+    "inventory_sha256": "850762d4854672dcb84670f135157f7e1f5e239a6125825281ae79c76b9d4b5a"
+  },
+  "invocations": [
+    {
+      "command": "python3 scripts/phase2_1/validate_phase2_1_readiness.py",
+      "exit_code": 0,
+      "terminal": "READY",
+      "network_access": false,
+      "after_file_count": 56,
+      "after_inventory_sha256": "850762d4854672dcb84670f135157f7e1f5e239a6125825281ae79c76b9d4b5a"
+    },
+    {
+      "command": "python3 scripts/phase2_1/validate_phase2_1_readiness.py",
+      "exit_code": 0,
+      "terminal": "READY",
+      "network_access": false,
+      "after_file_count": 56,
+      "after_inventory_sha256": "850762d4854672dcb84670f135157f7e1f5e239a6125825281ae79c76b9d4b5a"
+    }
+  ],
+  "final_validator": {
+    "command": "python3 scripts/phase2_1/validate_final_bundle.py",
+    "exit_code": 0,
+    "terminal": "PASS",
+    "network_access": false,
+    "after_file_count": 56,
+    "after_inventory_sha256": "850762d4854672dcb84670f135157f7e1f5e239a6125825281ae79c76b9d4b5a"
+  },
+  "preservation": {
+    "phase1": {
+      "file_count": 128,
+      "before_and_after_inventory_sha256": "0c125d03c769560a938e35e41b9ff1b7330efa1b491cae1c7cc9704edd37637a"
+    },
+    "phase2": {
+      "file_count": 91,
+      "before_and_after_inventory_sha256": "4a56a6b3e229bbfe670c0bca0da931ca40f779063f3e6e6b0a1015f104af87e1"
+    },
+    "prior_phase2_1": {
+      "file_count": 149,
+      "before_and_after_inventory_sha256": "18133a037fa83985f766de396ff205cc6265cdece0aa51618a6af73739aff4f0"
+    }
+  }
+}

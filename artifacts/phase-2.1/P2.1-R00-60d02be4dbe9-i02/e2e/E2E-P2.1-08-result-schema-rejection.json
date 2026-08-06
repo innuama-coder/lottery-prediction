@@ -1,0 +1,1 @@
+{"evidence":{"missing_required_status_rejected":true},"expected_terminal":"INVALID_CONTRACT","id":"E2E-P2.1-08-result-schema-rejection","observed_terminal":"INVALID_CONTRACT","status":"PASS"}

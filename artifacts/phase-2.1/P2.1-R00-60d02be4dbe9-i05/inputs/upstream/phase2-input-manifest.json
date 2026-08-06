@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase2_input_manifest",
+  "status": "frozen",
+  "frozen_at_utc": "2026-08-05T00:08:00Z",
+  "statistical_unit": "one DrawRecord is one draw; SourceObservation rows are provenance only and never increase n",
+  "active_games": ["dlt", "ssq"],
+  "upstream": {
+    "phase1_contract": {"path": "docs/roadmap/phase-1-acceptance-contract.json", "sha256": "6a941622e2de77aa5371750ceb4c9d012574ba581c2b6226851006a819243a40"},
+    "phase1_final": {"path": "artifacts/phase-1/acceptance/phase1-acceptance.json", "sha256": "959b1dddacf453dbff347786d572de4cd8c52d1b7eb2e7a3805cffa2a166bb18"},
+    "draws": {"path": "artifacts/phase-1/baseline-v1/draws.jsonl", "sha256": "f2e34a88fbd43a378d7fb6255d39deee1354216b918934f355a06ef986be60c1", "count": 400, "count_by_game": {"dlt": 200, "ssq": 200}},
+    "observations": {"path": "artifacts/phase-1/baseline-v1/observations.jsonl", "sha256": "dc974863c845da1e895ecf623bc6e878ba6aa6710c902357bce68ad5e661966e", "count": 800},
+    "manifest": {"path": "artifacts/phase-1/baseline-v1/manifest.json", "sha256": "0ddcccb72dce7662af665b369995b1c1fd28c68554b32e175f4561fc9f9683d1"},
+    "schema_freeze": {"path": "tests/phase1/fixtures/spec/spec-bundle-freeze.json", "sha256": "56d443d76075acdc8914da3fa8a0b7318325aff91f222bcd181c7390f14a2c6e"}
+  },
+  "R2_source": {"path": "docs/research/lottery-autoresearch-technical-strategy.md", "sha256": "1327ed33efb23afb4fd6034a5a426141f1cca9c1494e82f895c3e3022b9e07bb", "objective": "audit randomness assumptions and quantify detectable-effect and sample-size boundaries before any model research"},
+  "point_in_time_policy": {"knowledge_class": "retrospective_current_view", "available_at_utc_is_null": true, "allowed_use": "historical outcome labels and retrospective randomness audit only", "forbidden_use": "point-in-time predictive covariates or claims that fields were known before a draw"},
+  "forbidden_statistical_matrix_fields": ["evidence_links", "revision_id", "supersedes_revision_id", "core_fact_sha256", "source_observation_count", "future_draw_numbers"],
+  "game_rule_maps": [
+    {
+      "game": "dlt", "sample_issue_start": 2025034, "sample_issue_end": 2026083, "sample_count": 200,
+      "number_space_segments": [{"id": "dlt-ns-35c5-12c2-v1", "issue_start": 2025034, "issue_end": 2026083, "front": {"min": 1, "max": 35, "draw_count": 5}, "back": {"min": 1, "max": 12, "draw_count": 2}}],
+      "documented_draw_process_segments": [{"id": "dlt-process-documented-random-device-35c5-12c2-v1", "issue_start": 2025034, "issue_end": 2026083, "description": "notarially supervised random draw of 5/35 front and 2/12 back", "evidence_ref_ids": ["DLT-MOF-2018", "DLT-CURRENT-RULE"]}],
+      "prize_rule_segments": [{"id": "dlt-prize-pre-26014", "issue_start": 2025034, "issue_end": 2026013, "generation_split": false}, {"id": "dlt-prize-from-26014", "issue_start": 2026014, "issue_end": 2026083, "generation_split": false, "evidence_ref_ids": ["DLT-RULE-CHANGE-26014"]}],
+      "promotions": [{"id": "dlt-promotion-2026", "issue_start": 2026050, "issue_end": 2026066, "generation_split": false, "evidence_ref_ids": ["DLT-PROMO-2026-START", "DLT-PROMO-2026-END"]}],
+      "mechanism_metadata_status": "unknown_machine_and_ball_set_identity", "generation_null_blockers": []
+    },
+    {
+      "game": "ssq", "sample_issue_start": 2025037, "sample_issue_end": 2026085, "sample_count": 200,
+      "number_space_segments": [{"id": "ssq-ns-33c6-16c1-v1", "issue_start": 2025037, "issue_end": 2026085, "front": {"min": 1, "max": 33, "draw_count": 6}, "back": {"min": 1, "max": 16, "draw_count": 1}}],
+      "documented_draw_process_segments": [{"id": "ssq-process-documented-draw-machine-33c6-16c1-v1", "issue_start": 2025037, "issue_end": 2026085, "description": "notarially supervised machine draw of 6/33 red then 1/16 blue", "evidence_ref_ids": ["SSQ-MOF-2014", "SSQ-CURRENT-RULE"]}],
+      "prize_rule_segments": [{"id": "ssq-prize-pre-2026014", "issue_start": 2025037, "issue_end": 2026013, "generation_split": false}, {"id": "ssq-prize-from-2026014", "issue_start": 2026014, "issue_end": 2026085, "generation_split": false, "evidence_ref_ids": ["SSQ-RULE-CHANGE-2026014"]}],
+      "promotions": [], "mechanism_metadata_status": "unknown_machine_and_ball_set_identity", "generation_null_blockers": []
+    }
+  ],
+  "rule_evidence": [
+    {"id": "DLT-MOF-2018", "authority": "Ministry of Finance of China", "url": "https://www.mof.gov.cn/gp/xxgkml/zhs/201812/t20181229_3111394.htm", "retrieved_at": "2026-08-04", "supports": ["historical_number_space", "historical_draw_process"]},
+    {"id": "DLT-CURRENT-RULE", "authority": "China Sports Lottery", "url": "https://m.lottery.gov.cn/ksjz/m/yxgz_dlt/", "retrieved_at": "2026-08-04", "supports": ["current_number_space", "current_draw_process"]},
+    {"id": "DLT-RULE-CHANGE-26014", "authority": "China Sports Lottery", "url": "https://m.lottery.gov.cn/mltsz/jsq/index.html?tt_force_outside=1", "retrieved_at": "2026-08-04", "supports": ["prize_rule_effective_issue"]},
+    {"id": "DLT-PROMO-2026-START", "authority": "China Sports Lottery", "url": "https://m.lottery.gov.cn/xxgk/tzgg/dlttz/20260428/10053457.html", "retrieved_at": "2026-08-04", "supports": ["promotion_start"]},
+    {"id": "DLT-PROMO-2026-END", "authority": "China Sports Lottery", "url": "https://m.lottery.gov.cn/xxgk/tzgg/dlttz/20260615/10054208.html", "retrieved_at": "2026-08-04", "supports": ["promotion_end"]},
+    {"id": "SSQ-MOF-2014", "authority": "Ministry of Finance of China", "url": "https://zhs.mof.gov.cn/zhengcefabu/201404/t20140421_1069579.htm", "retrieved_at": "2026-08-04", "supports": ["historical_number_space", "historical_draw_process"]},
+    {"id": "SSQ-CURRENT-RULE", "authority": "China Welfare Lottery public rule mirror", "url": "https://www.scflcp.com.cn/yxgz/823145252.jhtml", "retrieved_at": "2026-08-04", "supports": ["current_number_space", "current_draw_process"]},
+    {"id": "SSQ-RULE-CHANGE-2026014", "authority": "China Welfare Lottery public notice mirror", "url": "https://www.scflcp.com.cn/tzgg/823144831.jhtml", "retrieved_at": "2026-08-04", "supports": ["prize_rule_effective_issue"]}
+  ]
+}

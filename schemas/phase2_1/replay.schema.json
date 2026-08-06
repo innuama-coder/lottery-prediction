@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "release_id", "status", "gate", "source_power_identity", "independent_seed", "engine", "independent_grid", "grid_comparisons", "deterministic_statistic_comparisons", "metrics", "input_identity"],
+  "properties": {
+    "schema_version": {"const": "2.1.0"},
+    "artifact_type": {"const": "phase2_1_replay"},
+    "release_id": {"type": "string"},
+    "status": {"const": "PASS"},
+    "gate": {"const": "G5"},
+    "source_power_identity": {"type": "object"},
+    "independent_seed": {"type": "integer"},
+    "engine": {"type": "object", "additionalProperties": false, "required": ["id", "path", "sha256", "power_grid_imported"], "properties": {"id": {"const": "phase2_1_independent_replay_v1"}, "path": {"const": "src/lottery_research/phase2_1/independent_replay.py"}, "sha256": {"pattern": "^[0-9a-f]{64}$"}, "power_grid_imported": {"const": false}}},
+    "independent_grid": {"type": "array", "minItems": 240, "maxItems": 240, "items": {"type": "object", "required": ["game", "family", "effect", "sample_size", "successes", "replications", "power", "simultaneous_95_lower", "simultaneous_95_upper", "seed"]}},
+    "grid_comparisons": {
+      "type": "array", "minItems": 240, "maxItems": 240,
+      "items": {"type": "object", "required": ["key", "compatible"], "properties": {"compatible": {"const": true}}}
+    },
+    "deterministic_statistic_comparisons": {
+      "type": "array", "minItems": 10,
+      "items": {"type": "object", "required": ["key", "match"], "properties": {"match": {"const": true}}}
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["evidence_hash_match_rate", "result_coverage", "independent_replay_consistency_rate", "missing_batches", "duplicate_batches"],
+      "properties": {"evidence_hash_match_rate": {"const": 1.0}, "result_coverage": {"const": 1.0}, "independent_replay_consistency_rate": {"const": 1.0}, "missing_batches": {"const": 0}, "duplicate_batches": {"const": 0}}
+    },
+    "input_identity": {"type": "object", "required": ["release_id", "baseline_sha", "phase1_frozen", "phase2_frozen", "task_inputs", "task_input_aggregate_sha256"]}
+  }
+}

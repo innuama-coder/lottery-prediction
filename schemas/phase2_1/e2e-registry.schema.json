@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "release_id", "status", "cases", "metrics", "input_identity"],
+  "properties": {
+    "schema_version": {"const": "2.1.0"},
+    "artifact_type": {"const": "phase2_1_e2e_registry"},
+    "release_id": {"type": "string"},
+    "status": {"const": "PASS"},
+    "cases": {
+      "type": "array", "minItems": 10, "maxItems": 10,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "expected_terminal", "observed_terminal", "scenario", "production_operation", "expected_exit_code_class", "status", "input_bundle", "command", "exit_code", "duration_seconds", "terminal", "evidence"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "expected_terminal": {"type": "string", "minLength": 1},
+          "observed_terminal": {"type": "string", "minLength": 1},
+          "scenario": {"type": "string", "minLength": 1},
+          "production_operation": {"type": "string", "minLength": 1},
+          "expected_exit_code_class": {"enum": ["zero", "nonzero"]},
+          "status": {"const": "PASS"},
+          "input_bundle": {"type": "string", "minLength": 1},
+          "command": {"type": "string", "minLength": 1},
+          "exit_code": {"type": "integer", "minimum": 0},
+          "duration_seconds": {"type": "number", "minimum": 0},
+          "terminal": {"type": "string", "minLength": 1},
+          "evidence": {
+            "type": "object",
+            "required": ["production_verification_receipt"],
+            "properties": {"production_verification_receipt": {"type": "object"}}
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object", "required": ["expected_terminal_coverage", "case_coverage"],
+      "properties": {"expected_terminal_coverage": {"const": 1.0}, "case_coverage": {"const": 1.0}}
+    },
+    "input_identity": {"type": "object", "required": ["release_id", "baseline_sha", "phase1_frozen", "phase2_frozen", "task_inputs", "task_input_aggregate_sha256"]}
+  }
+}

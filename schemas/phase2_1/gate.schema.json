@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "release_id", "status", "gates", "created_at_utc", "readiness_identity", "input_identity", "checks"],
+  "properties": {
+    "schema_version": {"const": "2.1.0"},
+    "artifact_type": {"const": "phase2_1_gate_evidence"},
+    "release_id": {"const": "P2.1-R00-61a99a2c3732-i07-r02"},
+    "status": {"const": "PASS"},
+    "gates": {"const": {"G0": "PASS", "G1": "PASS"}},
+    "created_at_utc": {"type": "string", "format": "date-time"},
+    "readiness_identity": {"type": "object", "required": ["path", "sha256"]},
+    "input_identity": {"type": "object", "required": ["release_id", "baseline_sha", "phase1_frozen", "phase2_frozen", "task_inputs", "task_input_aggregate_sha256"]},
+    "checks": {"type": "object", "additionalProperties": {"const": "PASS"}}
+  }
+}

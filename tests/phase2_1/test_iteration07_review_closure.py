@@ -286,6 +286,17 @@ class Iteration07ReviewClosureTests(unittest.TestCase):
             ]
             self.assertEqual(before, after)
 
+    def test_staging_validator_rescans_frozen_baseline_roots(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            destination, baseline = copy_valid_staging_bundle(raw)
+            self.assert_valid_rejected_head_baseline(destination, baseline)
+            isolated = Path(raw) / "isolated" / RELEASE_ID
+            shutil.copytree(destination, isolated)
+
+            result = validate_final_bundle(ROOT, isolated, frozen_power_baseline=baseline)
+
+            self.assertEqual((result["status"], result["delivery_status"]), ("PASS", "GO"))
+
 
 if __name__ == "__main__":
     unittest.main()

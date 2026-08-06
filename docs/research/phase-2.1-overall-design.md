@@ -2,7 +2,7 @@
 
 版本：2.1.0
 运行标签：`P2.1-R00`
-不可变 release：`P2.1-R00-61a99a2c3732-i07`
+不可变 release：`P2.1-R00-61a99a2c3732-i07-r02`
 
 ## 目标与边界
 
@@ -10,7 +10,7 @@ Phase 2.1 是对 Phase 2 统计与验收缺陷的版本化修复。它不原地�
 
 ## 不可变身份与证据流
 
-本轮 release ID 绑定 rejected PR head 并追加 iteration-07 标记：`P2.1-R00-61a99a2c3732-i07`。它与精确基线 `61a99a2…`、被拒的 i06 evidence 及更早 iteration bundle 的关系固定在合同中，旧 release 不覆盖、不修复。readiness 固化 Phase 2.1 与实际导入的完整 Phase 2 运行时代码、Schema/合同摘要、Phase 1 输入、2.1 补充预注册、九个任务输入及预期哈希、隔离目录、依赖锁、wheelhouse 清单、benchmark、正式输出白名单和证据回传 canary。完成 bundle 的公开 readiness 命令使用独立只读路径，从底层重算身份、原始任务输入结果根的正式历史结果计数和输出白名单，且不创建或覆盖正式命令 receipt；final validator 也必须执行同一只读重扫并把结果纳入 G0/G6。
+本轮成功候选 release ID 绑定 rejected PR head、iteration-07 和 run-02 重试标记：`P2.1-R00-61a99a2c3732-i07-r02`。它显式 supersede 本轮已保留的失败候选 `P2.1-R00-61a99a2c3732-i07`，并与精确基线 `61a99a2…`、被拒的 i06 evidence 及更早 iteration bundle 的关系固定在合同中；旧 release 不覆盖、不修复。readiness 固化 Phase 2.1 与实际导入的完整 Phase 2 运行时代码、Schema/合同摘要、Phase 1 输入、2.1 补充预注册、九个任务输入及预期哈希、隔离目录、依赖锁、wheelhouse 清单、benchmark、正式输出白名单和证据回传 canary。完成 bundle 的公开 readiness 命令使用独立只读路径，从底层重算身份、原始任务输入结果根的正式历史结果计数和输出白名单，且不创建或覆盖正式命令 receipt；final validator 也必须执行同一只读重扫并把结果纳入 G0/G6。
 
 负向验证使用独立 staging 副本及与真实 power 命令 receipt、power identity、冻结输入和源码清单绑定的只读基准证据。各负向用例复用该基准并在进入昂贵网格重算前完成 Schema、身份、目录闭包和 receipt 一致性拒绝；正式 final validator 不接受隐式缓存，仍从冻结语料完整重算 240 个 power cells。
 

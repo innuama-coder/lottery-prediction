@@ -75,7 +75,7 @@ EXTERNAL_COMMAND_CONTRACT = (
     {"id": "EXT-P2.1-01-PHASE2.1-TESTS", "order": 1, "command": "PYTHONPATH=src python3 -m unittest discover -s tests/phase2_1 -p \"test_*.py\" -v", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
     {"id": "EXT-P2.1-02-PHASE2-REGRESSION", "order": 2, "command": "PYTHONPATH=src python3 -m unittest discover -s tests/phase2 -p \"test_*.py\" -v", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
     {"id": "EXT-P2.1-03-READINESS", "order": 3, "command": "PYTHONPATH=src python3 -m lottery_research.phase2_1 --project-root . verify --scope readiness", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
-    {"id": "EXT-P2.1-04-BUILD", "order": 4, "command": "python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i07", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
+    {"id": "EXT-P2.1-04-BUILD", "order": 4, "command": "python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i07-r02", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
     {"id": "EXT-P2.1-05-LINT", "order": 5, "command": "python3 -m compileall -q src scripts tests && git diff --check 61a99a2c3732be0ade1f370e681d9af236902dcb", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
 )
 
@@ -251,12 +251,19 @@ def scan_formal_history(
     }
 
 
-def _recompute_formal_history(root: Path, destination: Path, readiness: dict[str, Any]) -> dict[str, Any]:
+def _recompute_formal_history(
+    root: Path,
+    destination: Path,
+    readiness: dict[str, Any],
+    *,
+    recorded_bundle: Path | None = None,
+) -> dict[str, Any]:
     recorded_roots = readiness["formal_history_scan"]["roots"]
     if len(recorded_roots) != 3:
         raise ValueError("readiness formal history root coverage mismatch")
+    expected_bundle = (recorded_bundle or destination).resolve()
     expected_fixed_roots = [
-        (destination / "results").resolve().as_posix(),
+        (expected_bundle / "results").resolve().as_posix(),
         (root / "artifacts/phase-2.1-protected-results" / RELEASE_ID).resolve().as_posix(),
     ]
     if recorded_roots[:2] != expected_fixed_roots:
@@ -266,7 +273,7 @@ def _recompute_formal_history(root: Path, destination: Path, readiness: dict[str
         raise ValueError("readiness task-input history root is invalid")
     recomputed = scan_formal_history(
         root,
-        destination,
+        expected_bundle,
         task_results.parent,
         completed_bundle=True,
     )
@@ -421,12 +428,17 @@ def validate_readiness(root: Path, destination: Path | None = None) -> dict[str,
     return readiness
 
 
-def verify_readiness_read_only(root: Path, destination: Path | None = None) -> dict[str, Any]:
+def verify_readiness_read_only(
+    root: Path,
+    destination: Path | None = None,
+    *,
+    recorded_bundle: Path | None = None,
+) -> dict[str, Any]:
     """Revalidate readiness bottom-up without writing a formal command receipt."""
     root = root.resolve()
     destination = (destination or bundle_path(root)).resolve()
     readiness = validate_readiness(root, destination)
-    _recompute_formal_history(root, destination, readiness)
+    _recompute_formal_history(root, destination, readiness, recorded_bundle=recorded_bundle)
     return readiness
 
 
@@ -1441,7 +1453,13 @@ def _scientific_classification(audit: dict[str, Any], power_payload: dict[str, A
     return "indeterminate"
 
 
-def derive_acceptance(root: Path, destination: Path, *, accepted_at_utc: str) -> dict[str, Any]:
+def derive_acceptance(
+    root: Path,
+    destination: Path,
+    *,
+    accepted_at_utc: str,
+    recorded_readiness_bundle: Path | None = None,
+) -> dict[str, Any]:
     readiness = load_json(destination / "readiness/readiness.json")
     gates = load_json(destination / "gates/g0-g1.json")
     method = load_json(destination / "reviews/independent-method-review.json")
@@ -1475,7 +1493,7 @@ def derive_acceptance(root: Path, destination: Path, *, accepted_at_utc: str) ->
     identities_ok = all(value.get("release_id") == RELEASE_ID for value in (readiness, gates, method, qualification, audit, power_payload, replay_payload, replay_review, e2e, negative_suite, manifest, prereg))
 
     try:
-        verify_readiness_read_only(root, destination)
+        verify_readiness_read_only(root, destination, recorded_bundle=recorded_readiness_bundle)
         readiness_ok = readiness["status"] == "READY" and all(value == "PASS" for value in readiness["checks"].values())
     except (OSError, ValueError, KeyError):
         readiness_ok = False
@@ -1601,13 +1619,19 @@ def validate_final_bundle(
     staging = frozen_power_baseline is not None
     values = _validate_core_artifacts(root, destination, staging_negative_suite=staging)
     readiness = values["readiness/readiness.json"]
-    verify_readiness_read_only(root, destination)
+    recorded_bundle = Path(frozen_power_baseline["staging_bundle"]) if frozen_power_baseline is not None else None
+    verify_readiness_read_only(root, destination, recorded_bundle=recorded_bundle)
     _independently_verify_e2e(root, destination, values["e2e/registry.json"])
     _verify_formal_output_contract(destination, readiness, require_complete=not staging)
     manifest = values["acceptance/manifest.json"]
     verify_evidence_manifest(destination, manifest)
     acceptance = load_json(destination / "acceptance/acceptance.json")
-    expected = derive_acceptance(root, destination, accepted_at_utc=acceptance["accepted_at_utc"])
+    expected = derive_acceptance(
+        root,
+        destination,
+        accepted_at_utc=acceptance["accepted_at_utc"],
+        recorded_readiness_bundle=recorded_bundle,
+    )
     if canonical_json_bytes(acceptance) != canonical_json_bytes(expected):
         raise ValueError("final acceptance differs from independently recomputed bottom-up acceptance")
     if acceptance["status"] != "PASS" or acceptance["delivery_status"] != "GO":
@@ -1676,6 +1700,14 @@ def run_final_validation_negative_suite(root: Path, destination: Path) -> dict[s
     with tempfile.TemporaryDirectory() as raw:
         base = Path(raw) / "base" / RELEASE_ID
         shutil.copytree(destination, base)
+        readiness_path = base / "readiness/readiness.json"
+        readiness = load_json(readiness_path)
+        readiness["formal_history_scan"]["roots"][0] = (base / "results").resolve().as_posix()
+        readiness_path.write_bytes(canonical_json_bytes(readiness))
+        gate_path = base / "gates/g0-g1.json"
+        gate = load_json(gate_path)
+        gate["readiness_identity"] = identity(base, readiness_path)
+        gate_path.write_bytes(canonical_json_bytes(gate))
         seed_receipt = verification_receipt("negative-suite-seed", lambda: (_ for _ in ()).throw(ValueError("expected seed failure")))
         pass_seed_receipt = verification_receipt("negative-suite-baseline-seed", lambda: None)
         seed_suite = {

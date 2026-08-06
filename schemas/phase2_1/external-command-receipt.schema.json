@@ -4,7 +4,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "artifact_type", "release_id", "command_id", "order", "command", "working_directory_scope", "working_directory", "offline_policy", "expected_status", "expected_exit_code", "status", "terminal", "started_at_utc", "finished_at_utc", "exit_code", "stdout_summary", "stderr_summary", "stdout_sha256", "stderr_sha256", "executed", "network_access", "input_identity"],
   "properties": {
-    "schema_version": {"const": "2.1.0"}, "artifact_type": {"const": "phase2_1_external_command_receipt"}, "release_id": {"const": "P2.1-R00-61a99a2c3732-i07"},
+    "schema_version": {"const": "2.1.0"}, "artifact_type": {"const": "phase2_1_external_command_receipt"}, "release_id": {"const": "P2.1-R00-61a99a2c3732-i07-r02"},
     "command_id": {"type": "string", "minLength": 1}, "order": {"type": "integer", "minimum": 1},
     "command": {"type": "string"}, "working_directory_scope": {"const": "project_root"}, "working_directory": {"type": "string", "minLength": 1},
     "offline_policy": {"const": "no_network_frozen_inputs_local_dependencies"}, "expected_status": {"const": "PASS"}, "expected_exit_code": {"const": 0},

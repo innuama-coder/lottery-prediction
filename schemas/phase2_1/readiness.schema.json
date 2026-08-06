@@ -4,7 +4,7 @@
   "required": ["schema_version", "artifact_type", "run_label", "release_id", "status", "created_at_utc", "checks", "resource_facts", "dependency_facts", "wheelhouse", "benchmark", "source_manifest", "frozen_input_identities", "input_identity", "formal_output_snapshot", "isolated_workspace", "evidence_return", "formal_historical_result_count", "formal_history_scan"],
   "properties": {
     "schema_version": {"const": "2.1.0"}, "artifact_type": {"const": "phase2_1_readiness"}, "run_label": {"const": "P2.1-R00"},
-    "release_id": {"const": "P2.1-R00-61a99a2c3732-i07"}, "status": {"const": "READY"}, "created_at_utc": {"type": "string", "format": "date-time"},
+    "release_id": {"const": "P2.1-R00-61a99a2c3732-i07-r02"}, "status": {"const": "READY"}, "created_at_utc": {"type": "string", "format": "date-time"},
     "checks": {"type": "object", "minProperties": 8, "additionalProperties": {"const": "PASS"}},
     "resource_facts": {"type": "object", "required": ["policy", "capacity_owner", "system", "architecture", "logical_cpu_count", "total_memory_bytes", "available_disk_bytes", "python"], "properties": {"policy": {"const": "facts_only_no_generic_capacity_or_architecture_thresholds"}, "capacity_owner": {"const": "task_initiator"}, "logical_cpu_count": {"type": "integer", "minimum": 1}, "total_memory_bytes": {"type": "integer", "minimum": 1}, "available_disk_bytes": {"type": "integer", "minimum": 0}}},
     "dependency_facts": {"type": "object", "required": ["lock_sha256", "installed"]},
@@ -26,7 +26,7 @@
       "additionalProperties": false,
       "required": ["release_id", "baseline_sha", "phase1_frozen", "phase2_frozen", "task_inputs", "task_input_aggregate_sha256"],
       "properties": {
-        "release_id": {"const": "P2.1-R00-61a99a2c3732-i07"},
+        "release_id": {"const": "P2.1-R00-61a99a2c3732-i07-r02"},
         "baseline_sha": {"const": "61a99a2c3732be0ade1f370e681d9af236902dcb"},
         "phase1_frozen": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/identity"}},
         "phase2_frozen": {"type": "array", "minItems": 4, "items": {"$ref": "#/$defs/identity"}},

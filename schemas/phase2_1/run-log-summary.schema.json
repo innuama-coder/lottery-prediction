@@ -3,7 +3,7 @@
   "type": "object", "additionalProperties": false,
   "required": ["schema_version", "artifact_type", "release_id", "status", "formal_commands", "external_verification_commands", "formal_network_access", "input_identity"],
   "properties": {
-    "schema_version": {"const": "2.1.0"}, "artifact_type": {"const": "phase2_1_run_log_summary"}, "release_id": {"const": "P2.1-R00-61a99a2c3732-i07"}, "status": {"const": "PASS"},
+    "schema_version": {"const": "2.1.0"}, "artifact_type": {"const": "phase2_1_run_log_summary"}, "release_id": {"const": "P2.1-R00-61a99a2c3732-i07-r02"}, "status": {"const": "PASS"},
     "formal_commands": {"type": "array", "minItems": 10}, "external_verification_commands": {"type": "array", "minItems": 5, "maxItems": 5}, "formal_network_access": {"const": false},
     "input_identity": {"type": "object", "required": ["release_id", "baseline_sha", "phase1_frozen", "phase2_frozen", "task_inputs", "task_input_aggregate_sha256"]}
   }

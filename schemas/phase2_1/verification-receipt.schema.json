@@ -6,7 +6,7 @@
   "properties": {
     "schema_version": {"const": "2.1.0"},
     "artifact_type": {"const": "phase2_1_verification_receipt"},
-    "release_id": {"const": "P2.1-R00-61a99a2c3732-i07"},
+    "release_id": {"const": "P2.1-R00-61a99a2c3732-i07-r02"},
     "operation": {"type": "string", "minLength": 1},
     "status": {"enum": ["PASS", "FAIL"]},
     "terminal": {"enum": ["PASS", "READY", "EVIDENCE_MISMATCH", "INVALID_CONTRACT", "ENVIRONMENT_FAILURE"]},

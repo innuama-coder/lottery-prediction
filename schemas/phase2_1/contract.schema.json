@@ -9,9 +9,9 @@
     "artifact_type": {"const": "phase2_1_acceptance_contract"},
     "run_label": {"const": "P2.1-R00"},
     "baseline_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-    "release_id": {"const": "P2.1-R00-61a99a2c3732-i07"},
+    "release_id": {"const": "P2.1-R00-61a99a2c3732-i07-r02"},
     "iteration": {"const": "i07"},
-    "supersedes_rejected_release": {"const": "P2.1-R00-60d02be4dbe9-i06"},
+    "supersedes_rejected_release": {"const": "P2.1-R00-61a99a2c3732-i07"},
     "status": {"const": "frozen"},
     "resource_policy": {
       "type": "object", "additionalProperties": false,

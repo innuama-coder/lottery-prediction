@@ -3,9 +3,9 @@
   "artifact_type": "phase2_1_acceptance_contract",
   "run_label": "P2.1-R00",
   "baseline_sha": "61a99a2c3732be0ade1f370e681d9af236902dcb",
-  "release_id": "P2.1-R00-61a99a2c3732-i07",
+  "release_id": "P2.1-R00-61a99a2c3732-i07-r02",
   "iteration": "i07",
-  "supersedes_rejected_release": "P2.1-R00-60d02be4dbe9-i06",
+  "supersedes_rejected_release": "P2.1-R00-61a99a2c3732-i07",
   "status": "frozen",
   "resource_policy": {
     "capacity_owner": "task_initiator",
@@ -51,7 +51,7 @@
     {"id": "EXT-P2.1-01-PHASE2.1-TESTS", "order": 1, "command": "PYTHONPATH=src python3 -m unittest discover -s tests/phase2_1 -p \"test_*.py\" -v", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
     {"id": "EXT-P2.1-02-PHASE2-REGRESSION", "order": 2, "command": "PYTHONPATH=src python3 -m unittest discover -s tests/phase2 -p \"test_*.py\" -v", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
     {"id": "EXT-P2.1-03-READINESS", "order": 3, "command": "PYTHONPATH=src python3 -m lottery_research.phase2_1 --project-root . verify --scope readiness", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
-    {"id": "EXT-P2.1-04-BUILD", "order": 4, "command": "python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i07", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
+    {"id": "EXT-P2.1-04-BUILD", "order": 4, "command": "python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i07-r02", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
     {"id": "EXT-P2.1-05-LINT", "order": 5, "command": "python3 -m compileall -q src scripts tests && git diff --check 61a99a2c3732be0ade1f370e681d9af236902dcb", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0}
   ],
   "gates": {

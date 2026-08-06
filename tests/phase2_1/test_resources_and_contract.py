@@ -18,7 +18,7 @@ ROOT = project_root()
 
 class ResourceAndContractTests(unittest.TestCase):
     def test_release_and_iteration_baseline_identities_are_explicit(self) -> None:
-        self.assertEqual(RELEASE_ID, "P2.1-R00-61a99a2c3732-i07")
+        self.assertEqual(RELEASE_ID, "P2.1-R00-61a99a2c3732-i07-r02")
         self.assertEqual(BASELINE_SHA, "61a99a2c3732be0ade1f370e681d9af236902dcb")
         self.assertEqual((RUN_LABEL, ITERATION), ("P2.1-R00", "i07"))
 

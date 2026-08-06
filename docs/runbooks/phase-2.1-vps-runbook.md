@@ -47,7 +47,7 @@ python3 scripts/phase2_1/validate_final_bundle.py
 仓库使用 setuptools 的 `pyproject.toml`，没有独立 linter 配置。因此实际 build 是离线 wheel 构建，实际 lint 是对 Python 源、脚本和测试执行 `compileall` 加 `git diff --check`：
 
 ```bash
-python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i07
+python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i07-r02
 python3 -m compileall -q src scripts tests && git diff --check 61a99a2c3732be0ade1f370e681d9af236902dcb
 ```
 

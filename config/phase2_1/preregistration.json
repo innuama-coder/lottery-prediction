@@ -2,7 +2,7 @@
   "schema_version": "2.1.0",
   "artifact_type": "phase2_1_preregistration",
   "status": "frozen_before_phase2_1_results",
-  "release_id": "P2.1-R00-61a99a2c3732-i07",
+  "release_id": "P2.1-R00-61a99a2c3732-i07-r02",
   "iteration": "i07",
   "global_alpha": 0.05,
   "target_power": 0.8,

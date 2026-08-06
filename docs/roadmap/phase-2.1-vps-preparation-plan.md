@@ -1,6 +1,18 @@
 # Phase 2.1 VPS Preparation Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Historical plan (completed):** This plan governed the initial VPS
+> preparation gate. Phase 2.1 subsequently completed its formal statistical and
+> acceptance workflow in release `P2.1-R00-61a99a2c3732-i07-r02`, which finished
+> `PASS / GO` with all G0-G6 gates passing. Current authority is
+> `docs/research/phase-2.1-overall-design.md` plus the release acceptance JSON;
+> the preparation-only stop condition below is not the current project status
+> and does not imply any Phase 2.2 work. Generic machine resource thresholds in
+> earlier planning material are not acceptance requirements.
+
+> **Historical execution note:** The original plan instructed agentic workers to
+> use a task-by-task execution skill. The plan has already been completed; its
+> unchecked boxes are preserved as planning history and are not an instruction
+> to restart Phase 2.1.
 
 **Goal:** Prepare a versioned Phase 2.1 release on a remote VPS and produce a machine-verifiable `P2.1-R00 READY` artifact without generating formal historical statistical results.
 
@@ -12,14 +24,18 @@
 
 ## Scope and Stop Condition
 
-This plan implements and documents VPS preparation only. The following are explicitly out of scope until a separately approved Phase 2.1 scientific implementation plan exists:
+This historical plan implemented and documented VPS preparation only. At that
+time, the following work was explicitly out of scope until a separately
+approved Phase 2.1 scientific implementation plan existed:
 
 - modifying historical Phase 2 preregistration, results, reviews, or acceptance artifacts;
 - executing a formal historical audit, power grid, replay, or final acceptance;
 - freezing Phase 2.1 scientific thresholds, seeds, grids, or a supplementary preregistration;
 - Phase 3 prediction, ranking, or betting work.
 
-The plan stops when `P2.1-R00` is `READY` and the checked-in evidence contains no formal Phase 2.1 historical result.
+The plan's historical stop condition was `P2.1-R00 READY` with no formal Phase
+2.1 historical result. That stop condition was later superseded by the completed
+formal release and final acceptance.
 
 ## Planned File Structure
 
@@ -589,10 +605,11 @@ git add docs/runbooks/phase-2.1-vps-operator.md docs/handoff/phase-2-current-sta
 git commit -m "docs: publish phase 2.1 VPS readiness runbook"
 ```
 
-## Plan-Level Acceptance
+## Historical Plan-Level Acceptance
 
-The plan is complete only when the VPS produces a verifiable `P2.1-R00 READY`
-artifact, the receiver-side evidence receipt has zero mismatches, and no Phase
-2.1 formal historical result exists. The next activity is a separate approved
-implementation plan for the Phase 2.1 statistical and acceptance repairs,
-followed by a new supplementary preregistration and independent method review.
+This preparation plan was complete when the VPS produced a verifiable
+`P2.1-R00 READY` artifact, the receiver-side evidence receipt had zero
+mismatches, and no Phase 2.1 formal historical result existed. Those conditions
+were satisfied before the separately approved statistical implementation and
+formal release. The later accepted `P2.1-R00-61a99a2c3732-i07-r02` bundle is now
+the terminal Phase 2 authority.

@@ -1,10 +1,18 @@
 # Phase 2.1 Restart and VPS Execution Design
 
-Status: approved design; VPS preparation plan available
+Status: historical restart design; implemented and superseded by the accepted Phase 2.1 release
+
+> Completion note (2026-08-07): Phase 2.1 release
+> `P2.1-R00-61a99a2c3732-i07-r02` finished with `PASS / GO`, all G0-G6
+> gates passing, and zero blocking findings. The current normative design is
+> `docs/research/phase-2.1-overall-design.md`; this document records the restart
+> decisions that preceded the accepted release. It must not be used to infer a
+> Phase 2.2 requirement or to reintroduce generic execution-machine thresholds.
 
 ## 1. Purpose
 
-Phase 2 remains `HOLD / partially achieved`. Its historical audit and
+At the time this restart design was approved, Phase 2 was
+`HOLD / partially achieved`. Its historical audit and
 `indeterminate` scientific classification are retained as historical evidence,
 but its former `GO` delivery artifact is not authority for a new execution.
 Phase 2.1 is a versioned corrective release that repairs the known methodological
@@ -41,18 +49,13 @@ the frozen workspace inputs and the prepared dependency set. They must never
 retrieve live lottery data, select a latest artifact, or expand the release
 scope through the network.
 
-The VPS baseline is:
-
-- Linux on x86_64;
-- at least 4 vCPU;
-- at least 16 GiB RAM;
-- at least 60 GiB free disk before the release workspace is created;
-- a supported CPython 3.12 interpreter, whose exact patch version is recorded
-  in the Phase 2.1 environment lock.
-
-The baseline rejects obviously inadequate hosts. It does not set the formal
-Monte Carlo budget: that budget is determined only from the VPS benchmark
-recorded for the exact release environment.
+The initial restart draft proposed generic architecture, CPU, memory and disk
+thresholds. Those thresholds were removed before the accepted release and are
+not execution requirements. The final policy records the host facts and exact
+interpreter/dependency identities, then uses the release benchmark for planning.
+Only an actual inability to execute the approved workload is an operational
+failure; architecture or resource snapshot values alone cannot produce `HOLD`,
+`ENVIRONMENT_FAILURE` or `NEEDS_INPUT`.
 
 ## 4. Release Workspace and Network Policy
 

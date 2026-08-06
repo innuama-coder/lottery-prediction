@@ -11,6 +11,8 @@
 
 仓库中现有 `artifacts/phase-2/acceptance/phase2-acceptance.json` 是深度复核前生成的历史正式验收制品，其中的 `GO` 不能代表当前项目状态。接手前必须阅读 [阶段 2 当前状态与交接说明](docs/handoff/phase-2-current-status.md)。
 
+Phase 2.1 的版本化修复入口见 [总体设计](docs/research/phase-2.1-overall-design.md) 与 [VPS 运行手册](docs/runbooks/phase-2.1-vps-runbook.md)。Phase 2.1 使用独立 release 目录，不改写上述历史 Phase 2 制品。
+
 ## 环境
 
 - Python `>=3.12,<3.13`

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "release_id", "status", "gate", "method", "calibration", "grid", "delta_star", "required_n", "metrics", "normalized_sha256", "input_identities"],
+  "properties": {
+    "schema_version": {"const": "2.1.0"}, "artifact_type": {"const": "phase2_1_power"}, "release_id": {"type": "string"}, "status": {"const": "PASS"}, "gate": {"const": "G4"}, "method": {"type": "object"}, "calibration": {"type": "object"},
+    "grid": {"type": "array", "minItems": 240, "maxItems": 240, "items": {"type": "object", "required": ["game", "family", "effect", "sample_size", "successes", "replications", "power", "simultaneous_95_lower", "simultaneous_95_upper"]}},
+    "delta_star": {"type": "array", "minItems": 10, "maxItems": 10}, "required_n": {"type": "array", "minItems": 40, "maxItems": 40}, "metrics": {"type": "object"}, "normalized_sha256": {"pattern": "^[0-9a-f]{64}$"}, "input_identities": {"type": "array", "minItems": 3}
+  }
+}

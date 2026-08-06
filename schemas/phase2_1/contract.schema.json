@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/phase2.1/contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "run_label", "baseline_sha", "release_id", "status", "resource_policy", "source_identity", "frozen_inputs", "registered_games", "registered_families", "effect_grids", "sample_size_grid", "formal_sequence", "gates", "e2e_cases", "scientific_classification"],
+  "properties": {
+    "schema_version": {"const": "2.1.0"},
+    "artifact_type": {"const": "phase2_1_acceptance_contract"},
+    "run_label": {"const": "P2.1-R00"},
+    "baseline_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "release_id": {"type": "string", "pattern": "^P2\\.1-R00-[0-9a-f]{12}$"},
+    "status": {"const": "frozen"},
+    "resource_policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["capacity_owner", "preflight_mode", "generic_thresholds", "failure_rule"],
+      "properties": {
+        "capacity_owner": {"const": "task_initiator"},
+        "preflight_mode": {"const": "facts_only"},
+        "generic_thresholds": {"type": "array", "maxItems": 0},
+        "failure_rule": {"const": "only_reproducible_actual_command_benchmark_wheelhouse_test_or_formal_run_errors"}
+      }
+    },
+    "source_identity": {"type": "object", "required": ["baseline_sha_rule", "bundle_digest_profile"]},
+    "frozen_inputs": {"type": "array", "minItems": 3, "items": {"type": "string"}, "uniqueItems": true},
+    "registered_games": {"const": ["dlt", "ssq"]},
+    "registered_families": {"type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true, "items": {"enum": ["marginal_inclusion", "set_structure", "pair_dependence", "slow_drift", "cross_zone_dependence"]}},
+    "effect_grids": {"type": "object", "minProperties": 5, "additionalProperties": {"type": "array", "minItems": 4, "items": {"type": "number", "minimum": 0}, "uniqueItems": true}},
+    "sample_size_grid": {"const": [50, 100, 200, 500, 1000, 2000]},
+    "formal_sequence": {"const": ["readiness", "G0", "G1", "method_review", "qualification", "audit", "power", "replay", "replay_review", "e2e", "acceptance"]},
+    "gates": {"type": "object", "required": ["G0", "G1", "G2", "G3", "G4", "G5", "G6"], "additionalProperties": {"type": "array", "minItems": 1, "items": {"type": "string"}}},
+    "e2e_cases": {"type": "array", "minItems": 10, "maxItems": 10, "uniqueItems": true, "items": {"type": "string"}},
+    "scientific_classification": {"type": "object", "required": ["enum", "indeterminate_meaning"], "properties": {"enum": {"const": ["candidate_signal", "no_detectable_signal", "indeterminate"]}, "indeterminate_meaning": {"type": "string", "minLength": 20}}}
+  }
+}

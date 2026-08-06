@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "run_label", "release_id", "status", "created_at_utc", "checks", "resource_facts", "dependency_facts", "wheelhouse", "benchmark", "source_manifest", "frozen_input_identities", "isolated_workspace", "evidence_return", "formal_historical_result_count"],
+  "properties": {
+    "schema_version": {"const": "2.1.0"}, "artifact_type": {"const": "phase2_1_readiness"}, "run_label": {"const": "P2.1-R00"},
+    "release_id": {"pattern": "^P2\\.1-R00-[0-9a-f]{12}$"}, "status": {"const": "READY"}, "created_at_utc": {"type": "string", "format": "date-time"},
+    "checks": {"type": "object", "minProperties": 8, "additionalProperties": {"const": "PASS"}},
+    "resource_facts": {"type": "object", "required": ["policy", "capacity_owner", "system", "architecture", "logical_cpu_count", "total_memory_bytes", "available_disk_bytes", "python"], "properties": {"policy": {"const": "facts_only_no_generic_capacity_or_architecture_thresholds"}, "capacity_owner": {"const": "task_initiator"}, "logical_cpu_count": {"type": "integer", "minimum": 1}, "total_memory_bytes": {"type": "integer", "minimum": 1}, "available_disk_bytes": {"type": "integer", "minimum": 0}}},
+    "dependency_facts": {"type": "object", "required": ["lock_sha256", "installed"]},
+    "wheelhouse": {"type": "object", "required": ["path", "wheel_count", "missing_locked_requirements", "wheels"], "properties": {"missing_locked_requirements": {"maxItems": 0}}},
+    "benchmark": {"type": "object", "required": ["status", "synthetic_only", "wall_seconds", "peak_memory_bytes", "checksum"], "properties": {"status": {"const": "PASS"}, "synthetic_only": {"const": true}}},
+    "source_manifest": {"type": "object", "required": ["file_count", "sha256", "files"]},
+    "frozen_input_identities": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/identity"}},
+    "isolated_workspace": {"type": "object", "required": ["path", "unique_release_directory", "outside_historical_phase2"], "properties": {"unique_release_directory": {"const": true}, "outside_historical_phase2": {"const": true}}},
+    "evidence_return": {"type": "object", "required": ["round_trip_match", "sha256"], "properties": {"round_trip_match": {"const": true}}},
+    "formal_historical_result_count": {"const": 0}
+  },
+  "$defs": {"identity": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string"}, "sha256": {"pattern": "^[0-9a-f]{64}$"}}}}
+}

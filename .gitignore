@@ -1,4 +1,5 @@
 .venv/
+.phase2_1/
 .uv-cache/
 build/
 dist/
@@ -26,3 +27,7 @@ artifacts/phase-2/replay/same-seed-checkpoints/
 # E2E cases contain recursive workspaces and tamper copies. The registry and
 # its ten selected compact receipts are force-added to Git separately.
 artifacts/phase-2/e2e/**
+
+# Phase 2.1 formal bundles are committed; only disposable local workspaces are
+# excluded.
+artifacts/phase-2.1-workspaces/

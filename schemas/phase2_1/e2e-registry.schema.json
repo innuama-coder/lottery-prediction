@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "release_id", "status", "cases", "metrics"],
+  "properties": {
+    "schema_version": {"const": "2.1.0"},
+    "artifact_type": {"const": "phase2_1_e2e_registry"},
+    "release_id": {"type": "string"},
+    "status": {"const": "PASS"},
+    "cases": {
+      "type": "array", "minItems": 10, "maxItems": 10,
+      "items": {"type": "object", "required": ["id", "expected_terminal", "observed_terminal", "status", "evidence"], "properties": {"status": {"const": "PASS"}}}
+    },
+    "metrics": {
+      "type": "object", "required": ["expected_terminal_coverage", "case_coverage"],
+      "properties": {"expected_terminal_coverage": {"const": 1.0}, "case_coverage": {"const": 1.0}}
+    }
+  }
+}

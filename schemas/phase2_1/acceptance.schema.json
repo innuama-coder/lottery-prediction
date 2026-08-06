@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "release_id", "status", "delivery_status", "scientific_classification", "accepted_at_utc", "gate_verdicts", "recomputed_metrics", "blocking_findings", "evidence_inventory", "recursive_manifest_identity", "limitations"],
+  "properties": {
+    "schema_version": {"const": "2.1.0"}, "artifact_type": {"const": "phase2_1_acceptance"}, "release_id": {"type": "string"}, "status": {"const": "PASS"}, "delivery_status": {"const": "GO"}, "scientific_classification": {"enum": ["candidate_signal", "no_detectable_signal", "indeterminate"]}, "accepted_at_utc": {"type": "string", "format": "date-time"},
+    "gate_verdicts": {"type": "object", "required": ["G0", "G1", "G2", "G3", "G4", "G5", "G6"], "additionalProperties": {"const": "PASS"}},
+    "recomputed_metrics": {"type": "object", "required": ["evidence_hash_closure", "historical_result_coverage", "power_grid_coverage", "independent_replay_consistency", "e2e_expected_terminal_coverage", "blocking_findings"], "properties": {"evidence_hash_closure": {"const": 1.0}, "historical_result_coverage": {"const": 1.0}, "power_grid_coverage": {"const": 1.0}, "independent_replay_consistency": {"const": 1.0}, "e2e_expected_terminal_coverage": {"const": 1.0}, "blocking_findings": {"const": 0}}},
+    "blocking_findings": {"const": 0}, "evidence_inventory": {"type": "array", "minItems": 15}, "recursive_manifest_identity": {"type": "object"}, "limitations": {"type": "array", "minItems": 1}
+  }
+}

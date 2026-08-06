@@ -1,0 +1,1 @@
+{"evidence":{"original_sha256":"ecbfcc0af9dc9730360ef93473545de0a85364fd41d2b9178e069e483697ad06","tampered_sha256":"78cae26fe788b93fb24c5a67c867554406cfee9892272f26a8892468bdc96385"},"expected_terminal":"EVIDENCE_MISMATCH","id":"E2E-P2.1-06-preregistration-tamper","observed_terminal":"EVIDENCE_MISMATCH","status":"PASS"}

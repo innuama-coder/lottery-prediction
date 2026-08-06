@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object", "additionalProperties": false,
-  "required": ["schema_version", "artifact_type", "run_label", "release_id", "status", "created_at_utc", "checks", "resource_facts", "dependency_facts", "wheelhouse", "benchmark", "source_manifest", "frozen_input_identities", "isolated_workspace", "evidence_return", "formal_historical_result_count", "formal_history_scan"],
+  "required": ["schema_version", "artifact_type", "run_label", "release_id", "status", "created_at_utc", "checks", "resource_facts", "dependency_facts", "wheelhouse", "benchmark", "source_manifest", "frozen_input_identities", "input_identity", "formal_output_snapshot", "isolated_workspace", "evidence_return", "formal_historical_result_count", "formal_history_scan"],
   "properties": {
     "schema_version": {"const": "2.1.0"}, "artifact_type": {"const": "phase2_1_readiness"}, "run_label": {"const": "P2.1-R00"},
-    "release_id": {"const": "P2.1-R00-60d02be4dbe9-i02"}, "status": {"const": "READY"}, "created_at_utc": {"type": "string", "format": "date-time"},
+    "release_id": {"const": "P2.1-R00-60d02be4dbe9-i05"}, "status": {"const": "READY"}, "created_at_utc": {"type": "string", "format": "date-time"},
     "checks": {"type": "object", "minProperties": 8, "additionalProperties": {"const": "PASS"}},
     "resource_facts": {"type": "object", "required": ["policy", "capacity_owner", "system", "architecture", "logical_cpu_count", "total_memory_bytes", "available_disk_bytes", "python"], "properties": {"policy": {"const": "facts_only_no_generic_capacity_or_architecture_thresholds"}, "capacity_owner": {"const": "task_initiator"}, "logical_cpu_count": {"type": "integer", "minimum": 1}, "total_memory_bytes": {"type": "integer", "minimum": 1}, "available_disk_bytes": {"type": "integer", "minimum": 0}}},
     "dependency_facts": {"type": "object", "required": ["lock_sha256", "installed"]},
@@ -12,10 +12,27 @@
     "benchmark": {"type": "object", "required": ["status", "synthetic_only", "wall_seconds", "peak_memory_bytes", "checksum"], "properties": {"status": {"const": "PASS"}, "synthetic_only": {"const": true}}},
     "source_manifest": {"type": "object", "required": ["file_count", "sha256", "files"]},
     "frozen_input_identities": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/identity"}},
+    "input_identity": {"$ref": "#/$defs/input_identity"},
+    "formal_output_snapshot": {"type": "object", "additionalProperties": false, "required": ["profile", "existing_files", "existing_inventory_sha256", "registered_future_paths", "allowed_final_paths", "allowed_final_paths_sha256"], "properties": {"profile": {"type": "string"}, "existing_files": {"type": "array", "items": {"$ref": "#/$defs/identity"}}, "existing_inventory_sha256": {"pattern": "^[0-9a-f]{64}$"}, "registered_future_paths": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}, "allowed_final_paths": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}, "allowed_final_paths_sha256": {"pattern": "^[0-9a-f]{64}$"}}},
     "isolated_workspace": {"type": "object", "required": ["path", "unique_release_directory", "outside_historical_phase2"], "properties": {"unique_release_directory": {"const": true}, "outside_historical_phase2": {"const": true}}},
     "evidence_return": {"type": "object", "required": ["round_trip_match", "sha256"], "properties": {"round_trip_match": {"const": true}}},
     "formal_historical_result_count": {"const": 0},
     "formal_history_scan": {"type": "object", "required": ["roots", "discovered", "count", "profile"], "properties": {"count": {"const": 0}, "discovered": {"maxItems": 0}}}
   },
-  "$defs": {"identity": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string"}, "sha256": {"pattern": "^[0-9a-f]{64}$"}}}}
+  "$defs": {
+    "identity": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string"}, "sha256": {"pattern": "^[0-9a-f]{64}$"}}},
+    "input_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["release_id", "baseline_sha", "phase1_frozen", "phase2_frozen", "task_inputs", "task_input_aggregate_sha256"],
+      "properties": {
+        "release_id": {"const": "P2.1-R00-60d02be4dbe9-i05"},
+        "baseline_sha": {"const": "b5ce8cf112dcd2889018ebcdf0fc7f08ec8d20e2"},
+        "phase1_frozen": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/identity"}},
+        "phase2_frozen": {"type": "array", "minItems": 4, "items": {"$ref": "#/$defs/identity"}},
+        "task_inputs": {"type": "object", "required": ["prompt.md", "iteration-01.md", "iteration-02.md", "iteration-03.md", "iteration-04.md", "iteration-05.md"], "additionalProperties": false, "patternProperties": {".*": {"pattern": "^[0-9a-f]{64}$"}}},
+        "task_input_aggregate_sha256": {"pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
 }

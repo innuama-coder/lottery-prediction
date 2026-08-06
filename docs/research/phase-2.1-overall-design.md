@@ -1,8 +1,8 @@
 # Phase 2.1 总体设计
 
-版本：2.1.0  
-运行标签：`P2.1-R00`  
-不可变 release：`P2.1-R00-60d02be4dbe9-i02`
+版本：2.1.0
+运行标签：`P2.1-R00`
+不可变 release：`P2.1-R00-60d02be4dbe9-i05`
 
 ## 目标与边界
 
@@ -10,7 +10,9 @@ Phase 2.1 是对 Phase 2 统计与验收缺陷的版本化修复。它不原地�
 
 ## 不可变身份与证据流
 
-本轮 release ID 在原始基线身份后追加 iteration-02 标记：`P2.1-R00-60d02be4dbe9-i02`。它与基线 `60d02be…` 及 rejected evidence `P2.1-R00-60d02be4dbe9` 的关系固定在合同中，旧 release 不覆盖、不修复。readiness 固化 Phase 2.1 与实际导入的完整 Phase 2 运行时代码、Schema/合同摘要、Phase 1 输入、2.1 补充预注册、三个任务输入及预期哈希、隔离目录、依赖锁、wheelhouse 清单、benchmark 和证据回传 canary。
+本轮 release ID 在原始 release 身份后追加 iteration-05 标记：`P2.1-R00-60d02be4dbe9-i05`。它与第五轮基线 `b5ce8cf…`、rejected evidence `P2.1-R00-60d02be4dbe9` 及旧 iteration bundle 的关系固定在合同中，旧 release 不覆盖、不修复。readiness 固化 Phase 2.1 与实际导入的完整 Phase 2 运行时代码、Schema/合同摘要、Phase 1 输入、2.1 补充预注册、六个任务输入及预期哈希、隔离目录、依赖锁、wheelhouse 清单、benchmark、正式输出白名单和证据回传 canary。
+
+负向验证使用独立 staging 副本及与真实 power 命令 receipt、power identity、冻结输入和源码清单绑定的只读基准证据。各负向用例复用该基准并在进入昂贵网格重算前完成 Schema、身份、目录闭包和 receipt 一致性拒绝；正式 final validator 不接受隐式缓存，仍从冻结语料完整重算 240 个 power cells。
 
 readiness 扫描当前 release、任务输入结果目录和按当前 release ID 分区的受保护结果目录，按 JSON 的 `release_id` 与正式 artifact type 计算历史正式结果数，再与合同中的 0 交叉验证。旧 rejected release 不计作新 identity 的前置结果。资源仍只记录事实。
 

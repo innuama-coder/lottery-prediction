@@ -63,6 +63,7 @@ class SchemaAndAcceptanceTests(unittest.TestCase):
             "gate_verdicts": {**{f"G{i}": "PASS" for i in range(6)}, "G6": "FAIL"},
             "recomputed_metrics": {"evidence_hash_closure": 0.9, "historical_result_coverage": 1.0, "power_grid_coverage": 1.0, "independent_replay_consistency": 1.0, "e2e_expected_terminal_coverage": 1.0, "blocking_findings": 0},
             "blocking_findings": 0, "evidence_inventory": [str(i) for i in range(15)], "recursive_manifest_identity": {}, "limitations": ["indeterminate is not proof of randomness"],
+            "input_identity": {"release_id": "x", "baseline_sha": "x", "phase1_frozen": [], "phase2_frozen": [], "task_inputs": {}, "task_input_aggregate_sha256": "x"},
         }
         validate("acceptance", fixture)
         fixture["delivery_status"] = "GO"

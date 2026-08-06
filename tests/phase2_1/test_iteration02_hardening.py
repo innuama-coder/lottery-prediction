@@ -17,12 +17,12 @@ class Iteration02HardeningTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as raw:
             alternate = Path(raw)
             expected = {}
-            for name in ("prompt.md", "iteration-01.md", "iteration-02.md"):
+            for name in ("prompt.md", "iteration-01.md", "iteration-02.md", "iteration-03.md", "iteration-04.md", "iteration-05.md"):
                 path = alternate / name
                 path.write_text(f"portable fixture for {name}\n", encoding="utf-8")
                 expected[name] = sha256(path)
-            self.assertEqual(len(validate_task_inputs(alternate, expected)), 3)
-            (alternate / "iteration-02.md").unlink()
+            self.assertEqual(len(validate_task_inputs(alternate, expected)), 6)
+            (alternate / "iteration-05.md").unlink()
             with self.assertRaises(FileNotFoundError):
                 validate_task_inputs(alternate, expected)
 

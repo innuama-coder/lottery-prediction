@@ -8,8 +8,9 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from . import RELEASE_ID
+from . import BASELINE_SHA, RELEASE_ID
 from .serialization import canonical_json_bytes, load_json, write_new_json
+from .schema import validate
 from .workflow import (
     accept,
     build_evidence_manifest,
@@ -23,6 +24,7 @@ from .workflow import (
     project_root,
     qualify,
     replay,
+    run_final_validation_negative_suite,
     run_e2e,
     validate_final_bundle,
     validate_preregistration,
@@ -30,6 +32,20 @@ from .workflow import (
     verify_evidence_manifest,
     now,
 )
+
+
+def receipt_input_identity(destination: Path) -> dict[str, object]:
+    readiness_path = destination / "readiness/readiness.json"
+    if readiness_path.is_file():
+        return load_json(readiness_path)["input_identity"]
+    return {
+        "release_id": RELEASE_ID,
+        "baseline_sha": BASELINE_SHA,
+        "phase1_frozen": [],
+        "phase2_frozen": [],
+        "task_inputs": {},
+        "task_input_aggregate_sha256": "0" * 64,
+    }
 
 
 def execute_external_commands(root: Path, destination: Path, commands: Sequence[str]) -> list[dict[str, object]]:
@@ -44,10 +60,14 @@ def execute_external_commands(root: Path, destination: Path, commands: Sequence[
         receipt = {
             "schema_version": "2.1.0", "artifact_type": "phase2_1_external_command_receipt", "release_id": RELEASE_ID,
             "command": external_command, "started_at_utc": external_started, "finished_at_utc": now(), "exit_code": completed.returncode,
+            "status": "PASS" if completed.returncode == 0 else "FAIL",
+            "terminal": "PASS" if completed.returncode == 0 else "FAIL",
             "stdout_summary": stdout[-4000:], "stderr_summary": stderr[-4000:],
             "stdout_sha256": hashlib.sha256(completed.stdout).hexdigest(), "stderr_sha256": hashlib.sha256(completed.stderr).hexdigest(),
             "executed": True, "network_access": False,
+            "input_identity": receipt_input_identity(destination),
         }
+        validate("external_command_receipt", receipt)
         write_new_json(destination / "logs" / f"external-{index:02d}.json", receipt)
         receipts.append(receipt)
     return receipts
@@ -61,19 +81,57 @@ def parser() -> argparse.ArgumentParser:
     prepare.add_argument("--wheelhouse", type=Path, required=True)
     prepare.add_argument("--task-input-dir", type=Path, required=True)
     prepare.add_argument("--corpus-root", type=Path, required=True)
-    for name in ("readiness", "gates", "method-review", "qualification", "audit", "power", "replay", "replay-review", "e2e", "logs", "manifest", "accept", "verify"):
+    for name in ("readiness", "gates", "method-review", "qualification", "audit", "power", "replay", "replay-review", "e2e", "logs", "negative-suite", "manifest", "accept", "verify"):
         command = commands.add_parser(name)
         command.add_argument("--bundle", type=Path)
-        if name in ("power", "replay"):
+        if name in ("power", "replay", "replay-review"):
             command.add_argument("--lfs-root", type=Path, required=True)
+        if name == "e2e":
+            command.add_argument("--staging-bundle", type=Path)
         if name == "verify":
             command.add_argument("--scope", required=True, choices=("readiness", "preregistration", "manifest", "final"))
     return value
 
 
+FORMAL_COMMANDS = (
+    "prepare", "readiness", "gates", "method-review", "qualification", "audit",
+    "power", "replay", "replay-review", "e2e", "logs", "negative-suite",
+)
+
+
+def write_command_receipt(
+    destination: Path,
+    *,
+    command: str,
+    argv: Sequence[str],
+    started_at_utc: str,
+    terminal: str,
+    exit_code: int,
+    stdout: bytes,
+    stderr: bytes,
+    working_directory: str,
+) -> dict[str, object]:
+    receipt = {
+        "schema_version": "2.1.0", "artifact_type": "phase2_1_command_record", "release_id": RELEASE_ID,
+        "command": command, "argv": list(argv), "status": "PASS" if exit_code == 0 else "FAIL",
+        "terminal": terminal, "exit_code": exit_code, "started_at_utc": started_at_utc, "finished_at_utc": now(),
+        "working_directory": working_directory, "executed": True, "network_access": False,
+        "stdout_summary": stdout.decode("utf-8", errors="replace")[-4000:],
+        "stderr_summary": stderr.decode("utf-8", errors="replace")[-4000:],
+        "stdout_sha256": hashlib.sha256(stdout).hexdigest(), "stderr_sha256": hashlib.sha256(stderr).hexdigest(),
+        "input_identity": receipt_input_identity(destination),
+    }
+    validate("command_receipt", receipt)
+    order = FORMAL_COMMANDS.index(command) + 1
+    write_new_json(destination / "logs" / f"{order:02d}-{command}.json", receipt)
+    return receipt
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     command = "unknown"
     started_at = now()
+    destination: Path | None = None
+    args_list = list(argv) if argv is not None else sys.argv[1:]
     try:
         args = parser().parse_args(argv)
         command = args.command
@@ -96,15 +154,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         elif command == "replay":
             result = replay(destination, root=root, lfs_root=args.lfs_root.resolve())
         elif command == "replay-review":
-            result = independent_replay_review(destination)
+            result = independent_replay_review(destination, root=root, lfs_root=args.lfs_root.resolve())
         elif command == "e2e":
-            result = run_e2e(destination, root=root)
+            staging = args.staging_bundle.resolve() if args.staging_bundle else None
+            result = run_e2e(destination, root=root, staging_bundle=staging)
         elif command == "logs":
             commands_to_run = [
                 "PYTHONPATH=src python3 -m unittest discover -s tests/phase2_1 -p \"test_*.py\" -v",
                 "PYTHONPATH=src python3 -m unittest discover -s tests/phase2 -p \"test_*.py\" -v",
-                "python3 scripts/phase2_1/validate_phase2_1_readiness.py",
-                "python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i02",
+                "PYTHONPATH=src python3 -m lottery_research.phase2_1 --project-root . verify --scope readiness",
+                "python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i05",
                 "python3 -m compileall -q src scripts tests && git diff --check",
             ]
             external = execute_external_commands(root, destination, commands_to_run)
@@ -115,8 +174,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "status": "PASS" if passed else "FAIL", "formal_commands": records,
                 "external_verification_commands": external,
                 "formal_network_access": False,
+                "input_identity": load_json(destination / "readiness/readiness.json")["input_identity"],
             }
+            if passed:
+                validate("run_log_summary", result)
             write_new_json(destination / "logs/run-summary.json", result)
+        elif command == "negative-suite":
+            result = run_final_validation_negative_suite(root, destination)
         elif command == "manifest":
             result = build_evidence_manifest(destination)
         elif command == "accept":
@@ -132,20 +196,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             else:
                 result = validate_final_bundle(root, destination)
         terminal = result.get("status", "PASS")
-        logged = {"prepare", "readiness", "gates", "method-review", "qualification", "audit", "power", "replay", "replay-review", "e2e"}
-        if command in logged:
-            order = ["prepare", "readiness", "gates", "method-review", "qualification", "audit", "power", "replay", "replay-review", "e2e"].index(command) + 1
-            record = {
-                "schema_version": "2.1.0", "artifact_type": "phase2_1_command_record", "release_id": RELEASE_ID,
-                "command": command, "argv": list(argv) if argv is not None else sys.argv[1:], "exit_code": 0,
-                "terminal": terminal, "started_at_utc": started_at, "finished_at_utc": now(), "working_directory": os.getcwd(), "network_access": False,
-            }
-            log_path = destination / "logs" / f"{order:02d}-{command}.json"
-            if not log_path.exists():
-                write_new_json(log_path, record)
+        receipt_destination = destination
+        if command == "e2e" and "_staging_bundle" in result:
+            receipt_destination = Path(result.pop("_staging_bundle"))
         result_code = 0 if terminal in ("PASS", "READY", "frozen") else 2
         output = {"release_id": RELEASE_ID, "command": command, "terminal": terminal, "exit_code": result_code, "artifact_type": result.get("artifact_type")}
-        sys.stdout.buffer.write(canonical_json_bytes(output))
+        stdout = canonical_json_bytes(output)
+        if command in FORMAL_COMMANDS:
+            write_command_receipt(receipt_destination, command=command, argv=args_list, started_at_utc=started_at, terminal=terminal, exit_code=result_code, stdout=stdout, stderr=b"", working_directory=os.getcwd())
+        sys.stdout.buffer.write(stdout)
         return result_code
     except FileExistsError as exc:
         code, terminal, error = 4, "INVALID_CONTRACT", str(exc)
@@ -154,5 +213,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     except (OSError, RuntimeError) as exc:
         code, terminal, error = 3, "ENVIRONMENT_FAILURE", str(exc)
     output = {"release_id": RELEASE_ID, "command": command, "terminal": terminal, "exit_code": code, "error": error}
-    sys.stdout.buffer.write(canonical_json_bytes(output))
+    stdout = canonical_json_bytes(output)
+    if destination is not None and command in FORMAL_COMMANDS and (destination / "logs").is_dir():
+        write_command_receipt(destination, command=command, argv=args_list, started_at_utc=started_at, terminal=terminal, exit_code=code, stdout=stdout, stderr=b"", working_directory=os.getcwd())
+    sys.stdout.buffer.write(stdout)
     return code

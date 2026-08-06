@@ -11,6 +11,7 @@ from .serialization import load_json
 SCHEMAS = {
     "contract": "contract.schema.json",
     "readiness": "readiness.schema.json",
+    "gate": "gate.schema.json",
     "qualification": "qualification.schema.json",
     "historical_audit": "historical-audit.schema.json",
     "power": "power.schema.json",
@@ -19,6 +20,11 @@ SCHEMAS = {
     "e2e_registry": "e2e-registry.schema.json",
     "acceptance": "acceptance.schema.json",
     "verification_receipt": "verification-receipt.schema.json",
+    "command_receipt": "command-receipt.schema.json",
+    "external_command_receipt": "external-command-receipt.schema.json",
+    "run_log_summary": "run-log-summary.schema.json",
+    "evidence_manifest": "evidence-manifest.schema.json",
+    "negative_suite": "negative-suite.schema.json",
 }
 
 

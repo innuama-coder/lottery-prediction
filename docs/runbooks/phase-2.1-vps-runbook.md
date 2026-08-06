@@ -29,9 +29,10 @@ python3 scripts/phase2_1/independent_method_review.py
 .phase2_1/venv/bin/python -m lottery_research.phase2_1 audit
 .phase2_1/venv/bin/python -m lottery_research.phase2_1 power --lfs-root .phase2_1/lfs
 .phase2_1/venv/bin/python -m lottery_research.phase2_1 replay --lfs-root .phase2_1/lfs
-python3 scripts/phase2_1/independent_replay_review.py
+python3 scripts/phase2_1/independent_replay_review.py --lfs-root .phase2_1/lfs
 python3 scripts/phase2_1/run_phase2_1_e2e.py
 .phase2_1/venv/bin/python -m lottery_research.phase2_1 logs
+.phase2_1/venv/bin/python -m lottery_research.phase2_1 negative-suite
 .phase2_1/venv/bin/python -m lottery_research.phase2_1 manifest
 .phase2_1/venv/bin/python -m lottery_research.phase2_1 accept
 python3 scripts/phase2_1/validate_final_bundle.py
@@ -44,7 +45,7 @@ python3 scripts/phase2_1/validate_final_bundle.py
 仓库使用 setuptools 的 `pyproject.toml`，没有独立 linter 配置。因此实际 build 是离线 wheel 构建，实际 lint 是对 Python 源、脚本和测试执行 `compileall` 加 `git diff --check`：
 
 ```bash
-python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i02
+python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i05
 python3 -m compileall -q src scripts tests && git diff --check
 ```
 

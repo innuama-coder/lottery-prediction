@@ -1,0 +1,174 @@
+{
+  "schema_version": "2.1.0",
+  "artifact_type": "phase2_1_acceptance_contract",
+  "run_label": "P2.1-R00",
+  "baseline_sha": "61a99a2c3732be0ade1f370e681d9af236902dcb",
+  "release_id": "P2.1-R00-61a99a2c3732-i07-r02",
+  "iteration": "i07",
+  "supersedes_rejected_release": "P2.1-R00-61a99a2c3732-i07",
+  "status": "frozen",
+  "resource_policy": {
+    "capacity_owner": "task_initiator",
+    "preflight_mode": "facts_only",
+    "generic_thresholds": [],
+    "failure_rule": "only_reproducible_actual_command_benchmark_wheelhouse_test_or_formal_run_errors"
+  },
+  "source_identity": {
+    "baseline_sha_rule": "release ID records the rejected PR head prefix while baseline_sha records the exact iteration-07 starting commit",
+    "bundle_digest_profile": "SHA-256 of canonical sorted {path,sha256} entries for Phase 2.1 code, schemas, contract, lock and documentation"
+  },
+  "task_input_identities": {
+    "prompt.md": "d182777708578d51e5de7331859bccdb5259ea796e4268065bfcf738f15d0c78",
+    "iteration-01.md": "da0020960b6d6a1ba6cbe9ebbd0d96956c5d8f075dff90c1920735f201d4aa14",
+    "iteration-02.md": "d09e6daacdc086b15b0fbd2a3b40f85853becf8dadd86992c41c1060513b9407",
+    "iteration-03.md": "a65a31ece9ec50b3dedb4618531482dadef49bddf0e975080d9cf3606cc0110c",
+    "iteration-04.md": "5064882de8f75c830bf6f8ba524a8b3e32936c51e774ca0cb58219e8b5eee0da",
+    "iteration-05.md": "25b536898649237d8abb7cdddbba091e3104a1caf5dc1bac8d68f30b1207482f",
+    "iteration-06.md": "15e6d0c0ce2cb44bf3367c7d2764eae16aa6a185a52759006e808a34302c27bb",
+    "iteration-07.md": "1319361336cd83b1d344c6843f4f7ddacdbfe8871e563519578b63f25023ebf5",
+    "iteration-07-run-02-correction.md": "11367f88752aa15c0486bf1940384d2a929d297cd551ebc66f669fec54a19f75"
+  },
+  "expected_formal_historical_result_count": 0,
+  "frozen_inputs": [
+    "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "artifacts/phase-1/baseline-v1/manifest.json",
+    "artifacts/phase-2/contracts/input-manifest.json",
+    "docs/roadmap/phase-2.1-acceptance-contract.json",
+    "config/phase2_1/preregistration.json"
+  ],
+  "registered_games": ["dlt", "ssq"],
+  "registered_families": ["marginal_inclusion", "set_structure", "pair_dependence", "slow_drift", "cross_zone_dependence"],
+  "effect_grids": {
+    "marginal_inclusion": [0.0, 0.01, 0.02, 0.03],
+    "set_structure": [0.0, 1.0, 2.0, 3.0],
+    "pair_dependence": [0.0, 0.005, 0.01, 0.015],
+    "slow_drift": [0.0, 0.02, 0.04, 0.06],
+    "cross_zone_dependence": [0.0, 0.1, 0.2, 0.3]
+  },
+  "sample_size_grid": [50, 100, 200, 500, 1000, 2000],
+  "formal_sequence": ["readiness", "G0", "G1", "method_review", "qualification", "audit", "power", "replay", "replay_review", "e2e", "logs", "negative_suite", "acceptance"],
+  "external_verification_commands": [
+    {"id": "EXT-P2.1-01-PHASE2.1-TESTS", "order": 1, "command": "PYTHONPATH=src python3 -m unittest discover -s tests/phase2_1 -p \"test_*.py\" -v", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
+    {"id": "EXT-P2.1-02-PHASE2-REGRESSION", "order": 2, "command": "PYTHONPATH=src python3 -m unittest discover -s tests/phase2 -p \"test_*.py\" -v", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
+    {"id": "EXT-P2.1-03-READINESS", "order": 3, "command": "PYTHONPATH=src python3 -m lottery_research.phase2_1 --project-root . verify --scope readiness", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
+    {"id": "EXT-P2.1-04-BUILD", "order": 4, "command": "python3 -m pip wheel . --no-deps --no-build-isolation --wheel-dir .phase2_1/build-wheel-i07-r02", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0},
+    {"id": "EXT-P2.1-05-LINT", "order": 5, "command": "python3 -m compileall -q src scripts tests && git diff --check 61a99a2c3732be0ade1f370e681d9af236902dcb", "working_directory_scope": "project_root", "offline_policy": "no_network_frozen_inputs_local_dependencies", "expected_status": "PASS", "expected_exit_code": 0}
+  ],
+  "gates": {
+    "G0": ["release identity", "source manifest", "frozen input hashes", "formal historical result count equals zero at readiness"],
+    "G1": ["isolated release directory", "offline wheelhouse completeness", "synthetic benchmark PASS", "evidence return hash match"],
+    "G2": ["actual generator support known-answer", "gradual drift profile known-answer", "10/10 strong-positive recovery"],
+    "G3": ["10/10 registered historical primary results", "Holm correction", "separate games", "negative controls non-candidate"],
+    "G4": ["240/240 power grid", "40/40 required-n states", "10/10 delta-star states", "CAL and POW metrics PASS"],
+    "G5": ["independent deterministic statistics", "different-seed compatibility", "no missing or duplicate replay batches"],
+    "G6": ["10/10 E2E expected terminals", "recursive evidence hash closure", "recomputed classification", "zero blocking findings"]
+  },
+  "e2e_cases": [
+    "E2E-P2.1-01-normal-full-chain",
+    "E2E-P2.1-02-input-tamper",
+    "E2E-P2.1-03-release-mismatch",
+    "E2E-P2.1-04-resource-facts-low-values",
+    "E2E-P2.1-05-wheelhouse-missing",
+    "E2E-P2.1-06-preregistration-tamper",
+    "E2E-P2.1-07-slow-drift-known-answer",
+    "E2E-P2.1-08-result-schema-rejection",
+    "E2E-P2.1-09-recursive-hash-tamper",
+    "E2E-P2.1-10-independent-replay"
+  ],
+  "e2e_case_contract": [
+    {
+      "id": "E2E-P2.1-01-normal-full-chain",
+      "expected_terminal": "PASS",
+      "scenario": "completed-bundle-runtime-evidence",
+      "production_operation": "validate_runtime_evidence",
+      "command": "validate_runtime_evidence",
+      "expected_exit_code_class": "zero",
+      "receipt_required": true
+    },
+    {
+      "id": "E2E-P2.1-02-input-tamper",
+      "expected_terminal": "EVIDENCE_MISMATCH",
+      "scenario": "phase1-input-byte-tamper",
+      "production_operation": "validate_readiness",
+      "command": "validate_readiness --tampered-phase1-input",
+      "expected_exit_code_class": "nonzero",
+      "receipt_required": true
+    },
+    {
+      "id": "E2E-P2.1-03-release-mismatch",
+      "expected_terminal": "INVALID_CONTRACT",
+      "scenario": "injected-release-id-mismatch",
+      "production_operation": "validate_release_contract_identity",
+      "command": "check_release_contract --injected-release-id",
+      "expected_exit_code_class": "nonzero",
+      "receipt_required": true
+    },
+    {
+      "id": "E2E-P2.1-04-resource-facts-low-values",
+      "expected_terminal": "READY",
+      "scenario": "facts-only-low-resource-values",
+      "production_operation": "evaluate_resource_facts",
+      "command": "evaluate_resource_facts --facts-only",
+      "expected_exit_code_class": "zero",
+      "receipt_required": true
+    },
+    {
+      "id": "E2E-P2.1-05-wheelhouse-missing",
+      "expected_terminal": "ENVIRONMENT_FAILURE",
+      "scenario": "empty-wheelhouse",
+      "production_operation": "wheelhouse_facts",
+      "command": "wheelhouse_facts --empty-wheelhouse",
+      "expected_exit_code_class": "nonzero",
+      "receipt_required": true
+    },
+    {
+      "id": "E2E-P2.1-06-preregistration-tamper",
+      "expected_terminal": "EVIDENCE_MISMATCH",
+      "scenario": "preregistration-global-alpha-tamper",
+      "production_operation": "validate_preregistration",
+      "command": "validate_preregistration --tampered-global-alpha",
+      "expected_exit_code_class": "nonzero",
+      "receipt_required": true
+    },
+    {
+      "id": "E2E-P2.1-07-slow-drift-known-answer",
+      "expected_terminal": "PASS",
+      "scenario": "linear-slow-drift-known-answer",
+      "production_operation": "slow_drift_probabilities",
+      "command": "slow_drift_probabilities --known-answer",
+      "expected_exit_code_class": "zero",
+      "receipt_required": true
+    },
+    {
+      "id": "E2E-P2.1-08-result-schema-rejection",
+      "expected_terminal": "INVALID_CONTRACT",
+      "scenario": "qualification-missing-status",
+      "production_operation": "validate_qualification_schema",
+      "command": "validate qualification --missing-status",
+      "expected_exit_code_class": "nonzero",
+      "receipt_required": true
+    },
+    {
+      "id": "E2E-P2.1-09-recursive-hash-tamper",
+      "expected_terminal": "EVIDENCE_MISMATCH",
+      "scenario": "recursive-manifest-audit-tamper",
+      "production_operation": "verify_evidence_manifest",
+      "command": "verify_evidence_manifest --tampered-audit",
+      "expected_exit_code_class": "nonzero",
+      "receipt_required": true
+    },
+    {
+      "id": "E2E-P2.1-10-independent-replay",
+      "expected_terminal": "PASS",
+      "scenario": "independent-replay-coverage",
+      "production_operation": "verify_independent_replay",
+      "command": "verify_independent_replay --coverage 240",
+      "expected_exit_code_class": "zero",
+      "receipt_required": true
+    }
+  ],
+  "scientific_classification": {
+    "enum": ["candidate_signal", "no_detectable_signal", "indeterminate"],
+    "indeterminate_meaning": "No registered candidate signal was established and registered practical boundaries were not all excluded with adequate power; this is not proof of randomness."
+  }
+}

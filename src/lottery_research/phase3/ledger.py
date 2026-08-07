@@ -100,4 +100,3 @@ def validate_ledger(path: Path) -> dict[str, str]:
     if any(state == "started" for state in states.values()):
         raise ValueError("registered experiment lacks a terminal state")
     return states
-

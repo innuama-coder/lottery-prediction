@@ -35,4 +35,3 @@ def write_new_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("xb") as handle:
         handle.write(canonical_json_bytes(value))
-

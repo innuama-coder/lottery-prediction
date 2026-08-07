@@ -1,0 +1,79 @@
+{
+  "schema_version": "3.0.0",
+  "artifact_type": "phase3_model_registry",
+  "results_blind": true,
+  "models": {
+    "M0": {
+      "role": "permanent_champion",
+      "opening_decision": "opened",
+      "opening_reason": "mandatory uniform fixed-cardinality baseline",
+      "joint_probability": "partition product of uniform fixed-cardinality subsets",
+      "inputs": [],
+      "allowed_classifications": ["indeterminate"],
+      "shadow_candidate_eligible": false
+    },
+    "M1": {
+      "role": "mandatory_challenger",
+      "opening_decision": "opened_for_synthetic_qualification_only_pending_pit",
+      "opening_reason": "mandatory implementation; historical execution requires complete PIT evidence",
+      "joint_probability": "partition product of strongly-shrunk fixed-cardinality exponential-weight subsets",
+      "inputs": ["prior_draw_result"],
+      "allowed_classifications": ["rejected", "archived", "shadow_candidate", "indeterminate"],
+      "shadow_candidate_eligible": true
+    },
+    "M2": {
+      "role": "challenger",
+      "opening_decision": "not_opened",
+      "opening_reason": "no independently frozen prospective evidence of stable M1 skill and dynamics",
+      "joint_probability": "dynamic state-space fixed-cardinality weights",
+      "inputs": ["prior_draw_result"],
+      "allowed_classifications": ["not_opened"],
+      "shadow_candidate_eligible": false
+    },
+    "M3": {
+      "role": "challenger",
+      "opening_decision": "not_opened",
+      "opening_reason": "no preregistered finite interaction list supported by mechanism evidence",
+      "joint_probability": "fixed-cardinality exponential family with finite pair interactions",
+      "inputs": [],
+      "allowed_classifications": ["not_opened"],
+      "shadow_candidate_eligible": false
+    },
+    "M4": {
+      "role": "diagnostic_challenger",
+      "opening_decision": "not_opened",
+      "opening_reason": "PIT features and a qualified fixed-cardinality joint projection are unavailable",
+      "joint_probability": "verified marginal model followed by fixed-cardinality joint projection",
+      "inputs": [],
+      "allowed_classifications": ["not_opened"],
+      "shadow_candidate_eligible": false
+    },
+    "M5": {
+      "role": "negative_control",
+      "opening_decision": "synthetic_negative_control_only",
+      "opening_reason": "registered only to test rejection of hot/cold, omission, and Markov heuristics",
+      "joint_probability": "none for formal use",
+      "inputs": [],
+      "allowed_classifications": ["rejected", "archived"],
+      "shadow_candidate_eligible": false
+    },
+    "M6": {
+      "role": "prohibited",
+      "opening_decision": "prohibited",
+      "opening_reason": "high-capacity neural and reinforcement-learning models are outside Phase 3",
+      "joint_probability": "not_applicable",
+      "inputs": [],
+      "allowed_classifications": ["not_opened"],
+      "shadow_candidate_eligible": false
+    },
+    "M7": {
+      "role": "literature_model",
+      "opening_decision": "not_opened",
+      "opening_reason": "no reproduction under the same frozen inputs, folds, joint probability contract, and evaluator",
+      "joint_probability": "not_registered",
+      "inputs": [],
+      "allowed_classifications": ["not_opened"],
+      "shadow_candidate_eligible": false
+    }
+  }
+}

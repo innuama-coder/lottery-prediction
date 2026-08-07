@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "release_id", "iteration_id", "status", "delivery_status", "scientific_summary", "m0_permanent_champion", "blocking_findings", "manifest_sha256", "formal_run_authorized"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"}, "artifact_type": {"const": "phase3_acceptance"},
+    "release_id": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"}, "iteration_id": {"type": "string"},
+    "status": {"enum": ["PASS", "HOLD", "FAIL"]}, "delivery_status": {"enum": ["GO", "HOLD", "STOP"]},
+    "scientific_summary": {"enum": ["no_shadow_candidate", "indeterminate", "shadow_candidate"]},
+    "m0_permanent_champion": {"const": true}, "blocking_findings": {"type": "integer", "minimum": 0},
+    "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "formal_run_authorized": {"type": "boolean"}
+  },
+  "allOf": [{"if": {"properties": {"status": {"const": "PASS"}}}, "then": {"properties": {"delivery_status": {"const": "GO"}, "formal_run_authorized": {"const": true}, "blocking_findings": {"const": 0}}}}]
+}

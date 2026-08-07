@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "game", "target_issue", "training_issues", "inner_targets"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"}, "artifact_type": {"const": "phase3_fold"},
+    "game": {"enum": ["dlt", "ssq"]}, "target_issue": {"type": "string"},
+    "training_issues": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "inner_targets": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  }
+}

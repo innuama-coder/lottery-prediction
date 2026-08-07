@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "results_blind", "models"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "artifact_type": {"const": "phase3_model_registry"},
+    "results_blind": {"const": true},
+    "models": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/model"},
+      "minProperties": 8
+    }
+  },
+  "$defs": {
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "opening_decision", "opening_reason", "joint_probability", "inputs", "allowed_classifications", "shadow_candidate_eligible"],
+      "properties": {
+        "role": {"type": "string"},
+        "opening_decision": {"type": "string"},
+        "opening_reason": {"type": "string", "minLength": 1},
+        "joint_probability": {"type": "string"},
+        "inputs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "allowed_classifications": {"type": "array", "items": {"enum": ["rejected", "archived", "shadow_candidate", "not_opened", "indeterminate"]}, "uniqueItems": true},
+        "shadow_candidate_eligible": {"type": "boolean"}
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "review_id", "reviewer_role", "implementation_author", "classification_approver", "reviewed_paths", "blocking_findings", "status"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"}, "artifact_type": {"const": "phase3_review"}, "review_id": {"type": "string"},
+    "reviewer_role": {"type": "string"}, "implementation_author": {"type": "string"}, "classification_approver": {"type": "string"},
+    "reviewed_paths": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "blocking_findings": {"type": "integer", "minimum": 0}, "status": {"enum": ["PASS", "HOLD", "FAIL"]}
+  }
+}

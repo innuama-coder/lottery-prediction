@@ -1,0 +1,1 @@
+{"artifact_type":"phase3_command_receipt","command":"run","exit_code":20,"formal_result_count":0,"formal_run_authorized":false,"hold_reasons":["PIT_AVAILABILITY_UNPROVEN"],"identity":"p3-formal-refusal-20260807-i01","schema_version":"3.0.0","status":"HOLD","terminal":"HOLD_PENDING_PIT_EVIDENCE"}

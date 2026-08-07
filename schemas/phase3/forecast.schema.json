@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "release_id", "run_id", "game", "target_issue", "model_id", "prediction_locked_at", "training_cutoff", "joint_probability", "normalization_sum", "top_1000_role", "label_read"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"}, "artifact_type": {"const": "phase3_forecast"},
+    "release_id": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"}, "run_id": {"type": "string"},
+    "game": {"enum": ["dlt", "ssq"]}, "target_issue": {"type": "string"}, "model_id": {"type": "string"},
+    "prediction_locked_at": {"type": "string", "format": "date-time"}, "training_cutoff": {"type": "string"},
+    "joint_probability": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+    "normalization_sum": {"type": "number", "minimum": 0.999999999999, "maximum": 1.000000000001},
+    "top_1000_role": {"const": "diagnostic_only"}, "label_read": {"const": false}
+  }
+}

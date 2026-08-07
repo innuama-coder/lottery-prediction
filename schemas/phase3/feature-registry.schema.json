@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "results_blind", "features", "forbidden_feature_families"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "artifact_type": {"const": "phase3_feature_registry"},
+    "results_blind": {"const": true},
+    "features": {"type": "object", "additionalProperties": {"$ref": "#/$defs/feature"}},
+    "forbidden_feature_families": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  },
+  "$defs": {
+    "feature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["feature_id", "definition", "raw_fields", "window", "games", "rule_scope", "availability_proof", "missing_policy", "fit_scope", "leakage_tests", "ablation_group", "status"],
+      "properties": {
+        "feature_id": {"type": "string"}, "definition": {"type": "string"},
+        "raw_fields": {"type": "array", "items": {"type": "string"}}, "window": {"type": "string"},
+        "games": {"type": "array", "items": {"enum": ["dlt", "ssq"]}, "uniqueItems": true},
+        "rule_scope": {"type": "array", "items": {"type": "string"}},
+        "availability_proof": {"type": ["object", "null"]}, "missing_policy": {"const": "fail_closed"},
+        "fit_scope": {"type": "string"}, "leakage_tests": {"type": "array", "items": {"type": "string"}},
+        "ablation_group": {"type": "string"}, "status": {"enum": ["eligible", "ineligible", "blocked_pending_pit_evidence"]}
+      }
+    }
+  }
+}

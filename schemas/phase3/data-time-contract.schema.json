@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "status", "input_manifest_sha256", "availability_ledger_sha256", "feature_fields", "label_fields", "forbidden_fields", "rule_policy", "unknown_availability_policy"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "artifact_type": {"const": "phase3_data_time_contract"},
+    "status": {"const": "blocked_missing_pit_evidence"},
+    "input_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "availability_ledger_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "feature_fields": {"type": "array", "minItems": 1},
+    "label_fields": {"type": "array", "minItems": 2},
+    "forbidden_fields": {"type": "array", "minItems": 1},
+    "rule_policy": {"type": "string", "minLength": 1},
+    "unknown_availability_policy": {"const": "fail_closed_hold"}
+  }
+}

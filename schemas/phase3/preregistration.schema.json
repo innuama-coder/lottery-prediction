@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "status", "formal_run_authorized", "input_manifest_sha256", "availability_ledger_sha256", "data_time_contract_sha256", "games", "activation_requirements", "models", "metrics", "search_policy", "classification", "forbidden_actions", "results"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "artifact_type": {"const": "phase3_preregistration"},
+    "status": {"const": "blocked_pending_pit_evidence"},
+    "formal_run_authorized": {"const": false},
+    "input_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "availability_ledger_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "data_time_contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "games": {"type": "object", "additionalProperties": false, "required": ["dlt", "ssq"], "properties": {"dlt": {"$ref": "#/$defs/game"}, "ssq": {"$ref": "#/$defs/game"}}},
+    "activation_requirements": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "models": {"type": "object", "additionalProperties": false, "required": ["M0", "M1", "M2", "M3", "M4"], "properties": {"M0": {"$ref": "#/$defs/model"}, "M1": {"$ref": "#/$defs/model"}, "M2": {"$ref": "#/$defs/model"}, "M3": {"$ref": "#/$defs/model"}, "M4": {"$ref": "#/$defs/model"}}},
+    "metrics": {"type": "object", "additionalProperties": false, "required": ["primary", "secondary", "top_1000"], "properties": {"primary": {"const": "relative_joint_log_score_skill_vs_M0"}, "secondary": {"type": "array"}, "top_1000": {"const": "diagnostic_only"}}},
+    "search_policy": {"type": "object"},
+    "classification": {"const": ["rejected", "archived", "shadow_candidate", "not_opened", "indeterminate"]},
+    "forbidden_actions": {"type": "array", "minItems": 1},
+    "results": {"const": []}
+  },
+  "$defs": {"game": {"type": "object", "additionalProperties": false, "required": ["outer_targets", "minimum_training_draws", "inner_folds"], "properties": {"outer_targets": {"const": []}, "minimum_training_draws": {"type": "integer", "minimum": 1}, "inner_folds": {"type": "integer", "minimum": 1}}}, "model": {"type": "object", "required": ["role", "required"], "properties": {"role": {"type": "string"}, "required": {"type": "boolean"}, "joint_probability": {"type": "string"}, "zero_parameter_equivalence": {"type": "string"}}}}
+}

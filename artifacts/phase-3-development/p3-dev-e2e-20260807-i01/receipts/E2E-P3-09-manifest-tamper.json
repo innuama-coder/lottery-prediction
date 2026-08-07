@@ -1,0 +1,1 @@
+{"actual_terminal":"EVIDENCE_MISMATCH","artifact_type":"phase3_e2e_receipt","case_id":"E2E-P3-09-manifest-tamper","expected_terminal":"EVIDENCE_MISMATCH","identity":"p3-dev-e2e-20260807-i01-e2e-p3-09-manifest-tamper","non_formal_synthetic_only":true,"schema_version":"3.0.0","status":"PASS"}

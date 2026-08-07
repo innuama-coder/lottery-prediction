@@ -1,0 +1,1 @@
+{"artifact_type":"phase3_replay","blocking_findings":0,"differences":[],"identity":"p3-dev-replay-20260807-i01","independence":"separate reference invocation over bottom-up artifacts; not organizational independence","non_formal_synthetic_only":true,"schema_version":"3.0.0","source_identity":"p3-dev-qualification-20260807-i01","status":"PASS","terminal":"PASS"}

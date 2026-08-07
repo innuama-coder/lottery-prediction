@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "identity", "source_identity", "status", "terminal", "non_formal_synthetic_only", "independence", "differences", "blocking_findings"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"}, "artifact_type": {"const": "phase3_replay"}, "identity": {"type": "string"},
+    "source_identity": {"type": "string"}, "status": {"enum": ["PASS", "HOLD"]}, "terminal": {"enum": ["PASS", "EVIDENCE_MISMATCH"]},
+    "non_formal_synthetic_only": {"type": "boolean"}, "independence": {"type": "string"},
+    "differences": {"type": "array", "items": {"type": "string"}}, "blocking_findings": {"type": "integer", "minimum": 0}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "identity", "non_formal_synthetic_only", "files", "inventory_sha256"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"}, "artifact_type": {"const": "phase3_explicit_evidence_manifest"},
+    "identity": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"}, "non_formal_synthetic_only": {"type": "boolean"},
+    "files": {"type": "array", "items": {"$ref": "#/$defs/file"}, "minItems": 1},
+    "inventory_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {"file": {"type": "object", "additionalProperties": false, "required": ["path", "role", "sha256", "bytes", "lines"], "properties": {
+    "path": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"}, "role": {"type": "string"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "bytes": {"type": "integer", "minimum": 1}, "lines": {"type": "integer", "minimum": 1}
+  }}}
+}

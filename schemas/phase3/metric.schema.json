@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "game", "target_issue", "model_id", "joint_log_score", "relative_skill_vs_M0", "inclusion_brier", "top_1000_role"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"}, "artifact_type": {"const": "phase3_metric"},
+    "game": {"enum": ["dlt", "ssq"]}, "target_issue": {"type": "string"}, "model_id": {"type": "string"},
+    "joint_log_score": {"type": "number"}, "relative_skill_vs_M0": {"type": "number"},
+    "inclusion_brier": {"type": "number", "minimum": 0}, "top_1000_role": {"const": "diagnostic_only"}
+  }
+}

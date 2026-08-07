@@ -168,10 +168,11 @@ class Iteration03ClosureTests(unittest.TestCase):
             staging = root / "staging" / RELEASE_ID
             with patch("lottery_research.phase2_1.workflow._run_e2e_in_place", return_value={"status": "PASS"}) as runner:
                 result = run_e2e(destination, root=root, staging_bundle=staging)
+            expected_staging = staging.resolve()
             self.assertEqual(marker.read_text(encoding="utf-8"), "old evidence\n")
-            self.assertEqual(result["_staging_bundle"], staging.as_posix())
-            self.assertFalse((staging / "e2e/registry.json").exists())
-            runner.assert_called_once_with(staging, root=root)
+            self.assertEqual(result["_staging_bundle"], expected_staging.as_posix())
+            self.assertFalse((expected_staging / "e2e/registry.json").exists())
+            runner.assert_called_once_with(expected_staging, root=root)
 
 
 if __name__ == "__main__":

@@ -47,7 +47,14 @@ def _new_output(path: Path, identity: str) -> Path:
 
 
 def _git(root: Path, *arguments: str) -> str:
-    return subprocess.run(["git", *arguments], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
+    try:
+        return subprocess.run(
+            ["git", *arguments], cwd=root, check=True, capture_output=True, text=True
+        ).stdout.strip()
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        # Independent acceptance can run from a read-only source copy without
+        # Git metadata. These fields are receipt metadata, never quality gates.
+        return ""
 
 
 def _lock_versions(root: Path) -> dict[str, str]:

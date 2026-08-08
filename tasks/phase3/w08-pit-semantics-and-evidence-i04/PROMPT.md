@@ -1,7 +1,8 @@
 # Phase 3 W08 PIT semantics correction and full evidence recovery i04
 
 You are working in a remote VPS container. Complete the Phase 3 PIT
-precondition recovery with a new immutable i04 identity. This task is
+precondition recovery with immutable identity `p3-pit-prep-20260809-i04`.
+This task is
 results-blind: it must never run formal W08-W13 research, create a formal
 `artifacts/phase-3/<release-id>` release, make a production prediction,
 promote a Champion, or perform betting-related actions.
@@ -24,10 +25,11 @@ and all relevant code/tests before editing.
 
 ## Required implementation
 
-1. Create a new immutable PIT preparation identity under
-   `artifacts/phase-3-pit/`; do not rewrite i01/i02 or the cancelled i03
-   remote worktree. The new bundle must explicitly record its parent chain and
-   the i03 cancellation as non-authoritative recovery context.
+1. Create the new immutable PIT preparation bundle at
+   `artifacts/phase-3-pit/p3-pit-prep-20260809-i04/`; do not rewrite i01/i02
+   or the cancelled i03 remote worktree. The new bundle must explicitly record
+   its parent chain and the i03 cancellation as non-authoritative recovery
+   context.
 2. Correct the data-time model and schemas so each ledger fact has an explicit
    `target_issue`, a feature `source_issue`, an immutable source draw binding,
    and an independently defined `prediction_locked_at`. A source issue must

@@ -22,6 +22,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
+# The verifier runs this script with no PYTHONPATH under env -i HOME=/nonexistent,
+# so sitecustomize never ran at startup and the jsonschema user site is absent.
+# Restore it before importing lottery_research (which imports jsonschema).
+from acceptance_env import restore_user_site  # noqa: E402
+
+restore_user_site(ROOT)
+
 from lottery_research.phase3.pit_recovery import (  # noqa: E402
     PIT_RELEASE_IDENTITY,
     build_pit_preparation_bundle,

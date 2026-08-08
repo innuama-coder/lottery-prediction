@@ -62,6 +62,11 @@ def restore_user_site(project_root: Path) -> Path | None:
     inherited = os.environ.get(ENV_VAR)
     if inherited:
         candidates.append(Path(inherited))
+    # The deployed agent-cli image installs locked Python dependencies in the
+    # container user's site. Hardened acceptance deliberately replaces HOME,
+    # so this location is otherwise invisible to CPython. It contains runtime
+    # packages only, never credentials.
+    candidates.append(Path("/home/cli/.local/lib") / f"python{sys.version_info.major}.{sys.version_info.minor}" / "site-packages")
     marker = _site_packages_subdir()
     for ancestor in project_root.resolve().parents:
         candidates.append(ancestor / marker)

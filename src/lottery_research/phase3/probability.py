@@ -98,15 +98,40 @@ class FixedCardinalityDistribution:
     def top_k(self, count: int) -> list[tuple[tuple[int, ...], float]]:
         if count < 1:
             raise ValueError("top-k count must be positive")
-        heap: list[tuple[float, tuple[int, ...]]] = []
-        for item in itertools.combinations(range(1, self.size + 1), self.cardinality):
-            probability = self.probability(item)
-            candidate = (probability, item)
-            if len(heap) < count:
-                heapq.heappush(heap, candidate)
-            elif candidate > heap[0]:
-                heapq.heapreplace(heap, candidate)
-        return [(item, probability) for probability, item in sorted(heap, reverse=True)]
+        # Enumerating C(35, 5) for every rolling target is unnecessary.  Once
+        # weights are sorted, incrementing any index cannot increase a ticket's
+        # mass.  A best-first traversal of that monotone lattice therefore
+        # yields the exact top-k while visiting only O(k * cardinality) states.
+        order = tuple(sorted(range(self.size), key=lambda index: (-self.weights[index], index)))
+        initial = tuple(range(self.cardinality))
+
+        def candidate(indices: tuple[int, ...]) -> tuple[float, tuple[int, ...]]:
+            values = tuple(sorted(order[index] + 1 for index in indices))
+            return self.probability(values), values
+
+        probability, values = candidate(initial)
+        queue: list[tuple[float, tuple[int, ...], tuple[int, ...]]] = [(-probability, values, initial)]
+        seen = {initial}
+        answer: list[tuple[tuple[int, ...], float]] = []
+        limit = min(count, self.combination_count)
+        while queue and len(answer) < limit:
+            negative, values, indices = heapq.heappop(queue)
+            answer.append((values, -negative))
+            for position in range(self.cardinality - 1, -1, -1):
+                maximum = self.size - self.cardinality + position
+                if indices[position] >= maximum:
+                    continue
+                changed = list(indices)
+                changed[position] += 1
+                for following in range(position + 1, self.cardinality):
+                    changed[following] = changed[following - 1] + 1
+                state = tuple(changed)
+                if state in seen:
+                    continue
+                seen.add(state)
+                child_probability, child_values = candidate(state)
+                heapq.heappush(queue, (-child_probability, child_values, state))
+        return answer
 
 
 @dataclass(frozen=True)
@@ -127,19 +152,21 @@ class PartitionedJointDistribution:
     def top_k(self, count: int) -> list[dict[str, object]]:
         front = self.front.top_k(min(count, self.front.combination_count))
         back = self.back.top_k(min(count, self.back.combination_count))
-        heap: list[tuple[float, tuple[int, ...], tuple[int, ...]]] = []
-        for front_item, front_probability in front:
-            for back_item, back_probability in back:
-                probability = front_probability * back_probability
-                candidate = (probability, front_item, back_item)
-                if len(heap) < count:
-                    heapq.heappush(heap, candidate)
-                elif candidate > heap[0]:
-                    heapq.heapreplace(heap, candidate)
-        return [
-            {"front": front_item, "back": back_item, "probability": probability}
-            for probability, front_item, back_item in sorted(heap, reverse=True)
-        ]
+        limit = min(count, self.combination_count)
+        queue: list[tuple[float, int, int]] = [(-(front[0][1] * back[0][1]), 0, 0)]
+        seen = {(0, 0)}
+        answer: list[dict[str, object]] = []
+        while queue and len(answer) < limit:
+            negative, front_index, back_index = heapq.heappop(queue)
+            front_item, front_probability = front[front_index]
+            back_item, back_probability = back[back_index]
+            answer.append({"front": front_item, "back": back_item, "probability": -negative})
+            for child in ((front_index + 1, back_index), (front_index, back_index + 1)):
+                if child in seen or child[0] >= len(front) or child[1] >= len(back):
+                    continue
+                seen.add(child)
+                heapq.heappush(queue, (-(front[child[0]][1] * back[child[1]][1]), child[0], child[1]))
+        return answer
 
 
 def joint_distribution(

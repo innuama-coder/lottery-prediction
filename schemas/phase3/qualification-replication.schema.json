@@ -1,0 +1,15 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","additionalProperties":false,
+  "required":["world","replicate","draw_count","outer_target_count","seed_namespace","generated_draws_sha256","draws","outer_skill_values","fitted_target_probabilities","selected_lambdas","outer_mean_skill","first_half_mean","second_half_mean","false_selected","direction_recovered","final_theta","terminal"],
+  "properties":{
+    "world":{"enum":["uniform","injected"]},"replicate":{"type":"integer","minimum":0,"maximum":999},"draw_count":{"const":200},"outer_target_count":{"const":150},
+    "seed_namespace":{"type":"string","minLength":1},"generated_draws_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "draws":{"type":"array","minItems":200,"maxItems":200,"items":{"type":"array","minItems":3,"maxItems":3,"uniqueItems":true,"items":{"type":"integer","minimum":1,"maximum":10}}},
+    "outer_skill_values":{"type":"array","minItems":150,"maxItems":150,"items":{"type":"number"}},
+    "fitted_target_probabilities":{"type":"array","minItems":150,"maxItems":150,"items":{"type":"number","exclusiveMinimum":0,"maximum":1}},
+    "selected_lambdas":{"type":"array","minItems":150,"maxItems":150,"items":{"enum":[1.0,5.0,20.0,100.0]}},
+    "outer_mean_skill":{"type":"number"},"first_half_mean":{"type":"number"},"second_half_mean":{"type":"number"},
+    "false_selected":{"type":"boolean"},"direction_recovered":{"type":"boolean"},
+    "final_theta":{"type":"array","minItems":10,"maxItems":10,"items":{"type":"number"}},"terminal":{"const":"PASS"}
+  }
+}

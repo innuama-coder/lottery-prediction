@@ -8,14 +8,16 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from lottery_research.phase3.workflow import (
-    final_validate,
-    handoff_validate,
-    qualify,
-    readiness,
-    replay,
-    verify_e2e,
+from lottery_research.phase3.formal import (
+    NEGATIVE_CONTROLS,
+    _benchmark_once,
+    audit_real_probability_spaces,
+    execute_failure_injection,
+    execute_qualification_control,
+    qualification_replication,
+    validate_qualification_bottom_up,
 )
+from lottery_research.phase3.ledger import AppendOnlyLedger
 from lottery_research.phase3.work_items import validate_review_provenance
 
 
@@ -45,36 +47,56 @@ class WorkflowContractTests(unittest.TestCase):
         }), encoding="utf-8")
         return path
 
-    def test_synthetic_qualification_replay_and_e2e_are_reproducible(self) -> None:
+    def test_registered_qualification_replication_is_complete_and_reproducible(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             base = Path(raw)
-            qualification = qualify(ROOT, base / "qualification-i01", "qualification-i01")
-            replay_receipt = replay(ROOT, base / "replay-i01", "replay-i01", base / "qualification-i01")
-            e2e = verify_e2e(ROOT, base / "e2e-i01", "e2e-i01")
+            first = qualification_replication("injected", 7, "registered-test")
+            second = qualification_replication("injected", 7, "registered-test")
+            self.assertEqual(first, second)
+            self.assertEqual(first["draw_count"], 200)
+            self.assertEqual(first["outer_target_count"], 150)
+            receipts = [execute_qualification_control(case, base) for case in NEGATIVE_CONTROLS]
+            self.assertTrue(all(row["actual_terminal"] == "REJECTED" for row in receipts))
 
-            self.assertEqual(qualification["status"], "HOLD")
-            self.assertEqual(qualification["completed_replications"], {"uniform": 1, "injected": 1})
-            self.assertTrue(qualification["non_formal_synthetic_only"])
-            self.assertEqual(replay_receipt["status"], "PASS")
-            self.assertEqual(e2e["status"], "PASS")
-            self.assertEqual(e2e["required_case_coverage"], 1.0)
-
-    def test_readiness_and_final_validator_wait_for_formal_release_freeze(self) -> None:
+    def test_w04_e2e_benchmark_covers_every_registered_case(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
-            base = Path(raw)
-            readiness_receipt = readiness(ROOT, base / "readiness-i01", "readiness-i01")
-            final = final_validate(ROOT, base / "final-i01", "final-i01")
-            handoff = handoff_validate(ROOT, base / "handoff-i01", "handoff-i01", base / "missing-release")
+            scratch = Path(raw)
+            _benchmark_once("e2e_suite", 0, ROOT, scratch)
+            artifact = json.loads((scratch / "e2e_suite/sample-00/artifact.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(artifact["cases"]), 21)
+        self.assertEqual(artifact["registry_coverage"], 1.0)
+        self.assertEqual(artifact["expected_terminal_match_rate"], 1.0)
 
-            self.assertEqual(readiness_receipt["terminal"], "HOLD_PENDING_FORMAL_RELEASE_FREEZE")
-            self.assertFalse(readiness_receipt["formal_run_authorized"])
-            self.assertEqual(readiness_receipt["sequence_relation_coverage"], 1.0)
-            self.assertIn("dirty", readiness_receipt["task"])
-            self.assertEqual(final["terminal"], "HOLD_PENDING_FORMAL_RELEASE_FREEZE")
-            self.assertEqual(final["formal_result_count"], 0)
-            self.assertEqual(handoff["terminal"], "HOLD_HANDOFF_INCOMPLETE")
+    def test_qualification_bottom_up_rejects_fitted_evidence_mutations(self) -> None:
+        mutations = {
+            "selected_lambda_mismatch_count": lambda row: row["selected_lambdas"].__setitem__(0, 1.0 if row["selected_lambdas"][0] != 1.0 else 5.0),
+            "fitted_probability_mismatch_count": lambda row: row["fitted_target_probabilities"].__setitem__(0, row["fitted_target_probabilities"][0] * 0.9),
+            "outer_skill_mismatch_count": lambda row: row["outer_skill_values"].__setitem__(0, row["outer_skill_values"][0] + 0.1),
+            "final_theta_mismatch_count": lambda row: row["final_theta"].__setitem__(0, row["final_theta"][0] + 0.1),
+        }
+        for mismatch_field, mutate in mutations.items():
+            with self.subTest(mismatch_field=mismatch_field), tempfile.TemporaryDirectory() as raw:
+                base = Path(raw)
+                row = qualification_replication("injected", 0, "mutation-check")
+                mutate(row)
+                (base / "replications.jsonl").write_text(json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
+                ledger = AppendOnlyLedger(base / "experiment-ledger.jsonl", "mutation-check")
+                ledger.start("injected-world-0000", {})
+                ledger.finish("injected-world-0000", "succeeded", {})
+                ledger.close()
+                result = validate_qualification_bottom_up(ROOT, base, "mutation-check")
+                self.assertGreater(result[mismatch_field], 0)
 
-    def test_run_command_refuses_formal_execution(self) -> None:
+    def test_real_probability_spaces_and_failure_recovery_execute(self) -> None:
+        self.assertEqual(audit_real_probability_spaces()["status"], "PASS")
+        with tempfile.TemporaryDirectory() as raw:
+            result = execute_failure_injection(Path(raw), "failure-check")
+        self.assertEqual(result["status"], "PASS")
+        self.assertTrue(result["timeout"]["observed"])
+        self.assertEqual(result["crash"]["observed_returncode"], 17)
+        self.assertTrue(result["retry"]["failed_attempt_retained"])
+
+    def test_run_command_requires_real_frozen_release_instead_of_fixed_hold(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             base = Path(raw)
             actors = self.formal_actor_assignment(base)
@@ -99,8 +121,8 @@ class WorkflowContractTests(unittest.TestCase):
                 text=True,
                 check=False,
             )
-            self.assertEqual(completed.returncode, 20)
-            self.assertEqual(json.loads(completed.stdout)["terminal"], "HOLD_PENDING_FORMAL_RELEASE_FREEZE")
+            self.assertNotEqual(completed.returncode, 0)
+            self.assertNotEqual(json.loads(completed.stdout)["terminal"], "HOLD")
 
     def test_review_provenance_is_bound_to_actor_task_and_manifest(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

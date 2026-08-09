@@ -8,24 +8,39 @@ from .serialization import canonical_json_bytes, canonical_sha256, load_json, wr
 
 
 TERMINAL_STATES = frozenset({"succeeded", "failed", "timeout", "crashed", "rejected", "not_opened", "indeterminate"})
+PROGRESS_STATES = ("started", "forecast_locked", "label_unlocked", "scored")
 
 
 class AppendOnlyLedger:
-    def __init__(self, path: Path, identity: str) -> None:
+    def __init__(self, path: Path, identity: str, *, resume: bool = False) -> None:
         if not identity or "/" in identity or "latest" in identity.lower() or "*" in identity:
             raise ValueError("ledger identity must be explicit and immutable")
         self.path = path
         self.identity = identity
         path.parent.mkdir(parents=True, exist_ok=True)
-        self._handle = path.open("xb")
         self._states: dict[tuple[str, str], str] = {}
+        self._sequence = 0
+        if resume:
+            if not path.is_file():
+                raise ValueError("resume ledger is missing")
+            with path.open("r", encoding="utf-8") as handle:
+                for row in map(json.loads, handle):
+                    if row["ledger_identity"] != identity or row["sequence"] != self._sequence:
+                        raise ValueError("resume ledger identity or sequence mismatch")
+                    self._states[(row["experiment_id"], row["attempt_id"])] = row["state"]
+                    self._sequence += 1
+            if any(state in TERMINAL_STATES for state in self._states.values()) and any(state not in TERMINAL_STATES for state in self._states.values()):
+                raise ValueError("resume ledger contains an unterminated attempt")
+            self._handle = path.open("ab")
+        else:
+            self._handle = path.open("xb")
 
     def _append(self, experiment_id: str, attempt_id: str, parent_attempt_id: str | None, state: str, details: dict[str, Any]) -> None:
         row = {
             "schema_version": "3.0.0",
             "artifact_type": "phase3_experiment_ledger_event",
             "ledger_identity": self.identity,
-            "sequence": len(self._states) if state == "started" else len(self._states) + sum(value in TERMINAL_STATES for value in self._states.values()),
+            "sequence": self._sequence,
             "experiment_id": experiment_id,
             "attempt_id": attempt_id,
             "parent_attempt_id": parent_attempt_id,
@@ -35,6 +50,7 @@ class AppendOnlyLedger:
         self._handle.write(canonical_json_bytes(row))
         self._handle.flush()
         self._states[(experiment_id, attempt_id)] = state
+        self._sequence += 1
 
     def start(self, experiment_id: str, details: dict[str, Any], *, attempt_id: str | None = None, parent_attempt_id: str | None = None) -> None:
         attempt_id = attempt_id or f"{experiment_id}-attempt-01"
@@ -48,10 +64,21 @@ class AppendOnlyLedger:
         key = (experiment_id, attempt_id)
         if state not in TERMINAL_STATES:
             raise ValueError("illegal experiment terminal state")
-        if self._states.get(key) != "started":
-            raise ValueError("terminal event requires exactly one started event")
+        if self._states.get(key) not in {"started", "scored"}:
+            raise ValueError("terminal event requires a started or scored attempt")
         parent_attempt_id = details.pop("parent_attempt_id", None)
         self._append(experiment_id, attempt_id, parent_attempt_id, state, details)
+
+    def progress(self, experiment_id: str, state: str, details: dict[str, Any], *, attempt_id: str | None = None) -> None:
+        attempt_id = attempt_id or f"{experiment_id}-attempt-01"
+        key = (experiment_id, attempt_id)
+        if state not in PROGRESS_STATES[1:]:
+            raise ValueError("illegal progress state")
+        current = self._states.get(key)
+        expected = {"forecast_locked": "started", "label_unlocked": "forecast_locked", "scored": "label_unlocked"}[state]
+        if current != expected:
+            raise ValueError(f"{state} requires {expected}")
+        self._append(experiment_id, attempt_id, None, state, details)
 
     def close(self) -> None:
         self._handle.close()
@@ -100,13 +127,17 @@ def validate_ledger(path: Path) -> dict[tuple[str, str], str]:
             if state == "started":
                 if key in states:
                     raise ValueError("duplicate attempt start")
+            elif state in PROGRESS_STATES[1:]:
+                expected = {"forecast_locked": "started", "label_unlocked": "forecast_locked", "scored": "label_unlocked"}[state]
+                if states.get(key) != expected:
+                    raise ValueError(f"ledger {state} is out of order")
             elif state in TERMINAL_STATES:
-                if states.get(key) != "started":
+                if states.get(key) not in {"started", "scored"}:
                     raise ValueError("terminal state is missing its start or overwrites a terminal")
             else:
                 raise ValueError("unknown ledger state")
             states[key] = state
-    if any(state == "started" for state in states.values()):
+    if any(state not in TERMINAL_STATES for state in states.values()):
         raise ValueError("registered experiment lacks a terminal state")
     return states
 

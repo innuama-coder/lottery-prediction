@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","additionalProperties":false,
+  "required":["case_id","expected_terminal","actual_terminal","status","execution_mode"],
+  "properties":{"case_id":{"type":"string"},"expected_terminal":{"const":"REJECTED"},"actual_terminal":{"enum":["REJECTED","WRONG_FAILURE_MODE","ACCEPTED_UNEXPECTEDLY"]},"status":{"enum":["PASS","FAIL"]},"execution_mode":{"const":"real_mutation_and_guard_call"}}
+}

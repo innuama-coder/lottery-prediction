@@ -207,6 +207,10 @@ def _preregistration(input_manifest_sha256: str, ledger_sha256: str, data_time_c
         "activation_requirements": [
             "all prior_draw_result relations satisfy source_issue strictly before target_issue",
             "forecast_locked event and hash exist before label_unlocked for every canonical attempt",
+            "label-free target catalog and sanitized training-prefix API are the only trainer inputs",
+            "spawn-isolated trainer has no label-store capability or target/future label inventory",
+            "guarded label unlock validates persisted forecast current SHA-256 and matching latest release/run/experiment/attempt/target/model lock before reading numbers",
+            "600 unique unlock receipts bind forecast path/hash, label-store identity and receipt SHA-256 to ledger and metrics",
             "external time-varying features are absent or have genuine available_at_utc before prediction_locked_at",
             "W01-W06 receipts bind to preparation actor assignments and W07 freezes conflict-free formal actor assignments",
         ],
@@ -282,8 +286,14 @@ def _preregistration(input_manifest_sha256: str, ledger_sha256: str, data_time_c
             "injected_theta": [0.4, 0.3, 0.2, 0.1, 0.0, 0.0, -0.1, -0.2, -0.3, -0.4],
             "direction_recovered_when": "outer_mean_skill_positive_and_fitted_injected_theta_spearman_positive",
             "uniform_false_selection_rate_max": 0.05,
+            "uniform_false_selection_event": "outer_mean_skill_strictly_above_log_1_001_and_both_chronological_half_means_strictly_positive",
             "injected_direction_recovery_rate_min": 0.9,
+            "spearman_tie_rule": "average_1_based_ranks_for_equal_values",
+            "final_theta_fit_prefix": "first_199_draws_strictly_before_last_outer_target",
+            "replicate_seed_derivation": "sha256(prep_identity|world|replicate_index|draw_index)[0:64bits]",
             "generator_identity_required": True,
+            "generator_source_path": "src/lottery_research/phase3/formal.py",
+            "generator_source_sha256": sha256(project_root() / "src/lottery_research/phase3/formal.py"),
         },
         "workload_contract": {
             "logical_experiments": 600,
@@ -344,6 +354,15 @@ def bootstrap_prerun_contract(root: Path) -> dict[str, Any]:
     preregistration = _preregistration(sha256(manifest_path), sha256(ledger_path), sha256(data_time_path))
     preregistration_path = _config_path(root, "preregistration.json")
     _write_json(preregistration_path, preregistration)
+    source_path = root / "src/lottery_research/phase3/formal.py"
+    model_registry_path = _config_path(root, "model-registry.json")
+    model_registry = load_json(model_registry_path)
+    model_registry["implementation_identity"] = {"source_path": "src/lottery_research/phase3/formal.py", "source_sha256": sha256(source_path), "preregistration_sha256": sha256(preregistration_path)}
+    _write_json(model_registry_path, model_registry)
+    feature_registry_path = _config_path(root, "feature-registry.json")
+    feature_registry = load_json(feature_registry_path)
+    feature_registry["implementation_identity"] = {"source_path": "src/lottery_research/phase3/formal.py", "source_sha256": sha256(source_path), "data_time_contract_sha256": sha256(data_time_path)}
+    _write_json(feature_registry_path, feature_registry)
     return validate_prerun_contract(root)
 
 
@@ -456,6 +475,9 @@ def validate_prerun_contract(root: Path) -> dict[str, Any]:
         raise ValueError("classification decision tree mismatch")
     if preregistration["qualification_contract"]["replicates_per_world"] != 1000:
         raise ValueError("qualification replication contract mismatch")
+    generator = preregistration["qualification_contract"]
+    if generator["generator_source_sha256"] != sha256(root / generator["generator_source_path"]):
+        raise ValueError("qualification generator source identity mismatch")
     workload = preregistration["workload_contract"]
     if workload["logical_experiments"] != 600 or len(workload["benchmark_components"]) != 7:
         raise ValueError("formal workload contract mismatch")

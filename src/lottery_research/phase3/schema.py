@@ -16,6 +16,7 @@ SCHEMA_FILES = {
     "fold": "fold.schema.json",
     "forecast": "forecast.schema.json",
     "metric": "metric.schema.json",
+    "guarded_label_unlock": "guarded-label-unlock.schema.json",
     "experiment_ledger": "experiment-ledger.schema.json",
     "replay": "replay.schema.json",
     "review": "review.schema.json",
@@ -24,6 +25,10 @@ SCHEMA_FILES = {
     "actor_assignment": "actor-assignment.schema.json",
     "handoff": "handoff.schema.json",
     "work_item_receipt": "work-item-receipt.schema.json",
+    "qualification_replication": "qualification-replication.schema.json",
+    "qualification_negative_control": "qualification-negative-control.schema.json",
+    "qualification_stage": "qualification-stage.schema.json",
+    "qualification_report": "qualification-report.schema.json",
 }
 
 

@@ -2,11 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_type", "results_blind", "features", "forbidden_feature_families"],
+  "required": ["schema_version", "artifact_type", "results_blind", "implementation_identity", "features", "forbidden_feature_families"],
   "properties": {
     "schema_version": {"const": "3.0.0"},
     "artifact_type": {"const": "phase3_feature_registry"},
     "results_blind": {"const": true},
+    "implementation_identity": {"type":"object","additionalProperties":false,"required":["source_path","source_sha256","data_time_contract_sha256"],"properties":{"source_path":{"const":"src/lottery_research/phase3/formal.py"},"source_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"data_time_contract_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"}}},
     "features": {"type": "object", "additionalProperties": {"$ref": "#/$defs/feature"}},
     "forbidden_feature_families": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
   },

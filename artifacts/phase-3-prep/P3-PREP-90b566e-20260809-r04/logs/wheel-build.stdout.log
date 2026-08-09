@@ -1,0 +1,28 @@
+Collecting attrs==26.1.0 (from -r requirements/phase3.lock (line 3))
+  Using cached attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+Collecting jsonschema==4.26.0 (from -r requirements/phase3.lock (line 4))
+  Using cached jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting jsonschema-specifications==2025.9.1 (from -r requirements/phase3.lock (line 5))
+  Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting referencing==0.37.0 (from -r requirements/phase3.lock (line 6))
+  Using cached referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting rpds-py==2026.6.3 (from -r requirements/phase3.lock (line 7))
+  Using cached rpds_py-2026.6.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+Collecting setuptools==83.0.0 (from -r requirements/phase3.lock (line 8))
+  Using cached setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting typing_extensions==4.16.0 (from -r requirements/phase3.lock (line 9))
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Using cached attrs-26.1.0-py3-none-any.whl (67 kB)
+Using cached jsonschema-4.26.0-py3-none-any.whl (90 kB)
+Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Using cached referencing-0.37.0-py3-none-any.whl (26 kB)
+Using cached rpds_py-2026.6.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (366 kB)
+Using cached setuptools-83.0.0-py3-none-any.whl (1.0 MB)
+Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Saved ./artifacts/phase-3-prep/P3-PREP-90b566e-20260809-r04/wheelhouse/attrs-26.1.0-py3-none-any.whl
+Saved ./artifacts/phase-3-prep/P3-PREP-90b566e-20260809-r04/wheelhouse/jsonschema-4.26.0-py3-none-any.whl
+Saved ./artifacts/phase-3-prep/P3-PREP-90b566e-20260809-r04/wheelhouse/jsonschema_specifications-2025.9.1-py3-none-any.whl
+Saved ./artifacts/phase-3-prep/P3-PREP-90b566e-20260809-r04/wheelhouse/referencing-0.37.0-py3-none-any.whl
+Saved ./artifacts/phase-3-prep/P3-PREP-90b566e-20260809-r04/wheelhouse/rpds_py-2026.6.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+Saved ./artifacts/phase-3-prep/P3-PREP-90b566e-20260809-r04/wheelhouse/setuptools-83.0.0-py3-none-any.whl
+Saved ./artifacts/phase-3-prep/P3-PREP-90b566e-20260809-r04/wheelhouse/typing_extensions-4.16.0-py3-none-any.whl

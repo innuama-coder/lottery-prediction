@@ -61,7 +61,15 @@
         "classification_decision_tree": {"const": ["not_opened_if_model_not_opened", "rejected_if_probability_leakage_ledger_or_integrity_gate_fails", "shadow_candidate_if_all_shadow_gates_pass_for_both_games", "indeterminate_if_any_game_interval_straddles_delta_and_all_non_bootstrap_gates_pass_for_that_game", "archived_otherwise_for_complete_process"]}
       }
     },
-    "qualification_contract": {"const": {"number_space": 10, "cardinality": 3, "draws_per_replication": 200, "minimum_training_draws": 50, "replicates_per_world": 1000, "injected_theta": [0.4, 0.3, 0.2, 0.1, 0.0, 0.0, -0.1, -0.2, -0.3, -0.4], "direction_recovered_when": "outer_mean_skill_positive_and_fitted_injected_theta_spearman_positive", "uniform_false_selection_rate_max": 0.05, "injected_direction_recovery_rate_min": 0.9, "generator_identity_required": true}},
+    "qualification_contract": {"type":"object","additionalProperties":false,"required":["number_space","cardinality","draws_per_replication","minimum_training_draws","replicates_per_world","injected_theta","direction_recovered_when","uniform_false_selection_rate_max","uniform_false_selection_event","injected_direction_recovery_rate_min","spearman_tie_rule","final_theta_fit_prefix","replicate_seed_derivation","generator_identity_required","generator_source_path","generator_source_sha256"],"properties":{
+      "number_space":{"const":10},"cardinality":{"const":3},"draws_per_replication":{"const":200},"minimum_training_draws":{"const":50},"replicates_per_world":{"const":1000},
+      "injected_theta":{"const":[0.4,0.3,0.2,0.1,0.0,0.0,-0.1,-0.2,-0.3,-0.4]},
+      "direction_recovered_when":{"const":"outer_mean_skill_positive_and_fitted_injected_theta_spearman_positive"},"uniform_false_selection_rate_max":{"const":0.05},
+      "uniform_false_selection_event":{"const":"outer_mean_skill_strictly_above_log_1_001_and_both_chronological_half_means_strictly_positive"},
+      "injected_direction_recovery_rate_min":{"const":0.9},"spearman_tie_rule":{"const":"average_1_based_ranks_for_equal_values"},
+      "final_theta_fit_prefix":{"const":"first_199_draws_strictly_before_last_outer_target"},"replicate_seed_derivation":{"type":"string"},
+      "generator_identity_required":{"const":true},"generator_source_path":{"const":"src/lottery_research/phase3/formal.py"},"generator_source_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+    }},
     "workload_contract": {"$ref": "#/$defs/workload"},
     "replay_contract": {"const": {"all_outer_observed_probabilities": true, "all_metrics_and_classification": true, "full_distribution_targets_per_game": ["first", "middle", "last"]}},
     "execution_contract": {"const": {"max_attempts_per_experiment": 2, "canonical_attempt_rule": "lowest_attempt_ordinal_complete_PASS", "max_acceptance_iterations_per_release": 2, "exhausted_terminal": "RETRY_BUDGET_EXHAUSTED"}},

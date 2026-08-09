@@ -1,0 +1,1 @@
+NOT_RUN: acceptance failed before W12 receipt creation; validating a nonexistent receipt would not be a valid W12 check.

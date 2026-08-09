@@ -1,0 +1,1 @@
+{"coverage":1.0,"expected_guarded_unlock_count":600,"forecast_lock_event_count":600,"guarded_unlock_count":600,"identity_or_hash_mismatch_count":0,"label_unlock_event_count":600,"ledger_identity_or_sequence_mismatch_count":0,"pre_lock_label_read_count":0,"receipt_inventory_mismatch_count":0,"status":"PASS","unique_unlock_receipt_count":600,"unlock_receipt_file_count":600}

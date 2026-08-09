@@ -2,11 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_type", "results_blind", "models"],
+  "required": ["schema_version", "artifact_type", "results_blind", "implementation_identity", "models"],
   "properties": {
     "schema_version": {"const": "3.0.0"},
     "artifact_type": {"const": "phase3_model_registry"},
     "results_blind": {"const": true},
+    "implementation_identity": {"type":"object","additionalProperties":false,"required":["source_path","source_sha256","preregistration_sha256"],"properties":{"source_path":{"const":"src/lottery_research/phase3/formal.py"},"source_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"preregistration_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"}}},
     "models": {
       "type": "object",
       "additionalProperties": {"$ref": "#/$defs/model"},

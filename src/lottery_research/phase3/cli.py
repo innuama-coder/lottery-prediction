@@ -10,7 +10,21 @@ from typing import Sequence
 from .prerun_contract import validate_prerun_contract
 from .registry import load_and_validate_registries
 from .serialization import canonical_json_bytes
-from .workflow import HOLD_TERMINAL, evaluate, final_validate, handoff_validate, hold_formal_run, implementation_validate, project_root, qualify, readiness, replay, validate_frozen_inputs, verify_e2e
+from .formal import (
+    accept_formal,
+    evaluate_formal,
+    handoff_formal,
+    implementation_validate,
+    new_directory,
+    readiness,
+    replay_formal,
+    run_formal,
+    run_qualification,
+    validate_bottom_up,
+    validate_existing_readiness,
+    verify_e2e_formal,
+)
+from .workflow import HOLD_TERMINAL, project_root, validate_frozen_inputs
 from .work_items import create_command_work_item_receipt, load_actor_assignment
 
 
@@ -29,6 +43,9 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--work-item-receipt", type=Path)
         if name in ("validate", "qualify", "readiness"):
             command.add_argument("--prep-root", type=Path)
+        if name == "qualify":
+            command.add_argument("--stop-after-uniform", action="store_true")
+            command.add_argument("--resume", action="store_true")
         if name in ("validate", "run", "evaluate", "readiness", "replay", "verify-e2e", "accept"):
             command.add_argument("--release-root", type=Path)
         if name == "validate":
@@ -74,41 +91,50 @@ def main(argv: Sequence[str] | None = None) -> int:
                     raise ValueError("implementation validation requires --prep-root")
                 result = implementation_validate(root, output, args.identity, args.prep_root.resolve())
             elif args.scope == "readiness":
-                result = readiness(root, output, args.identity)
+                if args.prep_root is None or args.release_root is None:
+                    raise ValueError("readiness validation requires --prep-root and --release-root")
+                result = validate_existing_readiness(root, output, args.identity, args.release_root.resolve())
             elif args.scope == "handoff":
                 if args.release_root is None:
                     raise ValueError("handoff validation requires --release-root")
-                result = handoff_validate(root, output, args.identity, args.release_root.resolve(), args.actor_assignments.resolve())
+                result = handoff_formal(root, output, args.identity, args.release_root.resolve(), args.actor_assignments.resolve())
             else:
-                result = final_validate(root, output, args.identity)
+                if args.release_root is None:
+                    raise ValueError("final validation requires --release-root")
+                destination = new_directory(output, args.identity)
+                checked = validate_bottom_up(root, args.release_root.resolve(), args.actor_assignments.resolve())
+                result = {"schema_version": "3.0.0", "artifact_type": "phase3_final_validation", "identity": args.identity, "status": "PASS", "terminal": "PASS", **checked}
+                (destination / "final-validation.json").write_bytes(canonical_json_bytes(result))
         elif command == "qualify":
             if args.prep_root is None:
                 raise ValueError("qualify requires --prep-root")
-            result = qualify(root, output, args.identity)
+            if args.stop_after_uniform and args.resume:
+                raise ValueError("qualify cannot stop and resume in the same invocation")
+            result = run_qualification(root, output, args.identity, args.prep_root.resolve(), args.actor_assignments.resolve(), stop_after_uniform=args.stop_after_uniform, resume=args.resume)
         elif command == "run":
             if args.release_root is None:
                 raise ValueError("run requires --release-root")
-            result = hold_formal_run(root, output, args.identity)
+            result = run_formal(root, output, args.identity, args.release_root.resolve())
         elif command == "evaluate":
             if args.release_root is None:
                 raise ValueError("evaluate requires --release-root")
-            result = evaluate(root, output, args.identity, args.release_root.resolve())
+            result = evaluate_formal(root, output, args.identity, args.release_root.resolve())
         elif command == "readiness":
             if args.prep_root is None or args.release_root is None:
                 raise ValueError("readiness requires --prep-root and --release-root")
-            result = readiness(root, output, args.identity)
+            result = readiness(root, output, args.identity, args.prep_root.resolve(), args.release_root.resolve(), args.actor_assignments.resolve())
         elif command == "replay":
             if args.release_root is None:
                 raise ValueError("replay requires --release-root")
-            result = replay(root, output, args.identity, args.release_root.resolve())
+            result = replay_formal(root, output, args.identity, args.release_root.resolve(), args.actor_assignments.resolve())
         elif command == "verify-e2e":
             if args.release_root is None:
                 raise ValueError("verify-e2e requires --release-root")
-            result = verify_e2e(root, output, args.identity)
+            result = verify_e2e_formal(root, output, args.identity, args.release_root.resolve(), args.actor_assignments.resolve())
         else:
             if args.release_root is None:
                 raise ValueError("accept requires --release-root")
-            result = final_validate(root, output, args.identity)
+            result = accept_formal(root, output, args.identity, args.release_root.resolve(), args.actor_assignments.resolve())
         code = _exit_code(result)
         if args.emit_work_item_receipt:
             work_item = {
@@ -132,7 +158,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                         "terminal": result.get("terminal", result.get("status")), "exit_code": code, "output": output.as_posix()}
     except FileExistsError as exc:
         code, output_value = 4, {"command": command, "status": "FAIL", "terminal": "INVALID_IDENTITY_REUSE", "exit_code": 4, "error": str(exc)}
-    except (ValueError, KeyError, json.JSONDecodeError) as exc:
+    except (ValueError, KeyError, RuntimeError, json.JSONDecodeError) as exc:
         code, output_value = 5, {"command": command, "status": "FAIL", "terminal": "EVIDENCE_MISMATCH", "exit_code": 5, "error": str(exc)}
     except OSError as exc:
         code, output_value = 3, {"command": command, "status": "FAIL", "terminal": "ENVIRONMENT_FAILURE", "exit_code": 3, "error": str(exc)}

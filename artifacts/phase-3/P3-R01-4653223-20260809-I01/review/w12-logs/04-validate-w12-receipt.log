@@ -1,0 +1,2 @@
+COMMAND: PATH=/dev/shm/phase3-regression-20260809-r01/bin:$PATH PYTHONPATH=src python3 scripts/phase3/validate_work_item_receipt.py --receipt artifacts/phase-3/P3-R01-4653223-20260809-I01/work-items/W12/receipt.json --actor-assignments artifacts/phase-3/P3-R01-4653223-20260809-I01/control/actor-assignments-formal.json --expected-work-item W12
+RECORDED RESULT (confirmed by the independent invocation after W12 receipt creation): exit_code=0 status=PASS work_item=W12

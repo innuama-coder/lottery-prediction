@@ -88,7 +88,7 @@ Run all commands from the repository root:
 python3 -m compileall -q -f src/lottery_research/phase3 scripts/phase3 tests/phase3
 git diff --check
 PYTHONPATH=src python3 -m unittest discover -s tests/phase3 -p "test_*.py" -v
-TMPDIR=/private/tmp PYTHONPATH=src python3 -m unittest discover -s tests/phase2_1 -p "test_*.py" -v
+TMPDIR=/tmp PYTHONPATH=src python3 -m unittest discover -s tests/phase2_1 -p "test_*.py" -v
 PYTHONPATH=src python3 -m unittest discover -s tests/phase2 -p "test_*.py" -v
 ```
 
@@ -100,4 +100,3 @@ exact commands and results in the final message.
 Commit all intended changes. The final response must begin with `COMPLETED:`
 and include the commit SHA, changed paths, test counts, and any remaining
 limitations. Do not leave uncommitted files.
-

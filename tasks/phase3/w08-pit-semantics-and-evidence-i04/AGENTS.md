@@ -1,5 +1,7 @@
 # Agent rules
 
+> SUPERSEDED: Do not execute this task. Its archived-publication prerequisite was replaced by Phase 3 v1.1 sequence-safe isolation.
+
 - Read the authoritative Phase 3 documents and the current implementation
   before changing code or evidence.
 - Work in a new immutable i04 release directory. Preserve all failed and

@@ -1,11 +1,12 @@
-"""Phase 3 point-in-time (PIT) evidence preparation, validation and tamper tests.
+"""Legacy Phase 3 PIT evidence validation and tamper tests.
 
-This module implements the W08 PIT recovery iteration for Phase 3.  It is
-deliberately separate from the W01-W03 candidate contract in ``config/phase3``:
+This module preserves verification of the immutable i02 HOLD evidence. Phase 3
+v1.1 replaced its historical-publication prerequisite with
+``retrospective_sequence_safe``. Creating another bundle is intentionally
+rejected; these rules remain applicable only to preserved legacy evidence and
+to any future external time-varying feature:
 
 * It never edits the candidate contracts or any Phase 1/2/2.1 artifact in place.
-* It builds a new, immutable PIT preparation release in its own directory and
-  binds the new manifest/ledger/data-time-contract/preregistration by SHA-256.
 * The validator recomputes every hash and the eligible-feature coverage from the
   files on disk; it does not trust any top-level self-reported field.
 * Availability may only be proven by an independently archived publication whose
@@ -52,6 +53,11 @@ from .serialization import canonical_json_bytes, canonical_sha256, sha256_file, 
 
 HOLD_TERMINAL = "HOLD_PENDING_PIT_EVIDENCE"
 READY_TERMINAL = "READY_FOR_RESULTS_BLIND_FREEZE"
+LEGACY_AUTHORITY = {
+    "path": "tasks/phase3/README.md",
+    "commit": "0f62062d30af0cc676edde15849a33f5bc33a8aa",
+    "sha256": "0b1bcc329c8063a8336e188e7e88b99542c038cc28a51387b81867d5953e1cdf",
+}
 
 # A PIT preparation iteration is its own immutable release identity.  Reusing an
 # existing directory is rejected so that earlier evidence is never overwritten.
@@ -386,6 +392,11 @@ def build_pit_preparation_bundle(
     receipts (e.g. HTTP probes).  They are preserved as evidence but never used
     to derive eligibility.
     """
+    raise ValueError(
+        "PIT_CONTRACT_SUPERSEDED: historical draw features now use "
+        "retrospective_sequence_safe; preserve existing PIT bundles and do not create new ones"
+    )
+
     _validate_identity(identity)
     root = root.resolve()
     bundle = output.resolve()
@@ -523,8 +534,14 @@ def validate_pit_preparation_bundle(root: Path, bundle: Path) -> dict[str, Any]:
         "preregistration": bundle / "preregistration.json",
     }
     payloads = {kind: load_json(path) for kind, path in paths.items()}
-    for kind, payload in payloads.items():
-        validate_schema(root, kind, payload)
+    if payloads["input_manifest"].get("authority") != LEGACY_AUTHORITY:
+        raise ValueError("legacy PIT bundle authority identity mismatch")
+    if payloads["availability_ledger"].get("artifact_type") != "phase3_availability_ledger":
+        raise ValueError("legacy PIT bundle has the wrong ledger type")
+    if payloads["data_time_contract"].get("status") != "blocked_missing_pit_evidence":
+        raise ValueError("legacy PIT bundle has the wrong data-time status")
+    if payloads["preregistration"].get("status") != "blocked_pending_pit_evidence":
+        raise ValueError("legacy PIT bundle has the wrong preregistration status")
 
     manifest_sha = sha256(paths["input_manifest"])
     if payloads["availability_ledger"]["input_manifest_sha256"] != manifest_sha:
@@ -544,9 +561,6 @@ def validate_pit_preparation_bundle(root: Path, bundle: Path) -> dict[str, Any]:
         raise ValueError("preregistration does not bind to data-time contract")
     if prereg["formal_run_authorized"]:
         raise ValueError("preregistration must not authorize a formal run while PIT is unproven")
-
-    if sha256(root / AUTHORITY["path"]) != AUTHORITY["sha256"]:
-        raise ValueError("Phase 3 authority file identity mismatch")
 
     # Recompute frozen input identities directly from disk (no self-report).
     for role, relative, expected_sha256, allowed_use in FROZEN_INPUTS:

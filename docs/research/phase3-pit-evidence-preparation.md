@@ -2,7 +2,9 @@
 
 版本：1.0
 
-状态：证据准备迭代（非正式运行）；终态 `HOLD_PENDING_PIT_EVIDENCE`，正式结果数量 0
+状态：历史证据记录，已由 Phase 3 总体设计 v1.1 废止为启动前置条件；当次终态仍为 `HOLD_PENDING_PIT_EVIDENCE`，正式结果数量 0
+
+> **废止说明（2026-08-09）：** 本文保留此前不可覆盖的失败尝试及其当时结论，但其“每个历史开奖号必须有历史网页发布时间证据”的前提不再是 Phase 3 权威合同。历史回测现在使用 `retrospective_sequence_safe`：来源期严格早于目标期，预测先于标签解锁。本文不得再用于阻断 W08；只有未来引入外部时变字段时，真实 `available_at_utc` 证据要求才重新适用。
 
 冻结上位定义：`tasks/phase3/README.md`（SHA-256 `0b1bcc329c8063a8336e188e7e88b99542c038cc28a51387b81867d5953e1cdf`）
 
@@ -118,9 +120,9 @@ PIT 证据**未闭合**。缺口清单：
 
 `delivery_verified=true` 表示“该 HOLD 已被独立重算核实为真”，**不是**成功。证据不足只能表现为 `BLOCKED/evidence_only`，不得冒充 `ACCEPTED/DELIVERED_SUCCESS`。M0 仍为永久 Champion；本次不产生 `shadow_candidate`，不触发任何晋级、发布或投注。
 
-## 8. 恢复步骤
+## 8. 当时定义的恢复步骤（现已废止）
 
-要在未来某个**新的唯一 release** 关闭 PIT，必须满足下列全部前置条件后，再进行结果盲冻结与正式 W08–W13：
+以下条目只解释当次 HOLD 的历史判定，不再是 Phase 3 启动条件。不得继续采集或补造 400 期网页归档来满足它们：
 
 1. 对 DLT 取得官方逐期 PDF / 对 SSQ 取得能同时绑定期号、号码与历史可用时间的官方或可审计归档原件；对全部 400 个目标期完成绑定。
 2. 每个归档原件写入 `evidence-collection/archived-publication/<game>/<issue>.json`，`availability_basis` 属于允许集合，号码与冻结 Phase 1 记录一致。
@@ -128,7 +130,7 @@ PIT 证据**未闭合**。缺口清单：
 4. 重新绑定 `data-time-contract`、`preregistration` 与 `manifest` 的哈希闭包。
 5. 用 `validate_pit_preparation_bundle` 重算，直到 `eligible_feature_coverage = 1.0`、`blocking_findings = 0`，方可进入结果盲冻结、正式运行、replay、11/11 E2E、最终 acceptance 与独立复核。
 
-在 PIT 覆盖达到 100% 之前，正式 W08–W13 保持禁止；任何失败尝试必须使用新迭代与新身份，并通过 `supersedes`/父子关系引用本证据，旧证据永不删除或重写。
+本次失败证据继续保持不可修改。新的权威 W02 验证使用详细计划 1.2 节给出的完整命令，必须显式传入 `--identity`、准备期 actor assignment、W01 upstream receipt 和 `--output`；它要求 300 个 outer targets 和 37,350 条严格历史序列关系全部通过，但不把本历史 bundle 改写为成功。
 
 ## 9. 产物索引
 

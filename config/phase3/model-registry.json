@@ -14,8 +14,8 @@
     },
     "M1": {
       "role": "mandatory_challenger",
-      "opening_decision": "opened_for_synthetic_qualification_only_pending_pit",
-      "opening_reason": "mandatory implementation; historical execution requires complete PIT evidence",
+      "opening_decision": "opened",
+      "opening_reason": "mandatory historical challenger under retrospective_sequence_safe isolation",
       "joint_probability": "partition product of strongly-shrunk fixed-cardinality exponential-weight subsets",
       "inputs": ["prior_draw_result"],
       "allowed_classifications": ["rejected", "archived", "shadow_candidate", "indeterminate"],
@@ -42,7 +42,7 @@
     "M4": {
       "role": "diagnostic_challenger",
       "opening_decision": "not_opened",
-      "opening_reason": "PIT features and a qualified fixed-cardinality joint projection are unavailable",
+      "opening_reason": "no external point-in-time features and no qualified fixed-cardinality joint projection",
       "joint_probability": "verified marginal model followed by fixed-cardinality joint projection",
       "inputs": [],
       "allowed_classifications": ["not_opened"],

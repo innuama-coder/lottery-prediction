@@ -7,7 +7,7 @@
     "schema_version": {"const": "3.0.0"},
     "artifact_type": {"const": "phase3_input_manifest"},
     "status": {"const": "frozen_candidate"},
-    "authority": {"type": "object", "additionalProperties": false, "required": ["path", "commit", "sha256"], "properties": {"path": {"type": "string"}, "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}},
+    "authority": {"type": "object", "additionalProperties": false, "required": ["path", "sha256", "identity_status"], "properties": {"path": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "identity_status": {"const": "candidate_pending_release_commit"}}},
     "files": {"type": "array", "minItems": 8, "items": {"type": "object", "additionalProperties": false, "required": ["role", "path", "sha256", "bytes", "allowed_use"], "properties": {"role": {"type": "string"}, "path": {"type": "string", "pattern": "^(?!.*(\\*|latest)).+$"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "bytes": {"type": "integer", "minimum": 1}, "allowed_use": {"type": "string"}}}},
     "draw_inventory": {"type": "object", "additionalProperties": false, "required": ["draw_count", "by_game", "source_observation_count"], "properties": {"draw_count": {"const": 400}, "by_game": {"const": {"dlt": 200, "ssq": 200}}, "source_observation_count": {"const": 800}}},
     "game_rules": {"type": "object", "additionalProperties": false, "required": ["dlt", "ssq"], "properties": {"dlt": {"type": "string"}, "ssq": {"type": "string"}}}

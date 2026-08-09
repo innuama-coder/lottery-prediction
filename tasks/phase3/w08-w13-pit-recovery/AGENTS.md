@@ -1,5 +1,7 @@
 # Agent execution rules
 
+> SUPERSEDED: Do not execute this recovery task. Use the Phase 3 v1.1 W01-W13 contracts in `docs/plans/phase-3-detailed-plan.md`.
+
 - Read `PROMPT.md` and the Phase 3 authority documents before editing.
 - Keep each iteration immutable and use a unique identity.
 - Do not edit the current Phase 3 candidate contracts in place.

@@ -2,13 +2,35 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_type", "status", "input_manifest_sha256", "append_only", "entries"],
+  "required": ["schema_version", "artifact_type", "status", "mode", "input_manifest_sha256", "append_only", "entries"],
   "properties": {
     "schema_version": {"const": "3.0.0"},
-    "artifact_type": {"const": "phase3_availability_ledger"},
-    "status": {"const": "blocked_missing_pit_evidence"},
+    "artifact_type": {"const": "phase3_temporal_eligibility_ledger"},
+    "status": {"const": "sequence_safe"},
+    "mode": {"const": "retrospective_sequence_safe"},
     "input_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "append_only": {"const": true},
-    "entries": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["game", "target_issue", "source_field", "prediction_locked_at", "available_at_utc", "source_path", "source_sha256", "evidence_method", "eligibility", "reason_code"], "properties": {"game": {"enum": ["dlt", "ssq"]}, "target_issue": {"type": "string"}, "source_field": {"const": "prior_draw_result"}, "prediction_locked_at": {"type": ["string", "null"], "format": "date-time"}, "available_at_utc": {"type": ["string", "null"], "format": "date-time"}, "source_path": {"const": "artifacts/phase-1/baseline-v1/draws.jsonl"}, "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "evidence_method": {"enum": ["none", "archived_publication"]}, "eligibility": {"enum": ["eligible", "ineligible", "unknown"]}, "reason_code": {"type": "string"}}}}
+    "entries": {
+      "type": "array",
+      "minItems": 300,
+      "maxItems": 300,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["game", "target_issue", "source_field", "source_issues", "source_count", "source_path", "source_sha256", "evidence_method", "eligibility", "reason_code"],
+        "properties": {
+          "game": {"enum": ["dlt", "ssq"]},
+          "target_issue": {"type": "string", "minLength": 1},
+          "source_field": {"const": "prior_draw_result"},
+          "source_issues": {"type": "array", "minItems": 50, "maxItems": 199, "items": {"type": "string"}, "uniqueItems": true},
+          "source_count": {"type": "integer", "minimum": 50, "maximum": 199},
+          "source_path": {"const": "artifacts/phase-1/baseline-v1/draws.jsonl"},
+          "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "evidence_method": {"const": "strict_issue_order"},
+          "eligibility": {"const": "eligible"},
+          "reason_code": {"const": "RETROSPECTIVE_SEQUENCE_SAFE"}
+        }
+      }
+    }
   }
 }

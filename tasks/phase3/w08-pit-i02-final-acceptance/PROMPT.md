@@ -1,5 +1,7 @@
 # Phase 3 i02 final evidence-only acceptance
 
+> SUPERSEDED: Historical verification record only. Do not use it as a current Phase 3 gate.
+
 This is a verification-only task. The immutable Phase 3 PIT release
 `artifacts/phase-3-pit/p3-pit-prep-20260808-i02/` and its top-level status
 file are already committed in the checkout. Do not build, edit, replace,

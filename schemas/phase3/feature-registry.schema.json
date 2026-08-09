@@ -20,9 +20,9 @@
         "raw_fields": {"type": "array", "items": {"type": "string"}}, "window": {"type": "string"},
         "games": {"type": "array", "items": {"enum": ["dlt", "ssq"]}, "uniqueItems": true},
         "rule_scope": {"type": "array", "items": {"type": "string"}},
-        "availability_proof": {"type": ["object", "null"]}, "missing_policy": {"const": "fail_closed"},
+        "availability_proof": {"type": "object", "additionalProperties": false, "required": ["mode", "rule", "ledger_path"], "properties": {"mode": {"const": "retrospective_sequence_safe"}, "rule": {"const": "source_issue_strictly_before_target_issue"}, "ledger_path": {"const": "config/phase3/availability-ledger.json"}}}, "missing_policy": {"const": "fail_closed"},
         "fit_scope": {"type": "string"}, "leakage_tests": {"type": "array", "items": {"type": "string"}},
-        "ablation_group": {"type": "string"}, "status": {"enum": ["eligible", "ineligible", "blocked_pending_pit_evidence"]}
+        "ablation_group": {"type": "string"}, "status": {"enum": ["eligible", "ineligible", "blocked_pending_external_time_evidence"]}
       }
     }
   }

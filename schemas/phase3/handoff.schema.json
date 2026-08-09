@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "release_id", "status", "delivery_status", "acceptance_path", "acceptance_sha256", "manifest_path", "manifest_sha256", "m0_permanent_champion", "forbidden_actions_authorized", "next_authorization"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "artifact_type": {"const": "phase3_handoff"},
+    "release_id": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"},
+    "status": {"const": "PASS"},
+    "delivery_status": {"const": "GO"},
+    "acceptance_path": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"},
+    "acceptance_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "manifest_path": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"},
+    "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "m0_permanent_champion": {"const": true},
+    "forbidden_actions_authorized": {"const": []},
+    "next_authorization": {"const": null}
+  }
+}

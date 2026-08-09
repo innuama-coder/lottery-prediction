@@ -1,5 +1,7 @@
 # Remote execution context
 
+> SUPERSEDED: Do not execute this recovery task. Use the Phase 3 v1.1 W01-W13 contracts in `docs/plans/phase-3-detailed-plan.md`.
+
 - Work only in the cloned repository and a new task/release directory.
 - Preserve all existing Phase 1, Phase 2, Phase 2.1 and current Phase 3 candidate artifacts.
 - Use the repository's existing schemas, validators, tests and runbooks as the source of truth.

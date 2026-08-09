@@ -5,17 +5,21 @@
   "features": {
     "prior_draw_result": {
       "feature_id": "prior_draw_result",
-      "definition": "strongly-shrunk per-number inclusion count from the training prefix only",
+      "definition": "strongly-shrunk per-number inclusion count from the strictly earlier training prefix only",
       "raw_fields": ["front_numbers", "back_numbers"],
       "window": "expanding strictly before outer target",
       "games": ["dlt", "ssq"],
       "rule_scope": ["dlt-ns-35c5-12c2-v1", "ssq-ns-33c6-16c1-v1"],
-      "availability_proof": null,
+      "availability_proof": {
+        "mode": "retrospective_sequence_safe",
+        "rule": "source_issue_strictly_before_target_issue",
+        "ledger_path": "config/phase3/availability-ledger.json"
+      },
       "missing_policy": "fail_closed",
       "fit_scope": "outer_training_prefix_only",
-      "leakage_tests": ["future_target", "post_draw_field", "global_normalization", "revision_time"],
+      "leakage_tests": ["same_or_future_issue", "label_read_before_forecast_lock", "post_draw_field", "global_normalization"],
       "ablation_group": "historical_inclusion",
-      "status": "blocked_pending_pit_evidence"
+      "status": "eligible"
     }
   },
   "forbidden_feature_families": [

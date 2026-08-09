@@ -8,12 +8,15 @@ bet, return claim, or winner guarantee. M0 remains the permanent Champion.
 ## Current gate
 
 The frozen Phase 1 records are `retrospective_current_view` and have
-`available_at_utc=null`. The checked-in availability ledger therefore has no
-eligible feature row. Until independently preserved evidence proves every
-actual input satisfies `available_at_utc < prediction_locked_at`, the expected
-terminal is `HOLD_PENDING_PIT_EVIDENCE` and formal W08/W09 execution is
-prohibited. Synthetic qualification outputs must use
-`artifacts/phase-3-development/`, never `artifacts/phase-3/`.
+`available_at_utc=null`. Historical `prior_draw_result` features therefore use
+`retrospective_sequence_safe`, not reconstructed publication timestamps. The
+checked-in temporal ledger covers 300 outer targets and 37,350 strictly earlier
+source-target relations. Training reads only the earlier prefix; a forecast hash
+must be locked before the scorer unlocks the target label. External time-varying
+features remain prohibited unless genuine `available_at_utc < prediction_locked_at`
+evidence is frozen. Preparation outputs use `artifacts/phase-3-prep/<prep-id>/`;
+formal output uses `artifacts/phase-3/<release-id>/` only after W07 freezes the
+release, actor identities, wheelhouse manifest, workload and whitelist.
 
 ## W04 build and lint
 
@@ -28,7 +31,7 @@ The Phase 3 lock is `requirements/phase3.lock`. A prepared offline environment
 is reconstructed with:
 
 ```bash
-python3 -m pip install --no-index --find-links <prepared-wheelhouse> -r requirements/phase3.lock
+python3 -m pip install --no-index --find-links artifacts/phase-3-prep/<prep-id>/wheelhouse -r requirements/phase3.lock
 python3 -m pip install --no-index --no-deps --no-build-isolation -e .
 ```
 
@@ -41,58 +44,48 @@ dependency. Resource fields are facts, not generic VPS pass thresholds.
 PYTHONPATH=src python3 -m unittest discover -s tests/phase3 -p "test_*.py" -v
 PYTHONPATH=src python3 -m unittest discover -s tests/phase2_1 -p "test_*.py" -v
 PYTHONPATH=src python3 -m unittest discover -s tests/phase2 -p "test_*.py" -v
-python3 scripts/phase3/validate_prerun_contract.py
+PYTHONPATH=src python3 -c 'from pathlib import Path; from lottery_research.phase3.prerun_contract import validate_prerun_contract; import json; print(json.dumps(validate_prerun_contract(Path.cwd()), sort_keys=True))'
 ```
 
-The last command must currently exit 2 and emit
-`terminal=HOLD_PENDING_PIT_EVIDENCE`. A nonzero HOLD is the correct result.
+The last command must exit 0 and emit `terminal=READY_FOR_RESULTS_BLIND_FREEZE`,
+`outer_target_count=300`, `expanded_sequence_relation_count=37350`, and
+`formal_run_authorized=false`. This means W01-W03 are coherent; it does not
+authorize W08 before W04-W07 are accepted.
 
-## Non-formal qualification command sequence
+## W01-W03 receipt sequence
 
-Every identity is immutable, every output basename equals its identity, and
-reusing an existing identity fails. The example identities are illustrative;
-each retry must use a new identity and preserve the old directory.
+The release controller first creates and schema-validates
+`$PREP_ROOT/control/actor-assignments-preparation.json`. It must bind the four
+preparation roles to real task/session records and their SHA-256 values. The
+following sequence is then exact; every retry uses a new `PREP_ID` and preserves
+the old directory.
 
 ```bash
-PYTHONPATH=src python3 -m lottery_research.phase3 validate \
-  --scope inputs --identity p3-dev-input-i01 \
-  --output artifacts/phase-3-development/p3-dev-input-i01
+PREP_ID=p3-prep-controller-issued-i01
+PREP_ROOT=artifacts/phase-3-prep/$PREP_ID
+PREP_ACTORS=$PREP_ROOT/control/actor-assignments-preparation.json
 
-PYTHONPATH=src python3 -m lottery_research.phase3 qualify \
-  --identity p3-dev-qualification-i01 \
-  --output artifacts/phase-3-development/p3-dev-qualification-i01
+PYTHONPATH=src python3 scripts/phase3/validate_prerun_contract.py \
+  --check W01 --identity "$PREP_ID-W01" --actor-assignments "$PREP_ACTORS" \
+  --output "$PREP_ROOT/work-items/W01/receipt.json"
 
-PYTHONPATH=src python3 -m lottery_research.phase3 evaluate \
-  --identity p3-dev-evaluate-i01 \
-  --output artifacts/phase-3-development/p3-dev-evaluate-i01 \
-  --qualification artifacts/phase-3-development/p3-dev-qualification-i01
+PYTHONPATH=src python3 scripts/phase3/validate_prerun_contract.py \
+  --check W02 --identity "$PREP_ID-W02" --actor-assignments "$PREP_ACTORS" \
+  --upstream-receipt "$PREP_ROOT/work-items/W01/receipt.json" \
+  --output "$PREP_ROOT/work-items/W02/receipt.json"
 
-PYTHONPATH=src python3 -m lottery_research.phase3 readiness \
-  --identity p3-dev-readiness-i01 \
-  --output artifacts/phase-3-development/p3-dev-readiness-i01
-
-PYTHONPATH=src python3 -m lottery_research.phase3 run \
-  --identity p3-formal-refusal-i01 \
-  --output artifacts/phase-3-development/p3-formal-refusal-i01
-
-PYTHONPATH=src python3 -m lottery_research.phase3 replay \
-  --identity p3-dev-replay-i01 \
-  --output artifacts/phase-3-development/p3-dev-replay-i01 \
-  --qualification artifacts/phase-3-development/p3-dev-qualification-i01
-
-PYTHONPATH=src python3 -m lottery_research.phase3 verify-e2e \
-  --identity p3-dev-e2e-i01 \
-  --output artifacts/phase-3-development/p3-dev-e2e-i01
-
-PYTHONPATH=src python3 -m lottery_research.phase3 accept \
-  --identity p3-dev-final-i01 \
-  --output artifacts/phase-3-development/p3-dev-final-i01
+PYTHONPATH=src python3 scripts/phase3/validate_prerun_contract.py \
+  --check W03 --identity "$PREP_ID-W03" --actor-assignments "$PREP_ACTORS" \
+  --upstream-receipt "$PREP_ROOT/work-items/W02/receipt.json" \
+  --output "$PREP_ROOT/work-items/W03/receipt.json"
 ```
 
-`qualify`, `evaluate`, `replay`, and `verify-e2e` operate only on explicit
-synthetic/small-world artifacts. `readiness`, `run`, and `accept` must retain
-the PIT HOLD, report zero formal results, and create no Phase 3 formal release
-or acceptance artifact.
+The W04-W13 commands and receipt-emission suffixes are defined without omitted
+arguments in `docs/plans/phase-3-detailed-plan.md`. The checked-in qualification
+implementation currently executes one replication per world and therefore
+returns `HOLD_INCOMPLETE_QUALIFICATION`; it must not be reported as W06 PASS.
+Until W04-W07 produce their complete receipts, formal `run` and final acceptance
+remain unauthorized. This HOLD is operational and is not a PIT-data gap.
 
 ## Identities, recovery, and evidence
 
@@ -109,7 +102,8 @@ or acceptance artifact.
 - Any future failed acceptance attempt must use a new iteration and release/run
   identity, link its parent explicitly, and never overwrite earlier evidence.
 
-Formal W08–W13 execution requires a separate results-blind freeze after PIT
-coverage reaches 100%, W01–W07 pass, independent role assignments are valid,
-the offline lock is available, and the explicit formal workload/whitelist is
-frozen. None of those future steps is authorized by this runbook.
+Formal W08–W13 execution requires W01–W07 PASS, conflict-free actor IDs, a W04
+wheelhouse manifest and offline reconstruction receipt, and a frozen workload,
+canonical-attempt ledger and whitelist. A release has at most two acceptance
+iterations; exhaustion seals a HOLD and requires explicit authorization for a
+new release. This runbook does not itself create that authorization.

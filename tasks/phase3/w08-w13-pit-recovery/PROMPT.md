@@ -1,5 +1,7 @@
 # Phase 3 W08-W13 PIT Recovery and Formal Delivery
 
+> SUPERSEDED: Do not execute this recovery task. Use the Phase 3 v1.1 W01-W13 contracts in `docs/plans/phase-3-detailed-plan.md`.
+
 你在远程 VPS 的 `agent-cli` Docker 容器中执行本任务。目标是为 Phase 3 建立一个新的、不可覆盖的 PIT 证据准备迭代；只有在两个彩种的实际特征输入都满足 `available_at_utc < prediction_locked_at` 且证据闭包完整时，才允许继续正式 W08-W13。不能修改现有候选合同或历史正式制品。
 
 ## 总体方案

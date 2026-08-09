@@ -1,5 +1,7 @@
 # Phase 3 W08 PIT evidence-only delivery, iteration i02
 
+> SUPERSEDED: Historical task record only. Do not execute. Phase 3 v1.1 uses `retrospective_sequence_safe`; new legacy PIT collection is prohibited.
+
 Work on the current checkout only. The authoritative Phase 3 definition is
 `tasks/phase3/README.md`; the implementation and recovery design are in
 `docs/research/phase3-pit-evidence-preparation.md`.

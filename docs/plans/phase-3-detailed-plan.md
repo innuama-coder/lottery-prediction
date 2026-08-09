@@ -1,8 +1,8 @@
 # Phase 3 详细集成实施计划
 
-版本：1.0
+版本：1.2
 
-状态：待实施；本计划不是 Phase 3 正式运行或验收
+状态：合同修订完成；W04-W07 候选实现须按本版重新资格验证，W08-W13 尚未正式运行
 
 上位权威：`tasks/phase3/README.md`
 
@@ -10,11 +10,11 @@
 
 ## 1. 执行原则和唯一依赖链
 
-本计划是一个端到端执行流，不把 Phase 3 拆成可独立验收的子阶段或任务包。唯一依赖顺序如下；允许并行的工作也只能写各自临时/候选路径，必须回到同一个冻结点、正式 release、evidence manifest 和最终 acceptance：
+本计划是一个端到端执行流，但 W01-W13 每项都是可单独判定 `PASS|HOLD|FAIL` 的工作合同。下游只能消费上游明确标为 PASS 且哈希固定的交付物；允许并行的工作只能写各自候选路径，最终必须回到同一个冻结点、正式 release、evidence manifest 和 acceptance：
 
 ```text
 W01 权威/输入核对
- -> W02 PIT 与规则数据合同
+ -> W02 历史序列、标签解锁与外部时间合同
  -> W03 预注册设计、角色和预算规则审查
  -> W04 Schema/CLI/研究实现
  -> W05 模型与特征 registry 冻结
@@ -28,9 +28,67 @@ W01 权威/输入核对
  -> W13 验收迭代或最终交接
 ```
 
-W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W07 用 W04 的合成 benchmark 按 W03 已冻结的换算规则形成数值工作量，并签署完整正式预注册，是最后结果前冻结点。W08 以后不得修改输入、折、指标、模型开放门、搜索空间、错误预算或分类规则。W08 可让 SSQ 和 DLT 进程并行读取同一冻结 release，但二者不得共享样本、训练、指标或输出文件，也不得绕过 W09–W13 的统一闭包。
+W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W07 用 W04 的七类分组件 benchmark 按 W03 已冻结的换算规则形成全流水线数值预算，并签署完整正式预注册，是最后结果前冻结点。W08 以后不得修改输入、折、指标、模型开放门、搜索空间、错误预算或分类规则。W08 可让 SSQ 和 DLT 进程并行读取同一冻结 release，但二者不得共享样本、训练、指标或输出文件，也不得绕过 W09–W13 的统一闭包。
 
 每个正式命令都先创建唯一目录和 ledger `started` 事件，再执行计算，最后只追加终态。每个 work item 的失败都保存输入身份、命令、stdout/stderr、事件、checkpoint、部分产物和明确终态；不得删除、重写或复用 run ID。
+
+### 1.1 路径、身份和退出码合同
+
+- `prep_id`：结果前准备身份；根目录固定为 `artifacts/phase-3-prep/<prep-id>/`。
+- `release_id`：W07 创建的正式 release 身份；根目录固定为 `artifacts/phase-3/<release-id>/`。
+- `experiment_id`：注册实验的稳定逻辑身份；`attempt_id`：一次执行身份。每次 attempt 都有终态，canonical ledger 只选择序号最小的完整 PASS attempt。
+- W01 前先创建 `<prep>/control/actor-assignments-preparation.json`；准备期 assignment 绑定 W01-W06 角色的 actor/task/session/任务记录哈希。任务记录复制到同一 control bundle 并使用 assignment 文件旁的相对路径，禁止绝对路径和 `..`。W07 前创建 `<release>/control/actor-assignments-formal.json`，通过 `parent_assignment_sha256` 引用准备期版本并补全 W07-W13 正式角色；旧版本只读保留。
+- 每个 W 项固定写 `<root>/work-items/Wxx/receipt.json`，Schema 为 `schemas/phase3/work-item-receipt.schema.json`，并列出输入哈希、输出路径/哈希、命令、退出码、负责人身份、开始/结束和 `PASS|HOLD|FAIL`。
+- 标准退出码：`0=PASS/READY`、`20=HOLD`、`4=identity reuse`、`5=contract/evidence mismatch`、`3=environment failure`、其他非零为 FAIL。验收命令必须核对 receipt 内退出码与进程退出码相同。
+- 所有路径中的占位身份都由命令行显式传入；禁止 `latest`、通配符、目录修改时间或隐式默认选择。
+
+所有命令从仓库根目录运行，并显式设置以下值；尖括号只在本定义处出现，工作项命令不得再包含 `...` 或未解析占位符：
+
+```bash
+PREP_ID=<controller-issued-prep-id>
+PREP_ROOT=artifacts/phase-3-prep/$PREP_ID
+PREP_ACTORS=$PREP_ROOT/control/actor-assignments-preparation.json
+RELEASE_ID=<W07-created-release-id>
+RELEASE_ROOT=artifacts/phase-3/$RELEASE_ID
+FORMAL_ACTORS=$RELEASE_ROOT/control/actor-assignments-formal.json
+```
+
+W01-W06 的 receipt 使用 `$PREP_ACTORS`，W07-W13 使用 `$FORMAL_ACTORS`。每项完成后统一执行 `PYTHONPATH=src python3 scripts/phase3/validate_work_item_receipt.py --receipt <root>/work-items/Wxx/receipt.json --actor-assignments <该项使用的actor-assignment> --expected-work-item Wxx`。它必须 exit 0，并重算 receipt 所列全部输入/输出哈希、actor/task/session 绑定和进程退出码。
+
+W04-W13 的表内命令必须追加下表对应的精确 receipt 发射参数，不能手工补写 receipt：
+
+| W | 必须追加的参数 |
+| --- | --- |
+| W04 | `--emit-work-item-receipt --upstream-receipt "$PREP_ROOT/work-items/W03/receipt.json" --work-item-receipt "$PREP_ROOT/work-items/W04/receipt.json"` |
+| W05 | `--emit-work-item-receipt --upstream-receipt "$PREP_ROOT/work-items/W04/receipt.json" --work-item-receipt "$PREP_ROOT/work-items/W05/receipt.json"` |
+| W06 | `--emit-work-item-receipt --upstream-receipt "$PREP_ROOT/work-items/W05/receipt.json" --work-item-receipt "$PREP_ROOT/work-items/W06/receipt.json"` |
+| W07 | `--emit-work-item-receipt --upstream-receipt "$PREP_ROOT/work-items/W06/receipt.json" --upstream-actor-assignments "$PREP_ACTORS" --work-item-receipt "$RELEASE_ROOT/work-items/W07/receipt.json"` |
+| W08 | `--emit-work-item-receipt --upstream-receipt "$RELEASE_ROOT/work-items/W07/receipt.json" --work-item-receipt "$RELEASE_ROOT/work-items/W08/receipt.json"` |
+| W09 | `--emit-work-item-receipt --upstream-receipt "$RELEASE_ROOT/work-items/W08/receipt.json" --work-item-receipt "$RELEASE_ROOT/work-items/W09/receipt.json"` |
+| W10 | `--emit-work-item-receipt --upstream-receipt "$RELEASE_ROOT/work-items/W09/receipt.json" --work-item-receipt "$RELEASE_ROOT/work-items/W10/receipt.json"` |
+| W11 | `--emit-work-item-receipt --upstream-receipt "$RELEASE_ROOT/work-items/W10/receipt.json" --work-item-receipt "$RELEASE_ROOT/work-items/W11/receipt.json"` |
+| W12 | `--emit-work-item-receipt --upstream-receipt "$RELEASE_ROOT/work-items/W11/receipt.json" --work-item-receipt "$RELEASE_ROOT/work-items/W12/receipt.json"` |
+| W13 | `--emit-work-item-receipt --upstream-receipt "$RELEASE_ROOT/work-items/W12/receipt.json" --work-item-receipt "$RELEASE_ROOT/work-items/W13/receipt.json"` |
+
+### 1.2 工作项交付与验收索引
+
+| W | 负责角色 | 必交付物 | 生成/验收命令和期望结果 |
+| --- | --- | --- | --- |
+| W01 | data_custodian | `config/phase3/input-manifest.json`；W01 receipt | `PYTHONPATH=src python3 scripts/phase3/validate_prerun_contract.py --check W01 --identity "$PREP_ID-W01" --actor-assignments "$PREP_ACTORS" --output "$PREP_ROOT/work-items/W01/receipt.json"`；仅检查权威输入/哈希/计数，exit 0 |
+| W02 | data_custodian | availability/data-time 合同；W02 receipt | 同脚本 `--check W02 --identity "$PREP_ID-W02" --actor-assignments "$PREP_ACTORS" --upstream-receipt "$PREP_ROOT/work-items/W01/receipt.json" --output "$PREP_ROOT/work-items/W02/receipt.json"`；300 targets、37,350 关系、未来关系 0，exit 0 |
+| W03 | statistical_owner | preregistration、方法预审；W03 receipt | 同脚本 `--check W03 --identity "$PREP_ID-W03" --actor-assignments "$PREP_ACTORS" --upstream-receipt "$PREP_ROOT/work-items/W02/receipt.json" --output "$PREP_ROOT/work-items/W03/receipt.json"`；冻结字段完整且 blocking=0，exit 0 |
+| W04 | implementation_author | Schema/CLI/实现/测试/lock/wheelhouse/七类 benchmark；W04 receipt | `TMPDIR=/private/tmp PYTHONPATH=src python3 -m unittest discover -s tests/phase3 -p "test_*.py" -v`；再执行 `PYTHONPATH=src python3 -m lottery_research.phase3 validate --scope implementation --identity "$PREP_ID-W04" --output "$PREP_ROOT/implementation-validation" --prep-root "$PREP_ROOT" --actor-assignments "$PREP_ACTORS"`，均 exit 0 |
+| W05 | statistical_owner | model/feature registries、开放判定；W05 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 validate --scope registries --identity "$PREP_ID-W05" --output "$PREP_ROOT/registry-validation" --prep-root "$PREP_ROOT" --actor-assignments "$PREP_ACTORS"`，exit 0 |
+| W06 | independent_method_reviewer | qualification 2,000 replications、故障注入；W06 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 qualify --identity "$PREP_ID-W06" --output "$PREP_ROOT/qualification" --prep-root "$PREP_ROOT" --actor-assignments "$PREP_ACTORS"`；2,000/2,000、场景/终态 100%，exit 0 |
+| W07 | release_controller | readiness、正式合同/registry/actor assignment/formal registry；W07 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 readiness --identity "$RELEASE_ID-W07" --output "$RELEASE_ROOT/readiness" --prep-root "$PREP_ROOT" --release-root "$RELEASE_ROOT" --actor-assignments "$FORMAL_ACTORS"`；正式结果 0、预算完整，exit 0 |
+| W08 | run_operator | 600 个逻辑实验及 attempts/ledgers；W08 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 run --identity "$RELEASE_ID-W08" --output "$RELEASE_ROOT/runs" --release-root "$RELEASE_ROOT" --actor-assignments "$FORMAL_ACTORS"`；300 targets 的 M0/M1 canonical 覆盖 100%，exit 0 |
+| W09 | statistical_owner | evaluation、逐期/汇总指标、唯一分类；W09 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 evaluate --identity "$RELEASE_ID-W09" --output "$RELEASE_ROOT/evaluation" --release-root "$RELEASE_ROOT" --actor-assignments "$FORMAL_ACTORS"`；指标/分类覆盖 100%，exit 0 |
+| W10 | independent_reviewer | replay/review/差异/任务记录绑定；W10 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 replay --identity "$RELEASE_ID-W10" --output "$RELEASE_ROOT/replay" --release-root "$RELEASE_ROOT" --actor-assignments "$FORMAL_ACTORS"`；全目标/指标/bootstrap/分类一致率 100%，exit 0 |
+| W11 | acceptance_engineer | E2E mutation/command/receipts；W11 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 verify-e2e --identity "$RELEASE_ID-W11" --output "$RELEASE_ROOT/e2e" --release-root "$RELEASE_ROOT" --actor-assignments "$FORMAL_ACTORS"`；registry 双向覆盖和终态命中 100%，exit 0 |
+| W12 | classification_approver | reports、final manifest、acceptance；W12 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 accept --identity "$RELEASE_ID-W12-I01" --output "$RELEASE_ROOT/acceptance/I01" --release-root "$RELEASE_ROOT" --actor-assignments "$FORMAL_ACTORS"`；只有 GO 可 exit 0，HOLD exit 20 |
+| W13 | release_controller | handoff 或封存证据；W13 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 validate --scope handoff --identity "$RELEASE_ID-W13" --output "$RELEASE_ROOT/handoff-validation" --release-root "$RELEASE_ROOT" --actor-assignments "$FORMAL_ACTORS"`；GO exit 0，预算耗尽 HOLD exit 20 |
+
+表中 CLI 参数、逐项 report、`work-item-receipt` 和 actor assignment 检查必须在 W04 完成并由 W04 自测；不允许把 qualification-only 实现伪装成正式 W08-W13 命令。W01-W03 使用仓库随本计划交付的 scoped 预运行校验脚本，不依赖 W04 的正式结果实现。
 
 ## 2. 集成工作项
 
@@ -49,21 +107,21 @@ W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W
 
 **验收方法：** 独立运行输入检查器；要求路径存在率、哈希匹配率、计数匹配率和规则 join 覆盖率均为 100%，不安全 `latest`/通配符引用为 0。通过后输出 W01 receipt 的路径和 SHA-256。
 
-### W02：point-in-time、数据用途和规则合同
+### W02：历史序列、标签解锁、外部时间和规则合同
 
-**依赖与输入：** W01 PASS 的 inventory；Phase 1 draws；注册规则 manifest；可选的准备期来源证据。当前数据的 `knowledge_class=retrospective_current_view` 且 `available_at_utc=null` 是强制起点。
+**依赖与输入：** W01 PASS 的 inventory；Phase 1 draws；注册规则 manifest。当前数据的 `knowledge_class=retrospective_current_view` 且 `available_at_utc=null` 是强制事实，但 `prior_draw_result` 使用历史期号顺序合同，不要求补造历史发布时间。
 
 **执行与输出：**
 
-- 定义每个彩种和目标期的 `prediction_locked_at`、训练截止、标签解锁时点及规则段。
-- 构造逐 `(game, target_issue, source_field)` 的 append-only availability ledger；每项记录来源内容哈希、事件时间、可用时间、证明方法和 `eligible|ineligible|unknown`。
-- 生成数据/时间合同，明确结果标签、允许特征原子输入、禁止字段、修订视图、未知机器/球组/摇出顺序和规则变更处理。
-- 只把有证据满足 `available_at < prediction_locked_at` 的字段纳入后续特征候选；`unknown` 与 `ineligible` 一律 fail closed。
-- 若准备期使用网络，先保存内容并独立核对，再将来源、获取时间和哈希冻结；正式输入不引用网络、live 或 latest。
+- 固定每彩种最小训练 50 期和后续 150 个 outer targets，逐目标记录完整训练来源 issue 列表、训练截止和规则段。
+- 构造 append-only sequence ledger；验证器从 300 个目标展开 37,350 个 `source_issue < target_issue` 关系并重算覆盖，不把同一份 Phase 1 文件复制成外部证据。
+- 生成数据/时间合同，分离 `retrospective_sequence_safe` 与 `external_point_in_time`；当前只允许前者的 `prior_draw_result`。
+- 冻结标签隔离状态机：`started -> forecast_locked -> label_unlocked -> scored -> terminal`；评分器在 forecast 哈希落盘前不得读取目标标签。
+- 外部时变字段默认禁止；未来若开放，必须逐原子输入证明 `available_at_utc < prediction_locked_at`，`unknown` 一律 fail closed。
 
-**失败处理与证据：** 无法证明先前开奖结果或 M1 输入在目标锁前可用时，不推定常识时间，记录受影响目标期和最小可用训练长度。若仍能按预注册最小样本执行，则排除不合格期；否则 `HOLD`。任何未来期、开奖后字段或全局变换混入均 `FAIL / STOP` 当前候选 release，并保留泄漏报告。
+**失败处理与证据：** 期号不能唯一排序、来源期不早于目标期、训练来源缺失、label store 可被训练器访问或 forecast 未锁定即读取标签时 `HOLD`/FAIL。任何未来期、开奖后字段、外部无时间证据字段或全局变换混入均停止当前候选 release，并保留泄漏报告。
 
-**验收方法：** Schema 校验、逐字段时间不等式检查、目标期故障注入、修订时间故障注入和双向 coverage 检查；合格特征中无证明项=0、未来/开奖后字段=0、规则零匹配/多匹配=0。
+**验收方法：** Schema、期号全序、训练前缀、标签解锁状态机、外部字段时间不等式和双向 coverage 检查；outer targets=300、展开关系=37,350、未来/同期期关系=0、预测前标签读取=0、规则零匹配/多匹配=0。
 
 ### W03：实验预注册设计、角色、错误预算和工作量换算规则
 
@@ -75,12 +133,14 @@ W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W
 - 冻结主指标（相对 M0 的逐期联合 log-score skill）、辅助指标（inclusion Brier、校准、可靠性、稳定性）、守护指标、敏感性、负控和 Top-1000 仅诊断角色。
 - 冻结 M0/M1 配置、M2–M4 开放条件、所有搜索/先验/超参数范围、种子层级、数值容差、单变更规则、分类门和停止规则。
 - 根据 Phase 2.1 功效限制和实际可用 outer targets 冻结假设/错误预算；证据不足时允许最终 `indeterminate`，不得为获得结论扩大未注册搜索。
-- 指派数据保管、研究实现、统计负责人、独立 replay/review、最终验收等角色；被复核实现作者不得批准自己的分类。
-- 冻结把 W04 小型 benchmark 转换为正式实验数、折数、重试数、墙钟/资源/制品预算的确定公式和裁决规则；W07 只代入观察事实，不得改变科学范围。不存在通用 VPS 规格门槛。
+- 校验 W01 前准备期 actor assignment 已绑定 data custodian、implementation author、statistical owner 和 independent method reviewer；冻结正式 replay/review、运行、验收和 release control 的冲突规则，W07 在任何正式结果前补全正式 actor assignment。被复核实现作者不得复核或批准自己的分类。
+- 冻结把 W04 七类分组件 benchmark 转换为正式实验、资格模拟、bootstrap、replay、E2E、验收迭代、墙钟和制品预算的确定公式及裁决规则；W07 只代入观察事实，不得改变科学范围。不存在通用 VPS 规格门槛。
 
-**失败处理与证据：** PIT 合格期不足、角色冲突、错误预算无法覆盖 M1、分类门或折设计未闭合时 `HOLD`。看见 Phase 3 结果后的语义修改必须废止当前候选 preregistration、保留其身份，并创建新 preregistration/release，不得原地编辑。
+**失败处理与证据：** sequence-safe 合格目标不足、外部时间证据不完整、角色冲突、错误预算无法覆盖 M1、分类门或折设计未闭合时 `HOLD`。看见 Phase 3 结果后的语义修改必须废止当前候选 preregistration、保留其身份，并创建新 preregistration/release，不得原地编辑。
 
-**验收方法：** JSON Schema、registry 双向差集、outer target 唯一性、inner/outer 时间不交叉、角色冲突和预算换算规则检查；独立方法预审 blocking findings=0 后签署结果盲合同候选 hash。W07 必须验证正式 preregistration 只增加按该公式计算的环境/workload 事实，没有改变 W03 科学语义。
+**验收方法：** JSON Schema、registry 双向差集、outer target 唯一性、20 个 inner targets/30 期 inner 最小训练、inner/outer 时间不交叉、角色冲突、唯一分类决策树和全组件预算规则检查；独立方法预审 blocking findings=0 后签署结果盲合同候选 hash。W07 只代入七类 benchmark 观察值和 W05 的 challenger 数，不得改变语义。
+
+W03 不得自由选择上述方法。M1 估计式、`lambda=[1,5,20,100]`、20 个 expanding inner targets/30 期 inner 最小训练、确定性 tie-break、bootstrap block/PRNG/quantile/p-value/Holm、分类决策树、校准/稳定性/敏感性/资格阈值及 `abs=1e-12, rel=1e-10` 容差均按总体设计 5.1 和第 7 节逐字段写入 preregistration；缺任一字段即 HOLD。
 
 ### W04：统一 Schema、CLI、环境锁和研究实现
 
@@ -93,7 +153,8 @@ W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W
 - 实现 M0、M1、合法组合/概率归一检查、outer/inner rolling evaluator、指标、Top-1000 诊断、checkpoint 和只追加 ledger。
 - M1 使用固定基数联合概率和强收缩；验证零参数逐组合退化为 M0。M4 投影接口即使未开放也必须有拒绝未验证边际输出的合同测试。
 - 锁定依赖、序列化、浮点容差和种子派生；固定输入顺序和规范化输出。
-- 在实际执行环境运行冻结的小型 benchmark，记录事实和单位工作量，不设置架构/CPU/内存/磁盘通用门槛。
+- 在准备期执行 `python3 -m pip wheel --wheel-dir artifacts/phase-3-prep/<prep-id>/wheelhouse -r requirements/phase3.lock`，生成逐 wheel SHA-256 manifest，并在隔离环境用 `--no-index --find-links` 重建后运行 smoke test。wheelhouse 是 W04 交付物，W07 不负责临时补建。
+- 在实际执行环境对 `m0_target`、`m1_target_with_4x20_inner`、`qualification_replication`、`bootstrap_1000`、`replay_target`、`e2e_suite`、`acceptance` 七类冻结单位各运行 20 次，记录 p95 时间和制品字节；不得用较小概率空间的单一微基准替代全组件预算。
 
 **失败处理与证据：** 非法概率、非确定输出、外层污染、ledger 可覆盖或依赖无法离线重建时实现不得进入 W05；保存失败测试和 benchmark 错误。实际 OOM、写盘失败、wheel 缺失等按观察错误 `HOLD`/失败，不从资源快照推断。
 
@@ -122,7 +183,7 @@ W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W
 **执行与输出：**
 
 - 精确枚举 M0/M1 小世界；测试真实号码空间概率规范、合法性、排序无关和分区/联合关系。
-- 运行纯均匀、静态权重和已开放模型对应的注入偏差资格场景；测量评估器是否在均匀世界频繁选择假规律以及能否找回已知方向。
+- 运行 1,000 个纯均匀复制和 1,000 个静态注入权重复制；两者均使用 `N=10,k=3`、200 期、初始训练 50 期，注入世界固定 `theta=[0.4,0.3,0.2,0.1,0,0,-0.1,-0.2,-0.3,-0.4]`。均匀世界 false-selection rate 必须不高于 5%；注入世界 outer mean skill>0 且拟合/注入 theta Spearman>0 的方向恢复率必须至少 90%。生成器源码哈希在 W03 冻结。
 - 注入未来结果、开奖后字段、错误修订时间、全数据归一化、外层目标调参、规则混用、非法组合、负概率、不归一概率、失败 ledger 删除/覆盖、历史结果晋级 Champion 和 Top-1000 主门。
 - 测试受控中断、checkpoint 恢复、重复命令、同 run ID 写入和部分 artifact 回传。
 - 输出 qualification report、负控结果、失败 receipt 和 blocking finding 清单。
@@ -137,7 +198,7 @@ W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W
 
 **执行与输出：**
 
-- 在 VPS 隔离 worktree 验证 task ID、绝对 worktree、task branch、精确 Git commit、dirty state、输入/prereg/registry/代码/依赖哈希和离线依赖可用性。
+- 在 VPS 隔离 worktree 验证 task ID、绝对 worktree、task branch、精确 Git commit、dirty state、输入/prereg/registry/代码/依赖哈希，以及 W04 wheelhouse manifest 和离线重建 receipt。
 - 记录 factual environment 和 benchmark；据此填完批准模型×彩种×折×种子、最大重试、墙钟、checkpoint 和制品预算，只评估该 workload 是否可执行。
 - 创建全局唯一 `release_id`；每条命令使用唯一 `run_id` 和新的不可覆盖目录。先写 run manifest/`started` 事件，再运行。
 - 冻结显式 formal-run registry、artifact whitelist、日志路径、回传目标、监控信息和 acceptance iteration 规则；验证正式结果计数为 0。
@@ -159,9 +220,9 @@ W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W
 - 逐期输出合法性、非负、归一化证明；生成 Top-1000 接口记录及覆盖概率，但不用于选择。
 - 持续追加 experiment ledger、资源/墙钟/完成工作量、checkpoint、失败/超时/崩溃和最后命令状态。
 
-**失败处理与证据：** 单实验失败不得被静默跳过或覆盖；保存部分制品并给出 `failed|timeout|crashed` 终态。预注册允许的确定性重试使用新 run ID 并引用父失败；超预算或可恢复环境错误 `HOLD`。泄漏、非法概率或 outer target 被二次最终评价时停止 release，建议 `FAIL / STOP`，不得继续挑选其他结果。
+**失败处理与证据：** 单实验失败不得被静默跳过或覆盖；保存部分制品并给出 `failed|timeout|crashed` attempt 终态。预注册允许的确定性重试保持同一 `experiment_id`、使用新 `attempt_id` 并引用父失败；canonical ledger 选择序号最小的完整 PASS attempt。超预算或可恢复环境错误 `HOLD`。泄漏、非法概率或同一 attempt 二次解锁目标标签时停止 release。
 
-**验收方法：** 在线守护加运行后只读扫描；每个 `(game, outer_target, registered_open_model)` 恰有一个预期终态，每期最终评价次数=1，M0/M1 覆盖率=100%，跨彩种输出/训练交叉=0，正式网络请求=0，概率守护通过率=100%。
+**验收方法：** 在线守护加运行后只读扫描；每个 attempt 恰有一个终态，每个 `(game, outer_target, registered_open_model)` 恰有一个 canonical attempt，每个 canonical forecast 只解锁/评分一次，M0/M1 目标覆盖率=100%，跨彩种交叉=0，正式网络请求=0，概率守护通过率=100%。
 
 ### W09：统一评价、ledger 闭包和冻结分类
 
@@ -185,14 +246,14 @@ W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W
 
 **执行与输出：**
 
-- 独立重建输入选择、规则 join、outer/inner folds、特征快照和选定核心模型输入。
-- 独立参考实现复算 M0/M1 小空间与抽样真实期的联合概率、逐期 log score、Brier 和汇总；验证同种子规范化重放。
+- 独立重建输入选择、规则 join、全部 outer/inner folds、全部目标的特征快照和 M0/M1 核心模型输入。
+- 独立参考实现复算 M0/M1 小空间，以及全部真实 outer targets 的实际结果联合概率、逐期 log score、Brier、汇总、bootstrap 和分类；真实完整分布审计固定选择每彩种首/中/末目标，不允许结果后抽样。
 - 对所有 outer targets 复算折身份和一次评价不变量；复算 model classification 和阶段汇总。
 - 输出 replay artifact、逐项差异、independence 声明、review report 和 blocking findings；复核者不批准自己编写的实现。
 
 **失败处理与证据：** 超出预注册容差、输入/折/概率/指标/分类不一致或独立性冲突时 `HOLD` 并形成 blocking finding。泄漏、伪造或选择性删除建议 `FAIL / STOP`。不得由主实现者直接改写 review；修复产生新证据和新 review identity。
 
-**验收方法：** replay Schema、同种子哈希、独立 known-answer 和逐项容差检查；输入/折一致率、选定概率/指标复算一致率和分类一致率均为 100%，blocking findings=0。
+**验收方法：** replay Schema、身份冲突检查、同种子哈希、独立 known-answer 和逐项容差检查；输入/折、全部目标实际结果概率、指标、bootstrap 和分类一致率均为 100%，blocking findings=0。
 
 ### W11：正式 E2E 和最终 validator 资格
 
@@ -200,10 +261,11 @@ W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W
 
 **执行与输出：**
 
-- 执行正常全链路以及输入/规则不一致、PIT/开奖后泄漏、非法/负/不归一概率、outer 污染、失败实验删除/覆盖、历史越权晋级、replay 不一致和 manifest/acceptance 篡改。
+- 执行正常全链路以及输入/规则不一致、同/未来期关系、预测前标签读取、外部时间/开奖后泄漏、非法/负/不归一概率、outer 污染、失败实验删除/覆盖、历史越权晋级、replay 不一致和 manifest/acceptance 篡改。
 - 执行“无 challenger 合格”正例，必须得到诚实的 `GO / no_shadow_candidate`；执行证据不足正例，允许 `GO / indeterminate`。
 - 验证 final validator 必须从底层逐期预测、ledger、replay 和显式 manifest 重算，而不是信顶层 status。
 - 输出每个 E2E 的唯一 receipt、命令、预期/实际退出码、终态、断言和哈希。
+- 每个负向 E2E 必须从隔离 staging 副本执行真实单点 mutation，再调用生产 validator 观察终态；直接构造或硬编码 `actual_terminal` 不算执行，不得通过 W11。
 
 **失败处理与证据：** 必需 E2E 缺失、重复、预期终态不符或负向用例被接受时阻断 W12。修复实现后回到 W04；若修改冻结研究语义则回到 W03 并创建新 release。失败 E2E 永不删除。
 
@@ -218,7 +280,7 @@ W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W
 - 从 VPS 按 whitelist 回传合同、预注册、input manifest、registries、实现身份、Schema/tests、完整 ledger、预测/评价、replay/reviews、E2E、日志和 workload completion；逐文件重哈希。
 - 生成不可变 final evidence manifest，显式列路径、SHA-256、run/release identity、行数/大小和交付物映射；禁止 `latest`、通配符、隐式目录或修改时间选择。
 - 编写分彩种研究报告，逐结论引用结构化证据；清楚区分交付状态、模型分类和阶段科学汇总。
-- 最终验收人运行离线 validator，从底层重算身份、覆盖、核心指标、分类、Champion 不变、blocking findings 和禁区动作；人工复核科学措辞。
+- 最终验收人运行离线 validator，从底层重算身份、覆盖、核心指标、分类、Champion 不变、blocking findings 和禁区动作；人工复核科学措辞。validator 从冻结 actor assignment 和任务记录哈希验证 reviewer、实现作者及最终批准者的 task/session 绑定；reviewer 与后二者不得相同，最终批准者不得是实现作者，单纯填写不同字符串不构成独立性证据。
 - 原子写入唯一 acceptance artifact；成功时只能给出 `PASS / GO`，失败按合同给出 `HOLD` 或 `FAIL / STOP`。
 
 **失败处理与证据：** 回传缺失/哈希差异、manifest 不闭合或 validator/review 未通过时不得签 GO。可恢复问题进入 W13 新 iteration；保留当前 manifest 候选、validator 输出和现场。不得原地把失败 acceptance 改成 PASS。
@@ -239,6 +301,8 @@ W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W
 **失败处理与证据：** 不允许用人工备注覆盖机器阻断，不允许把“没有好模型”误判为失败，也不允许为取得 shadow 候选修改历史门槛。每次 iteration 保存父 identity、变更原因、影响分析、重复工作和新 acceptance。
 
 **验收方法：** GO 只在唯一最终 acceptance 为 `PASS / GO` 且 manifest 哈希闭合时成立；`no_shadow_candidate` 和 `indeterminate` 均可 GO。交接检查确认 M0 Champion、无生产/发布/投注动作、后续授权为空。
+
+每个 release 最多执行 2 次 acceptance iteration（初次 W12 计为第 1 次）。第 2 次后仍为可恢复 HOLD，必须封存为 `HOLD / RETRY_BUDGET_EXHAUSTED` 并停止自动迭代；新的 release 需要新的明确授权和新的身份。不可恢复完整性问题立即 `FAIL / STOP`，不消耗剩余迭代尝试。
 
 ## 3. VPS 监控、恢复和证据检索协议
 
@@ -262,7 +326,7 @@ W03 在任何模型历史结果生成前完成结果盲的科学合同设计；W
 最终验收人必须能逐项回答“是”：
 
 - 当前权威只有 `tasks/phase3/README.md`，所有正式输入路径存在且身份匹配；历史 research roadmap 未被当成权威。
-- Phase 1 400 个 draw 的用途和 `available_at_utc=null` 限制得到 fail-closed 执行。
+- Phase 1 400 个 draw 只按严格期号顺序进入 300 个 outer targets；`available_at_utc=null` 未被伪造成历史发布时间，外部时变字段保持 fail closed。
 - SSQ/DLT 分开训练、评价和分类；outer evaluation 从未参与训练、调参或选择。
 - M0 永久 Champion，M1 完整运行，M2–M4 均有结果前开放决定或合法 `not_opened`。
 - 每个实际模型给出合法、非负、归一的固定基数联合概率；M1 零参数退化为 M0。

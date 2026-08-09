@@ -1,5 +1,7 @@
 # Remote context
 
+> SUPERSEDED: Do not execute this task. Its archived-publication prerequisite was replaced by Phase 3 v1.1 sequence-safe isolation.
+
 - Use public network access only during evidence preparation. Final validation
   must consume only preserved local evidence.
 - The repository's protected Phase 1/2/2.1 artifacts are read-only. Existing

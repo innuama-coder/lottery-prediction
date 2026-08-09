@@ -77,6 +77,31 @@ def summarize_skill(values: Sequence[float]) -> dict[str, float | int]:
     }
 
 
+def select_shrinkage(
+    draws: Sequence[Sequence[int]],
+    fold: OuterFold,
+    *,
+    size: int,
+    cardinality: int,
+    lambda_grid: Sequence[float] = (1.0, 5.0, 20.0, 100.0),
+) -> float:
+    if not fold.inner or not lambda_grid or len(set(lambda_grid)) != len(lambda_grid):
+        raise ValueError("inner folds and unique lambda candidates are required")
+    scored: list[tuple[float, float]] = []
+    for value in lambda_grid:
+        if not math.isfinite(value) or value <= 0.0:
+            raise ValueError("lambda candidates must be finite and positive")
+        scores = []
+        for inner in fold.inner:
+            training = [draws[int(index)] for index in inner.training]
+            model = FixedCardinalityDistribution.from_theta(posterior_theta(training, size, cardinality, value), cardinality)
+            scores.append(joint_log_score(model.probability(tuple(draws[int(inner.target)]))))
+        scored.append((fmean(scores), value))
+    best_score = min(score for score, _ in scored)
+    tied = [value for score, value in scored if math.isclose(score, best_score, rel_tol=1e-10, abs_tol=1e-12)]
+    return max(tied)
+
+
 def evaluate_rolling_subsets(
     draws: Sequence[Sequence[int]],
     *,
@@ -84,7 +109,8 @@ def evaluate_rolling_subsets(
     cardinality: int,
     minimum_training: int,
     inner_folds: int,
-    shrinkage: float,
+    shrinkage: float | None,
+    lambda_grid: Sequence[float] = (1.0, 5.0, 20.0, 100.0),
 ) -> list[dict[str, object]]:
     """Synthetic/offline rolling evaluator; each target is scored exactly once."""
     folds = rolling_folds(list(range(len(draws))), minimum_training, inner_folds)
@@ -92,7 +118,10 @@ def evaluate_rolling_subsets(
     m0 = FixedCardinalityDistribution.uniform(size, cardinality)
     for fold in folds:
         training = [draws[int(index)] for index in fold.training]
-        theta = posterior_theta(training, size, cardinality, shrinkage)
+        selected_shrinkage = shrinkage if shrinkage is not None else select_shrinkage(
+            draws, fold, size=size, cardinality=cardinality, lambda_grid=lambda_grid,
+        )
+        theta = posterior_theta(training, size, cardinality, selected_shrinkage)
         m1 = FixedCardinalityDistribution.from_theta(theta, cardinality)
         target = tuple(draws[int(fold.target)])
         m0_probability = m0.probability(target)
@@ -101,6 +130,7 @@ def evaluate_rolling_subsets(
             "target_index": fold.target,
             "training_indices": fold.training,
             "inner_target_indices": tuple(inner.target for inner in fold.inner),
+            "selected_shrinkage": selected_shrinkage,
             "m0_probability": m0_probability,
             "m1_probability": m1_probability,
             "relative_skill_vs_M0": relative_joint_log_score_skill(m0_probability, m1_probability),

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "work_item", "identity", "actor_assignment_sha256", "owner_role", "owner_id", "owner_task_id", "owner_session_id", "inputs", "outputs", "command", "started_at_utc", "ended_at_utc", "process_exit_code", "status", "terminal"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "artifact_type": {"const": "phase3_work_item_receipt"},
+    "work_item": {"pattern": "^W(0[1-9]|1[0-3])$"},
+    "identity": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"},
+    "actor_assignment_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "owner_role": {"type": "string", "minLength": 1},
+    "owner_id": {"type": "string", "minLength": 1},
+    "owner_task_id": {"type": "string", "minLength": 1},
+    "owner_session_id": {"type": "string", "minLength": 1},
+    "inputs": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+        "properties": {"path": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+      }, "uniqueItems": true
+    },
+    "outputs": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+        "properties": {"path": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+      }, "uniqueItems": true
+    },
+    "command": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "started_at_utc": {"type": "string", "format": "date-time"},
+    "ended_at_utc": {"type": "string", "format": "date-time"},
+    "process_exit_code": {"type": "integer"},
+    "status": {"enum": ["PASS", "HOLD", "FAIL"]},
+    "terminal": {"type": "string", "minLength": 1}
+  }
+}

@@ -9,6 +9,7 @@ from lottery_research.phase3.evaluation import (
     evaluate_rolling_subsets,
     joint_log_score,
     rolling_folds,
+    select_shrinkage,
     summarize_skill,
 )
 from lottery_research.phase3.probability import FixedCardinalityDistribution, joint_distribution
@@ -90,6 +91,14 @@ class EvaluationContractTests(unittest.TestCase):
         self.assertEqual([row["target_index"] for row in rows], [4, 5, 6])
         self.assertEqual(len({row["target_index"] for row in rows}), len(rows))
         self.assertTrue(all(row["target_index"] not in row["training_indices"] for row in rows))
+
+    def test_frozen_m1_inner_window_selects_from_registered_grid(self) -> None:
+        draws = [tuple(((index + offset) % 6) + 1 for offset in (0, 2)) for index in range(55)]
+        folds = rolling_folds(list(range(len(draws))), minimum_training=50, inner_folds=20)
+        self.assertEqual(len(folds[0].inner), 20)
+        self.assertEqual(len(folds[0].inner[0].training), 30)
+        selected = select_shrinkage(draws, folds[0], size=6, cardinality=2)
+        self.assertIn(selected, (1.0, 5.0, 20.0, 100.0))
 
 
 if __name__ == "__main__":

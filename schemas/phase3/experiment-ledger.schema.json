@@ -2,11 +2,16 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_type", "ledger_identity", "sequence", "experiment_id", "state", "details"],
+  "required": ["schema_version", "artifact_type", "ledger_identity", "sequence", "experiment_id", "attempt_id", "state", "details"],
   "properties": {
-    "schema_version": {"const": "3.0.0"}, "artifact_type": {"const": "phase3_experiment_ledger_event"},
-    "ledger_identity": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"}, "sequence": {"type": "integer", "minimum": 0},
-    "experiment_id": {"type": "string"}, "state": {"enum": ["started", "succeeded", "failed", "timeout", "crashed", "rejected", "not_opened", "indeterminate"]},
+    "schema_version": {"const": "3.0.0"},
+    "artifact_type": {"const": "phase3_experiment_ledger_event"},
+    "ledger_identity": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"},
+    "sequence": {"type": "integer", "minimum": 0},
+    "experiment_id": {"type": "string", "minLength": 1},
+    "attempt_id": {"type": "string", "minLength": 1},
+    "parent_attempt_id": {"type": ["string", "null"]},
+    "state": {"enum": ["started", "forecast_locked", "label_unlocked", "scored", "succeeded", "failed", "timeout", "crashed", "rejected", "not_opened", "indeterminate"]},
     "details": {"type": "object"}
   }
 }

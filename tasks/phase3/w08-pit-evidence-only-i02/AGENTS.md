@@ -1,5 +1,7 @@
 # Agent rules
 
+> SUPERSEDED: Historical task record only. Do not execute. Phase 3 v1.1 uses `retrospective_sequence_safe`; new legacy PIT collection is prohibited.
+
 - Use the repository scripts rather than hand-writing evidence JSON.
 - Keep the original reconnaissance receipts in the i02 bundle so that the
   evidence manifest can hash-bind them.

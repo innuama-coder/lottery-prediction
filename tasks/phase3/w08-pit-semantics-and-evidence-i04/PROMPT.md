@@ -1,5 +1,7 @@
 # Phase 3 W08 PIT semantics correction and full evidence recovery i04
 
+> SUPERSEDED: Do not execute this task. Its archived-publication prerequisite was replaced by Phase 3 v1.1 sequence-safe isolation.
+
 You are working in a remote VPS container. Complete the Phase 3 PIT
 precondition recovery with immutable identity `p3-pit-prep-20260809-i04`.
 This task is

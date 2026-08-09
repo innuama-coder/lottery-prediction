@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "assignment_id", "assignment_stage", "parent_assignment_sha256", "controller_id", "created_at_utc", "assignments"],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "artifact_type": {"const": "phase3_actor_assignment"},
+    "assignment_id": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"},
+    "assignment_stage": {"enum": ["preparation_before_W01", "formal_before_W07"]},
+    "parent_assignment_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "controller_id": {"type": "string", "minLength": 1},
+    "created_at_utc": {"type": "string", "format": "date-time"},
+    "assignments": {
+      "type": "array", "minItems": 4, "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["role", "actor_id", "task_id", "session_id", "assigned_at_utc", "assigned_by", "task_record_path", "task_record_sha256"],
+        "properties": {
+          "role": {"enum": ["data_custodian", "implementation_author", "statistical_owner", "independent_method_reviewer", "run_operator", "independent_reviewer", "acceptance_engineer", "classification_approver", "release_controller"]},
+          "actor_id": {"type": "string", "minLength": 1},
+          "task_id": {"type": "string", "minLength": 1},
+          "session_id": {"type": "string", "minLength": 1},
+          "assigned_at_utc": {"type": "string", "format": "date-time"},
+          "assigned_by": {"type": "string", "minLength": 1},
+          "task_record_path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*latest)(?!.*\\*).+$"},
+          "task_record_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    }
+  }
+}

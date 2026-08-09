@@ -1,0 +1,49 @@
+test_deliverable_evidence_must_cover_declared_file_and_directory_contents (test_acceptance_closure.AcceptanceClosureTests.test_deliverable_evidence_must_cover_declared_file_and_directory_contents) ... ok
+test_g0_g1_rejects_empty_frozen_identity_coverage (test_acceptance_closure.AcceptanceClosureTests.test_g0_g1_rejects_empty_frozen_identity_coverage) ... ok
+test_gate_and_metric_verdicts_use_relevant_evidence (test_acceptance_closure.AcceptanceClosureTests.test_gate_and_metric_verdicts_use_relevant_evidence) ... ok
+test_isolated_e2e01_is_synthesized_once_for_g6_and_cov07 (test_acceptance_closure.AcceptanceClosureTests.test_isolated_e2e01_is_synthesized_once_for_g6_and_cov07) ... ok
+test_isolated_preaccept_registry_cannot_be_arbitrary_json (test_acceptance_closure.AcceptanceClosureTests.test_isolated_preaccept_registry_cannot_be_arbitrary_json) ... ok
+test_isolated_registry_rows_must_equal_manifest_rows (test_acceptance_closure.AcceptanceClosureTests.test_isolated_registry_rows_must_equal_manifest_rows) ... ok
+test_run_selection_rejects_request_result_input_identity_mismatch (test_acceptance_closure.AcceptanceClosureTests.test_run_selection_rejects_request_result_input_identity_mismatch) ... ok
+test_research_engine (unittest.loader._FailedTest.test_research_engine) ... ERROR
+test_every_strong_positive_path_exceeds_null_99th_percentile (test_statistical_engine.StatisticalEngineTests.test_every_strong_positive_path_exceeds_null_99th_percentile) ... ok
+test_exact_binomial_interval_reference_value (test_statistical_engine.StatisticalEngineTests.test_exact_binomial_interval_reference_value) ... ok
+test_fixed_seed_is_byte_reproducible (test_statistical_engine.StatisticalEngineTests.test_fixed_seed_is_byte_reproducible) ... ok
+test_holm_is_monotone_and_controls_order (test_statistical_engine.StatisticalEngineTests.test_holm_is_monotone_and_controls_order) ... ok
+test_null_tickets_and_statistics_obey_contract (test_statistical_engine.StatisticalEngineTests.test_null_tickets_and_statistics_obey_contract) ... ok
+test_vectorized_engine (unittest.loader._FailedTest.test_vectorized_engine) ... ERROR
+
+======================================================================
+ERROR: test_research_engine (unittest.loader._FailedTest.test_research_engine)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_research_engine
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/unittest/loader.py", line 394, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/loader.py", line 337, in _get_module_from_name
+    __import__(name)
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/tests/phase2/test_research_engine.py", line 8, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: test_vectorized_engine (unittest.loader._FailedTest.test_vectorized_engine)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_vectorized_engine
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/unittest/loader.py", line 394, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/loader.py", line 337, in _get_module_from_name
+    __import__(name)
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/tests/phase2/test_vectorized_engine.py", line 8, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+----------------------------------------------------------------------
+Ran 14 tests in 2.162s
+
+FAILED (errors=2)

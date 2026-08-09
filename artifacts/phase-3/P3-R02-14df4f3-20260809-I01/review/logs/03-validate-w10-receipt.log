@@ -1,0 +1,4 @@
+Script started on 2026-08-08 21:00:22-07:00 [COMMAND="PATH=/dev/shm/phase3-regression-20260809-r01/bin:$PATH PYTHONPATH=src python3 scripts/phase3/validate_work_item_receipt.py --receipt artifacts/phase-3/P3-R02-14df4f3-20260809-I01/work-items/W10/receipt.json --actor-assignments artifacts/phase-3/P3-R02-14df4f3-20260809-I01/control/actor-assignments-formal.json --expected-work-item W10" <not executed on terminal>]
+{"actor_assignment_sha256":"2b84a4c0dcfe66b7594680a5a7a1df6e78dd35b875b57c50b7654c2f9e20b421","receipt_sha256":"539a02c71998c37a3008794f0f84de4f6ce6ae5e60f0db26ed31ccf756885db5","status":"PASS","work_item":"W10"}
+
+Script done on 2026-08-08 21:00:22-07:00 [COMMAND_EXIT_CODE="0"]

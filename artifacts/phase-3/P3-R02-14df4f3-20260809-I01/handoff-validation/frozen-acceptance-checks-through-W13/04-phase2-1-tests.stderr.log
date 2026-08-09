@@ -1,0 +1,151 @@
+test_historical_protection (unittest.loader._FailedTest.test_historical_protection) ... ERROR
+test_iteration02_hardening (unittest.loader._FailedTest.test_iteration02_hardening) ... ERROR
+test_iteration03_closure (unittest.loader._FailedTest.test_iteration03_closure) ... ERROR
+test_iteration06_readiness (unittest.loader._FailedTest.test_iteration06_readiness) ... ERROR
+test_iteration07_review_closure (unittest.loader._FailedTest.test_iteration07_review_closure) ... ERROR
+test_resources_and_contract (unittest.loader._FailedTest.test_resources_and_contract) ... ERROR
+test_schema_and_acceptance (unittest.loader._FailedTest.test_schema_and_acceptance) ... ERROR
+test_slow_drift (unittest.loader._FailedTest.test_slow_drift) ... ERROR
+
+======================================================================
+ERROR: test_historical_protection (unittest.loader._FailedTest.test_historical_protection)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_historical_protection
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/unittest/loader.py", line 394, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/loader.py", line 337, in _get_module_from_name
+    __import__(name)
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/tests/phase2_1/test_historical_protection.py", line 5, in <module>
+    from lottery_research.phase2_1.workflow import project_root
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/src/lottery_research/phase2_1/workflow.py", line 17, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: test_iteration02_hardening (unittest.loader._FailedTest.test_iteration02_hardening)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_iteration02_hardening
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/unittest/loader.py", line 394, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/loader.py", line 337, in _get_module_from_name
+    __import__(name)
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/tests/phase2_1/test_iteration02_hardening.py", line 11, in <module>
+    from lottery_research.phase2_1.cli import execute_external_commands
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/src/lottery_research/phase2_1/cli.py", line 14, in <module>
+    from .workflow import (
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/src/lottery_research/phase2_1/workflow.py", line 17, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: test_iteration03_closure (unittest.loader._FailedTest.test_iteration03_closure)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_iteration03_closure
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/unittest/loader.py", line 394, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/loader.py", line 337, in _get_module_from_name
+    __import__(name)
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/tests/phase2_1/test_iteration03_closure.py", line 11, in <module>
+    from lottery_research.phase2_1.cli import execute_external_commands, write_command_receipt
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/src/lottery_research/phase2_1/cli.py", line 14, in <module>
+    from .workflow import (
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/src/lottery_research/phase2_1/workflow.py", line 17, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: test_iteration06_readiness (unittest.loader._FailedTest.test_iteration06_readiness)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_iteration06_readiness
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/unittest/loader.py", line 394, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/loader.py", line 337, in _get_module_from_name
+    __import__(name)
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/tests/phase2_1/test_iteration06_readiness.py", line 14, in <module>
+    from lottery_research.phase2_1.workflow import SOURCE_PATHS, _input_identity, project_root, source_manifest
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/src/lottery_research/phase2_1/workflow.py", line 17, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: test_iteration07_review_closure (unittest.loader._FailedTest.test_iteration07_review_closure)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_iteration07_review_closure
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/unittest/loader.py", line 394, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/loader.py", line 337, in _get_module_from_name
+    __import__(name)
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/tests/phase2_1/test_iteration07_review_closure.py", line 11, in <module>
+    from lottery_research.phase2_1.workflow import (
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/src/lottery_research/phase2_1/workflow.py", line 17, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: test_resources_and_contract (unittest.loader._FailedTest.test_resources_and_contract)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_resources_and_contract
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/unittest/loader.py", line 394, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/loader.py", line 337, in _get_module_from_name
+    __import__(name)
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/tests/phase2_1/test_resources_and_contract.py", line 13, in <module>
+    from lottery_research.phase2_1.workflow import SOURCE_PATHS, project_root, source_manifest
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/src/lottery_research/phase2_1/workflow.py", line 17, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: test_schema_and_acceptance (unittest.loader._FailedTest.test_schema_and_acceptance)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_schema_and_acceptance
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/unittest/loader.py", line 394, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/loader.py", line 337, in _get_module_from_name
+    __import__(name)
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/tests/phase2_1/test_schema_and_acceptance.py", line 11, in <module>
+    from lottery_research.phase2_1.workflow import (
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/src/lottery_research/phase2_1/workflow.py", line 17, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+ERROR: test_slow_drift (unittest.loader._FailedTest.test_slow_drift)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_slow_drift
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/unittest/loader.py", line 394, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/unittest/loader.py", line 337, in _get_module_from_name
+    __import__(name)
+  File "/home/royzuo/worktrees/lottery-prediction-phase3-implementation-20260809-r01/tests/phase2_1/test_slow_drift.py", line 6, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.001s
+
+FAILED (errors=8)

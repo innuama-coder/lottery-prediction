@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "artifact_type", "identity", "case_id",
+    "expected_terminal", "actual_terminal", "expected_exit_code", "actual_exit_code",
+    "expected_guard", "actual_guard", "guard_reached", "status", "execution_mode",
+    "command", "process_exit_code"
+  ],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "artifact_type": {"const": "phase3_e2e_receipt"},
+    "identity": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"},
+    "case_id": {"type": "string", "minLength": 1},
+    "expected_terminal": {"type": "string", "minLength": 1},
+    "actual_terminal": {"type": "string", "minLength": 1},
+    "expected_exit_code": {"type": "integer", "minimum": 0},
+    "actual_exit_code": {"type": "integer", "minimum": 0},
+    "expected_guard": {"type": ["string", "null"]},
+    "actual_guard": {"type": ["string", "null"]},
+    "guard_reached": {"type": "boolean"},
+    "status": {"enum": ["PASS", "FAIL"]},
+    "execution_mode": {"type": "string", "minLength": 1},
+    "mutation": {"type": "object"},
+    "command": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "process_exit_code": {"type": "integer"},
+    "validator_exception_type": {"type": ["string", "null"]},
+    "wall_seconds": {"type": "number"}
+  }
+}

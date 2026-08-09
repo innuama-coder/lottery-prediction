@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "artifact_type", "release_id", "status", "implementation",
+    "outer_target_count", "model_target_count", "fold_reconstruction_coverage",
+    "lambda_reconstruction_coverage", "weight_reconstruction_coverage",
+    "actual_probability_match_rate", "forecast_index_sha256", "metric_index_sha256",
+    "guarded_label_unlock", "mismatches", "blocking_findings"
+  ],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "artifact_type": {"const": "phase3_independent_model_reconstruction"},
+    "release_id": {"type": "string", "pattern": "^(?!.*latest)(?!.*\\*).+$"},
+    "status": {"enum": ["PASS", "HOLD"]},
+    "implementation": {"type": "string", "minLength": 1},
+    "outer_target_count": {"type": "integer", "minimum": 0},
+    "model_target_count": {"type": "integer", "minimum": 0},
+    "fold_reconstruction_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+    "lambda_reconstruction_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+    "weight_reconstruction_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+    "actual_probability_match_rate": {"type": "number", "minimum": 0, "maximum": 1},
+    "forecast_index_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "metric_index_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "guarded_label_unlock": {"type": "object"},
+    "mismatches": {"type": "array", "items": {"type": "string"}},
+    "blocking_findings": {"type": "integer", "minimum": 0}
+  }
+}

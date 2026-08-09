@@ -196,6 +196,11 @@ def main() -> int:
             row = json.loads(line)
             metric_index[(row["game"], row["target_issue"], row["model_id"])] = row
     guarded_unlock = guarded_unlock_recomputation(release, forecast_index, metric_index)
+    # Bind the reconstruction to the exact release evidence it recomputed from so
+    # downstream validators can reject a reconstruction whose claims no longer
+    # match the current forecast/metric indices.
+    forecast_index_sha256 = hashlib.sha256((release / "runs/forecast-index.jsonl").read_bytes()).hexdigest()
+    metric_index_sha256 = hashlib.sha256((release / "runs/metric-index.jsonl").read_bytes()).hexdigest()
     mismatches = []
     reconstructed = 0
     for game in ("dlt", "ssq"):
@@ -241,6 +246,7 @@ def main() -> int:
         "outer_target_count": 300, "model_target_count": reconstructed,
         "fold_reconstruction_coverage": reconstructed / 600, "lambda_reconstruction_coverage": reconstructed / 600,
         "weight_reconstruction_coverage": reconstructed / 600, "actual_probability_match_rate": (reconstructed - len([row for row in mismatches if row.startswith("actual-probability:")])) / 600,
+        "forecast_index_sha256": forecast_index_sha256, "metric_index_sha256": metric_index_sha256,
         "guarded_label_unlock": guarded_unlock,
         "mismatches": mismatches, "blocking_findings": len(mismatches) + len(guarded_unlock["mismatches"]),
     }

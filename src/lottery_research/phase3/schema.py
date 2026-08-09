@@ -29,6 +29,8 @@ SCHEMA_FILES = {
     "qualification_negative_control": "qualification-negative-control.schema.json",
     "qualification_stage": "qualification-stage.schema.json",
     "qualification_report": "qualification-report.schema.json",
+    "independent_model_reconstruction": "independent-model-reconstruction.schema.json",
+    "e2e_receipt": "e2e-receipt.schema.json",
 }
 
 

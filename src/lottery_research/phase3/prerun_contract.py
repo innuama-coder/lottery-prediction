@@ -12,7 +12,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 AUTHORITY = {
     "path": "tasks/phase3/README.md",
-    "sha256": "7c8b1cf67b1a8e2bc6710c8c5ddc674e56250a216684c985f133a2b2689e1685",
+    "sha256": "05dcacc08bb4132247d80047b190c69151dc7764d18a585dba2b6ec46fc116ae",
     "identity_status": "candidate_pending_release_commit",
 }
 

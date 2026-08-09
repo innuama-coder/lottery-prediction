@@ -208,6 +208,8 @@
 - 模型、特征、指标或 acceptance 制品被篡改。
 - 没有 challenger 合格时仍能生成诚实的 `GO / no_shadow_candidate` 结论。
 
+E2E 篡改验证按可执行时序分为两类，且都必须在最终交接前完成：验收前（pre-acceptance）对隔离 staging 施加 mutation 并观察生产底层 validator 终态的一类由 W11 覆盖；验收后对已生成 acceptance 与最终 manifest 的篡改（含 W10 独立重建、E2E receipt、准备证据等所列文件在 acceptance 后被改动）由 W13 在交接前递归核对哈希与大小并 fail closed。
+
 ### 9.7 最终验收
 
 - 最终 validator 从冻结输入、逐期预测、实验账本和复核制品重新计算核心指标、模型分类、交付覆盖率和阻断问题数量。

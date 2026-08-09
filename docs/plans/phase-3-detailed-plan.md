@@ -261,11 +261,12 @@ W03 不得自由选择上述方法。M1 估计式、`lambda=[1,5,20,100]`、20 �
 
 **执行与输出：**
 
-- 执行正常全链路以及输入/规则不一致、同/未来期关系、预测前标签读取、外部时间/开奖后泄漏、非法/负/不归一概率、outer 污染、失败实验删除/覆盖、历史越权晋级、replay 不一致和 manifest/acceptance 篡改。
-- 执行“无 challenger 合格”正例，必须得到诚实的 `GO / no_shadow_candidate`；执行证据不足正例，允许 `GO / indeterminate`。
+- 执行正常全链路以及输入/规则不一致、同/未来期关系、预测前标签读取、外部时间/开奖后泄漏、非法/负/不归一概率、outer 污染、失败实验删除/覆盖、历史越权晋级和 replay 不一致。
+- W11 只能测试验收前（pre-acceptance）的生产 validator 用例：此时 W12 的 acceptance 与显式 manifest 尚未生成，因此 E2E 对隔离 staging 副本施加单点 mutation 后调用 `validate --scope final` 的底层 validator 观察终态。验收后的 acceptance/manifest 篡改验证属于 W13（见下），因为只有 W12 之后才存在可被篡改的 acceptance 与 manifest。两类篡改都必须在最终交接前被测试到。
+- 执行"无 challenger 合格"正例，必须得到诚实的 `GO / no_shadow_candidate`；执行证据不足正例，允许 `GO / indeterminate`。
 - 验证 final validator 必须从底层逐期预测、ledger、replay 和显式 manifest 重算，而不是信顶层 status。
-- 输出每个 E2E 的唯一 receipt、命令、预期/实际退出码、终态、断言和哈希。
-- 每个负向 E2E 必须从隔离 staging 副本执行真实单点 mutation，再调用生产 validator 观察终态；直接构造或硬编码 `actual_terminal` 不算执行，不得通过 W11。
+- 输出每个 E2E 的唯一 receipt、命令、预期/实际退出码、终态、实际守卫码（stable guard/error code）和断言；正例终态 `PASS_NO_SHADOW_CANDIDATE` 与 `PASS_INDETERMINATE` 记录退出码 0。
+- 每个负向 E2E 必须从隔离 staging 副本执行真实单点 mutation，再在生产 validator 的独立进程中观察其实际终态、实际守卫码和进程退出码；只有命中注册守卫码才记为该终态。直接构造或硬编码 `actual_terminal`/拒绝原因不算执行，不得通过 W11；命中错误守卫、缺失文件或畸形 JSON 的无关异常必须判该用例失败。
 
 **失败处理与证据：** 必需 E2E 缺失、重复、预期终态不符或负向用例被接受时阻断 W12。修复实现后回到 W04；若修改冻结研究语义则回到 W03 并创建新 release。失败 E2E 永不删除。
 
@@ -294,6 +295,7 @@ W03 不得自由选择上述方法。M1 估计式、`lambda=[1,5,20,100]`、20 �
 **执行与输出：**
 
 - 若 W12 为 GO，冻结 release/manifest/acceptance，记录实际完成 workload，并交接历史研究基线、限制及可能的 `shadow_candidate` 清单；M0 继续为 Champion。
+- 在签发交接 PASS 前，解析并 schema 校验最终 manifest，按当前 release 树递归重算每个所列文件（含 W10 独立重建、E2E receipt、准备证据等）的哈希与大小，并精确放行 W12/W13 产生的后置 manifest 额外文件；任何所列文件在 acceptance 之后被改动，或出现未登记且不在允许后置集合内的额外文件，都必须让交接 fail closed。这是 W11 之外的验收后 acceptance/manifest 篡改验证，归属 W13。
 - 若为可恢复 HOLD，按 finding 判断最早受影响的 W01–W12 节点，创建唯一 iteration 和 run/release identity，引用而不覆盖旧证据，仅重做依赖于修复的后续步骤。
 - 若为 FAIL / STOP，封存现场、输入、日志、部分制品、finding 和越界证据，停止正式计算。
 - 任何未来 shadow 工作只作为新任务提出，不在本计划内启动。

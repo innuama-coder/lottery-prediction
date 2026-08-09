@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from .serialization import load_json
+from .serialization import sha256_file
 from .schema import validate_payload
 
 
@@ -12,6 +13,13 @@ def load_and_validate_registries(root: Path) -> tuple[dict[str, Any], dict[str, 
     feature = load_json(root / "config/phase3/feature-registry.json")
     validate_payload(root, "model_registry", model)
     validate_payload(root, "feature_registry", feature)
+    source = root / model["implementation_identity"]["source_path"]
+    if model["implementation_identity"]["source_sha256"] != sha256_file(source) or feature["implementation_identity"]["source_sha256"] != sha256_file(source):
+        raise ValueError("registry implementation source identity mismatch")
+    if model["implementation_identity"]["preregistration_sha256"] != sha256_file(root / "config/phase3/preregistration.json"):
+        raise ValueError("model registry preregistration identity mismatch")
+    if feature["implementation_identity"]["data_time_contract_sha256"] != sha256_file(root / "config/phase3/data-time-contract.json"):
+        raise ValueError("feature registry data-time identity mismatch")
     if set(model["models"]) != {"M0", "M1", "M2", "M3", "M4", "M5", "M6", "M7"}:
         raise ValueError("model registry coverage mismatch")
     if model["models"]["M0"]["role"] != "permanent_champion":

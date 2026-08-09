@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","additionalProperties":false,
+  "required":["schema_version","artifact_type","identity","status","terminal","process_exit_code","completed_replications","checkpoint_sha256","ledger_sha256","command","pid"],
+  "properties":{"schema_version":{"const":"3.0.0"},"artifact_type":{"const":"phase3_qualification_stage_receipt"},"identity":{"type":"string"},"status":{"const":"HOLD"},"terminal":{"const":"CONTROLLED_INTERRUPT_AFTER_UNIFORM"},"process_exit_code":{"const":20},"completed_replications":{"const":{"uniform":1000,"injected":0}},"checkpoint_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"ledger_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"command":{"type":"array","minItems":1,"items":{"type":"string"}},"pid":{"type":"integer","minimum":1}}
+}

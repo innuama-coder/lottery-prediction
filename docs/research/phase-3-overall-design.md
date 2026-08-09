@@ -2,7 +2,7 @@
 
 版本：1.2
 
-状态：权威实施设计；W04-W07 候选实现已存在但必须按本版合同重新资格验证，正式历史运行、独立复核和最终验收尚未完成
+状态：权威实施设计；正式实现必须按本版合同通过 W01-W07 后方可执行历史运行
 
 冻结上位定义：`tasks/phase3/README.md`（SHA-256 `0b1bcc329c8063a8336e188e7e88b99542c038cc28a51387b81867d5953e1cdf`）
 
@@ -144,6 +144,7 @@ theta_i(lambda) = r_i(lambda) - mean_j(r_j(lambda))
 - 两个按时间连续且大小差不超过 1 的半段平均 skill 均须大于 0；任一单目标对全部正 skill 之和的贡献不得超过 20%。规则段至少有 20 个 outer targets 时，其平均 skill 也须大于 0。
 - inclusion Brier 不得高于 M0；10 个等宽预测概率 bin 的加权 ECE 不得高于 `M0 + 0.005`。删除最早 10% 和最晚 10% 目标两种敏感性运行的平均 skill 均须大于 0。
 - 均匀世界 false-selection rate 必须不高于 5%；注入静态权重世界的方向恢复率必须至少 90%。两者均使用 `N=10,k=3`，每个复制 200 期、前 50 期为初始训练、后 150 期滚动评价；注入 `theta=[0.4,0.3,0.2,0.1,0,0,-0.1,-0.2,-0.3,-0.4]`。方向恢复定义为 outer mean skill>0 且最终拟合 theta 与注入 theta 的 Spearman 相关>0。两种世界各固定 1,000 个复制并使用注册种子派生规则。
+- 资格模拟中的 uniform false selection 事件在结果前固定为：150 个 outer skill 的均值严格大于 `log(1.001)`，且两个连续时间半段的均值都严格大于 0。Spearman 对并列值使用从 1 开始的平均秩，最终 theta 只在最后一个 outer target 以前的 199 期前缀上拟合；这些定义及生成器源码哈希写入 preregistration，执行人不得结果后改写。
 - 所有概率、隔离、ledger、E2E、独立 replay 守护门通过，blocking finding=0。
 
 模型分类使用以下顺序唯一决策树；禁止人工覆盖：未开放模型为 `not_opened`；概率、泄漏、ledger、选择性删除或其他完整性门失败为 `rejected`；两个彩种的全部 shadow 门均通过为 `shadow_candidate`；否则，若至少一个彩种的 percentile 区间满足 `lower<=delta<upper` 且该彩种除 bootstrap/Holm 外的全部方向、稳定性、Brier、ECE、敏感性和完整性门通过，则为 `indeterminate`；其余过程完整但未通过 shadow 门的模型为 `archived`。阶段汇总按 `shadow_candidate` 优先，其次 `indeterminate`，否则 `no_shadow_candidate`。任何单一期、单折、主观“可解释性”或结果后补写规则都不能改变分类。

@@ -1,12 +1,13 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "additionalProperties": false,
-  "required": ["schema_version", "artifact_type", "identity", "source_identity", "status", "terminal", "non_formal_synthetic_only", "independence", "differences", "blocking_findings"],
-  "properties": {
-    "schema_version": {"const": "3.0.0"}, "artifact_type": {"const": "phase3_replay"}, "identity": {"type": "string"},
-    "source_identity": {"type": "string"}, "status": {"enum": ["PASS", "HOLD"]}, "terminal": {"enum": ["PASS", "EVIDENCE_MISMATCH"]},
-    "non_formal_synthetic_only": {"type": "boolean"}, "independence": {"type": "string"},
-    "differences": {"type": "array", "items": {"type": "string"}}, "blocking_findings": {"type": "integer", "minimum": 0}
+  "$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","additionalProperties":false,
+  "required":["schema_version","artifact_type","identity","source_identity","release_id","status","terminal","non_formal_synthetic_only","independence","outer_target_count","forecast_probability_count","input_fold_match_rate","probability_match_rate","metric_match_rate","bootstrap_match_rate","classification_match_rate","differences","blocking_findings","distribution_audits","known_answer"],
+  "properties":{
+    "schema_version":{"const":"3.0.0"},"artifact_type":{"const":"phase3_replay"},"identity":{"type":"string"},"source_identity":{"type":"string"},"release_id":{"type":"string"},
+    "status":{"enum":["PASS","HOLD"]},"terminal":{"enum":["PASS","EVIDENCE_MISMATCH"]},"non_formal_synthetic_only":{"const":false},"independence":{"type":"string"},
+    "outer_target_count":{"const":300},"forecast_probability_count":{"const":600},
+    "input_fold_match_rate":{"type":"number","minimum":0,"maximum":1},"probability_match_rate":{"type":"number","minimum":0,"maximum":1},
+    "metric_match_rate":{"type":"number","minimum":0,"maximum":1},"bootstrap_match_rate":{"type":"number","minimum":0,"maximum":1},"classification_match_rate":{"type":"number","minimum":0,"maximum":1},
+    "differences":{"type":"array","items":{"type":"string"}},"blocking_findings":{"type":"integer","minimum":0},
+    "distribution_audits":{"type":"array","minItems":6,"maxItems":6,"items":{"type":"object"}},"known_answer":{"type":"object"}
   }
 }

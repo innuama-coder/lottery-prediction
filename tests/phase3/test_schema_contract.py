@@ -15,6 +15,7 @@ class SchemaContractTests(unittest.TestCase):
             "input_manifest", "preregistration", "model_registry", "feature_registry", "fold",
             "forecast", "metric", "experiment_ledger", "replay", "review", "manifest", "acceptance",
             "actor_assignment", "handoff", "work_item_receipt",
+            "qualification_replication", "qualification_negative_control", "qualification_stage", "qualification_report",
         }
         self.assertEqual(set(SCHEMA_FILES), required)
         for filename in SCHEMA_FILES.values():

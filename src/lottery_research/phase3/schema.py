@@ -24,6 +24,10 @@ SCHEMA_FILES = {
     "actor_assignment": "actor-assignment.schema.json",
     "handoff": "handoff.schema.json",
     "work_item_receipt": "work-item-receipt.schema.json",
+    "qualification_replication": "qualification-replication.schema.json",
+    "qualification_negative_control": "qualification-negative-control.schema.json",
+    "qualification_stage": "qualification-stage.schema.json",
+    "qualification_report": "qualification-report.schema.json",
 }
 
 

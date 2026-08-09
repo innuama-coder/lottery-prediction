@@ -49,6 +49,17 @@ class ProbabilityContractTests(unittest.TestCase):
         self.assertEqual(len({(row["front"], row["back"]) for row in top}), 5)
         self.assertTrue(all(row["probability"] >= 0.0 for row in top))
 
+    def test_best_first_top_k_matches_full_enumeration(self) -> None:
+        model = FixedCardinalityDistribution.from_theta([0.8, 0.1, -0.2, 0.4, -0.7, 0.3], 3)
+        expected = sorted(
+            ((item, model.probability(item)) for item in itertools.combinations(range(1, 7), 3)),
+            key=lambda row: (-row[1], row[0]),
+        )[:10]
+        actual = model.top_k(10)
+        self.assertEqual([row[0] for row in actual], [row[0] for row in expected])
+        for (_, left), (_, right) in zip(actual, expected, strict=True):
+            self.assertAlmostEqual(left, right, places=15)
+
     def test_real_game_spaces_have_dp_normalization_proof(self) -> None:
         ssq_front = FixedCardinalityDistribution.uniform(33, 6)
         ssq_back = FixedCardinalityDistribution.uniform(16, 1)

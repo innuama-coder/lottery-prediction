@@ -1,0 +1,1 @@
+{"artifact_type":"phase3_preserved_failed_command","command":"validate --scope implementation","error":"component-benchmarks.json was not yet visible when validation raced the still-running W04 preparation process","exit_code":3,"identity":"P3-PREP-90b566e-20260809-r01-W04","preservation":"append_only_not_a_work_item_receipt","status":"FAIL","terminal":"ENVIRONMENT_FAILURE"}

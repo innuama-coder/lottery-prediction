@@ -81,11 +81,35 @@ PYTHONPATH=src python3 scripts/phase3/validate_prerun_contract.py \
 ```
 
 The W04-W13 commands and receipt-emission suffixes are defined without omitted
-arguments in `docs/plans/phase-3-detailed-plan.md`. The checked-in qualification
-implementation currently executes one replication per world and therefore
-returns `HOLD_INCOMPLETE_QUALIFICATION`; it must not be reported as W06 PASS.
+arguments in `docs/plans/phase-3-detailed-plan.md`. `qualify` executes all 1,000
+uniform and 1,000 injected registered worlds plus the frozen probability,
+leakage, isolation, ledger, recovery, and authorization negative controls. It
+returns PASS only when both numerical thresholds and every guard pass. `run`
+consumes a W07 authorization and performs the 600 registered M0/M1 logical
+experiments; there is no synthetic-only or fixed-HOLD formal command path.
 Until W04-W07 produce their complete receipts, formal `run` and final acceptance
-remain unauthorized. This HOLD is operational and is not a PIT-data gap.
+remain unauthorized. Any such refusal is operational and is not a PIT-data gap.
+
+W04 dependency and component evidence is generated before implementation
+validation with the explicit preparation identity:
+
+```bash
+PYTHONPATH=src python3 scripts/phase3/prepare_w04.py --prep-root "$PREP_ROOT"
+```
+
+The script builds the wheelhouse from `requirements/phase3.lock`, records every
+wheel SHA-256, rebuilds a temporary isolated environment with `--no-index
+--find-links`, and runs 20 observed repetitions of each of the seven frozen
+component benchmarks. Formal W08-W13 commands do not fetch inputs or dependencies.
+
+W06 deliberately crosses a real process boundary. The first `qualify` invocation
+uses `--stop-after-uniform`, closes the append-only ledger after all 1,000 uniform
+worlds, writes a hash-bound checkpoint, and exits 20 with
+`CONTROLLED_INTERRUPT_AFTER_UNIFORM`. A second invocation uses the exact same
+identity and output with `--resume`; it validates the preserved hashes, appends
+the 1,000 injected worlds and real negative-control mutations, and is the only
+invocation that emits the W06 PASS receipt. An output without the first-stage
+checkpoint cannot be resumed.
 
 ## Identities, recovery, and evidence
 

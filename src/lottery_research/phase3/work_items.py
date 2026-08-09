@@ -222,6 +222,15 @@ def create_command_work_item_receipt(
     owner = owners[0]
     output_root = _resolve(root, command_output)
     output_files = sorted(path for path in output_root.rglob("*") if path.is_file())
+    release_root = output_root.parents[1] if work_item == "W12" else output_root.parent
+    extra_by_work_item = {
+        "W07": (release_root / "control/formal-run-registry.json", release_root / "control/approved-workload.json", release_root / "control/artifact-whitelist.json", release_root / "control/formal-authorization.json", release_root / "control/implementation-inventory.json"),
+        "W10": (release_root / "review/review.json", release_root / "review/independent-model-reconstruction.json"),
+        "W12": (release_root / "manifest/final-evidence-manifest.json", release_root / "reports/final-research-report.json", release_root / "reports/final-research-report.md"),
+        "W13": (release_root / "handoff/handoff.json",),
+    }
+    output_files.extend(path for path in extra_by_work_item.get(work_item, ()) if path.is_file())
+    output_files = sorted(set(output_files))
     if not output_files:
         raise ValueError("work item command produced no output artifacts")
     receipt = {

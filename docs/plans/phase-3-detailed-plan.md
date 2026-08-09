@@ -2,7 +2,7 @@
 
 版本：1.2
 
-状态：合同修订完成；W04-W07 候选实现须按本版重新资格验证，W08-W13 尚未正式运行
+状态：合同修订完成；任何实现和正式 release 均须依次按 W01-W13 生成不可变证据
 
 上位权威：`tasks/phase3/README.md`
 
@@ -79,7 +79,7 @@ W04-W13 的表内命令必须追加下表对应的精确 receipt 发射参数，
 | W03 | statistical_owner | preregistration、方法预审；W03 receipt | 同脚本 `--check W03 --identity "$PREP_ID-W03" --actor-assignments "$PREP_ACTORS" --upstream-receipt "$PREP_ROOT/work-items/W02/receipt.json" --output "$PREP_ROOT/work-items/W03/receipt.json"`；冻结字段完整且 blocking=0，exit 0 |
 | W04 | implementation_author | Schema/CLI/实现/测试/lock/wheelhouse/七类 benchmark；W04 receipt | `TMPDIR=/private/tmp PYTHONPATH=src python3 -m unittest discover -s tests/phase3 -p "test_*.py" -v`；再执行 `PYTHONPATH=src python3 -m lottery_research.phase3 validate --scope implementation --identity "$PREP_ID-W04" --output "$PREP_ROOT/implementation-validation" --prep-root "$PREP_ROOT" --actor-assignments "$PREP_ACTORS"`，均 exit 0 |
 | W05 | statistical_owner | model/feature registries、开放判定；W05 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 validate --scope registries --identity "$PREP_ID-W05" --output "$PREP_ROOT/registry-validation" --prep-root "$PREP_ROOT" --actor-assignments "$PREP_ACTORS"`，exit 0 |
-| W06 | independent_method_reviewer | qualification 2,000 replications、故障注入；W06 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 qualify --identity "$PREP_ID-W06" --output "$PREP_ROOT/qualification" --prep-root "$PREP_ROOT" --actor-assignments "$PREP_ACTORS"`；2,000/2,000、场景/终态 100%，exit 0 |
+| W06 | independent_method_reviewer | qualification 2,000 replications、故障注入；W06 receipt | 先运行 `PYTHONPATH=src python3 -m lottery_research.phase3 qualify --identity "$PREP_ID-W06" --output "$PREP_ROOT/qualification" --prep-root "$PREP_ROOT" --actor-assignments "$PREP_ACTORS" --stop-after-uniform`，得到受控中断 exit 20 和不可变 checkpoint；再以同一 identity/output 运行同命令但将末参数替换为 `--resume` 并追加 W06 receipt 发射参数；最终 2,000/2,000、场景/终态 100%，exit 0 |
 | W07 | release_controller | readiness、正式合同/registry/actor assignment/formal registry；W07 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 readiness --identity "$RELEASE_ID-W07" --output "$RELEASE_ROOT/readiness" --prep-root "$PREP_ROOT" --release-root "$RELEASE_ROOT" --actor-assignments "$FORMAL_ACTORS"`；正式结果 0、预算完整，exit 0 |
 | W08 | run_operator | 600 个逻辑实验及 attempts/ledgers；W08 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 run --identity "$RELEASE_ID-W08" --output "$RELEASE_ROOT/runs" --release-root "$RELEASE_ROOT" --actor-assignments "$FORMAL_ACTORS"`；300 targets 的 M0/M1 canonical 覆盖 100%，exit 0 |
 | W09 | statistical_owner | evaluation、逐期/汇总指标、唯一分类；W09 receipt | `PYTHONPATH=src python3 -m lottery_research.phase3 evaluate --identity "$RELEASE_ID-W09" --output "$RELEASE_ROOT/evaluation" --release-root "$RELEASE_ROOT" --actor-assignments "$FORMAL_ACTORS"`；指标/分类覆盖 100%，exit 0 |

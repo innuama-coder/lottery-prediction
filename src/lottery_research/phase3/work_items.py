@@ -223,6 +223,12 @@ def create_command_work_item_receipt(
     output_root = _resolve(root, command_output)
     output_files = sorted(path for path in output_root.rglob("*") if path.is_file())
     release_root = output_root.parents[1] if work_item == "W12" else output_root.parent
+    if work_item == "W10":
+        # The W10 receipt may not be emitted unless the standalone independent
+        # model reconstruction is present and valid; it is never an optional
+        # attachment. Lazy import avoids a formal <-> work_items import cycle.
+        from .formal import validate_independent_reconstruction
+        validate_independent_reconstruction(root, release_root)
     extra_by_work_item = {
         "W07": (release_root / "control/formal-run-registry.json", release_root / "control/approved-workload.json", release_root / "control/artifact-whitelist.json", release_root / "control/formal-authorization.json", release_root / "control/implementation-inventory.json"),
         "W10": (release_root / "review/review.json", release_root / "review/independent-model-reconstruction.json"),

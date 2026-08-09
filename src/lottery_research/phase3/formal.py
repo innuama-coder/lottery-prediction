@@ -1241,17 +1241,116 @@ def validate_existing_readiness(root: Path, output: Path, identity: str, release
     return result
 
 
-def run_formal(root: Path, output: Path, identity: str, release_root: Path) -> dict[str, Any]:
-    disable_network()
-    destination = new_directory(output, identity)
+def _verify_completed_run_bindings(release_root: Path, canonical: dict[str, str]) -> None:
+    """Verify preserved forecasts/metrics still bind to the succeeded ledger attempts."""
+
+    ledger_path = release_root / "runs/experiment-ledger.jsonl"
+    by_key: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for row in _read_jsonl(ledger_path):
+        by_key.setdefault((row["experiment_id"], row["attempt_id"]), []).append(row)
+    expected_chain = ["started", "forecast_locked", "label_unlocked", "scored", "succeeded"]
+    for experiment_id, attempt_id in canonical.items():
+        events = by_key.get((experiment_id, attempt_id), [])
+        if [event["state"] for event in events] != expected_chain:
+            raise ValueError(f"run resume succeeded attempt lacks a complete event chain: {experiment_id}")
+        lock = next(event for event in events if event["state"] == "forecast_locked")
+        scored = next(event for event in events if event["state"] == "scored")
+        forecast_path = release_root / lock["details"]["forecast_path"]
+        metric_path = release_root / scored["details"]["metric_path"]
+        if not forecast_path.is_file() or sha256_file(forecast_path) != lock["details"]["forecast_sha256"]:
+            raise ValueError(f"run resume completed forecast binding mismatch: {experiment_id}")
+        if not metric_path.is_file() or sha256_file(metric_path) != scored["details"]["metric_sha256"]:
+            raise ValueError(f"run resume completed metric binding mismatch: {experiment_id}")
+
+
+def _resume_formal_revalidate(root: Path, release_root: Path, destination: Path, identity: str) -> dict[str, Any]:
+    """Revalidate every frozen invariant before appending to a partially-run release.
+
+    Authorization, the immutable run identity, the checkpoint payload hash, the
+    completed artifact bindings, and the canonical ledger attempts are all
+    rechecked. Partial evidence and failed/incomplete attempts are never deleted.
+    A destination that already holds a completed run-summary is rejected as a
+    duplicate resume.
+    """
+
+    ledger_path = destination / "experiment-ledger.jsonl"
+    if not ledger_path.is_file():
+        raise ValueError("run resume experiment ledger is missing")
+    if (destination / "run-summary.json").is_file():
+        raise ValueError("run resume destination already holds a completed run-summary")
     control = validate_authorization(root, release_root)
-    targets = load_target_catalog(root)
-    ledger = AppendOnlyLedger(destination / "experiment-ledger.jsonl", identity)
-    scoring_capability = activate_scoring_capability()
-    label_store = GuardedLabelStore(root, capability=scoring_capability)
+    ledger = AppendOnlyLedger(ledger_path, identity, resume=True)
+    validate_ledger(ledger_path)
+    canonical = canonical_attempts(ledger_path)
+    if len(canonical) > 600:
+        raise ValueError("run resume canonical attempt count exceeds the registered workload")
+    succeeded_by_target: dict[tuple[str, str], set[str]] = {}
+    for experiment_id in canonical:
+        game, target_issue, _model_id = experiment_id.rsplit("-", 2)
+        succeeded_by_target.setdefault((game, target_issue), set()).add(experiment_id.rsplit("-", 2)[2])
+    initial_completed_targets = sum(1 for models in succeeded_by_target.values() if models == {"M0", "M1"})
+    checkpoint_paths = sorted(destination.glob("checkpoints/target-*.json"), key=lambda path: int(path.stem.split("-")[1]))
+    last_checkpoint_target = 0
+    if checkpoint_paths:
+        latest = checkpoint_paths[-1]
+        CheckpointStore(latest, identity).load()
+        last_checkpoint_target = int(latest.stem.split("-")[1])
+    _verify_completed_run_bindings(release_root, canonical)
+    return {
+        "control": control, "ledger": ledger, "succeeded_experiments": set(canonical),
+        "initial_completed_targets": initial_completed_targets, "last_checkpoint_target": last_checkpoint_target,
+    }
+
+
+def _rebuild_run_indexes(destination: Path, targets: Sequence[Any]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Rebuild forecast/metric indexes from persisted artifacts in catalog order."""
+
     consolidated_forecasts: list[dict[str, Any]] = []
     consolidated_scores: list[dict[str, Any]] = []
-    completed_targets = 0
+    for target in targets:
+        for model_id in ("M0", "M1"):
+            forecast_path = destination / "forecasts" / target.game / target.target_issue / f"{model_id}.json"
+            metric_path = destination / "scores" / target.game / target.target_issue / f"{model_id}.json"
+            if not forecast_path.is_file() or not metric_path.is_file():
+                raise ValueError(f"run finalization is missing forecast/metric for {target.game}-{target.target_issue}-{model_id}")
+            consolidated_forecasts.append({
+                "path": forecast_path.relative_to(destination).as_posix(), "sha256": sha256_file(forecast_path),
+                "game": target.game, "target_issue": target.target_issue, "model_id": model_id,
+            })
+            metric = load_json(metric_path)
+            consolidated_scores.append({"path": metric_path.relative_to(destination).as_posix(), **metric})
+    return consolidated_forecasts, consolidated_scores
+
+
+def run_formal(root: Path, output: Path, identity: str, release_root: Path, *, resume: bool = False, stop_after_targets: int | None = None) -> dict[str, Any]:
+    disable_network()
+    if resume and stop_after_targets is not None:
+        raise ValueError("run cannot resume and stop after targets in the same invocation")
+    if resume:
+        destination = output.resolve()
+        if not destination.is_dir():
+            raise ValueError("run resume destination is missing")
+        resume_state = _resume_formal_revalidate(root, release_root, destination, identity)
+        control = resume_state["control"]
+        ledger = resume_state["ledger"]
+        succeeded_experiments: set[str] = resume_state["succeeded_experiments"]
+        completed_targets = resume_state["initial_completed_targets"]
+        last_checkpoint_target = resume_state["last_checkpoint_target"]
+        resumed = True
+    else:
+        destination = new_directory(output, identity)
+        control = validate_authorization(root, release_root)
+        ledger = AppendOnlyLedger(destination / "experiment-ledger.jsonl", identity)
+        succeeded_experiments = set()
+        completed_targets = 0
+        last_checkpoint_target = 0
+        resumed = False
+    targets = load_target_catalog(root)
+    if stop_after_targets is not None and not (0 < stop_after_targets < len(targets)):
+        raise ValueError("stop-after-targets must be a strict interior target count")
+    scoring_capability = activate_scoring_capability()
+    label_store = GuardedLabelStore(root, capability=scoring_capability)
+    new_unlock_count = 0
     spawn_context = multiprocessing.get_context("spawn")
     with concurrent.futures.ProcessPoolExecutor(max_workers=1, mp_context=spawn_context) as trainer_pool:
         trainer_probe = trainer_pool.submit(_trainer_label_store_access_probe, root.as_posix()).result(timeout=30)
@@ -1259,6 +1358,9 @@ def run_formal(root: Path, output: Path, identity: str, release_root: Path) -> d
             raise ValueError("TRAINER_PROCESS_CAPABILITY_PROBE_REJECTED")
         for target in targets:
             game, target_issue = target.game, target.target_issue
+            missing_models = tuple(model_id for model_id in ("M0", "M1") if f"{game}-{target_issue}-{model_id}" not in succeeded_experiments)
+            if not missing_models:
+                continue
             prefix = read_training_prefix(root, target)
             trainer_payload = trainer_input_payload(target, prefix)
             trained = trainer_pool.submit(_trainer_fit_target, trainer_payload).result()
@@ -1269,6 +1371,8 @@ def run_formal(root: Path, output: Path, identity: str, release_root: Path) -> d
                 require_strictly_earlier(source["issue_id"], target_issue)
             for model_id in ("M0", "M1"):
                 experiment = f"{game}-{target_issue}-{model_id}"
+                if experiment in succeeded_experiments:
+                    continue
                 attempt = f"{experiment}-attempt-01"
                 ledger.start(experiment, {"release_id": release_root.name, "game": game, "target_issue": target_issue, "model_id": model_id, "input_sha256": control["input_manifest_sha256"], "network_requests": 0}, attempt_id=attempt)
                 trained_model = trained["models"][model_id]
@@ -1307,6 +1411,7 @@ def run_formal(root: Path, output: Path, identity: str, release_root: Path) -> d
                     model_id=model_id, forecast_path=forecast_path,
                     receipt_path=destination / "label-unlocks" / game / target_issue / f"{model_id}.json",
                 )
+                new_unlock_count += 1
                 observed_front, observed_back = unlocked.front_numbers, unlocked.back_numbers
                 model = distribution_from_payload(forecast["distribution"])
                 probability = model.probability(observed_front, observed_back)
@@ -1329,31 +1434,44 @@ def run_formal(root: Path, output: Path, identity: str, release_root: Path) -> d
                 write_new_json(metric_path, metric)
                 ledger.progress(experiment, "scored", {"metric_path": metric_path.relative_to(release_root).as_posix(), "metric_sha256": sha256_file(metric_path)}, attempt_id=attempt)
                 ledger.finish(experiment, "succeeded", {"network_requests": 0}, attempt_id=attempt)
-                consolidated_forecasts.append({"path": forecast_path.relative_to(destination).as_posix(), "sha256": locked_sha, "game": game, "target_issue": target_issue, "model_id": model_id})
-                consolidated_scores.append({"path": metric_path.relative_to(destination).as_posix(), **metric})
                 del unlocked, observed_front, observed_back
             completed_targets += 1
-            if completed_targets % 10 == 0:
+            if completed_targets % 10 == 0 and completed_targets > last_checkpoint_target:
                 checkpoint = CheckpointStore(destination / "checkpoints" / f"target-{completed_targets:03d}.json", identity)
                 checkpoint.write_new({"completed_targets": completed_targets, "completed_logical_experiments": completed_targets * 2})
                 checkpoint.load()
+            if stop_after_targets is not None and completed_targets >= stop_after_targets:
+                ledger.close()
+                stage = {
+                    "schema_version": "3.0.0", "artifact_type": "phase3_run_stage_receipt", "identity": identity,
+                    "status": "HOLD", "terminal": "CONTROLLED_INTERRUPT_AFTER_TARGETS", "process_exit_code": 20,
+                    "completed_targets": completed_targets, "completed_logical_experiments": completed_targets * 2,
+                    "resumable": True, "resume_command": ["python3", "-m", "lottery_research.phase3", "run", "--resume", "--identity", identity, "--output", str(destination), "--release-root", str(release_root)],
+                    "command": list(sys.argv), "pid": os.getpid(),
+                    "trainer_process_pid": trainer_probe["pid"],
+                }
+                write_new_json(destination / "run-stage.json", stage)
+                return stage
     ledger.close()
     states = validate_ledger(destination / "experiment-ledger.jsonl")
     canonical = canonical_attempts(destination / "experiment-ledger.jsonl")
+    consolidated_forecasts, consolidated_scores = _rebuild_run_indexes(destination, targets)
     _write_jsonl_new(destination / "forecast-index.jsonl", consolidated_forecasts)
     _write_jsonl_new(destination / "metric-index.jsonl", consolidated_scores)
     write_new_json(destination / "canonical-attempts.json", canonical)
     guarded = validate_guarded_unlock_evidence(release_root)
-    if guarded["status"] != "PASS" or label_store.number_read_count != 600 or label_store.rejection_count != 0:
+    if guarded["status"] != "PASS" or label_store.number_read_count != new_unlock_count or label_store.rejection_count != 0:
         raise ValueError("guarded label unlock evidence did not close")
     receipt = {
         "schema_version": "3.0.0", "artifact_type": "phase3_formal_run_summary", "identity": identity,
         "release_id": release_root.name, "status": "PASS", "terminal": "PASS", "formal_run_authorized": True,
+        "run_pid": os.getpid(),
         "logical_experiment_count": len(canonical), "attempt_count": len(states), "outer_target_count": completed_targets,
         "m0_canonical_count": sum(key.endswith("-M0") for key in canonical), "m1_canonical_count": sum(key.endswith("-M1") for key in canonical),
         "canonical_coverage": len(canonical) / 600, "forecast_lock_order_violations": 0,
         "label_unlock_order_violations": 0, "network_request_count": 0, "checkpoint_count": completed_targets // 10,
-        "guarded_label_unlock": guarded, "label_store_number_read_count": label_store.number_read_count,
+        "guarded_label_unlock": guarded, "label_store_number_read_count": guarded["guarded_unlock_count"],
+        "process_label_unlock_count": new_unlock_count, "resumed_run": resumed,
         "pre_lock_label_read_count": guarded["pre_lock_label_read_count"],
         "label_unlock_identity_or_hash_mismatch_count": guarded["identity_or_hash_mismatch_count"],
         "trainer_process_isolation_coverage": 1.0,
@@ -1417,6 +1535,60 @@ def verify_explicit_manifest(base: Path, manifest: dict[str, Any], *, allowed_ex
     actual = {path.relative_to(base).as_posix() for path in base.rglob("*") if path.is_file()}
     extra = actual - listed - set(allowed_extras)
     return {"listed": len(listed), "missing": 0, "extra": len(extra), "duplicate": 0, "unsafe": 0}
+
+
+# Prefixes (and exact receipts) that W12/W13 legitimately create after the final
+# evidence manifest is sealed. The handoff manifest closure rejects any release
+# tree file that is neither manifest-listed nor inside one of these domains.
+_POST_MANIFEST_ALLOWED_PREFIXES = ("manifest/", "acceptance/", "handoff/", "handoff-validation/")
+_POST_MANIFEST_ALLOWED_RECEIPTS = ("work-items/W12/receipt.json", "work-items/W13/receipt.json")
+
+
+def _is_allowed_post_manifest_extra(relative: str) -> bool:
+    return relative in _POST_MANIFEST_ALLOWED_RECEIPTS or relative.startswith(_POST_MANIFEST_ALLOWED_PREFIXES)
+
+
+def verify_final_manifest_closure(root: Path, release_root: Path, manifest_path: Path) -> dict[str, Any]:
+    """Parse, schema-validate, and recursively verify the final evidence manifest.
+
+    Every manifest-listed file must still exist with its recorded hash and size
+    against the current release tree, and the only unlisted files permitted are
+    the exact post-manifest artifacts that W12/W13 create. A listed W10
+    reconstruction, E2E receipt, preparation-evidence, or any other manifest file
+    changed after acceptance makes this (and therefore handoff) fail closed.
+    """
+
+    release_root = release_root.resolve()
+    if not manifest_path.is_file():
+        raise ValueError("handoff final evidence manifest is missing")
+    manifest = load_json(manifest_path)
+    validate_payload(root, "manifest", manifest)
+    if canonical_sha256(manifest["files"]) != manifest["inventory_sha256"]:
+        raise ValueError("handoff manifest inventory hash mismatch")
+    listed: set[str] = set()
+    for row in manifest["files"]:
+        relative = row["path"]
+        if relative in listed or "latest" in relative.lower() or "*" in relative or ".." in Path(relative).parts:
+            raise ValueError("handoff manifest path is duplicate or unsafe")
+        listed.add(relative)
+        path = release_root / relative
+        if not path.is_file() or sha256_file(path) != row["sha256"] or path.stat().st_size != row["bytes"]:
+            raise ValueError(f"handoff manifest listed file mismatch: {relative}")
+    actual = {path.relative_to(release_root).as_posix() for path in release_root.rglob("*") if path.is_file()}
+    missing = listed - actual
+    if missing:
+        raise ValueError(f"handoff manifest lists missing files: {sorted(missing)}")
+    unexpected = sorted(relative for relative in (actual - listed) if not _is_allowed_post_manifest_extra(relative))
+    if unexpected:
+        raise ValueError(f"handoff manifest has unexpected post-manifest extras: {unexpected[:8]}")
+    allowed_extras = sorted(relative for relative in (actual - listed) if _is_allowed_post_manifest_extra(relative))
+    return {
+        "listed_file_count": len(listed),
+        "verified_file_count": len(listed),
+        "allowed_post_manifest_extra_count": len(allowed_extras),
+        "unexpected_extra_count": 0,
+        "manifest_sha256": sha256_file(manifest_path),
+    }
 
 
 def evaluate_formal(root: Path, output: Path, identity: str, release_root: Path) -> dict[str, Any]:
@@ -1640,7 +1812,66 @@ def replay_formal(root: Path, output: Path, identity: str, release_root: Path, a
     }
     validate_payload(root, "review", review)
     write_new_json(release_root / "review/review.json", review)
+    _run_independent_model_reconstruction(root, release_root)
     return replay
+
+
+def _run_independent_model_reconstruction(root: Path, release_root: Path) -> dict[str, Any]:
+    """Execute the standalone W10 reconstruction in a distinct process and validate it.
+
+    The W10 production command must run the independent estimator reconstruction
+    from frozen prefixes before it may report PASS. The standalone script imports
+    no phase3 model/evaluator code, so launching it as a subprocess keeps the
+    reference implementation process-isolated from the primary pipeline.
+    """
+
+    reconstruction_path = release_root / "review/independent-model-reconstruction.json"
+    script = root / "scripts/phase3/independent_model_reconstruction.py"
+    if not script.is_file():
+        raise ValueError("independent model reconstruction script is missing")
+    env = {**os.environ, "PYTHONPATH": str(root / "src")}
+    completed = subprocess.run(
+        [sys.executable, str(script), "--release-root", str(release_root), "--output", str(reconstruction_path)],
+        cwd=root, env=env, capture_output=True, text=True, check=False,
+    )
+    if completed.returncode != 0:
+        raise ValueError(
+            "independent model reconstruction subprocess failed: "
+            + completed.stderr.strip()[:400]
+        )
+    return validate_independent_reconstruction(root, release_root)
+
+
+def validate_independent_reconstruction(root: Path, release_root: Path) -> dict[str, Any]:
+    """Require and validate the standalone W10 model reconstruction artifact.
+
+    The reconstruction is a mandatory W10 deliverable, not an optional attachment.
+    A missing, HOLD/FAIL, malformed, wrong-release, incomplete, or hash-inconsistent
+    artifact must fail closed before any downstream PASS.
+    """
+
+    reconstruction_path = release_root / "review/independent-model-reconstruction.json"
+    if not reconstruction_path.is_file():
+        raise ValueError("independent model reconstruction artifact is missing")
+    artifact = load_json(reconstruction_path)
+    validate_payload(root, "independent_model_reconstruction", artifact)
+    if artifact["release_id"] != release_root.name:
+        raise ValueError("independent model reconstruction release identity mismatch")
+    if artifact["status"] != "PASS" or artifact["blocking_findings"] != 0:
+        raise ValueError("independent model reconstruction is not PASS")
+    if artifact["outer_target_count"] != 300 or artifact["model_target_count"] != 600:
+        raise ValueError("independent model reconstruction coverage count mismatch")
+    for field in (
+        "fold_reconstruction_coverage", "lambda_reconstruction_coverage",
+        "weight_reconstruction_coverage", "actual_probability_match_rate",
+    ):
+        if artifact[field] != 1.0:
+            raise ValueError(f"independent model reconstruction {field} is incomplete")
+    forecast_index_sha = sha256_file(release_root / "runs/forecast-index.jsonl")
+    metric_index_sha = sha256_file(release_root / "runs/metric-index.jsonl")
+    if artifact["forecast_index_sha256"] != forecast_index_sha or artifact["metric_index_sha256"] != metric_index_sha:
+        raise ValueError("independent model reconstruction evidence hash mismatch")
+    return artifact
 
 
 def validate_bottom_up(root: Path, release_root: Path, actor_path: Path, *, require_review: bool = True) -> dict[str, Any]:
@@ -1657,6 +1888,7 @@ def validate_bottom_up(root: Path, release_root: Path, actor_path: Path, *, requ
     guarded_unlock = validate_guarded_unlock_evidence(release_root)
     if guarded_unlock["status"] != "PASS":
         raise ValueError("guarded label unlock evidence mismatch")
+    validate_independent_reconstruction(root, release_root)
     draws = read_scoring_label_inventory(root, capability=activate_scoring_capability())
     target_catalog = {(row.game, row.target_issue): row for row in load_target_catalog(root)}
     score_index = {(row["game"], row["target_issue"], row["model_id"]): row for row in scores}
@@ -1666,6 +1898,14 @@ def validate_bottom_up(root: Path, release_root: Path, actor_path: Path, *, requ
         if not forecast_path.is_file() or sha256_file(forecast_path) != row["sha256"]:
             raise ValueError("forecast index hash mismatch")
         forecast = load_json(forecast_path)
+        # Emit stable guard codes for the probability/normalization properties
+        # ahead of the schema check so the W11 E2E cases observe a deterministic
+        # rejection reason rather than a generic schema diagnostic.
+        for partition in ("front", "back"):
+            section_weights = forecast.get("distribution", {}).get(partition, {}).get("weights", ())
+            if any((not math.isfinite(float(weight))) or float(weight) <= 0.0 for weight in section_weights):
+                raise ValueError("FORECAST_DISTRIBUTION_WEIGHT_REJECTED")
+        require_normalized(float(forecast["normalization_sum"]))
         validate_payload(root, "forecast", forecast)
         target_metadata = target_catalog.get((forecast["game"], forecast["target_issue"]))
         if target_metadata is None:
@@ -1827,42 +2067,166 @@ def _write_jsonl_replace(path: Path, rows: Iterable[dict[str, Any]]) -> None:
     _write_jsonl_new(path, rows)
 
 
+# Successful E2E terminals that must record process exit code 0.
+E2E_POSITIVE_TERMINALS = ("PASS", "PASS_NO_SHADOW_CANDIDATE", "PASS_INDETERMINATE")
+
+# Each registered negative E2E case maps to the stable guard/error code its
+# production-validator mutation must reach, and the terminal category that guard
+# represents. A case passes only when the validator is observed to fail with this
+# exact guard in a distinct process; an unrelated missing file, malformed JSON,
+# or wrong guard fails the case. Tokens are stable substrings of the
+# production bottom-up validator's own exception messages.
+E2E_CASE_GUARDS: dict[str, tuple[str, str]] = {
+    "E2E-P3-02-input-identity-tamper": ("frozen input manifest mismatch", "EVIDENCE_MISMATCH"),
+    "E2E-P3-03-sequence-label-leakage": ("outer target pollution or sequence violation", "REJECTED"),
+    "E2E-P3-04-external-post-draw-leakage": ("external_current_view_without_available_at", "REJECTED"),
+    "E2E-P3-05-outer-pollution": ("outer target pollution or sequence violation", "REJECTED"),
+    "E2E-P3-06-illegal-or-negative-probability": ("FORECAST_DISTRIBUTION_WEIGHT_REJECTED", "REJECTED"),
+    "E2E-P3-07-non-normalized-probability": ("NORMALIZATION_REJECTED", "REJECTED"),
+    "E2E-P3-08-ledger-delete-or-overwrite": ("registered experiment lacks a terminal state", "EVIDENCE_MISMATCH"),
+    "E2E-P3-09-champion-promotion": ("historical evidence attempted a forbidden authorization", "REJECTED"),
+    "E2E-P3-10-replay-mismatch": ("independent replay is not PASS", "EVIDENCE_MISMATCH"),
+    "E2E-P3-11-forecast-after-lock-tamper": ("guarded label unlock evidence mismatch", "EVIDENCE_MISMATCH"),
+    "E2E-P3-12-missing-metric": ("metric artifact missing", "EVIDENCE_MISMATCH"),
+    "E2E-P3-15-pre-lock-label-read": ("ledger label_unlocked is out of order", "EVIDENCE_MISMATCH"),
+    "E2E-P3-16-unlock-lock-hash-mismatch": ("guarded label unlock evidence mismatch", "EVIDENCE_MISMATCH"),
+    "E2E-P3-17-unlock-wrong-release": ("guarded label unlock evidence mismatch", "EVIDENCE_MISMATCH"),
+    "E2E-P3-18-unlock-wrong-experiment": ("guarded label unlock evidence mismatch", "EVIDENCE_MISMATCH"),
+    "E2E-P3-19-unlock-wrong-attempt": ("guarded label unlock evidence mismatch", "EVIDENCE_MISMATCH"),
+    "E2E-P3-20-unlock-wrong-target": ("guarded label unlock evidence mismatch", "EVIDENCE_MISMATCH"),
+    "E2E-P3-21-trainer-label-capability": ("trainer prefix capability isolation mismatch", "EVIDENCE_MISMATCH"),
+}
+
+
+_BOTTOM_UP_VALIDATOR_CHILD = r'''
+import json, sys
+from pathlib import Path
+root, release_root, actor_path, result_path = (Path(p) for p in sys.argv[1:5])
+try:
+    from lottery_research.phase3.formal import validate_bottom_up
+    validate_bottom_up(root, release_root, actor_path)
+    outcome = {"passed": True, "exit_code": 0, "exception_type": None, "message": None}
+except BaseException as exc:
+    outcome = {"passed": False, "exit_code": 5, "exception_type": type(exc).__name__, "message": str(exc)}
+Path(result_path).write_text(json.dumps(outcome, ensure_ascii=False), encoding="utf-8")
+sys.exit(0 if outcome["passed"] else 5)
+'''
+
+
+def _run_bottom_up_validator_process(root: Path, release_root: Path, actor_path: Path, result_path: Path, *, timeout: int = 600) -> dict[str, Any]:
+    """Run the production bottom-up validator in a distinct process.
+
+    Returns the structured, observed validator outcome together with the real
+    process return code. A crash that prevents the child from reporting is
+    surfaced as a non-passing outcome so it can never be mistaken for success.
+    """
+
+    env = {**os.environ, "PYTHONPATH": str(root / "src")}
+    try:
+        completed = subprocess.run(
+            [sys.executable, "-c", _BOTTOM_UP_VALIDATOR_CHILD, str(root), str(release_root), str(actor_path), str(result_path)],
+            cwd=root, env=env, capture_output=True, text=True, check=False, timeout=timeout,
+        )
+    except subprocess.TimeoutExpired:
+        return {"passed": False, "exit_code": 5, "exception_type": "TimeoutExpired", "message": "production validator timed out", "process_returncode": 5}
+    if result_path.is_file():
+        outcome = json.loads(result_path.read_text(encoding="utf-8"))
+    else:
+        outcome = {
+            "passed": False, "exit_code": completed.returncode,
+            "exception_type": "SubprocessError",
+            "message": (completed.stderr.strip() or "production validator subprocess produced no result")[:500],
+        }
+    outcome["process_returncode"] = completed.returncode
+    return outcome
+
+
+def _classify_e2e_negative_outcome(case_id: str, expected_terminal: str, outcome: dict[str, Any]) -> dict[str, Any]:
+    expected_guard, _guard_terminal = E2E_CASE_GUARDS[case_id]
+    actual_exit = int(outcome.get("process_returncode", 5))
+    if outcome.get("passed"):
+        actual_guard = None
+        guard_reached = False
+        actual_terminal = "ACCEPTED_UNEXPECTEDLY"
+    else:
+        actual_guard = outcome.get("message") or ""
+        guard_reached = expected_guard in actual_guard
+        actual_terminal = expected_terminal if guard_reached else "WRONG_FAILURE_MODE"
+    status = "PASS" if (guard_reached and actual_terminal == expected_terminal and actual_exit != 0) else "FAIL"
+    return {
+        "expected_guard": expected_guard, "actual_guard": actual_guard, "guard_reached": guard_reached,
+        "expected_exit_code": 5, "actual_exit_code": actual_exit, "actual_terminal": actual_terminal,
+        "status": status, "validator_exception_type": outcome.get("exception_type"),
+    }
+
+
+def _build_e2e_receipt(*, identity: str, case_id: str, expected_terminal: str, classification: dict[str, Any], execution_mode: str,
+                       mutation: dict[str, Any], command: list[str], process_exit_code: int, wall_seconds: float) -> dict[str, Any]:
+    receipt = {
+        "schema_version": "3.0.0", "artifact_type": "phase3_e2e_receipt", "identity": identity,
+        "case_id": case_id, "expected_terminal": expected_terminal,
+        "actual_terminal": classification["actual_terminal"],
+        "expected_exit_code": classification["expected_exit_code"], "actual_exit_code": classification["actual_exit_code"],
+        "expected_guard": classification["expected_guard"], "actual_guard": classification["actual_guard"],
+        "guard_reached": classification["guard_reached"], "status": classification["status"],
+        "execution_mode": execution_mode, "mutation": mutation, "command": command,
+        "process_exit_code": process_exit_code, "wall_seconds": wall_seconds,
+    }
+    if classification.get("validator_exception_type") is not None:
+        receipt["validator_exception_type"] = classification["validator_exception_type"]
+    return receipt
+
+
 def verify_e2e_formal(root: Path, output: Path, identity: str, release_root: Path, actor_path: Path) -> dict[str, Any]:
     disable_network()
     destination = new_directory(output, identity)
     registry = load_json(root / "config/phase3/e2e-registry.json")
+    negative_ids = {case["id"] for case in registry["cases"] if case["expected_terminal"] not in E2E_POSITIVE_TERMINALS}
+    unknown_guards = sorted(case_id for case_id in negative_ids if case_id not in E2E_CASE_GUARDS)
+    if unknown_guards:
+        raise ValueError(f"registered negative E2E cases lack a stable guard mapping: {unknown_guards}")
     receipts = []
-    positive = {"E2E-P3-01-formal-full-chain": "PASS", "E2E-P3-13-no-shadow-candidate": "PASS_NO_SHADOW_CANDIDATE", "E2E-P3-14-indeterminate": "PASS_INDETERMINATE"}
     for case in registry["cases"]:
         case_id, expected = case["id"], case["expected_terminal"]
         case_root = destination / "staging" / case_id
         case_root.mkdir(parents=True, exist_ok=False)
         mutation: dict[str, Any] = {"case_id": case_id, "type": "positive"}
+        validator_command = ["python3", "-m", "lottery_research.phase3", "validate", "--scope", "final", "--release-root", f"staging/{case_id}/{release_root.name}"]
         started = time.perf_counter()
         if case_id == "E2E-P3-01-formal-full-chain":
-            validate_bottom_up(root, release_root, actor_path)
-            actual = "PASS"
+            outcome = _run_bottom_up_validator_process(root, release_root, actor_path, case_root / "validator-result.json")
+            passed_positive = bool(outcome.get("passed")) and int(outcome.get("process_returncode", 5)) == 0
+            classification = {
+                "expected_guard": None, "actual_guard": None, "guard_reached": passed_positive,
+                "expected_exit_code": 0, "actual_exit_code": int(outcome.get("process_returncode", 5)),
+                "actual_terminal": expected if passed_positive else "FAIL", "status": "PASS" if passed_positive else "FAIL",
+                "validator_exception_type": outcome.get("exception_type"),
+            }
+            process_exit_code = int(outcome.get("process_returncode", 5))
+            execution_mode = "production_bottom_up_validator_full_release_distinct_process"
         elif case_id == "E2E-P3-13-no-shadow-candidate":
-            actual = "PASS_NO_SHADOW_CANDIDATE" if summarize_phase(["archived", "not_opened"]) == "no_shadow_candidate" else "FAIL"
+            ok = summarize_phase(["archived", "not_opened"]) == "no_shadow_candidate"
+            classification = {"expected_guard": None, "actual_guard": None, "guard_reached": ok, "expected_exit_code": 0, "actual_exit_code": 0, "actual_terminal": expected if ok else "FAIL", "status": "PASS" if ok else "FAIL", "validator_exception_type": None}
+            process_exit_code, execution_mode = 0, "frozen_classification_summary_no_shadow_candidate"
         elif case_id == "E2E-P3-14-indeterminate":
-            actual = "PASS_INDETERMINATE" if summarize_phase(["indeterminate", "not_opened"]) == "indeterminate" else "FAIL"
+            ok = summarize_phase(["indeterminate", "not_opened"]) == "indeterminate"
+            classification = {"expected_guard": None, "actual_guard": None, "guard_reached": ok, "expected_exit_code": 0, "actual_exit_code": 0, "actual_terminal": expected if ok else "FAIL", "status": "PASS" if ok else "FAIL", "validator_exception_type": None}
+            process_exit_code, execution_mode = 0, "frozen_classification_summary_indeterminate"
         else:
             staging_release = case_root / release_root.name
             shutil.copytree(release_root, staging_release, copy_function=os.link, ignore=shutil.ignore_patterns("e2e", "acceptance", "manifest", "handoff", "handoff-validation", "work-items"))
             mutation = _mutate_staging(case_id, staging_release)
-            try:
-                validate_bottom_up(root, staging_release, actor_path)
-                actual = "PASS_UNEXPECTED"
-            except (ValueError, KeyError, FileNotFoundError, json.JSONDecodeError):
-                actual = expected
-            shutil.rmtree(staging_release)
-        receipt = {
-            "schema_version": "3.0.0", "artifact_type": "phase3_e2e_receipt", "identity": f"{identity}-{case_id.lower()}",
-            "case_id": case_id, "expected_terminal": expected, "actual_terminal": actual,
-            "status": "PASS" if actual == expected else "FAIL", "execution_mode": "isolated_staging_mutation_then_production_bottom_up_validator",
-            "mutation": mutation, "command": ["python3", "-m", "lottery_research.phase3", "validate", "--scope", "final", "--release-root", f"staging/{case_id}/{release_root.name}"],
-            "process_exit_code": 0 if actual == "PASS" else 5, "wall_seconds": time.perf_counter() - started,
-        }
+            outcome = _run_bottom_up_validator_process(root, staging_release, actor_path, case_root / "validator-result.json")
+            classification = _classify_e2e_negative_outcome(case_id, expected, outcome)
+            process_exit_code = int(outcome.get("process_returncode", 5))
+            execution_mode = "isolated_staging_mutation_then_production_bottom_up_validator_distinct_process"
+            shutil.rmtree(staging_release, ignore_errors=True)
+        receipt = _build_e2e_receipt(
+            identity=f"{identity}-{case_id.lower()}", case_id=case_id, expected_terminal=expected,
+            classification=classification, execution_mode=execution_mode, mutation=mutation,
+            command=validator_command, process_exit_code=process_exit_code, wall_seconds=time.perf_counter() - started,
+        )
+        validate_payload(root, "e2e_receipt", receipt)
         write_new_json(case_root / "receipt.json", receipt)
         receipts.append(receipt)
     passed = all(row["status"] == "PASS" for row in receipts) and len(receipts) == len(registry["cases"])
@@ -1871,7 +2235,8 @@ def verify_e2e_formal(root: Path, output: Path, identity: str, release_root: Pat
         "status": "PASS" if passed else "FAIL", "terminal": "PASS" if passed else "E2E_MISMATCH",
         "non_formal_synthetic_only": False, "required_case_count": len(registry["cases"]), "executed_case_count": len(receipts),
         "required_case_coverage": len(receipts) / len(registry["cases"]), "expected_terminal_match_rate": sum(row["status"] == "PASS" for row in receipts) / len(receipts),
-        "production_validator_recomputed_fields": ["inputs", "trainer_prefix_capability", "forecast_hashes", "guarded_unlock_receipts", "ledger_order", "probabilities", "metrics", "bootstrap", "Holm", "classification", "Champion", "review"],
+        "negative_case_guard_attribution_rate": sum(row["guard_reached"] for row in receipts if row["case_id"] in negative_ids) / len(negative_ids),
+        "production_validator_recomputed_fields": ["inputs", "trainer_prefix_capability", "forecast_hashes", "guarded_unlock_receipts", "ledger_order", "probabilities", "metrics", "bootstrap", "Holm", "classification", "Champion", "review", "independent_reconstruction"],
         "self_reported_fields_trusted": 0, "cases": [{"case_id": row["case_id"], "receipt": f"staging/{row['case_id']}/receipt.json"} for row in receipts],
     }
     write_new_json(destination / "e2e-summary.json", summary)
@@ -1965,6 +2330,7 @@ def handoff_formal(root: Path, output: Path, identity: str, release_root: Path, 
         raise ValueError("handoff acceptance is not PASS/GO")
     if acceptance["manifest_sha256"] != sha256_file(manifest_path):
         raise ValueError("handoff manifest hash mismatch")
+    manifest_closure = verify_final_manifest_closure(root, release_root, manifest_path)
     handoff_dir = release_root / "handoff"
     handoff_dir.mkdir(parents=True, exist_ok=False)
     handoff = {
@@ -1980,6 +2346,7 @@ def handoff_formal(root: Path, output: Path, identity: str, release_root: Path, 
         "schema_version": "3.0.0", "artifact_type": "phase3_handoff_validation", "identity": identity,
         "status": "PASS", "terminal": "PASS", "release_id": release_root.name,
         "acceptance_iteration_count": 1, "blocking_findings": [], "m0_permanent_champion": True,
+        "manifest_closure": manifest_closure,
         "production_authorized": False, "publication_authorized": False, "shadow_authorized": False, "betting_authorized": False,
     }
     write_new_json(destination / "handoff-validation.json", receipt)

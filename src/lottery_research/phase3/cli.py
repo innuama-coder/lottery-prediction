@@ -46,6 +46,9 @@ def parser() -> argparse.ArgumentParser:
         if name == "qualify":
             command.add_argument("--stop-after-uniform", action="store_true")
             command.add_argument("--resume", action="store_true")
+        if name == "run":
+            command.add_argument("--resume", action="store_true")
+            command.add_argument("--stop-after-targets", type=int, default=None)
         if name in ("validate", "run", "evaluate", "readiness", "replay", "verify-e2e", "accept"):
             command.add_argument("--release-root", type=Path)
         if name == "validate":
@@ -114,7 +117,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         elif command == "run":
             if args.release_root is None:
                 raise ValueError("run requires --release-root")
-            result = run_formal(root, output, args.identity, args.release_root.resolve())
+            if args.resume and args.stop_after_targets is not None:
+                raise ValueError("run cannot resume and stop after targets in the same invocation")
+            result = run_formal(root, output, args.identity, args.release_root.resolve(), resume=args.resume, stop_after_targets=args.stop_after_targets)
         elif command == "evaluate":
             if args.release_root is None:
                 raise ValueError("evaluate requires --release-root")

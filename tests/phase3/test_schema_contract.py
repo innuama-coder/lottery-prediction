@@ -14,7 +14,7 @@ class SchemaContractTests(unittest.TestCase):
     def test_all_required_artifact_schemas_exist_and_are_valid(self) -> None:
         required = {
             "input_manifest", "preregistration", "model_registry", "feature_registry", "fold",
-            "forecast", "metric", "experiment_ledger", "replay", "review", "manifest", "acceptance",
+            "forecast", "metric", "guarded_label_unlock", "experiment_ledger", "replay", "review", "manifest", "acceptance",
             "actor_assignment", "handoff", "work_item_receipt",
             "qualification_replication", "qualification_negative_control", "qualification_stage", "qualification_report",
         }

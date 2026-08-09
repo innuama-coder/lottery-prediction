@@ -1,0 +1,20 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","additionalProperties":false,
+  "required":["schema_version","artifact_type","release_id","run_id","experiment_id","attempt_id","game","target_issue","model_id","forecast_path","forecast_sha256","label_store_identity","label_sha256","label_unlocked_at","read_ordinal","guard_validation"],
+  "properties":{
+    "schema_version":{"const":"3.0.0"},"artifact_type":{"const":"phase3_guarded_label_unlock_receipt"},
+    "release_id":{"type":"string","minLength":1},"run_id":{"type":"string","minLength":1},
+    "experiment_id":{"type":"string","minLength":1},"attempt_id":{"type":"string","minLength":1},
+    "game":{"enum":["dlt","ssq"]},"target_issue":{"type":"string","minLength":1},"model_id":{"enum":["M0","M1"]},
+    "forecast_path":{"type":"string","pattern":"^(?!/)(?!.*latest)(?!.*\\*).+$"},
+    "forecast_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "label_store_identity":{"type":"string","pattern":"^phase3-label-store-v1:[0-9a-f]{64}$"},
+    "label_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "label_unlocked_at":{"type":"string","format":"date-time"},"read_ordinal":{"type":"integer","minimum":1,"maximum":600},
+    "guard_validation":{"type":"object","additionalProperties":false,"required":["forecast_persisted","forecast_current_hash_matches_lock","latest_ledger_state_is_matching_lock","release_experiment_attempt_target_model_match","label_read_after_all_guards"],"properties":{
+      "forecast_persisted":{"const":true},"forecast_current_hash_matches_lock":{"const":true},
+      "latest_ledger_state_is_matching_lock":{"const":true},"release_experiment_attempt_target_model_match":{"const":true},
+      "label_read_after_all_guards":{"const":true}
+    }}
+  }
+}

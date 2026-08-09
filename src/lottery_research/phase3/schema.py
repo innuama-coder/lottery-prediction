@@ -16,6 +16,7 @@ SCHEMA_FILES = {
     "fold": "fold.schema.json",
     "forecast": "forecast.schema.json",
     "metric": "metric.schema.json",
+    "guarded_label_unlock": "guarded-label-unlock.schema.json",
     "experiment_ledger": "experiment-ledger.schema.json",
     "replay": "replay.schema.json",
     "review": "review.schema.json",

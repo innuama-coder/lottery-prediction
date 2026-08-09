@@ -207,6 +207,10 @@ def _preregistration(input_manifest_sha256: str, ledger_sha256: str, data_time_c
         "activation_requirements": [
             "all prior_draw_result relations satisfy source_issue strictly before target_issue",
             "forecast_locked event and hash exist before label_unlocked for every canonical attempt",
+            "label-free target catalog and sanitized training-prefix API are the only trainer inputs",
+            "spawn-isolated trainer has no label-store capability or target/future label inventory",
+            "guarded label unlock validates persisted forecast current SHA-256 and matching latest release/run/experiment/attempt/target/model lock before reading numbers",
+            "600 unique unlock receipts bind forecast path/hash, label-store identity and receipt SHA-256 to ledger and metrics",
             "external time-varying features are absent or have genuine available_at_utc before prediction_locked_at",
             "W01-W06 receipts bind to preparation actor assignments and W07 freezes conflict-free formal actor assignments",
         ],

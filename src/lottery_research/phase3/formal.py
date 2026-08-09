@@ -6,6 +6,7 @@ import gzip
 import hashlib
 import json
 import math
+import multiprocessing
 import os
 import platform
 import shutil
@@ -19,6 +20,17 @@ from statistics import fmean
 from typing import Any, Iterable, Sequence
 
 from .classification import PRACTICAL_SKILL_DELTA, holm_adjust, moving_block_evidence, classify_model, summarize_phase
+from .data_access import (
+    GuardedLabelStore,
+    TRAINER_FORBIDDEN_FIELDS,
+    activate_scoring_capability,
+    load_target_catalog,
+    quarantine_current_process_as_trainer,
+    read_scoring_label_inventory,
+    read_training_prefix,
+    trainer_input_payload,
+    validate_guarded_unlock_evidence,
+)
 from .evaluation import calibration_error, inclusion_brier, joint_log_score, relative_joint_log_score_skill
 from .ledger import AppendOnlyLedger, CheckpointStore, canonical_attempts, validate_ledger
 from .prerun_contract import validate_prerun_contract
@@ -69,16 +81,9 @@ def git(root: Path, *arguments: str) -> str:
 
 
 def read_draws(root: Path) -> dict[str, list[dict[str, Any]]]:
-    rows: dict[str, list[dict[str, Any]]] = {"dlt": [], "ssq": []}
-    with (root / "artifacts/phase-1/baseline-v1/draws.jsonl").open("r", encoding="utf-8") as handle:
-        for line in handle:
-            row = json.loads(line)
-            rows[row["game"]].append(row)
-    for game in rows:
-        rows[game].sort(key=lambda row: row["issue_id"])
-        if len(rows[game]) != 200 or len({row["issue_id"] for row in rows[game]}) != 200:
-            raise ValueError(f"{game} frozen draw inventory is invalid")
-    return rows
+    """Compatibility wrapper for non-training preparation diagnostics only."""
+
+    return read_scoring_label_inventory(root, capability=activate_scoring_capability())
 
 
 def _models_for_prefix(prefix: Sequence[dict[str, Any]], shrinkage: float | None) -> tuple[Any, float | None]:
@@ -132,6 +137,106 @@ def distribution_from_payload(payload: dict[str, Any]) -> Any:
     return joint_distribution(
         FixedCardinalityDistribution.from_weights(payload["front"]["weights"], payload["front"]["cardinality"]),
         FixedCardinalityDistribution.from_weights(payload["back"]["weights"], payload["back"]["cardinality"]),
+    )
+
+
+def _trainer_fit_target(payload: dict[str, Any]) -> dict[str, Any]:
+    """Fit one target in a spawn-isolated process with prefix-only input."""
+
+    quarantine_current_process_as_trainer()
+    disable_network()
+    if payload.get("capability") != "training_prefix_only_no_label_store":
+        raise ValueError("TRAINER_CAPABILITY_PROTOCOL_REJECTED")
+    if TRAINER_FORBIDDEN_FIELDS.intersection(payload):
+        raise ValueError("TRAINER_INPUT_CONTAINS_FORBIDDEN_LABEL_CAPABILITY")
+    target = payload["target"]
+    sanitized = payload["prefix"]
+    if any(TRAINER_FORBIDDEN_FIELDS.intersection(row) for row in sanitized):
+        raise ValueError("TRAINER_INPUT_CONTAINS_FORBIDDEN_LABEL_CAPABILITY")
+    if len(sanitized) != target["source_count"] or any(
+        row["game"] != target["game"] or row["issue_id"] >= target["target_issue"] for row in sanitized
+    ):
+        raise ValueError("TRAINER_INPUT_PREFIX_BOUNDARY_REJECTED")
+    prefix = [{
+        "game": row["game"],
+        "issue_id": row["issue_id"],
+        "front_numbers": tuple(row["prior_front_numbers"]),
+        "back_numbers": tuple(row["prior_back_numbers"]),
+    } for row in sanitized]
+    selected = select_joint_shrinkage(prefix)
+    models: dict[str, Any] = {}
+    for model_id, shrinkage in (("M0", None), ("M1", selected)):
+        model, model_lambda = _models_for_prefix(prefix, shrinkage)
+        top = model.top_k(1000)
+        models[model_id] = {
+            "distribution": distribution_payload(model, model_lambda),
+            "normalization_sum": model.front.normalization_dp_audit() * model.back.normalization_dp_audit(),
+            "top1000": top,
+            "top1000_coverage_probability": math.fsum(float(row["probability"]) for row in top),
+        }
+    return {
+        "trainer_pid": os.getpid(),
+        "trainer_input_sha256": canonical_sha256(payload),
+        "training_count": len(prefix),
+        "training_cutoff": prefix[-1]["issue_id"],
+        "inner_target_issues": [row["issue_id"] for row in prefix[-20:]],
+        "models": models,
+    }
+
+
+def _trainer_label_store_access_probe(root_text: str) -> dict[str, Any]:
+    """Run inside the real trainer process and prove capability minting fails."""
+
+    quarantine_current_process_as_trainer()
+    direct_artifact_denied = False
+    try:
+        with (Path(root_text) / "artifacts/phase-1/baseline-v1/draws.jsonl").open("rb") as handle:
+            handle.read(1)
+    except PermissionError as exc:
+        direct_artifact_denied = str(exc) == "TRAINER_ARTIFACT_FILESYSTEM_CAPABILITY_DENIED"
+    subprocess_denied = False
+    try:
+        subprocess.run(["/bin/true"], check=True)
+    except PermissionError as exc:
+        subprocess_denied = str(exc) == "TRAINER_CHILD_PROCESS_CAPABILITY_DENIED"
+    fork_denied = False
+    try:
+        child_pid = os.fork()
+        if child_pid == 0:
+            os._exit(99)
+        os.waitpid(child_pid, 0)
+    except PermissionError as exc:
+        fork_denied = str(exc) == "TRAINER_CHILD_PROCESS_CAPABILITY_DENIED"
+    exec_denied = False
+    try:
+        # Exercise the same audit event raised by every os.exec* variant without
+        # risking replacement of the worker if a future interpreter regresses.
+        sys.audit("os.exec", sys.executable, (sys.executable,), None)
+    except PermissionError as exc:
+        exec_denied = str(exc) == "TRAINER_CHILD_PROCESS_CAPABILITY_DENIED"
+    try:
+        capability = activate_scoring_capability()
+        GuardedLabelStore(Path(root_text), capability=capability)
+    except ValueError as exc:
+        return {
+            "pid": os.getpid(), "denied": str(exc) == "LABEL_STORE_CAPABILITY_DENIED",
+            "direct_artifact_denied": direct_artifact_denied,
+            "subprocess_denied": subprocess_denied, "fork_denied": fork_denied,
+            "exec_denied": exec_denied, "number_read_count": 0,
+        }
+    return {
+        "pid": os.getpid(), "denied": False, "direct_artifact_denied": direct_artifact_denied,
+        "subprocess_denied": subprocess_denied, "fork_denied": fork_denied,
+        "exec_denied": exec_denied, "number_read_count": -1,
+    }
+
+
+def _trainer_probe_passed(probe: dict[str, Any]) -> bool:
+    return bool(
+        probe.get("pid") != os.getpid() and probe.get("denied")
+        and probe.get("direct_artifact_denied") and probe.get("subprocess_denied")
+        and probe.get("fork_denied") and probe.get("exec_denied")
+        and probe.get("number_read_count") == 0
     )
 
 
@@ -274,6 +379,9 @@ NEGATIVE_CONTROLS = (
     "future_draw_result", "post_draw_field", "forged_available_at", "global_normalization",
     "outer_target_tuning", "mixed_game_rule", "same_issue_relation", "future_issue_relation",
     "label_before_forecast_lock", "forecast_mutation_after_lock", "illegal_combination",
+    "label_wrong_hash", "label_forecast_rewritten", "label_wrong_release", "label_wrong_experiment",
+    "label_wrong_attempt", "label_wrong_target", "label_wrong_ledger", "label_interleaved_ledger_state",
+    "trainer_label_store_access",
     "negative_probability", "non_normalized_probability", "ledger_terminal_overwrite",
     "ledger_attempt_delete", "checkpoint_identity_mismatch", "checkpoint_payload_tamper", "duplicate_run_identity",
     "champion_promotion", "top1000_primary_gate", "partial_artifact_return",
@@ -313,6 +421,84 @@ def require_top_role(role: str) -> None:
         raise ValueError("TOP1000_PRIMARY_GATE_REJECTED")
 
 
+def _execute_guarded_unlock_negative_control(case_id: str, case: Path) -> None:
+    root = Path(__file__).resolve().parents[3]
+    release = case / "release-negative-control"
+    forecast_path = release / "runs/forecasts/dlt/2025084/M0.json"
+    forecast = {
+        "release_id": release.name, "run_id": f"{case_id}-run", "game": "dlt",
+        "target_issue": "2025084", "model_id": "M0",
+    }
+    write_new_json(forecast_path, forecast)
+    experiment = "dlt-2025084-M0"
+    attempt = f"{experiment}-attempt-01"
+    ledger = AppendOnlyLedger(release / "runs/experiment-ledger.jsonl", forecast["run_id"])
+    ledger.start(experiment, {key: forecast[key] for key in ("release_id", "game", "target_issue", "model_id")}, attempt_id=attempt)
+    capability = activate_scoring_capability()
+    store = GuardedLabelStore(root, capability=capability)
+    if case_id != "label_before_forecast_lock":
+        locked_sha = "0" * 64 if case_id == "label_wrong_hash" else sha256_file(forecast_path)
+        ledger.progress(experiment, "forecast_locked", {
+            "release_id": release.name, "run_id": forecast["run_id"],
+            "experiment_id": experiment, "attempt_id": attempt,
+            "game": "dlt", "target_issue": "2025084", "model_id": "M0",
+            "forecast_path": forecast_path.relative_to(release).as_posix(),
+            "forecast_sha256": locked_sha, "prediction_locked_at": utc_now(),
+        }, attempt_id=attempt)
+    if case_id == "label_forecast_rewritten":
+        forecast_path.unlink()
+        write_new_json(forecast_path, {**forecast, "mutated": True})
+    if case_id == "label_interleaved_ledger_state":
+        other_experiment = "dlt-2025084-M1"
+        ledger.start(other_experiment, {
+            "release_id": release.name, "game": "dlt", "target_issue": "2025084", "model_id": "M1",
+        }, attempt_id=f"{other_experiment}-attempt-01")
+    arguments: dict[str, Any] = {
+        "release_root": release, "ledger": ledger, "experiment_id": experiment, "attempt_id": attempt,
+        "release_id": release.name, "run_id": forecast["run_id"], "game": "dlt", "target_issue": "2025084",
+        "model_id": "M0", "forecast_path": forecast_path,
+        "receipt_path": release / "runs/label-unlocks/dlt/2025084/M0.json",
+    }
+    forged: AppendOnlyLedger | None = None
+    if case_id == "label_wrong_release":
+        arguments["release_id"] = "wrong-release"
+    elif case_id == "label_wrong_experiment":
+        arguments["experiment_id"] = "dlt-2025084-M1"
+    elif case_id == "label_wrong_attempt":
+        arguments["attempt_id"] = f"{experiment}-attempt-02"
+    elif case_id == "label_wrong_target":
+        arguments.update({"target_issue": "2025085", "experiment_id": "dlt-2025085-M0", "attempt_id": "dlt-2025085-M0-attempt-01"})
+    elif case_id == "label_wrong_ledger":
+        forged = AppendOnlyLedger(case / "forged-experiment-ledger.jsonl", forecast["run_id"])
+        forged.start(experiment, {key: forecast[key] for key in ("release_id", "game", "target_issue", "model_id")}, attempt_id=attempt)
+        forged.progress(experiment, "forecast_locked", {
+            "release_id": release.name, "run_id": forecast["run_id"],
+            "experiment_id": experiment, "attempt_id": attempt,
+            "game": "dlt", "target_issue": "2025084", "model_id": "M0",
+            "forecast_path": forecast_path.relative_to(release).as_posix(),
+            "forecast_sha256": sha256_file(forecast_path), "prediction_locked_at": utc_now(),
+        }, attempt_id=attempt)
+        arguments["ledger"] = forged
+    elif case_id == "trainer_label_store_access":
+        with concurrent.futures.ProcessPoolExecutor(max_workers=1, mp_context=multiprocessing.get_context("spawn")) as pool:
+            probe = pool.submit(_trainer_label_store_access_probe, root.as_posix()).result(timeout=30)
+        if not _trainer_probe_passed(probe):
+            ledger.close()
+            raise RuntimeError("trainer unexpectedly acquired label-store capability")
+        ledger.close()
+        raise ValueError("LABEL_STORE_CAPABILITY_DENIED")
+    try:
+        store.guarded_unlock(**arguments)
+    except ValueError:
+        if store.number_read_count != 0:
+            raise ValueError("LABEL_READ_OCCURRED_BEFORE_GUARD_REJECTION")
+        raise
+    finally:
+        ledger.close()
+        if forged is not None:
+            forged.close()
+
+
 def execute_qualification_control(case_id: str, base: Path) -> dict[str, Any]:
     case = base / case_id
     case.mkdir(parents=True, exist_ok=False)
@@ -328,10 +514,8 @@ def execute_qualification_control(case_id: str, base: Path) -> dict[str, Any]:
             require_external_point_in_time("2026-01-02T00:00:00Z", "2026-01-01T00:00:00Z", "weather")
         elif case_id in {"outer_target_tuning", "same_issue_relation", "future_issue_relation"}:
             require_strictly_earlier("2026002" if case_id == "future_issue_relation" else "2026001", "2026001")
-        elif case_id == "label_before_forecast_lock":
-            ledger = AppendOnlyLedger(case / "ledger.jsonl", case_id)
-            ledger.start("experiment", {})
-            ledger.progress("experiment", "label_unlocked", {})
+        elif case_id == "label_before_forecast_lock" or case_id.startswith("label_") or case_id == "trainer_label_store_access":
+            _execute_guarded_unlock_negative_control(case_id, case)
         elif case_id == "forecast_mutation_after_lock":
             forecast = case / "forecast.json"
             write_new_json(forecast, {"value": "locked"})
@@ -390,7 +574,13 @@ def execute_qualification_control(case_id: str, base: Path) -> dict[str, Any]:
             "global_normalization": "FORBIDDEN_FEATURE_REJECTED", "mixed_game_rule": "RULE_MIX_REJECTED",
             "forged_available_at": "EXTERNAL_POINT_IN_TIME_REJECTED", "outer_target_tuning": "SEQUENCE_RELATION_REJECTED",
             "same_issue_relation": "SEQUENCE_RELATION_REJECTED", "future_issue_relation": "SEQUENCE_RELATION_REJECTED",
-            "label_before_forecast_lock": "label_unlocked requires forecast_locked", "forecast_mutation_after_lock": "forecast mutation detected",
+            "label_before_forecast_lock": "LABEL_UNLOCK_LATEST_LEDGER_STATE_MISMATCH", "forecast_mutation_after_lock": "forecast mutation detected",
+            "label_wrong_hash": "LABEL_UNLOCK_FORECAST_HASH_MISMATCH", "label_forecast_rewritten": "LABEL_UNLOCK_FORECAST_HASH_MISMATCH",
+            "label_wrong_release": "LABEL_UNLOCK_RELEASE_ID_MISMATCH", "label_wrong_experiment": "LABEL_UNLOCK_EXPERIMENT_ID_MISMATCH",
+            "label_wrong_attempt": "LABEL_UNLOCK_ATTEMPT_ID_MISMATCH", "label_wrong_target": "LABEL_UNLOCK_NONCANONICAL_PATH",
+            "label_wrong_ledger": "LABEL_UNLOCK_LEDGER_CAPABILITY_MISMATCH",
+            "label_interleaved_ledger_state": "LABEL_UNLOCK_LATEST_LEDGER_STATE_MISMATCH",
+            "trainer_label_store_access": "LABEL_STORE_CAPABILITY_DENIED",
             "illegal_combination": "illegal combination rejected", "negative_probability": "weights must be finite and strictly positive",
             "non_normalized_probability": "NORMALIZATION_REJECTED", "ledger_terminal_overwrite": "terminal event requires a started or scored attempt",
             "ledger_attempt_delete": "registered experiment lacks a terminal state", "checkpoint_identity_mismatch": "checkpoint run identity mismatch",
@@ -908,8 +1098,12 @@ def readiness(root: Path, output: Path, identity: str, prep_root: Path, release_
     budget = _budget(benchmarks, eligible)
     commit = git(root, "rev-parse", "HEAD")
     release_relative = release_root.relative_to(root).as_posix() + "/"
+    prep_relative = prep_root.relative_to(root).as_posix() + "/"
     status_rows = git(root, "status", "--porcelain=v1", "--untracked-files=all").splitlines()
-    dirty_paths = [row[3:] for row in status_rows if not row[3:].startswith(release_relative)]
+    dirty_paths = [
+        row[3:] for row in status_rows
+        if not row[3:].startswith(release_relative) and not row[3:].startswith(prep_relative)
+    ]
     dirty = bool(dirty_paths)
     release_control = load_json(release_root / "control/release-control.json")
     expected = {
@@ -926,10 +1120,9 @@ def readiness(root: Path, output: Path, identity: str, prep_root: Path, release_
     with canary.open("xb") as handle:
         handle.write(b"phase3-evidence-return-canary-v1\n")
     registry = []
-    for game, rows in read_draws(root).items():
-        for row in rows[50:]:
-            for model_id in ("M0", "M1"):
-                registry.append({"experiment_id": f"{game}-{row['issue_id']}-{model_id}", "game": game, "target_issue": row["issue_id"], "model_id": model_id, "max_attempts": 2})
+    for target in load_target_catalog(root):
+        for model_id in ("M0", "M1"):
+            registry.append({"experiment_id": f"{target.game}-{target.target_issue}-{model_id}", "game": target.game, "target_issue": target.target_issue, "model_id": model_id, "max_attempts": 2})
     write_new_json(release_root / "control/formal-run-registry.json", {"schema_version": "3.0.0", "artifact_type": "phase3_formal_run_registry", "release_id": release_root.name, "experiments": registry})
     write_new_json(release_root / "control/approved-workload.json", budget)
     implementation_paths = []
@@ -976,11 +1169,27 @@ def implementation_validate(root: Path, output: Path, identity: str, prep_root: 
     sample = ((1, 2, 3, 4, 5, 6), (1,))
     if not math.isclose(m0.probability(*sample), zero.probability(*sample), rel_tol=1e-10, abs_tol=1e-12):
         raise ValueError("M1 zero parameter does not reduce to M0")
+    catalog = load_target_catalog(root)
+    first_target = catalog[0]
+    prefix_payload = trainer_input_payload(first_target, read_training_prefix(root, first_target))
+    if len(catalog) != 300 or TRAINER_FORBIDDEN_FIELDS.intersection(prefix_payload) or any(TRAINER_FORBIDDEN_FIELDS.intersection(row) for row in prefix_payload["prefix"]):
+        raise ValueError("label-free target/trainer prefix capability validation failed")
+    with concurrent.futures.ProcessPoolExecutor(max_workers=1, mp_context=multiprocessing.get_context("spawn")) as pool:
+        trainer_probe = pool.submit(_trainer_label_store_access_probe, root.as_posix()).result(timeout=30)
+    trainer_denial = _trainer_probe_passed(trainer_probe)
+    if not trainer_denial:
+        raise ValueError("trainer unexpectedly acquired label-store capability")
     receipt = {
         "schema_version": "3.0.0", "artifact_type": "phase3_implementation_validation", "identity": identity,
         "status": "PASS", "terminal": "PASS", "formal_run_authorized": False,
         "wheelhouse": wheelhouse, "benchmark_component_coverage": 1.0, "benchmark_repetitions_per_component": 20,
         "m0_m1_zero_equivalence_rate": 1.0, "probability_guard_pass_rate": 1.0, "deterministic_hash_match_rate": 1.0,
+        "label_free_target_catalog_count": len(catalog), "trainer_label_store_denial": trainer_denial,
+        "trainer_direct_artifact_access_denial": bool(trainer_probe["direct_artifact_denied"]),
+        "trainer_child_process_access_denial": bool(
+            trainer_probe["subprocess_denied"] and trainer_probe["fork_denied"] and trainer_probe["exec_denied"]
+        ),
+        "trainer_prefix_forbidden_field_count": 0, "guarded_unlock_negative_control_count": 10,
         "formal_cli_commands": ["validate", "qualify", "readiness", "run", "evaluate", "replay", "verify-e2e", "accept"],
     }
     write_new_json(destination / "implementation-validation.json", receipt)
@@ -1029,71 +1238,93 @@ def run_formal(root: Path, output: Path, identity: str, release_root: Path) -> d
     disable_network()
     destination = new_directory(output, identity)
     control = validate_authorization(root, release_root)
-    draws = read_draws(root)
+    targets = load_target_catalog(root)
     ledger = AppendOnlyLedger(destination / "experiment-ledger.jsonl", identity)
+    scoring_capability = activate_scoring_capability()
+    label_store = GuardedLabelStore(root, capability=scoring_capability)
     consolidated_forecasts: list[dict[str, Any]] = []
     consolidated_scores: list[dict[str, Any]] = []
     completed_targets = 0
-    for game in ("dlt", "ssq"):
-        rows = draws[game]
-        for target_index in range(50, 200):
-            prefix, label = rows[:target_index], rows[target_index]
+    spawn_context = multiprocessing.get_context("spawn")
+    with concurrent.futures.ProcessPoolExecutor(max_workers=1, mp_context=spawn_context) as trainer_pool:
+        trainer_probe = trainer_pool.submit(_trainer_label_store_access_probe, root.as_posix()).result(timeout=30)
+        if not _trainer_probe_passed(trainer_probe):
+            raise ValueError("TRAINER_PROCESS_CAPABILITY_PROBE_REJECTED")
+        for target in targets:
+            game, target_issue = target.game, target.target_issue
+            prefix = read_training_prefix(root, target)
+            trainer_payload = trainer_input_payload(target, prefix)
+            trained = trainer_pool.submit(_trainer_fit_target, trainer_payload).result()
+            if trained["trainer_pid"] != trainer_probe["pid"] or trained["trainer_input_sha256"] != canonical_sha256(trainer_payload):
+                raise ValueError("TRAINER_PROCESS_ISOLATION_REJECTED")
             require_rule_match(game, "dlt-ns-35c5-12c2-v1" if game == "dlt" else "ssq-ns-33c6-16c1-v1")
             for source in prefix:
-                require_strictly_earlier(source["issue_id"], label["issue_id"])
-            selected = select_joint_shrinkage(prefix)
+                require_strictly_earlier(source["issue_id"], target_issue)
             for model_id in ("M0", "M1"):
-                experiment = f"{game}-{label['issue_id']}-{model_id}"
+                experiment = f"{game}-{target_issue}-{model_id}"
                 attempt = f"{experiment}-attempt-01"
-                ledger.start(experiment, {"release_id": release_root.name, "game": game, "target_issue": label["issue_id"], "model_id": model_id, "input_sha256": control["input_manifest_sha256"], "network_requests": 0}, attempt_id=attempt)
-                model, model_lambda = _models_for_prefix(prefix, None if model_id == "M0" else selected)
-                top = model.top_k(1000)
-                top_path = destination / "top1000" / game / label["issue_id"] / f"{model_id}.json.gz"
-                _write_gzip_json_new(top_path, {"release_id": release_root.name, "game": game, "target_issue": label["issue_id"], "model_id": model_id, "role": "diagnostic_only", "tickets": top, "coverage_probability": math.fsum(float(row["probability"]) for row in top)})
+                ledger.start(experiment, {"release_id": release_root.name, "game": game, "target_issue": target_issue, "model_id": model_id, "input_sha256": control["input_manifest_sha256"], "network_requests": 0}, attempt_id=attempt)
+                trained_model = trained["models"][model_id]
+                top_path = destination / "top1000" / game / target_issue / f"{model_id}.json.gz"
+                _write_gzip_json_new(top_path, {"release_id": release_root.name, "game": game, "target_issue": target_issue, "model_id": model_id, "role": "diagnostic_only", "tickets": trained_model["top1000"], "coverage_probability": trained_model["top1000_coverage_probability"]})
                 forecast = {
                     "schema_version": "3.0.0", "artifact_type": "phase3_forecast", "release_id": release_root.name,
-                    "run_id": identity, "game": game, "target_issue": label["issue_id"], "model_id": model_id,
-                    "prediction_locked_at": utc_now(), "training_cutoff": prefix[-1]["issue_id"], "training_count": len(prefix),
-                    "inner_target_issues": [row["issue_id"] for row in prefix[-20:]] if model_id == "M1" else [],
-                    "distribution": distribution_payload(model, model_lambda),
-                    "normalization_sum": model.front.normalization_dp_audit() * model.back.normalization_dp_audit(),
+                    "run_id": identity, "game": game, "target_issue": target_issue, "model_id": model_id,
+                    "prediction_locked_at": utc_now(), "training_cutoff": trained["training_cutoff"], "training_count": trained["training_count"],
+                    "inner_target_issues": trained["inner_target_issues"] if model_id == "M1" else [],
+                    "distribution": trained_model["distribution"],
+                    "normalization_sum": trained_model["normalization_sum"],
                     "top_1000_role": "diagnostic_only", "top_1000_path": top_path.relative_to(release_root).as_posix(),
                     "top_1000_sha256": sha256_file(top_path), "label_read": False,
+                    "training_prefix_sha256": trained["trainer_input_sha256"],
+                    "trainer_input_capability": "training_prefix_only_no_label_store",
+                    "trainer_pid": trained["trainer_pid"], "orchestrator_pid": os.getpid(),
                 }
                 require_normalized(forecast["normalization_sum"])
                 require_top_role(forecast["top_1000_role"])
                 validate_payload(root, "forecast", forecast)
-                forecast_path = destination / "forecasts" / game / label["issue_id"] / f"{model_id}.json"
+                forecast_path = destination / "forecasts" / game / target_issue / f"{model_id}.json"
                 write_new_json(forecast_path, forecast)
                 locked_sha = sha256_file(forecast_path)
-                ledger.progress(experiment, "forecast_locked", {"forecast_path": forecast_path.relative_to(release_root).as_posix(), "forecast_sha256": locked_sha, "prediction_locked_at": forecast["prediction_locked_at"]}, attempt_id=attempt)
+                ledger.progress(experiment, "forecast_locked", {
+                    "release_id": release_root.name, "run_id": identity,
+                    "experiment_id": experiment, "attempt_id": attempt,
+                    "game": game, "target_issue": target_issue, "model_id": model_id,
+                    "forecast_path": forecast_path.relative_to(release_root).as_posix(),
+                    "forecast_sha256": locked_sha, "prediction_locked_at": forecast["prediction_locked_at"],
+                }, attempt_id=attempt)
 
-                # The label store is consulted only after the immutable forecast
-                # and its ledger lock event exist.
-                if sha256_file(forecast_path) != locked_sha:
-                    raise ValueError("forecast changed after lock")
-                observed_front, observed_back = tuple(label["front_numbers"]), tuple(label["back_numbers"])
-                ledger.progress(experiment, "label_unlocked", {"label_sha256": canonical_sha256({"front": observed_front, "back": observed_back}), "label_unlocked_at": utc_now()}, attempt_id=attempt)
+                unlocked = label_store.guarded_unlock(
+                    release_root=release_root, ledger=ledger, experiment_id=experiment, attempt_id=attempt,
+                    release_id=release_root.name, run_id=identity, game=game, target_issue=target_issue,
+                    model_id=model_id, forecast_path=forecast_path,
+                    receipt_path=destination / "label-unlocks" / game / target_issue / f"{model_id}.json",
+                )
+                observed_front, observed_back = unlocked.front_numbers, unlocked.back_numbers
+                model = distribution_from_payload(forecast["distribution"])
                 probability = model.probability(observed_front, observed_back)
                 front_brier = inclusion_brier(model.front.inclusion_probabilities(), set(observed_front))
                 back_brier = inclusion_brier(model.back.inclusion_probabilities(), set(observed_back))
                 m0 = joint_distribution(FixedCardinalityDistribution.uniform(GAME_SPEC[game]["front_size"], GAME_SPEC[game]["front_k"]), FixedCardinalityDistribution.uniform(GAME_SPEC[game]["back_size"], GAME_SPEC[game]["back_k"]))
                 metric = {
                     "schema_version": "3.0.0", "artifact_type": "phase3_metric", "release_id": release_root.name,
-                    "game": game, "target_issue": label["issue_id"], "model_id": model_id,
+                    "game": game, "target_issue": target_issue, "model_id": model_id,
                     "forecast_sha256": locked_sha, "actual_joint_probability": probability,
                     "joint_log_score": joint_log_score(probability),
                     "relative_skill_vs_M0": relative_joint_log_score_skill(m0.probability(observed_front, observed_back), probability),
                     "inclusion_brier": (front_brier + back_brier) / 2.0, "front_inclusion_brier": front_brier,
                     "back_inclusion_brier": back_brier, "top_1000_role": "diagnostic_only",
+                    "label_unlock_receipt_path": unlocked.receipt_path,
+                    "label_unlock_receipt_sha256": unlocked.receipt_sha256,
                 }
                 validate_payload(root, "metric", metric)
-                metric_path = destination / "scores" / game / label["issue_id"] / f"{model_id}.json"
+                metric_path = destination / "scores" / game / target_issue / f"{model_id}.json"
                 write_new_json(metric_path, metric)
                 ledger.progress(experiment, "scored", {"metric_path": metric_path.relative_to(release_root).as_posix(), "metric_sha256": sha256_file(metric_path)}, attempt_id=attempt)
                 ledger.finish(experiment, "succeeded", {"network_requests": 0}, attempt_id=attempt)
-                consolidated_forecasts.append({"path": forecast_path.relative_to(destination).as_posix(), "sha256": locked_sha, "game": game, "target_issue": label["issue_id"], "model_id": model_id})
+                consolidated_forecasts.append({"path": forecast_path.relative_to(destination).as_posix(), "sha256": locked_sha, "game": game, "target_issue": target_issue, "model_id": model_id})
                 consolidated_scores.append({"path": metric_path.relative_to(destination).as_posix(), **metric})
+                del unlocked, observed_front, observed_back
             completed_targets += 1
             if completed_targets % 10 == 0:
                 checkpoint = CheckpointStore(destination / "checkpoints" / f"target-{completed_targets:03d}.json", identity)
@@ -1105,6 +1336,9 @@ def run_formal(root: Path, output: Path, identity: str, release_root: Path) -> d
     _write_jsonl_new(destination / "forecast-index.jsonl", consolidated_forecasts)
     _write_jsonl_new(destination / "metric-index.jsonl", consolidated_scores)
     write_new_json(destination / "canonical-attempts.json", canonical)
+    guarded = validate_guarded_unlock_evidence(release_root)
+    if guarded["status"] != "PASS" or label_store.number_read_count != 600 or label_store.rejection_count != 0:
+        raise ValueError("guarded label unlock evidence did not close")
     receipt = {
         "schema_version": "3.0.0", "artifact_type": "phase3_formal_run_summary", "identity": identity,
         "release_id": release_root.name, "status": "PASS", "terminal": "PASS", "formal_run_authorized": True,
@@ -1112,6 +1346,17 @@ def run_formal(root: Path, output: Path, identity: str, release_root: Path) -> d
         "m0_canonical_count": sum(key.endswith("-M0") for key in canonical), "m1_canonical_count": sum(key.endswith("-M1") for key in canonical),
         "canonical_coverage": len(canonical) / 600, "forecast_lock_order_violations": 0,
         "label_unlock_order_violations": 0, "network_request_count": 0, "checkpoint_count": completed_targets // 10,
+        "guarded_label_unlock": guarded, "label_store_number_read_count": label_store.number_read_count,
+        "pre_lock_label_read_count": guarded["pre_lock_label_read_count"],
+        "label_unlock_identity_or_hash_mismatch_count": guarded["identity_or_hash_mismatch_count"],
+        "trainer_process_isolation_coverage": 1.0,
+        "trainer_process_pid": trainer_probe["pid"],
+        "trainer_label_store_capability_denied": trainer_probe["denied"],
+        "trainer_direct_artifact_access_denied": trainer_probe["direct_artifact_denied"],
+        "trainer_subprocess_access_denied": trainer_probe["subprocess_denied"],
+        "trainer_fork_access_denied": trainer_probe["fork_denied"],
+        "trainer_exec_access_denied": trainer_probe["exec_denied"],
+        "trainer_capability_probe_label_read_count": trainer_probe["number_read_count"],
     }
     write_new_json(destination / "run-summary.json", receipt)
     return receipt
@@ -1172,10 +1417,13 @@ def evaluate_formal(root: Path, output: Path, identity: str, release_root: Path)
     destination = new_directory(output, identity)
     validate_authorization(root, release_root)
     forecasts, scores = _evaluation_inputs(release_root)
+    guarded_unlock = validate_guarded_unlock_evidence(release_root)
+    if guarded_unlock["status"] != "PASS":
+        raise ValueError("evaluation rejected guarded label unlock evidence")
     by_key = {(row["game"], row["target_issue"], row["model_id"]): row for row in scores}
     if len(by_key) != 600:
         raise ValueError("formal metric keys are not unique")
-    draws = read_draws(root)
+    draws = read_scoring_label_inventory(root, capability=activate_scoring_capability())
     game_reports: dict[str, Any] = {}
     raw_p: dict[tuple[str, str], float] = {}
     bootstrap_by_game: dict[str, Any] = {}
@@ -1236,6 +1484,7 @@ def evaluate_formal(root: Path, output: Path, identity: str, release_root: Path)
         "classifications": classifications, "scientific_summary": scientific,
         "m0_permanent_champion": True, "champion_change_count": 0, "forbidden_action_count": 0,
         "registry_ledger_result_coverage": 1.0, "metric_coverage": 1.0, "blocking_findings": 0,
+        "guarded_label_unlock": guarded_unlock,
         "top_1000_diagnostic": {"role": "diagnostic_only", "artifact_count": 600, "legality_rate": 1.0, "deterministic_hash_coverage": 1.0, "used_as_primary_gate": False},
     }
     write_new_json(destination / "evaluation.json", report)
@@ -1277,8 +1526,11 @@ def replay_formal(root: Path, output: Path, identity: str, release_root: Path, a
     by_role = {row["role"]: row for row in assignment["assignments"]}
     reviewer, author, approver = by_role["independent_reviewer"], by_role["implementation_author"], by_role["classification_approver"]
     run_forecasts, run_scores = _evaluation_inputs(release_root)
+    guarded_unlock = validate_guarded_unlock_evidence(release_root)
+    if guarded_unlock["status"] != "PASS":
+        raise ValueError("replay rejected guarded label unlock evidence")
     score_by_key = {(row["game"], row["target_issue"], row["model_id"]): row for row in run_scores}
-    draws = read_draws(root)
+    draws = read_scoring_label_inventory(root, capability=activate_scoring_capability())
     differences: list[str] = []
     replay_rows = []
     distribution_audits = []
@@ -1363,6 +1615,7 @@ def replay_formal(root: Path, output: Path, identity: str, release_root: Path, a
         "bootstrap_match_rate": 1.0 if not any(value.startswith(("bootstrap:", "holm:")) for value in differences) else 0.0,
         "classification_match_rate": 0.0 if "classification" in differences else 1.0, "differences": differences, "blocking_findings": len(differences),
         "distribution_audits": distribution_audits,
+        "guarded_label_unlock": guarded_unlock,
         "known_answer": {"small_world_combination_count": 120, "m0_probability": 1.0 / 120.0, "zero_parameter_equivalence": True},
     }
     validate_payload(root, "replay", replay)
@@ -1375,7 +1628,7 @@ def replay_formal(root: Path, output: Path, identity: str, release_root: Path, a
         "signed_at_utc": utc_now(), "reviewed_manifest_sha256": sha256_file(reviewed_manifest),
         "implementation_author_id": author["actor_id"], "classification_approver_id": approver["actor_id"],
         "independence_declaration": "reviewer_is_not_implementation_author_or_classification_approver",
-        "reviewed_paths": ["evaluation/evidence-manifest.json", "runs/forecast-index.jsonl", "runs/metric-index.jsonl"],
+        "reviewed_paths": ["evaluation/evidence-manifest.json", "runs/forecast-index.jsonl", "runs/metric-index.jsonl", "runs/experiment-ledger.jsonl", "runs/label-unlocks"],
         "blocking_findings": len(differences), "status": "PASS" if not differences else "HOLD",
     }
     validate_payload(root, "review", review)
@@ -1394,7 +1647,11 @@ def validate_bottom_up(root: Path, release_root: Path, actor_path: Path, *, requ
     states = validate_ledger(ledger_path)
     if len(states) != 600 or len(canonical_attempts(ledger_path)) != 600:
         raise ValueError("ledger terminal/canonical coverage mismatch")
-    draws = read_draws(root)
+    guarded_unlock = validate_guarded_unlock_evidence(release_root)
+    if guarded_unlock["status"] != "PASS":
+        raise ValueError("guarded label unlock evidence mismatch")
+    draws = read_scoring_label_inventory(root, capability=activate_scoring_capability())
+    target_catalog = {(row.game, row.target_issue): row for row in load_target_catalog(root)}
     score_index = {(row["game"], row["target_issue"], row["model_id"]): row for row in scores}
     skill_by_game: dict[str, list[float]] = {"dlt": [], "ssq": []}
     for row in forecasts:
@@ -1403,6 +1660,16 @@ def validate_bottom_up(root: Path, release_root: Path, actor_path: Path, *, requ
             raise ValueError("forecast index hash mismatch")
         forecast = load_json(forecast_path)
         validate_payload(root, "forecast", forecast)
+        target_metadata = target_catalog.get((forecast["game"], forecast["target_issue"]))
+        if target_metadata is None:
+            raise ValueError("forecast target is absent from label-free catalog")
+        expected_trainer_input = trainer_input_payload(target_metadata, read_training_prefix(root, target_metadata))
+        if (
+            forecast["training_prefix_sha256"] != canonical_sha256(expected_trainer_input)
+            or forecast["trainer_input_capability"] != "training_prefix_only_no_label_store"
+            or forecast["trainer_pid"] == forecast["orchestrator_pid"]
+        ):
+            raise ValueError("trainer prefix capability isolation mismatch")
         label = next(value for value in draws[forecast["game"]] if value["issue_id"] == forecast["target_issue"])
         if forecast["training_cutoff"] >= forecast["target_issue"] or forecast["training_count"] < 50:
             raise ValueError("outer target pollution or sequence violation")
@@ -1432,7 +1699,13 @@ def validate_bottom_up(root: Path, release_root: Path, actor_path: Path, *, requ
             raise ValueError("metric artifact missing")
         metric = load_json(metric_path)
         validate_payload(root, "metric", metric)
-        if metric["forecast_sha256"] != row["sha256"] or not math.isclose(probability, float(metric["actual_joint_probability"]), rel_tol=1e-10, abs_tol=1e-12):
+        unlock_receipt_path = release_root / metric["label_unlock_receipt_path"]
+        if (
+            metric["forecast_sha256"] != row["sha256"]
+            or not unlock_receipt_path.is_file()
+            or sha256_file(unlock_receipt_path) != metric["label_unlock_receipt_sha256"]
+            or not math.isclose(probability, float(metric["actual_joint_probability"]), rel_tol=1e-10, abs_tol=1e-12)
+        ):
             raise ValueError("bottom-up actual probability mismatch")
     for game in ("dlt", "ssq"):
         for label in draws[game][50:]:
@@ -1469,7 +1742,7 @@ def validate_bottom_up(root: Path, release_root: Path, actor_path: Path, *, requ
         if replay["status"] != "PASS" or replay["blocking_findings"] != 0:
             raise ValueError("independent replay is not PASS")
         validate_review_provenance(root, release_root / "review/review.json", actor_path, release_root / "evaluation/evidence-manifest.json")
-    return {"forecast_coverage": 1.0, "metric_coverage": 1.0, "ledger_coverage": 1.0, "bootstrap_coverage": 1.0, "classification": classification, "scientific_summary": evaluation["scientific_summary"], "blocking_findings": 0}
+    return {"forecast_coverage": 1.0, "metric_coverage": 1.0, "ledger_coverage": 1.0, "bootstrap_coverage": 1.0, "guarded_label_unlock": guarded_unlock, "classification": classification, "scientific_summary": evaluation["scientific_summary"], "blocking_findings": 0}
 
 
 def _replace_json(path: Path, mutator: Any) -> None:
@@ -1514,6 +1787,29 @@ def _mutate_staging(case_id: str, staging: Path) -> dict[str, Any]:
     elif case_id == "E2E-P3-12-missing-metric":
         score = _read_jsonl(staging / "runs/metric-index.jsonl")[0]
         (staging / "runs" / score["path"]).unlink()
+    elif case_id == "E2E-P3-15-pre-lock-label-read":
+        rows = _read_jsonl(staging / "runs/experiment-ledger.jsonl")
+        rows[1], rows[2] = rows[2], rows[1]
+        _write_jsonl_replace(staging / "runs/experiment-ledger.jsonl", rows)
+    elif case_id == "E2E-P3-16-unlock-lock-hash-mismatch":
+        rows = _read_jsonl(staging / "runs/experiment-ledger.jsonl")
+        next(row for row in rows if row["state"] == "forecast_locked")["details"]["forecast_sha256"] = "0" * 64
+        _write_jsonl_replace(staging / "runs/experiment-ledger.jsonl", rows)
+    elif case_id in {
+        "E2E-P3-17-unlock-wrong-release", "E2E-P3-18-unlock-wrong-experiment",
+        "E2E-P3-19-unlock-wrong-attempt", "E2E-P3-20-unlock-wrong-target",
+    }:
+        score = _read_jsonl(staging / "runs/metric-index.jsonl")[0]
+        receipt_path = staging / score["label_unlock_receipt_path"]
+        field, value = {
+            "E2E-P3-17-unlock-wrong-release": ("release_id", "wrong-release"),
+            "E2E-P3-18-unlock-wrong-experiment": ("experiment_id", "wrong-experiment"),
+            "E2E-P3-19-unlock-wrong-attempt": ("attempt_id", "wrong-attempt"),
+            "E2E-P3-20-unlock-wrong-target": ("target_issue", "wrong-target"),
+        }[case_id]
+        _replace_json(receipt_path, lambda payload: payload.__setitem__(field, value))
+    elif case_id == "E2E-P3-21-trainer-label-capability":
+        _replace_json(forecast_path, lambda value: value.__setitem__("trainer_pid", value["orchestrator_pid"]))
     else:
         raise ValueError(f"unknown staging mutation: {case_id}")
     return mutation
@@ -1568,7 +1864,7 @@ def verify_e2e_formal(root: Path, output: Path, identity: str, release_root: Pat
         "status": "PASS" if passed else "FAIL", "terminal": "PASS" if passed else "E2E_MISMATCH",
         "non_formal_synthetic_only": False, "required_case_count": len(registry["cases"]), "executed_case_count": len(receipts),
         "required_case_coverage": len(receipts) / len(registry["cases"]), "expected_terminal_match_rate": sum(row["status"] == "PASS" for row in receipts) / len(receipts),
-        "production_validator_recomputed_fields": ["inputs", "forecast_hashes", "ledger_order", "probabilities", "metrics", "bootstrap", "Holm", "classification", "Champion", "review"],
+        "production_validator_recomputed_fields": ["inputs", "trainer_prefix_capability", "forecast_hashes", "guarded_unlock_receipts", "ledger_order", "probabilities", "metrics", "bootstrap", "Holm", "classification", "Champion", "review"],
         "self_reported_fields_trusted": 0, "cases": [{"case_id": row["case_id"], "receipt": f"staging/{row['case_id']}/receipt.json"} for row in receipts],
     }
     write_new_json(destination / "e2e-summary.json", summary)
@@ -1601,6 +1897,7 @@ def accept_formal(root: Path, output: Path, identity: str, release_root: Path, a
             "authorization": "No production, publication, shadow, purchase, betting, return, or winning authorization is granted.",
         },
         "forbidden_actions_authorized": [], "blocking_findings": 0,
+        "guarded_label_unlock": bottom["guarded_label_unlock"],
     }
     write_new_json(report_dir / "final-research-report.json", report)
     readme = (

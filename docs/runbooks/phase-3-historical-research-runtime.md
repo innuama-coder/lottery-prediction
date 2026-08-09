@@ -131,3 +131,27 @@ wheelhouse manifest and offline reconstruction receipt, and a frozen workload,
 canonical-attempt ledger and whitelist. A release has at most two acceptance
 iterations; exhaustion seals a HOLD and requires explicit authorization for a
 new release. This runbook does not itself create that authorization.
+
+For W08, `run` derives its 300 label-free targets from the frozen availability
+ledger, supplies only sanitized strictly-earlier prefixes to a spawn-isolated
+trainer that is quarantined before payload parsing, persists each forecast and
+`forecast_locked`, and then invokes the scoring-only guarded label store through
+a PID-bound opaque capability never sent to the trainer. The store fixes the
+ledger and forecast/receipt locations to canonical paths and fails before
+reading numbers unless the continuous ledger identity/sequence, current file
+hash, and every release/run/experiment/attempt/target/model/path binding match
+the global latest ledger lock. Successful runs retain 600 files below
+`runs/label-unlocks/`.
+
+After W08 and again during W10/W12/final postcheck, recompute those bindings with
+an explicit release path:
+
+```sh
+PYTHONPATH=src python3 scripts/phase3/recompute_guarded_unlocks.py \
+  --release-root "$RELEASE_ROOT" \
+  --output "$RELEASE_ROOT/review/guarded-unlock-recomputation.json"
+```
+
+PASS requires exactly 600 current forecast hashes, 600 matching lock events,
+600 unique receipt hashes, 600 matching unlock events, zero pre-lock reads, and
+zero identity/hash mismatches. W08–W13 remain offline.

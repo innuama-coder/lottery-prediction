@@ -29,12 +29,13 @@ def main() -> int:
     release = args.release_root.resolve() if args.release_root else None
     prep_actors = prep / "control/actor-assignments-preparation.json"
     formal_actors = release / "control/actor-assignments-formal.json" if release else None
+    python = sys.executable
     commands: list[tuple[str, list[str], dict[str, str]]] = [
-        ("compileall", ["python3", "-m", "compileall", "-q", "-f", "src/lottery_research/phase3", "scripts/phase3"], {}),
+        ("compileall", [python, "-m", "compileall", "-q", "-f", "src/lottery_research/phase3", "scripts/phase3"], {}),
         ("git-diff-check", ["git", "diff", "--check"], {}),
-        ("phase3-tests", ["python3", "-m", "unittest", "discover", "-s", "tests/phase3", "-p", "test_*.py", "-v"], {"TMPDIR": "/private/tmp", "PYTHONPATH": "src"}),
-        ("phase2-1-tests", ["python3", "-m", "unittest", "discover", "-s", "tests/phase2_1", "-p", "test_*.py", "-v"], {"TMPDIR": "/private/tmp", "PYTHONPATH": "src"}),
-        ("phase2-tests", ["python3", "-m", "unittest", "discover", "-s", "tests/phase2", "-p", "test_*.py", "-v"], {"PYTHONPATH": "src"}),
+        ("phase3-tests", [python, "-m", "unittest", "discover", "-s", "tests/phase3", "-p", "test_*.py", "-v"], {"TMPDIR": "/private/tmp", "PYTHONPATH": "src"}),
+        ("phase2-1-tests", [python, "-m", "unittest", "discover", "-s", "tests/phase2_1", "-p", "test_*.py", "-v"], {"TMPDIR": "/private/tmp", "PYTHONPATH": "src"}),
+        ("phase2-tests", [python, "-m", "unittest", "discover", "-s", "tests/phase2", "-p", "test_*.py", "-v"], {"PYTHONPATH": "src"}),
     ]
     for ordinal in range(1, args.through_work_item + 1):
         work_item = f"W{ordinal:02d}"
@@ -48,7 +49,7 @@ def main() -> int:
             actors = formal_actors
         commands.append((
             f"receipt-{work_item}",
-            ["python3", "scripts/phase3/validate_work_item_receipt.py", "--receipt", str(receipt), "--actor-assignments", str(actors), "--expected-work-item", work_item],
+            [python, "scripts/phase3/validate_work_item_receipt.py", "--receipt", str(receipt), "--actor-assignments", str(actors), "--expected-work-item", work_item],
             {"PYTHONPATH": "src"},
         ))
     rows = []

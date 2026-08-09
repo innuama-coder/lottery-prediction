@@ -64,6 +64,8 @@ Phase 2.1 的 `indeterminate` 表示当前注册检验和功效不能形成更�
 
 正式执行必须使用分离的数据读取接口：训练器只能读取目标期以前的特征前缀；预测器先原子写入带哈希的 forecast 和 `forecast_locked` 事件；评分器验证该事件后才可从独立 label store 解锁目标期号码，并只追加 `label_unlocked` 与评分事件。任何窗口、归一化、分箱、缺失填补、特征选择、超参数和权重拟合都只能读取训练前缀。
 
+运行时能力边界不是事件顺序的自报字段：target catalog 只含 `game/target_issue/ordinal/source_count`；training-prefix 接口只返回同彩种且严格早于目标期的 prior-result 记录；trainer 在独立 spawn 进程内只接收该前缀协议，不接收 label-store 对象、评分能力或完整 inventory，并在读取 payload 前永久进入 trainer quarantine；该 quarantine 的审计守卫拒绝 trainer 直接打开整个 `artifacts/` label-bearing 树或派生子进程绕过边界。评分能力是不可由 role 字符串伪造、不可序列化给 trainer、绑定评分进程 PID 的 opaque capability。评分侧 guarded label store 在第一次读取号码前必须固定使用 `<release>/runs/experiment-ledger.jsonl`，从磁盘重验连续 sequence 与 ledger identity、规范 forecast/receipt 路径和当前 SHA-256、同一 release/run/experiment/attempt/target/model 身份，以及 ledger 的全局最新事件恰为该 attempt 的 `forecast_locked`。每个成功解锁生成唯一 receipt，后续 `label_unlocked` 事件和 metric 同时绑定其路径、SHA-256 与 label-store identity；底层重算还必须验证 lock 与 unlock 在全局 ledger 中相邻、引用的 receipt 集合恰等于规范 inventory。任何失败均在 label read counter 增加前终止。
+
 Phase 1 每彩种 200 期、最小训练长度固定为 50，因此冻结外层目标为每彩种后 150 期，共 300 个目标。验证器应生成每彩种 `50+51+...+199=18,675` 条、合计 37,350 条 source-target 关系；这是机器展开的关系覆盖率，不要求 37,350 份外部证据文件。两彩种合计 398 个不同的历史来源 issue。
 
 若 `prior_draw_result` 违反严格期号顺序、预测在标签读取前未锁定，或任何外部字段缺少真实时间证据，当前 release 必须 fail closed。输入或运行不完整属于交付 `HOLD`，不能用科学 `indeterminate` 代替；`indeterminate` 只用于过程完整但统计证据不足的模型分类。
@@ -178,7 +180,7 @@ Phase 3 最终交付包必须完整包含：
 11. 显式最终 evidence manifest；
 12. 唯一 Phase 3 acceptance 制品与人工签署。
 
-最终 validator 必须从 manifest 指定的输入、逐期预测、ledger 和 replay 制品重新计算核心指标、覆盖率、模型分类和 blocking finding 数，不能只信顶层报告或自动选择 `latest`。必需正向与负向 E2E 必须覆盖正常全链路、输入/规则篡改、未来/开奖后字段、外层污染、非法/负/不归一概率、遗漏或覆盖失败实验、历史越权晋级、replay 不一致、acceptance/manifest 篡改，以及没有 challenger 合格时的 `GO / no_shadow_candidate`。
+最终 validator 必须从 manifest 指定的输入、逐期预测、600 条 unlock receipts、ledger 和 replay 制品重新计算核心指标、guarded unlock 覆盖率、模型分类和 blocking finding 数，不能只信顶层报告或自动选择 `latest`。必需正向与负向 E2E 必须覆盖正常全链路、输入/规则篡改、未来/开奖后字段、外层污染、pre-lock label read、错误 forecast hash、锁后 forecast 改写、错误 release/experiment/attempt/target、trainer 越权访问 label store、非法/负/不归一概率、遗漏或覆盖失败实验、历史越权晋级、replay 不一致、acceptance/manifest 篡改，以及没有 challenger 合格时的 `GO / no_shadow_candidate`。
 
 ## 9. GO、HOLD 与 FAIL / STOP
 

@@ -1,6 +1,6 @@
 {
   "$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","additionalProperties":false,
-  "required":["schema_version","artifact_type","identity","source_identity","release_id","status","terminal","non_formal_synthetic_only","independence","outer_target_count","forecast_probability_count","input_fold_match_rate","probability_match_rate","metric_match_rate","bootstrap_match_rate","classification_match_rate","differences","blocking_findings","distribution_audits","known_answer"],
+  "required":["schema_version","artifact_type","identity","source_identity","release_id","status","terminal","non_formal_synthetic_only","independence","outer_target_count","forecast_probability_count","input_fold_match_rate","probability_match_rate","metric_match_rate","bootstrap_match_rate","classification_match_rate","differences","blocking_findings","distribution_audits","known_answer","guarded_label_unlock"],
   "properties":{
     "schema_version":{"const":"3.0.0"},"artifact_type":{"const":"phase3_replay"},"identity":{"type":"string"},"source_identity":{"type":"string"},"release_id":{"type":"string"},
     "status":{"enum":["PASS","HOLD"]},"terminal":{"enum":["PASS","EVIDENCE_MISMATCH"]},"non_formal_synthetic_only":{"const":false},"independence":{"type":"string"},
@@ -8,6 +8,7 @@
     "input_fold_match_rate":{"type":"number","minimum":0,"maximum":1},"probability_match_rate":{"type":"number","minimum":0,"maximum":1},
     "metric_match_rate":{"type":"number","minimum":0,"maximum":1},"bootstrap_match_rate":{"type":"number","minimum":0,"maximum":1},"classification_match_rate":{"type":"number","minimum":0,"maximum":1},
     "differences":{"type":"array","items":{"type":"string"}},"blocking_findings":{"type":"integer","minimum":0},
-    "distribution_audits":{"type":"array","minItems":6,"maxItems":6,"items":{"type":"object"}},"known_answer":{"type":"object"}
+    "distribution_audits":{"type":"array","minItems":6,"maxItems":6,"items":{"type":"object"}},"known_answer":{"type":"object"},
+    "guarded_label_unlock":{"type":"object","required":["guarded_unlock_count","expected_guarded_unlock_count","unique_unlock_receipt_count","pre_lock_label_read_count","identity_or_hash_mismatch_count","forecast_lock_event_count","label_unlock_event_count","coverage","status"],"properties":{"guarded_unlock_count":{"const":600},"expected_guarded_unlock_count":{"const":600},"unique_unlock_receipt_count":{"const":600},"pre_lock_label_read_count":{"const":0},"identity_or_hash_mismatch_count":{"const":0},"forecast_lock_event_count":{"const":600},"label_unlock_event_count":{"const":600},"coverage":{"const":1.0},"status":{"const":"PASS"}}}
   }
 }

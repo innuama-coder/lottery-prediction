@@ -1,12 +1,14 @@
 {
   "$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","additionalProperties":false,
-  "required":["schema_version","artifact_type","release_id","game","target_issue","model_id","forecast_sha256","actual_joint_probability","joint_log_score","relative_skill_vs_M0","inclusion_brier","front_inclusion_brier","back_inclusion_brier","top_1000_role"],
+  "required":["schema_version","artifact_type","release_id","game","target_issue","model_id","forecast_sha256","actual_joint_probability","joint_log_score","relative_skill_vs_M0","inclusion_brier","front_inclusion_brier","back_inclusion_brier","top_1000_role","label_unlock_receipt_path","label_unlock_receipt_sha256"],
   "properties":{
     "schema_version":{"const":"3.0.0"},"artifact_type":{"const":"phase3_metric"},"release_id":{"type":"string","minLength":1},
     "game":{"enum":["dlt","ssq"]},"target_issue":{"type":"string"},"model_id":{"enum":["M0","M1"]},
     "forecast_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"actual_joint_probability":{"type":"number","exclusiveMinimum":0,"maximum":1},
     "joint_log_score":{"type":"number"},"relative_skill_vs_M0":{"type":"number"},
     "inclusion_brier":{"type":"number","minimum":0},"front_inclusion_brier":{"type":"number","minimum":0},"back_inclusion_brier":{"type":"number","minimum":0},
-    "top_1000_role":{"const":"diagnostic_only"}
+    "top_1000_role":{"const":"diagnostic_only"},
+    "label_unlock_receipt_path":{"type":"string","pattern":"^(?!/)(?!.*latest)(?!.*\\*).+$"},
+    "label_unlock_receipt_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"}
   }
 }

@@ -14,6 +14,13 @@
     {"id":"E2E-P3-11-forecast-after-lock-tamper","expected_terminal":"EVIDENCE_MISMATCH"},
     {"id":"E2E-P3-12-missing-metric","expected_terminal":"EVIDENCE_MISMATCH"},
     {"id":"E2E-P3-13-no-shadow-candidate","expected_terminal":"PASS_NO_SHADOW_CANDIDATE"},
-    {"id":"E2E-P3-14-indeterminate","expected_terminal":"PASS_INDETERMINATE"}
+    {"id":"E2E-P3-14-indeterminate","expected_terminal":"PASS_INDETERMINATE"},
+    {"id":"E2E-P3-15-pre-lock-label-read","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-16-unlock-lock-hash-mismatch","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-17-unlock-wrong-release","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-18-unlock-wrong-experiment","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-19-unlock-wrong-attempt","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-20-unlock-wrong-target","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-21-trainer-label-capability","expected_terminal":"EVIDENCE_MISMATCH"}
   ]
 }

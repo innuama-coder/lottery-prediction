@@ -1,0 +1,110 @@
+{
+  "schema_version": "phase3_independent_task_record_v1",
+  "record_type": "phase3_w06_independent_method_review",
+  "role": "independent_method_reviewer",
+  "actor_id": "codex-w06-independent-method-reviewer-r03",
+  "task_id": "phase3-r03-w06-label-isolation-review",
+  "session_id": "phase3-r03-w06-label-isolation-review-session-01",
+  "parent_task_id": "phase3-implementation-20260809-r01-iteration-01",
+  "reviewed_paths": [
+    "src/lottery_research/phase3/data_access.py",
+    "src/lottery_research/phase3/formal.py",
+    "src/lottery_research/phase3/prerun_contract.py",
+    "src/lottery_research/phase3/ledger.py",
+    "src/lottery_research/phase3/schema.py",
+    "schemas/phase3/guarded-label-unlock.schema.json",
+    "schemas/phase3/forecast.schema.json",
+    "schemas/phase3/metric.schema.json",
+    "schemas/phase3/replay.schema.json",
+    "scripts/phase3/recompute_guarded_unlocks.py",
+    "scripts/phase3/independent_model_reconstruction.py",
+    "tests/phase3/test_label_capability_isolation.py",
+    "tests/phase3/test_schema_contract.py",
+    "config/phase3/e2e-registry.json",
+    "docs/research/phase-3-overall-design.md",
+    "docs/plans/phase-3-detailed-plan.md",
+    "docs/runbooks/phase-3-historical-research-runtime.md"
+  ],
+  "commands": [
+    {
+      "command": "git status --short && git log --oneline -8 && rg -n 'def run_formal|read_draws\\(|label =|forecast_locked|label_unlocked' src/lottery_research/phase3/formal.py",
+      "exit_code": 0,
+      "result": "inspected dirty implementation and preserved R01/R02 history"
+    },
+    {
+      "command": "TMPDIR=/private/tmp PYTHONPATH=src python3 -m unittest tests.phase3.test_label_capability_isolation tests.phase3.test_schema_contract -v; python3 -m compileall -q -f src/lottery_research/phase3 scripts/phase3; git diff --check",
+      "exit_code": 0,
+      "result": "9 targeted tests passed; compileall and diff check passed; tests did not require creating TMPDIR"
+    },
+    {
+      "command": "TMPDIR=/private/tmp PYTHONPATH=src python3 -m unittest discover -s tests/phase3 -p 'test_*.py' -v",
+      "exit_code": 0,
+      "result": "42 Phase 3 tests passed"
+    },
+    {
+      "command": "PYTHONPATH=src python3 - <<'PY' ... construct matching AppendOnlyLedger outside release_root and call GuardedLabelStore.guarded_unlock ... PY",
+      "exit_code": 0,
+      "result": "guard accepted outside-release-ledger.jsonl and number_read_count became 1"
+    },
+    {
+      "command": "PYTHONPATH=src python3 - <<'PY' ... GuardedLabelStore(Path.cwd(), caller_role='scorer') ... PY",
+      "exit_code": 0,
+      "result": "a separate process can self-assert the scorer string and construct the store"
+    },
+    {
+      "command": "mkdir -p /private/tmp",
+      "exit_code": 1,
+      "result": "current Linux host has no /private and the reviewer user cannot create it; parent directed fallback to /tmp"
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "W06-LABEL-001",
+      "severity": "blocking",
+      "title": "guard accepts a ledger outside the immutable release",
+      "evidence": "guarded_unlock reads ledger.path but never requires ledger.path.resolve() == release_root/runs/experiment-ledger.jsonl. A temporary external matching ledger was accepted and target numbers were read (number_read_count=1).",
+      "required_remediation": "bind the guard to the exact release ledger path and exact ledger/run identity before any label read; add a rejection test asserting number_read_count remains zero."
+    },
+    {
+      "finding_id": "W06-LABEL-002",
+      "severity": "blocking",
+      "title": "trainer label-store denial is a forgeable role assertion, not a capability boundary",
+      "evidence": "GuardedLabelStore and read_scoring_label_inventory authorize caller_role == 'scorer'. The spawn worker inherits cwd/filesystem and imports formal.py/data_access.py, so a trainer-side process can self-assert the scorer string. Existing trainer_access controls only submit the honest string 'trainer'.",
+      "required_remediation": "replace role-string authorization with a scorer-only capability unavailable to the trainer process and/or launch the trainer under an enforceable filesystem boundary; ensure the negative control attempts the real unauthorized access path rather than an honest role declaration."
+    },
+    {
+      "finding_id": "W06-EVIDENCE-003",
+      "severity": "blocking",
+      "title": "bottom-up guarded-unlock recomputation does not verify the global latest lock state",
+      "evidence": "validate_guarded_unlock_evidence and independent_model_reconstruction group events per attempt and accept the local sequence started/forecast_locked/label_unlocked/scored/succeeded. They do not assert that the globally immediately preceding event for each label_unlocked is that same attempt's forecast_locked, although the runtime guard and frozen design require the global latest event to be the matching lock.",
+      "required_remediation": "recompute global predecessor/latest state from ledger order for every receipt and add an interleaving mutation negative test."
+    },
+    {
+      "finding_id": "W06-EVIDENCE-004",
+      "severity": "blocking",
+      "title": "bottom-up recomputation omits lock path and lock run identity bindings",
+      "evidence": "both recomputers compare the lock forecast SHA but not lock.details.forecast_path to the indexed/current forecast path, and do not require lock.ledger_identity to equal the receipt/forecast run_id. Therefore their 600/600 result cannot independently establish every runtime guard predicate.",
+      "required_remediation": "bind lock path, current SHA, release/run/experiment/attempt/target/model, receipt, metric and store identity in both primary and independent recomputation; add mutations for lock path, global interleaving and lock run identity."
+    },
+    {
+      "finding_id": "W06-POSITIVE-005",
+      "severity": "informational",
+      "title": "training data flow no longer directly loads the full draw inventory",
+      "evidence": "run_formal uses label-free load_target_catalog, bounded read_training_prefix and a spawn payload. The worker receives prior-number fields only and checks every issue is strictly earlier than target; read_draws remains limited to non-W08 preparation diagnostics."
+    },
+    {
+      "finding_id": "W06-POSITIVE-006",
+      "severity": "informational",
+      "title": "listed negative controls reject before the instrumented target-number read",
+      "evidence": "pre-lock, wrong hash, rewritten forecast, wrong release/experiment/attempt/target and honest trainer-role cases all passed and retained number_read_count == 0."
+    }
+  ],
+  "blocking_findings": [
+    "W06-LABEL-001",
+    "W06-LABEL-002",
+    "W06-EVIDENCE-003",
+    "W06-EVIDENCE-004"
+  ],
+  "status": "HOLD",
+  "declaration": "I independently reviewed the uncommitted label-capability isolation implementation and evidence paths, executed only read-only repository checks plus disposable temporary fixtures, made no changes to the main implementation or preserved R01/R02 evidence, and found four unresolved blocking findings. The requested /private/tmp path is unavailable on this Linux host; this record is placed in /tmp by parent direction."
+}

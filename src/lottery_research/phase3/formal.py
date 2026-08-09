@@ -952,6 +952,13 @@ def _benchmark_once(component: str, repetition: int, root: Path, scratch: Path) 
             "E2E-P3-08-ledger-delete-or-overwrite": "ledger_attempt_delete", "E2E-P3-09-champion-promotion": "champion_promotion",
             "E2E-P3-10-replay-mismatch": "partial_artifact_return", "E2E-P3-11-forecast-after-lock-tamper": "forecast_mutation_after_lock",
             "E2E-P3-12-missing-metric": "partial_artifact_return",
+            "E2E-P3-15-pre-lock-label-read": "label_before_forecast_lock",
+            "E2E-P3-16-unlock-lock-hash-mismatch": "label_wrong_hash",
+            "E2E-P3-17-unlock-wrong-release": "label_wrong_release",
+            "E2E-P3-18-unlock-wrong-experiment": "label_wrong_experiment",
+            "E2E-P3-19-unlock-wrong-attempt": "label_wrong_attempt",
+            "E2E-P3-20-unlock-wrong-target": "label_wrong_target",
+            "E2E-P3-21-trainer-label-capability": "trainer_label_store_access",
         }
         cases = []
         for row in registry["cases"]:

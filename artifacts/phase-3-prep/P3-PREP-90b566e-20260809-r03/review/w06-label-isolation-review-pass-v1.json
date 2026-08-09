@@ -1,0 +1,130 @@
+{
+  "schema_version": "phase3_independent_task_record_v1",
+  "record_type": "phase3_w06_independent_method_review",
+  "role": "independent_method_reviewer",
+  "actor_id": "codex-w06-independent-method-reviewer-r03",
+  "task_id": "phase3-r03-w06-label-isolation-review-final",
+  "session_id": "phase3-r03-w06-label-isolation-review-session-01",
+  "parent_task_id": "phase3-implementation-20260809-r01-iteration-01",
+  "supersedes_review_record": {
+    "path": "/tmp/phase3-r03-w06-label-isolation-review.json",
+    "sha256": "5d70fffe6c7f497b3d61540e5d435eb2dc007cea9501cabe340c3fd749bb0284",
+    "preservation": "preserved unchanged as the initial HOLD review"
+  },
+  "reviewed_paths": [
+    "src/lottery_research/phase3/data_access.py",
+    "src/lottery_research/phase3/formal.py",
+    "src/lottery_research/phase3/prerun_contract.py",
+    "src/lottery_research/phase3/ledger.py",
+    "src/lottery_research/phase3/schema.py",
+    "schemas/phase3/guarded-label-unlock.schema.json",
+    "schemas/phase3/forecast.schema.json",
+    "schemas/phase3/metric.schema.json",
+    "schemas/phase3/replay.schema.json",
+    "scripts/phase3/recompute_guarded_unlocks.py",
+    "scripts/phase3/independent_model_reconstruction.py",
+    "tests/phase3/test_label_capability_isolation.py",
+    "tests/phase3/test_schema_contract.py",
+    "config/phase3/e2e-registry.json",
+    "config/phase3/feature-registry.json",
+    "config/phase3/model-registry.json",
+    "config/phase3/preregistration.json",
+    "docs/research/phase-3-overall-design.md",
+    "docs/plans/phase-3-detailed-plan.md",
+    "docs/runbooks/phase-3-historical-research-runtime.md"
+  ],
+  "commands": [
+    {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "python3 -m compileall -q -f src/lottery_research/phase3 scripts/phase3",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "TMPDIR=/tmp PYTHONPATH=src python3 -m unittest tests.phase3.test_label_capability_isolation tests.phase3.test_schema_contract -v",
+      "exit_code": 0,
+      "result": "9/9 targeted tests passed"
+    },
+    {
+      "command": "TMPDIR=/tmp PYTHONPATH=src python3 -m unittest discover -s tests/phase3 -p 'test_*.py' -v",
+      "exit_code": 0,
+      "result": "42/42 Phase 3 tests passed after frozen source SHA synchronization"
+    },
+    {
+      "command": "PYTHONPATH=src python3 - <<'PY' ... construct release-external matching ledger and invoke guarded_unlock ... PY",
+      "exit_code": 0,
+      "result": "rejected with LABEL_UNLOCK_LEDGER_CAPABILITY_MISMATCH; number_read_count=0; receipt_exists=false"
+    },
+    {
+      "command": "PYTHONPATH=src python3 - <<'PY' ... generate 600 canonical forecast/lock/unlock/receipt/metric fixtures and invoke primary plus standalone recomputation ... PY",
+      "exit_code": 0,
+      "result": "primary PASS 600/600 and independent PASS 600/600"
+    },
+    {
+      "command": "PYTHONPATH=src python3 - <<'PY' ... preserve local attempt sequences while inserting a foreign started event between a lock and its unlock ... PY",
+      "exit_code": 0,
+      "result": "primary FAIL with pre_lock count 1; independent FAIL with unlock-global-adjacency mismatch"
+    },
+    {
+      "command": "PYTHONPATH=src python3 - <<'PY' ... mutate one lock forecast_path after a 600/600 baseline ... PY",
+      "exit_code": 0,
+      "result": "primary FAIL and independent FAIL with unlock-binding mismatch"
+    },
+    {
+      "command": "rg -n 'def run_formal|read_draws\\(|read_scoring_label_inventory\\(|GuardedLabelStore\\(|activate_scoring_capability\\(|quarantine_current_process_as_trainer\\(|forecast_locked|label_unlocked' src/lottery_research/phase3/formal.py src/lottery_research/phase3/data_access.py",
+      "exit_code": 0,
+      "result": "run_formal uses label-free catalog and bounded training prefix; full label inventory calls are confined to preparation diagnostics and explicit scoring/evaluation/replay/validator interfaces"
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "W06-RESOLVED-001",
+      "severity": "resolved",
+      "title": "training process receives only a label-free target and strict historical prefix",
+      "evidence": "run_formal no longer calls read_draws on its training path. load_target_catalog emits game/target_issue/ordinal/source_count only. read_training_prefix stops after source_count same-game rows and rejects target-or-future issues. The spawn worker receives only this sanitized payload and quarantines itself before payload inspection."
+    },
+    {
+      "finding_id": "W06-RESOLVED-002",
+      "severity": "resolved",
+      "title": "trainer cannot mint or use the scoring capability",
+      "evidence": "scoring access now requires an opaque process-nonce and PID-bound capability. The trainer's first action permanently sets its process role to trainer; activate_scoring_capability then fails closed. A probe executed in the real spawn context was denied with number_read_count=0. The capability is not serialized into trainer payloads."
+    },
+    {
+      "finding_id": "W06-RESOLVED-003",
+      "severity": "resolved",
+      "title": "guard validates persisted forecast and exact immutable release ledger before label read",
+      "evidence": "guarded_unlock requires canonical release-contained forecast and receipt paths, exact release ledger path, ledger object identity/run match, continuous global sequence, global latest event equal to the same experiment/attempt lock, complete lock identity/path/current SHA, and forecast release/run/game/target/model identity before _read_one. A release-external forged ledger is rejected with zero reads and no receipt."
+    },
+    {
+      "finding_id": "W06-RESOLVED-004",
+      "severity": "resolved",
+      "title": "successful unlock receipt and event close all required bindings",
+      "evidence": "each receipt binds release/run/experiment/attempt/game/target/model, canonical forecast path/current lock SHA, label-store identity, label SHA, read ordinal and guard result. The label_unlocked event binds the receipt path/SHA and the same identities; metrics bind that receipt path/SHA."
+    },
+    {
+      "finding_id": "W06-RESOLVED-005",
+      "severity": "resolved",
+      "title": "primary and standalone recomputation verify bottom-level guarded unlock evidence",
+      "evidence": "both recomputers verify canonical forecast and receipt paths, current forecast SHA, exact lock/unlock identities and run, globally adjacent latest lock, receipt/event/metric hashes, label-store identity, continuous ledger identity/sequence and equality of referenced versus actual receipt inventory. A synthetic canonical 600-record inventory passed 600/600 in both; global interleaving and wrong lock path mutations failed in both."
+    },
+    {
+      "finding_id": "W06-TEST-006",
+      "severity": "informational",
+      "title": "required positive and negative implementation controls pass",
+      "evidence": "pre-lock, wrong lock hash, forecast rewrite, wrong release, wrong experiment, wrong attempt, wrong target, wrong ledger and real trainer capability access all reject before the instrumented label-number read; positive guarded unlock emits a bound receipt. Phase 3 regression is 42/42 PASS."
+    },
+    {
+      "finding_id": "W06-ENV-007",
+      "severity": "informational",
+      "title": "requested /private/tmp location is unavailable on this Linux host",
+      "evidence": "the host has no writable /private; mkdir -p /private/tmp failed with permission denied. By parent direction both W06 records are stored under /tmp."
+    }
+  ],
+  "blocking_findings": [],
+  "status": "PASS",
+  "declaration": "I independently re-reviewed the remediated label-capability isolation and evidence paths after preserving the initial HOLD record. I executed only read-only repository checks plus disposable /tmp fixtures, made no changes to the main implementation or preserved R01/R02 evidence, and found zero remaining blocking findings in the W06 method-review scope. This PASS covers implementation readiness; the future R03 formal release must still independently demonstrate its own 600/600 receipts and complete W08-W13 lifecycle evidence."
+}

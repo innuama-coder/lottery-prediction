@@ -10,6 +10,7 @@ from pathlib import Path
 
 from lottery_research.phase3.formal import (
     NEGATIVE_CONTROLS,
+    _benchmark_once,
     audit_real_probability_spaces,
     execute_failure_injection,
     execute_qualification_control,
@@ -56,6 +57,15 @@ class WorkflowContractTests(unittest.TestCase):
             self.assertEqual(first["outer_target_count"], 150)
             receipts = [execute_qualification_control(case, base) for case in NEGATIVE_CONTROLS]
             self.assertTrue(all(row["actual_terminal"] == "REJECTED" for row in receipts))
+
+    def test_w04_e2e_benchmark_covers_every_registered_case(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            scratch = Path(raw)
+            _benchmark_once("e2e_suite", 0, ROOT, scratch)
+            artifact = json.loads((scratch / "e2e_suite/sample-00/artifact.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(artifact["cases"]), 21)
+        self.assertEqual(artifact["registry_coverage"], 1.0)
+        self.assertEqual(artifact["expected_terminal_match_rate"], 1.0)
 
     def test_qualification_bottom_up_rejects_fitted_evidence_mutations(self) -> None:
         mutations = {

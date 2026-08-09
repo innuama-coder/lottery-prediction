@@ -1,0 +1,103 @@
+{
+  "schema_version": "phase3_independent_task_record_v1",
+  "record_type": "phase3_w06_independent_method_review_delta_v2",
+  "role": "independent_method_reviewer",
+  "actor_id": "codex-w06-independent-method-reviewer-r03",
+  "task_id": "phase3-r03-w06-label-isolation-review-final-v2",
+  "session_id": "phase3-r03-w06-label-isolation-review-session-01",
+  "parent_task_id": "phase3-implementation-20260809-r01-iteration-01",
+  "prior_records": [
+    {
+      "path": "/tmp/phase3-r03-w06-label-isolation-review.json",
+      "sha256": "5d70fffe6c7f497b3d61540e5d435eb2dc007cea9501cabe340c3fd749bb0284",
+      "status": "HOLD",
+      "preservation": "preserved unchanged"
+    },
+    {
+      "path": "/tmp/phase3-r03-w06-label-isolation-review-final.json",
+      "sha256": "8a5f786d7e401fb3af9467fbd0f67a5b0c2c4a50bbe2f7fe3fd7dcd572ec898f",
+      "status": "PASS",
+      "preservation": "preserved unchanged"
+    }
+  ],
+  "reviewed_paths": [
+    "src/lottery_research/phase3/data_access.py",
+    "src/lottery_research/phase3/formal.py",
+    "tests/phase3/test_label_capability_isolation.py",
+    "config/phase3/model-registry.json",
+    "config/phase3/feature-registry.json",
+    "config/phase3/preregistration.json"
+  ],
+  "commands": [
+    {
+      "command": "rg -n 'audit|quarantine|trainer_label_store_access_probe|artifacts|subprocess|os.system|open' src/lottery_research/phase3/data_access.py src/lottery_research/phase3/formal.py tests/phase3/test_label_capability_isolation.py",
+      "exit_code": 0,
+      "result": "inspected quarantine installation, guarded audit events, real spawn probe and fail-closed consumers"
+    },
+    {
+      "command": "PYTHONPATH=src python3 - <<'PY' ... quarantine; os.fork; child os.execve a fresh interpreter which reads draws and writes one byte ... PY",
+      "exit_code": 0,
+      "result": "initial delta was bypassed before remediation: fork_exec_status=0, marker_exists=true, leaked_byte_count=1; finding was reported before PASS"
+    },
+    {
+      "command": "PYTHONPATH=src python3 - <<'PY' ... after remediation attempt os.fork, os.system and artifact symlink read; verify ordinary non-artifact I/O ... PY",
+      "exit_code": 0,
+      "result": "fork and system rejected with TRAINER_CHILD_PROCESS_CAPABILITY_DENIED; artifact symlink rejected with TRAINER_ARTIFACT_FILESYSTEM_CAPABILITY_DENIED; ordinary non-artifact I/O remained allowed"
+    },
+    {
+      "command": "TMPDIR=/tmp PYTHONPATH=src python3 -m unittest tests.phase3.test_label_capability_isolation -v",
+      "exit_code": 0,
+      "result": "5/5 label-isolation tests passed, including probe and fitting in the same persistent spawn worker"
+    },
+    {
+      "command": "TMPDIR=/tmp PYTHONPATH=src python3 -m unittest discover -s tests/phase3 -p 'test_*.py' -v",
+      "exit_code": 0,
+      "result": "42/42 Phase 3 tests passed after final formal.py SHA bootstrap"
+    },
+    {
+      "command": "python3 -m compileall -q -f src/lottery_research/phase3 scripts/phase3",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "result": "PASS"
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "W06-V2-RESOLVED-001",
+      "severity": "resolved",
+      "title": "trainer artifact-tree access is denied by a process-persistent audit guard",
+      "evidence": "quarantine installs a Python audit hook before payload inspection. Direct and symlink-resolved opens beneath the worktree artifacts directory raise TRAINER_ARTIFACT_FILESYSTEM_CAPABILITY_DENIED, while the prefix-only trainer retains ordinary non-artifact runtime access."
+    },
+    {
+      "finding_id": "W06-V2-RESOLVED-002",
+      "severity": "resolved",
+      "title": "fork/exec escape found during review is now closed",
+      "evidence": "the first delta omitted os.fork and os.exec and was empirically bypassed. The final hook rejects subprocess.Popen, os.system, posix_spawn variants, os.fork, os.forkpty, os.exec and ctypes audit events. Re-running the fork/system path now rejects before a child is created."
+    },
+    {
+      "finding_id": "W06-V2-RESOLVED-003",
+      "severity": "resolved",
+      "title": "real spawn probe is fully fail-closed",
+      "evidence": "_trainer_probe_passed requires distinct PID, opaque scoring-capability denial, direct artifact denial, subprocess denial, fork denial, exec denial and number_read_count=0. W04 implementation validation and W08 run_formal both stop unless every predicate is true; W08 persists all denial fields in run-summary."
+    },
+    {
+      "finding_id": "W06-V2-RESOLVED-004",
+      "severity": "resolved",
+      "title": "quarantine does not break model training",
+      "evidence": "the isolation test submits the denial probe and then _trainer_fit_target to the same one-worker spawn pool, verifies identical worker PID, and successfully reconstructs both M0 and M1 from the sanitized prefix. Targeted tests are 5/5 PASS and Phase 3 regression is 42/42 PASS."
+    },
+    {
+      "finding_id": "W06-V2-ENV-005",
+      "severity": "informational",
+      "title": "record remains under /tmp because /private/tmp is unavailable",
+      "evidence": "the current Linux reviewer account cannot create the absent /private directory; this location follows parent direction and does not overwrite either prior review record."
+    }
+  ],
+  "blocking_findings": [],
+  "status": "PASS",
+  "declaration": "I independently reviewed the trainer-quarantine increment after the prior W06 PASS records, reported and reproduced an initial fork/exec bypass, and re-reviewed only after it and the probe-assertion gap were remediated. I made no changes to the main implementation or preserved R01/R02 evidence. The final increment preserves prefix-only model fitting while denying direct artifact, scoring capability, subprocess, fork and exec access in the real persistent spawn worker. Zero blocking findings remain in this delta scope; R03 formal evidence must still close its actual 600/600 and W08-W13 lifecycle requirements."
+}

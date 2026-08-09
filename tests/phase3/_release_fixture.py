@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -113,21 +112,28 @@ def build_authorized_release(root: Path, release_dir: Path, *, readiness_identit
         "release_id": release_dir.name, "status": "PASS", "terminal": "READY", "formal_run_authorized": True,
         "code_hash_match_rate": 1.0, "input_hash_match_rate": 1.0, "dependency_hash_match_rate": 1.0,
     })
-    commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
     implementation_paths: list[Path] = []
     for relative in ("src/lottery_research/phase3", "scripts/phase3", "schemas/phase3", "config/phase3"):
         implementation_paths.extend(path for path in (root / relative).rglob("*") if path.is_file() and "__pycache__" not in path.parts)
     for relative in ("requirements/phase3.lock", "tasks/phase3/README.md", "docs/research/phase-3-overall-design.md", "docs/plans/phase-3-detailed-plan.md", "docs/runbooks/phase-3-historical-research-runtime.md"):
         implementation_paths.append(root / relative)
     inventory_rows = [{"path": path.relative_to(root).as_posix(), "sha256": sha256_file(path), "bytes": path.stat().st_size} for path in sorted(set(implementation_paths))]
+    # The fixture's release tree carries no Git metadata: independent acceptance
+    # checks copy the source tree without .git, so ``git rev-parse HEAD`` is
+    # unavailable. Derive a stable synthetic implementation_freeze_commit from
+    # the canonical inventory hash so the frozen authorization layer is
+    # reproducible without Git. (Production W07/readiness still binds formal
+    # releases to the real Git commit; only this fixture is Git-free.)
+    inventory_sha = canonical_sha256(inventory_rows)
+    freeze_commit = hashlib.sha1(inventory_sha.encode("ascii")).hexdigest()
     write_new_json(control / "implementation-inventory.json", {
-        "release_id": release_dir.name, "implementation_freeze_commit": commit,
-        "files": inventory_rows, "inventory_sha256": canonical_sha256(inventory_rows),
+        "release_id": release_dir.name, "implementation_freeze_commit": freeze_commit,
+        "files": inventory_rows, "inventory_sha256": inventory_sha,
     })
     write_new_json(control / "formal-authorization.json", {
         "schema_version": "3.0.0", "artifact_type": "phase3_formal_authorization", "release_id": release_dir.name,
         "readiness_identity": readiness_identity, "formal_run_authorized": True,
-        "readiness_sha256": sha256_file(readiness_path), "implementation_freeze_commit": commit,
+        "readiness_sha256": sha256_file(readiness_path), "implementation_freeze_commit": freeze_commit,
     })
     work_items_dir = release_dir / "work-items"
     w06_dir = work_items_dir / "W06"
@@ -148,7 +154,7 @@ def build_authorized_release(root: Path, release_dir: Path, *, readiness_identit
     ))
     write_new_json(control / "release-control.json", {
         "schema_version": "3.0.0", "artifact_type": "phase3_release_control", "release_id": release_dir.name,
-        "prep_id": "fixture-prep", "implementation_freeze_commit": commit, "actor_assignment_sha256": formal_actor_sha,
+        "prep_id": "fixture-prep", "implementation_freeze_commit": freeze_commit, "actor_assignment_sha256": formal_actor_sha,
         "input_manifest_sha256": sha256_file(root / "config/phase3/input-manifest.json"),
         "preregistration_sha256": sha256_file(root / "config/phase3/preregistration.json"),
         "model_registry_sha256": sha256_file(root / "config/phase3/model-registry.json"),

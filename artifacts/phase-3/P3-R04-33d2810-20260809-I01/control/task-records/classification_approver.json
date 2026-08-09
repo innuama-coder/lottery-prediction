@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "record_type": "phase3_actor_task_record",
+  "role": "classification_approver",
+  "actor_id": "P3-W12-CLASSIFICATION-APPROVER-20260809-R04",
+  "task_id": "/root/w12_r04_acceptance",
+  "session_id": "P3-W12-CLASSIFICATION-APPROVAL-SESSION-20260809-R04-33D28102",
+  "parent_task_id": "phase3-implementation-20260809-r01-iteration-01",
+  "assignment_declaration": "I am assigned as the independent R04 classification approver. I am not the implementation author or W10 independent reviewer. I will personally perform the independent bottom-up and guarded-label evidence review and execute W12 acceptance only after W11 is complete and the parent task provides the immutable R04 release path. This ASSIGNED record is not an approval and does not predetermine PASS or GO.",
+  "status": "ASSIGNED"
+}

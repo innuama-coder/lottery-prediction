@@ -1,0 +1,19 @@
+{
+  "schema_version": "phase3_independent_task_record_v1",
+  "record_type": "phase3_w10_independent_reviewer_assignment",
+  "role": "independent_reviewer",
+  "actor_id": "P3-W10-INDEPENDENT-REVIEWER-20260809-R04",
+  "task_id": "/root/w10_r04_independent_replay",
+  "session_id": "P3-W10-INDEPENDENT-REVIEW-SESSION-20260809-R04-33D28102",
+  "parent_task_id": "/root",
+  "assigned_at_utc": "2026-08-09T05:43:36Z",
+  "implementation_freeze_commit": "33d2810236156526e5f61d7b7f06ce3ac0815507",
+  "reviewed_scope": [
+    "src/lottery_research/phase3/data_access.py",
+    "scripts/phase3/independent_model_reconstruction.py",
+    "scripts/phase3/recompute_guarded_unlocks.py"
+  ],
+  "assignment_declaration": "Assigned as the R04 W10 independent reviewer. After W09 and receipt of the immutable release path, I will personally run the standalone model reconstruction, independently recompute all 600 guarded label-unlock ledger/forecast/receipt/metric bindings, run the production guarded-unlock recomputation only as a cross-check, and execute W10 replay with its receipt. I will not modify implementation source or preserved R01/R02 evidence.",
+  "independence_note": "The standalone reconstruction performs its own ledger and hash recomputation without importing Phase 3 model/evaluator code. The recompute_guarded_unlocks helper imports the production validator and therefore is supplementary evidence only.",
+  "status": "ASSIGNED"
+}

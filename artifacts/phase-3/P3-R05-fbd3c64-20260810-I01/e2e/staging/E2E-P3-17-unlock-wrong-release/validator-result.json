@@ -1,0 +1,1 @@
+{"passed": false, "exit_code": 5, "exception_type": "FileNotFoundError", "message": "[Errno 2] No such file or directory: '/home/royzuo/worktrees/lottery-prediction-phase3-formal-replay-20260810-r00/artifacts/phase-3/P3-R05-fbd3c64-20260810-I01/e2e/staging/E2E-P3-17-unlock-wrong-release/P3-R05-fbd3c64-20260810-I01/work-items/W07/receipt.json'"}

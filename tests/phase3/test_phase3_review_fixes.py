@@ -102,6 +102,20 @@ class IndependentReconstructionTests(unittest.TestCase):
 
 
 class E2EAttributionTests(unittest.TestCase):
+    def test_staging_copy_retains_authorizing_work_item_receipts(self) -> None:
+        from lottery_research.phase3.formal import _copy_e2e_staging_release
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            source, destination = root / "release", root / "staging"
+            (source / "work-items/W07").mkdir(parents=True)
+            (source / "work-items/W07/receipt.json").write_text("{}\n", encoding="utf-8")
+            (source / "e2e").mkdir()
+            (source / "e2e/partial.json").write_text("{}\n", encoding="utf-8")
+            _copy_e2e_staging_release(source, destination)
+            self.assertTrue((destination / "work-items/W07/receipt.json").is_file())
+            self.assertFalse((destination / "e2e").exists())
+
     def test_guard_registry_covers_every_registered_negative_case(self) -> None:
         import json as _json
         registry = _json.loads((ROOT / "config/phase3/e2e-registry.json").read_text(encoding="utf-8"))

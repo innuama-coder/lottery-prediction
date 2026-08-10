@@ -2183,6 +2183,20 @@ def _build_e2e_receipt(*, identity: str, case_id: str, expected_terminal: str, c
     return receipt
 
 
+def _copy_e2e_staging_release(source: Path, destination: Path) -> None:
+    """Copy the complete pre-acceptance validator dependency set.
+
+    W07-W10 work-item receipts are authorization inputs, not W11 outputs, so a
+    staging copy must retain them.  Only evidence that is absent by contract
+    before W12/W13 (and the W11 tree being generated) is excluded.
+    """
+
+    shutil.copytree(
+        source, destination, copy_function=os.link,
+        ignore=shutil.ignore_patterns("e2e", "acceptance", "manifest", "handoff", "handoff-validation"),
+    )
+
+
 def verify_e2e_formal(root: Path, output: Path, identity: str, release_root: Path, actor_path: Path) -> dict[str, Any]:
     disable_network()
     destination = new_directory(output, identity)
@@ -2220,7 +2234,7 @@ def verify_e2e_formal(root: Path, output: Path, identity: str, release_root: Pat
             process_exit_code, execution_mode = 0, "frozen_classification_summary_indeterminate"
         else:
             staging_release = case_root / release_root.name
-            shutil.copytree(release_root, staging_release, copy_function=os.link, ignore=shutil.ignore_patterns("e2e", "acceptance", "manifest", "handoff", "handoff-validation", "work-items"))
+            _copy_e2e_staging_release(release_root, staging_release)
             mutation = _mutate_staging(case_id, staging_release)
             outcome = _run_bottom_up_validator_process(root, staging_release, actor_path, case_root / "validator-result.json")
             classification = _classify_e2e_negative_outcome(case_id, expected, outcome)

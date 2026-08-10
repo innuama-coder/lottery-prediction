@@ -1,0 +1,1 @@
+{"passed": false, "exit_code": 5, "exception_type": "ValueError", "message": "forecast schema violation at $: Additional properties are not allowed ('external_current_view_without_available_at' was unexpected)"}

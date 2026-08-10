@@ -1,0 +1,24 @@
+Looking in links: /home/royzuo/worktrees/lottery-prediction-phase3-formal-replay-20260810-r00/artifacts/phase-3-prep/P3-PREP-2c0fa97-20260810-r04/wheelhouse
+Processing ./artifacts/phase-3-prep/P3-PREP-2c0fa97-20260810-r04/wheelhouse/attrs-26.1.0-py3-none-any.whl (from -r requirements/phase3.lock (line 3))
+Processing ./artifacts/phase-3-prep/P3-PREP-2c0fa97-20260810-r04/wheelhouse/jsonschema-4.26.0-py3-none-any.whl (from -r requirements/phase3.lock (line 4))
+Processing ./artifacts/phase-3-prep/P3-PREP-2c0fa97-20260810-r04/wheelhouse/jsonschema_specifications-2025.9.1-py3-none-any.whl (from -r requirements/phase3.lock (line 5))
+Processing ./artifacts/phase-3-prep/P3-PREP-2c0fa97-20260810-r04/wheelhouse/referencing-0.37.0-py3-none-any.whl (from -r requirements/phase3.lock (line 6))
+Processing ./artifacts/phase-3-prep/P3-PREP-2c0fa97-20260810-r04/wheelhouse/rpds_py-2026.6.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (from -r requirements/phase3.lock (line 7))
+Processing ./artifacts/phase-3-prep/P3-PREP-2c0fa97-20260810-r04/wheelhouse/setuptools-83.0.0-py3-none-any.whl (from -r requirements/phase3.lock (line 8))
+Processing ./artifacts/phase-3-prep/P3-PREP-2c0fa97-20260810-r04/wheelhouse/typing_extensions-4.16.0-py3-none-any.whl (from -r requirements/phase3.lock (line 9))
+Installing collected packages: typing_extensions, setuptools, rpds-py, attrs, referencing, jsonschema-specifications, jsonschema
+Successfully installed attrs-26.1.0 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 referencing-0.37.0 rpds-py-2026.6.3 setuptools-83.0.0 typing_extensions-4.16.0
+Looking in links: /home/royzuo/worktrees/lottery-prediction-phase3-formal-replay-20260810-r00/artifacts/phase-3-prep/P3-PREP-2c0fa97-20260810-r04/wheelhouse
+Obtaining file:///home/royzuo/worktrees/lottery-prediction-phase3-formal-replay-20260810-r00
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: autoresearch-lotte
+  Building editable for autoresearch-lotte (pyproject.toml): started
+  Building editable for autoresearch-lotte (pyproject.toml): finished with status 'done'
+  Created wheel for autoresearch-lotte: filename=autoresearch_lotte-0.1.0-0.editable-py3-none-any.whl size=1697 sha256=43ad33a5fd4d2132f4b3dce1c596a77c44bcfc017056b8f3eb903a6e1d51ba5b
+  Stored in directory: /tmp/pip-ephem-wheel-cache-4obepnix/wheels/61/40/df/9649dcf92035b2834874affeb6284e579483c2467f1f66d677
+Successfully built autoresearch-lotte
+Installing collected packages: autoresearch-lotte
+Successfully installed autoresearch-lotte-0.1.0

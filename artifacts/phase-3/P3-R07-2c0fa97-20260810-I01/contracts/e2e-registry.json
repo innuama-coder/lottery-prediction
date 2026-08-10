@@ -1,0 +1,26 @@
+{
+  "schema_version":"3.0.0","artifact_type":"phase3_e2e_registry","status":"frozen_results_blind",
+  "cases":[
+    {"id":"E2E-P3-01-formal-full-chain","expected_terminal":"PASS"},
+    {"id":"E2E-P3-02-input-identity-tamper","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-03-sequence-label-leakage","expected_terminal":"REJECTED"},
+    {"id":"E2E-P3-04-external-post-draw-leakage","expected_terminal":"REJECTED"},
+    {"id":"E2E-P3-05-outer-pollution","expected_terminal":"REJECTED"},
+    {"id":"E2E-P3-06-illegal-or-negative-probability","expected_terminal":"REJECTED"},
+    {"id":"E2E-P3-07-non-normalized-probability","expected_terminal":"REJECTED"},
+    {"id":"E2E-P3-08-ledger-delete-or-overwrite","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-09-champion-promotion","expected_terminal":"REJECTED"},
+    {"id":"E2E-P3-10-replay-mismatch","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-11-forecast-after-lock-tamper","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-12-missing-metric","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-13-no-shadow-candidate","expected_terminal":"PASS_NO_SHADOW_CANDIDATE"},
+    {"id":"E2E-P3-14-indeterminate","expected_terminal":"PASS_INDETERMINATE"},
+    {"id":"E2E-P3-15-pre-lock-label-read","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-16-unlock-lock-hash-mismatch","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-17-unlock-wrong-release","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-18-unlock-wrong-experiment","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-19-unlock-wrong-attempt","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-20-unlock-wrong-target","expected_terminal":"EVIDENCE_MISMATCH"},
+    {"id":"E2E-P3-21-trainer-label-capability","expected_terminal":"EVIDENCE_MISMATCH"}
+  ]
+}

@@ -1,0 +1,1 @@
+python3 -m compileall -q -f src/lottery_research/phase3 scripts/phase3 tests/phase3

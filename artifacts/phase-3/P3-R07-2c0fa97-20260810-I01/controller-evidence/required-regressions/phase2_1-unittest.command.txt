@@ -1,0 +1,1 @@
+TMPDIR=/tmp PYTHONPATH=src python3 -m unittest discover -s tests/phase2_1 -p "test_*.py" -v

@@ -1,0 +1,1 @@
+python3 -m pip install --no-index <cached-numpy-2.5.1-wheel>

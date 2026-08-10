@@ -1,13 +1,21 @@
 # lottery-prediction
 
-中国体彩大乐透与福彩双色球 autoresearch 项目。当前仓库包含阶段 0 的数据可行性验证、阶段 1 的规范化数据层，以及阶段 2 的随机性审计、功效分析和证据制品。
+中国体彩大乐透与福彩双色球预测及 AutoResearch 项目。项目最终目标、当前基线和后续 Phase 4–6 的定义见 [项目路线图](ROADMAP.md)；该路线图以合入 `main` 后的固定 commit 为权威身份。
 
 ## 当前状态
 
 - 阶段 0：已完成。
 - 阶段 1：已完成。
 - 阶段 2：已完成，最终交付状态为 `GO`。
-- 当前科学结论：`indeterminate`，既没有形成候选信号，也没有足够功效支持“未发现可检测偏差”。
+- 阶段 3：已完成，最终交付状态为 `PASS / GO`，科学结果为 `no_shadow_candidate`。
+- 当前 Champion：均匀固定基数模型 M0。
+- 下一阶段：Phase 4，可运行的双彩种预测与 AutoResearch 闭环 MVP。
+
+Phase 3 已交付无未来信息泄漏、可重复、可独立复算的历史模型研究基线。正式验收身份为 `P3-R07-2c0fa97-20260810-I01`，权威制品是 [`artifacts/phase-3/P3-R07-2c0fa97-20260810-I01/acceptance/I01/acceptance.json`](artifacts/phase-3/P3-R07-2c0fa97-20260810-I01/acceptance/I01/acceptance.json)：`status=PASS`、`delivery_status=GO`、`scientific_summary=no_shadow_candidate`、阻断问题为 0。没有 challenger 合格不代表阶段失败，M0 按合同继续作为 Champion。
+
+Phase 4 将在此基线上实现 SSQ/DLT 每期各 1,000 注完整组合输出、开奖前锁定、开奖后 Top-10/100/200/1000 与概率评分，以及受控 AutoResearch 决策闭环。工程交付、真实模型改善和 Top-K 观察使用三类独立状态；模型改善是持续优化目标，不是对随机开奖作出的结果保证。
+
+阶段 2 的科学分类为 `indeterminate`，既没有形成候选信号，也没有足够功效支持“未发现可检测偏差”。
 
 阶段 2 的当前权威验收制品是 [`artifacts/phase-2.1/P2.1-R00-61a99a2c3732-i07-r02/acceptance/acceptance.json`](artifacts/phase-2.1/P2.1-R00-61a99a2c3732-i07-r02/acceptance/acceptance.json)：`status=PASS`、`delivery_status=GO`、G0～G6 全部 `PASS`、阻断问题为 0。`artifacts/phase-2/acceptance/phase2-acceptance.json` 是深度复核前生成的历史制品，不再代表当前状态。详细解释见 [阶段 2 当前状态与交接说明](docs/handoff/phase-2-current-status.md)。
 
@@ -26,7 +34,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e . --no-deps
 ```
 
-## 阶段 2 快速回归验证
+## 快速回归验证
 
 ```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s tests\phase2_1 -p "test_*.py" -v
@@ -34,6 +42,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m unittest discover -s tests\phase2_cli_contract -p "test_*.py" -v
 .\.venv\Scripts\python.exe -m unittest discover -s tests\phase2_e2e -p "test_*.py" -v
 .\.venv\Scripts\python.exe -m unittest discover -s tests\phase2_readiness -p "test_*.py" -v
+.\.venv\Scripts\python.exe -m unittest discover -s tests\phase3 -p "test_*.py" -v
 ```
 
 阶段 2 CLI 与正式运行顺序见 [阶段 2 Roadmap](docs/roadmap/phase-2-randomness-audit-plan.md)。这些命令用于当前代码回归；阶段完成结论来自上面的不可变 Phase 2.1 正式验收 bundle，而不是由任意一次本地测试单独推导。
@@ -62,10 +71,10 @@ python -m venv .venv
 ## 目录
 
 - `docs/`：路线图、数据规格和研究报告。
-- `src/`：数据工作流与阶段 2 研究实现。
+- `src/`：数据工作流与阶段 2、阶段 3 研究实现。
 - `schemas/`：机器合同 Schema。
 - `tests/`：单元、合同、readiness 和 E2E 测试。
 - `artifacts/`：冻结输入、正式结果和证据制品。
-- `requirements/phase2_1.lock`：最终 Phase 2.1 release 的 Python 3.12 依赖锁；`requirements/phase2.lock` 保留为历史 Phase 2 依赖锁。
+- `requirements/phase2_1.lock`：最终 Phase 2.1 release 的 Python 3.12 依赖锁；`requirements/phase3.lock`：Phase 3 研究 release 依赖锁；`requirements/phase2.lock` 保留为历史 Phase 2 依赖锁。
 
 本地虚拟环境、缓存、构建产物、运行锁、集成测试临时根、Phase 2 Monte Carlo 检查点、递归 E2E workspace 和 `artifacts/phase-2/superseded/` 历史重复快照不会提交到远程仓库。仓库保留冻结输入、正式摘要、运行清单、当前 qualification corpora 和 E2E registry 选定的十份 compact receipt；被排除的批量中间状态可从冻结种子和代码重新生成。

@@ -116,6 +116,63 @@ class E2EAttributionTests(unittest.TestCase):
             self.assertTrue((destination / "work-items/W07/receipt.json").is_file())
             self.assertFalse((destination / "e2e").exists())
 
+    def test_semantic_mutation_rebinds_staging_integrity_envelope(self) -> None:
+        from lottery_research.phase3.formal import _mutate_staging
+
+        with tempfile.TemporaryDirectory() as raw:
+            staging = Path(raw)
+            forecast_rel = "forecasts/dlt/2025084/M0.json"
+            metric_rel = "scores/dlt/2025084/M0.json"
+            unlock_rel = "runs/label-unlocks/dlt/2025084/M0.json"
+            forecast_path = staging / "runs" / forecast_rel
+            metric_path = staging / "runs" / metric_rel
+            unlock_path = staging / unlock_rel
+            reconstruction_path = staging / "review/independent-model-reconstruction.json"
+            for path in (forecast_path, metric_path, unlock_path, reconstruction_path):
+                path.parent.mkdir(parents=True, exist_ok=True)
+            forecast = {"game": "dlt", "target_issue": "2025084", "model_id": "M0", "training_cutoff": "2025083"}
+            forecast_path.write_bytes(canonical_json_bytes(forecast))
+            unlock_path.write_bytes(canonical_json_bytes({"forecast_sha256": sha256_file(forecast_path)}))
+            metric = {
+                "game": "dlt", "target_issue": "2025084", "model_id": "M0", "path": metric_rel,
+                "forecast_sha256": sha256_file(forecast_path), "label_unlock_receipt_path": unlock_rel,
+                "label_unlock_receipt_sha256": sha256_file(unlock_path),
+            }
+            metric_path.write_bytes(canonical_json_bytes(metric))
+            forecast_index = [{"game": "dlt", "target_issue": "2025084", "model_id": "M0", "path": forecast_rel, "sha256": sha256_file(forecast_path)}]
+            (staging / "runs/forecast-index.jsonl").write_bytes(canonical_json_bytes(forecast_index[0]))
+            (staging / "runs/metric-index.jsonl").write_bytes(canonical_json_bytes(metric))
+            ledger = [
+                {"experiment_id": "dlt-2025084-M0", "attempt_id": "dlt-2025084-M0-attempt-01", "state": state, "details": details}
+                for state, details in (
+                    ("forecast_locked", {"forecast_sha256": sha256_file(forecast_path)}),
+                    ("label_unlocked", {"forecast_sha256": sha256_file(forecast_path), "unlock_receipt_sha256": sha256_file(unlock_path)}),
+                    ("scored", {"metric_sha256": sha256_file(metric_path)}),
+                )
+            ]
+            (staging / "runs/experiment-ledger.jsonl").write_bytes(b"".join(canonical_json_bytes(row) for row in ledger))
+            reconstruction_path.write_bytes(canonical_json_bytes({"forecast_index_sha256": "0" * 64, "metric_index_sha256": "0" * 64}))
+
+            _mutate_staging("E2E-P3-03-sequence-label-leakage", staging)
+
+            rebound_forecast = json.loads((staging / "runs/forecast-index.jsonl").read_text())
+            rebound_metric = json.loads((staging / "runs/metric-index.jsonl").read_text())
+            rebound_receipt = json.loads(unlock_path.read_text())
+            rebound_ledger = [json.loads(line) for line in (staging / "runs/experiment-ledger.jsonl").read_text().splitlines()]
+            rebound_reconstruction = json.loads(reconstruction_path.read_text())
+            forecast_sha = sha256_file(forecast_path)
+            receipt_sha = sha256_file(unlock_path)
+            self.assertEqual(rebound_forecast["sha256"], forecast_sha)
+            self.assertEqual(rebound_receipt["forecast_sha256"], forecast_sha)
+            self.assertEqual(rebound_metric["forecast_sha256"], forecast_sha)
+            self.assertEqual(rebound_metric["label_unlock_receipt_sha256"], receipt_sha)
+            self.assertEqual(rebound_ledger[0]["details"]["forecast_sha256"], forecast_sha)
+            self.assertEqual(rebound_ledger[1]["details"]["forecast_sha256"], forecast_sha)
+            self.assertEqual(rebound_ledger[1]["details"]["unlock_receipt_sha256"], receipt_sha)
+            self.assertEqual(rebound_ledger[2]["details"]["metric_sha256"], sha256_file(metric_path))
+            self.assertEqual(rebound_reconstruction["forecast_index_sha256"], sha256_file(staging / "runs/forecast-index.jsonl"))
+            self.assertEqual(rebound_reconstruction["metric_index_sha256"], sha256_file(staging / "runs/metric-index.jsonl"))
+
     def test_guard_registry_covers_every_registered_negative_case(self) -> None:
         import json as _json
         registry = _json.loads((ROOT / "config/phase3/e2e-registry.json").read_text(encoding="utf-8"))

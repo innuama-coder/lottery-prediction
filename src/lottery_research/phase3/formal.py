@@ -2005,6 +2005,68 @@ def _replace_json(path: Path, mutator: Any) -> None:
     path.write_bytes(canonical_json_bytes(value))
 
 
+def _rebind_staging_forecast_envelope(
+    staging: Path,
+    forecast_index: list[dict[str, Any]],
+    forecast_row: dict[str, Any],
+) -> None:
+    """Rebind staging-only integrity references after a semantic mutation.
+
+    These W11 cases are meant to exercise a forecast semantic guard, not the
+    earlier post-lock-tamper guard.  The isolated copy therefore needs a
+    self-consistent evidence envelope around the deliberately invalid forecast.
+    Production artifacts are never passed to this helper, and the production
+    validator remains unchanged and fail-closed.
+    """
+
+    key = (forecast_row["game"], forecast_row["target_issue"], forecast_row["model_id"])
+    experiment_id = "-".join(key)
+    attempt_id = f"{experiment_id}-attempt-01"
+    forecast_path = staging / "runs" / forecast_row["path"]
+    forecast_sha = sha256_file(forecast_path)
+    forecast_row["sha256"] = forecast_sha
+    _write_jsonl_replace(staging / "runs/forecast-index.jsonl", forecast_index)
+
+    metric_index = _read_jsonl(staging / "runs/metric-index.jsonl")
+    metric_row = next(
+        row for row in metric_index
+        if (row["game"], row["target_issue"], row["model_id"]) == key
+    )
+    unlock_path = staging / metric_row["label_unlock_receipt_path"]
+    _replace_json(unlock_path, lambda value: value.__setitem__("forecast_sha256", forecast_sha))
+    unlock_sha = sha256_file(unlock_path)
+
+    metric_path = staging / "runs" / metric_row["path"]
+    def rebind_metric(value: dict[str, Any]) -> None:
+        value["forecast_sha256"] = forecast_sha
+        value["label_unlock_receipt_sha256"] = unlock_sha
+    _replace_json(metric_path, rebind_metric)
+    metric_sha = sha256_file(metric_path)
+    metric_row["forecast_sha256"] = forecast_sha
+    metric_row["label_unlock_receipt_sha256"] = unlock_sha
+    _write_jsonl_replace(staging / "runs/metric-index.jsonl", metric_index)
+
+    ledger = _read_jsonl(staging / "runs/experiment-ledger.jsonl")
+    attempt_events = [
+        row for row in ledger
+        if row["experiment_id"] == experiment_id and row["attempt_id"] == attempt_id
+    ]
+    lock = next(row for row in attempt_events if row["state"] == "forecast_locked")
+    unlock = next(row for row in attempt_events if row["state"] == "label_unlocked")
+    scored = next(row for row in attempt_events if row["state"] == "scored")
+    lock["details"]["forecast_sha256"] = forecast_sha
+    unlock["details"]["forecast_sha256"] = forecast_sha
+    unlock["details"]["unlock_receipt_sha256"] = unlock_sha
+    scored["details"]["metric_sha256"] = metric_sha
+    _write_jsonl_replace(staging / "runs/experiment-ledger.jsonl", ledger)
+
+    reconstruction_path = staging / "review/independent-model-reconstruction.json"
+    def rebind_reconstruction(value: dict[str, Any]) -> None:
+        value["forecast_index_sha256"] = sha256_file(staging / "runs/forecast-index.jsonl")
+        value["metric_index_sha256"] = sha256_file(staging / "runs/metric-index.jsonl")
+    _replace_json(reconstruction_path, rebind_reconstruction)
+
+
 def _mutate_staging(case_id: str, staging: Path) -> dict[str, Any]:
     forecast_index = _read_jsonl(staging / "runs/forecast-index.jsonl")
     first = forecast_index[0]
@@ -2014,20 +2076,16 @@ def _mutate_staging(case_id: str, staging: Path) -> dict[str, Any]:
         _replace_json(staging / "control/release-control.json", lambda value: value.__setitem__("input_manifest_sha256", "0" * 64))
     elif case_id in {"E2E-P3-03-sequence-label-leakage", "E2E-P3-05-outer-pollution"}:
         _replace_json(forecast_path, lambda value: value.__setitem__("training_cutoff", value["target_issue"]))
-        first["sha256"] = sha256_file(forecast_path)
-        _write_jsonl_replace(staging / "runs/forecast-index.jsonl", forecast_index)
+        _rebind_staging_forecast_envelope(staging, forecast_index, first)
     elif case_id == "E2E-P3-04-external-post-draw-leakage":
         _replace_json(forecast_path, lambda value: value.__setitem__("external_current_view_without_available_at", True))
-        first["sha256"] = sha256_file(forecast_path)
-        _write_jsonl_replace(staging / "runs/forecast-index.jsonl", forecast_index)
+        _rebind_staging_forecast_envelope(staging, forecast_index, first)
     elif case_id == "E2E-P3-06-illegal-or-negative-probability":
         _replace_json(forecast_path, lambda value: value["distribution"]["front"]["weights"].__setitem__(0, -1.0))
-        first["sha256"] = sha256_file(forecast_path)
-        _write_jsonl_replace(staging / "runs/forecast-index.jsonl", forecast_index)
+        _rebind_staging_forecast_envelope(staging, forecast_index, first)
     elif case_id == "E2E-P3-07-non-normalized-probability":
         _replace_json(forecast_path, lambda value: value.__setitem__("normalization_sum", 0.9))
-        first["sha256"] = sha256_file(forecast_path)
-        _write_jsonl_replace(staging / "runs/forecast-index.jsonl", forecast_index)
+        _rebind_staging_forecast_envelope(staging, forecast_index, first)
     elif case_id == "E2E-P3-08-ledger-delete-or-overwrite":
         rows = _read_jsonl(staging / "runs/experiment-ledger.jsonl")
         _write_jsonl_replace(staging / "runs/experiment-ledger.jsonl", rows[:-1])
@@ -2063,6 +2121,7 @@ def _mutate_staging(case_id: str, staging: Path) -> dict[str, Any]:
         _replace_json(receipt_path, lambda payload: payload.__setitem__(field, value))
     elif case_id == "E2E-P3-21-trainer-label-capability":
         _replace_json(forecast_path, lambda value: value.__setitem__("trainer_pid", value["orchestrator_pid"]))
+        _rebind_staging_forecast_envelope(staging, forecast_index, first)
     else:
         raise ValueError(f"unknown staging mutation: {case_id}")
     return mutation

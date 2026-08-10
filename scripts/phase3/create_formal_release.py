@@ -36,6 +36,10 @@ def main() -> int:
             "assigned_at_utc": now, "assigned_by": args.controller_id,
             "task_record_path": f"task-records/{role}.json", "task_record_sha256": sha256_file(target),
         })
+    release_controllers = [row for row in assignments if row["role"] == "release_controller"]
+    if len(release_controllers) != 1:
+        raise ValueError("formal assignment must contain exactly one release_controller")
+    release_controller = release_controllers[0]
     parent = prep / "control/actor-assignments-preparation.json"
     actor_payload = {
         "schema_version": "3.0.0", "artifact_type": "phase3_actor_assignment",
@@ -59,6 +63,7 @@ def main() -> int:
         else:
             shutil.copyfile(source, target)
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
+    branch = subprocess.run(["git", "branch", "--show-current"], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
     release_control = {
         "schema_version": "3.0.0", "artifact_type": "phase3_release_control", "release_id": release.name,
         "prep_id": prep.name, "implementation_freeze_commit": commit,
@@ -69,8 +74,8 @@ def main() -> int:
         "feature_registry_sha256": sha256_file(root / "config/phase3/feature-registry.json"),
         "created_at_utc": now, "formal_result_count_at_creation": 0,
         "formal_network_policy": "disabled_no_network_inputs_W08_W13",
-        "task_id": "phase3-implementation-20260809-r01", "worktree": root.as_posix(),
-        "branch": "codex/phase3-implementation-20260809-r01",
+        "task_id": release_controller["task_id"], "worktree": root.as_posix(),
+        "branch": branch,
     }
     write_new_json(control / "release-control.json", release_control)
     return 0

@@ -1113,9 +1113,15 @@ def readiness(root: Path, output: Path, identity: str, prep_root: Path, release_
     ]
     dirty = bool(dirty_paths)
     release_control = load_json(release_root / "control/release-control.json")
+    release_controllers = [row for row in assignment["assignments"] if row["role"] == "release_controller"]
+    if len(release_controllers) != 1:
+        raise ValueError("formal assignment must contain exactly one release_controller")
+    observed_branch = git(root, "branch", "--show-current")
     expected = {
         "release_id": release_root.name, "implementation_freeze_commit": commit,
         "prep_id": prep_root.name, "actor_assignment_sha256": assignment_sha,
+        "task_id": release_controllers[0]["task_id"], "worktree": root.as_posix(),
+        "branch": observed_branch,
     }
     if any(release_control.get(key) != value for key, value in expected.items()):
         raise ValueError("release control identity does not bind the current frozen implementation")
@@ -1152,7 +1158,7 @@ def readiness(root: Path, output: Path, identity: str, prep_root: Path, release_
         "formal_run_authorized": passed, "formal_result_count": len(formal_result_paths), "formal_result_paths": [path.relative_to(root).as_posix() for path in formal_result_paths],
         "code_hash_match_rate": 1.0, "input_hash_match_rate": 1.0, "dependency_hash_match_rate": 1.0,
         "sequence_relation_coverage": frozen["metrics"]["sequence_relation_coverage"], "expanded_sequence_relation_count": frozen["metrics"]["expanded_sequence_relation_count"],
-        "task": {"task_id": "phase3-implementation-20260809-r01", "worktree": root.as_posix(), "branch": git(root, "branch", "--show-current"), "commit": commit, "dirty": dirty, "dirty_paths_outside_release": dirty_paths},
+        "task": {"task_id": release_control["task_id"], "worktree": release_control["worktree"], "branch": release_control["branch"], "commit": commit, "dirty": dirty, "dirty_paths_outside_release": dirty_paths},
         "environment": benchmarks["environment"], "wheelhouse": wheelhouse, "approved_workload": budget,
         "formal_registry_count": len(registry), "command_output_mapping_coverage": 1.0,
         "evidence_return_canary": "PASS", "formal_network_policy": "disabled_no_network_inputs_W08_W13",

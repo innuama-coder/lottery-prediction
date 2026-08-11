@@ -1,6 +1,6 @@
 # Phase 4 预测与 AutoResearch 闭环 MVP 详细实施计划
 
-版本：1.0
+版本：1.1
 
 状态：可执行计划候选；只定义后续开发、资格与验收，不在本任务中实现或运行 Phase 4
 
@@ -10,7 +10,7 @@
 
 ## 1. 执行原则、角色和身份
 
-所有下游只消费上游 `PASS` 且内容哈希固定的输出。每个任务有一个责任所有者和独立验收路径；作者不能仅以文件存在、自报 `PASS` 或自己生成的顶层汇总验收。可从底层重算的事实必须由独立脚本或角色重算。Phase 0–3 全部只读，Phase 4 staging/runtime/formal 三个 namespace 严格分离。
+所有下游只消费上游 `PASS` 且内容哈希固定的输出。每个任务有一个责任所有者和独立验收路径；作者不能仅以文件存在、自报 `PASS` 或自己生成的顶层汇总验收。可从底层重算的事实必须由独立脚本或角色重算。Phase 0–3 全部只读；Phase 4 preparation `artifacts/phase-4-prep/<prep-id>/`、staging `artifacts/phase-4-staging/<staging-id>/`、runtime `artifacts/phase-4-runtime/<runtime-id>/`、formal `artifacts/phase-4/<release-id>/` 四个 namespace 严格分离，路径解析后不得互为祖先或复用 ID。
 
 角色固定为 `release_controller`、`data_custodian`、`contract_owner`、`implementation_author`、`statistical_owner`、`run_operator`、`vps_operator`、`independent_oracle_author`、`independent_reviewer`、`acceptance_engineer`、`acceptance_approver`。`independent_oracle_author`/`independent_reviewer` 不得写被复核产品核心；`acceptance_engineer` 不得是实现作者或正式运行者；最终 `acceptance_approver` 不得是实现作者、运行者、oracle 作者或 reviewer。准备期和正式期 actor assignment 分别绑定 actor/task/session/任务记录 SHA-256，并只能新增版本。
 
@@ -19,6 +19,8 @@
 ```bash
 P4_PREP_ID=p4-prep-controller-issued-i01
 P4_PREP_ROOT=artifacts/phase-4-prep/$P4_PREP_ID
+P4_STAGING_ID=p4-staging-canary-i01
+P4_STAGING_ROOT=artifacts/phase-4-staging/$P4_STAGING_ID
 P4_RUNTIME_ID=p4-runtime-readiness-i01
 P4_RUNTIME_ROOT=artifacts/phase-4-runtime/$P4_RUNTIME_ID
 P4_RELEASE_ID=P4-R01-<implementation-commit-first12>-<freeze-date-YYYYMMDD>-I01
@@ -58,7 +60,7 @@ T13 + T14 -> T15 benchmark, resource/seed/identity freeze and formal release
  -> T21 independent final delivery acceptance
 ```
 
-T02–T08 可在 T01 后按互不重叠模块并行；T10 可与产品实现并行但不得读取或导入产品核心。T12 只能使用 development seed；T13 冻结 design 后只能使用 power-confirmation seed；T15 才冻结 formal master seed、依赖、工作量、code/input/contract acceptance identity；T16 以前不得生成正式资格结果。T16–T21 全部串行且消费同一 `P4_RELEASE_ID`。关键路径是 `T00 -> T01 -> max(T02..T10) -> T09/T11 -> T12 -> T13 -> T14 -> T15 -> T16 -> T17 -> T18 -> T19 -> T20 -> T21`。
+T02–T08 可在 T01 后按互不重叠模块并行；T10 可与产品实现并行但不得读取或导入产品核心，且必须在 T12 前产生结果盲解析 feasibility certificate。T12 只能使用 development seed；T13 先绑定 T12 candidate hash，再只能使用 power-confirmation seed，结果不得反馈到该 design；T15 才冻结 formal master seed、依赖、工作量、code/input/contract acceptance identity；T16 以前不得生成正式资格结果。T16–T21 全部串行且消费同一 `P4_RELEASE_ID`。关键路径是 `T00 -> T01 -> max(T02..T10) -> T09/T11 -> T12 -> T13 -> T14 -> T15 -> T16 -> T17 -> T18 -> T19 -> T20 -> T21`。
 
 ## 3. 任务合同
 
@@ -67,9 +69,9 @@ T02–T08 可在 T01 后按互不重叠模块并行；T10 可与产品实现并�
 - **目标/执行角色：** `release_controller` 只建立不可变输入 inventory；不设计模型。
 - **前置输入及固定身份：** Git `0142530a55ddb1b302ecf770907e30e52df63c04`；`ROADMAP.md` SHA-256 `24ba28e72c33959a91e505fd518718bd0c948c84b7e2e4cd5591a26f0a0b0149`；`tasks/phase4/README.md` SHA-256 `13b099c584c24c2bb7324f5fa852c9fac2dff7ad934245598eae2d117e701a75`；Phase 3 `P3-R07-2c0fa97-20260810-I01` acceptance SHA-256 `415bfc69cc04704265e231fd7d6e36bd2daa06b970b0def30703c4a7f04570c9`；Phase 1 四项 genesis（`baseline-v1`、`0ddcccb72dce7662af665b369995b1c1fd28c68554b32e175f4561fc9f9683d1`、`f2e34a88fbd43a378d7fb6255d39deee1354216b918934f355a06ef986be60c1`、`dc974863c845da1e895ecf623bc6e878ba6aa6710c902357bce68ad5e661966e`）。无任务依赖。
 - **允许修改/禁止修改：** 允许 `config/phase4/authority-freeze.json`、`config/phase4/genesis.json`、`schemas/phase4/{authority-freeze,genesis,protected-inventory}.schema.json`、`scripts/phase4/freeze_authority.py`、`$P4_PREP_ROOT/control/`；禁止 Phase 0–3、产品代码、正式 release。
-- **交付物及接口：** 上述两个严格 Schema JSON、`phase1-protected-inventory.json`（path/type/bytes/SHA）、preparation actor assignment/task records 和 T00 receipt；T00 同时拥有并验收三个仅描述 authority 的 Schema，不依赖 T01。
+- **交付物及接口：** 上述两个严格 Schema JSON、`phase1-protected-inventory.json`（path/type/bytes/SHA）、包含 prep/staging/runtime/formal 四根及互斥规则的 path contract、preparation actor assignment/task records 和 T00 receipt；T00 同时拥有并验收三个仅描述 authority 的 Schema，不依赖 T01。
 - **依赖/执行命令：** 无；`PYTHONPATH=src python3 scripts/phase4/freeze_authority.py --prep-id "$P4_PREP_ID" --commit 0142530a55ddb1b302ecf770907e30e52df63c04 --phase3-release P3-R07-2c0fa97-20260810-I01 --output "$P4_PREP_ROOT/work-items/T00" --actor-assignments "$P4_PREP_ACTORS"`。
-- **独立验收标准与方法：** data custodian 从 Git 对象和文件字节重算所有 SHA、Phase 1 全路径集合及四项内容；路径/哈希/计数/角色绑定 100%，dirty 修改为 0。正测当前基线；负测换 commit、空 baseline、改一字节、删/加受保护文件、`latest` 路径。
+- **独立验收标准与方法：** data custodian 从 Git 对象和文件字节重算所有 SHA、Phase 1 全路径集合及四项内容；四根均位于冻结相对路径、realpath 互不嵌套、ID 不复用且无 `latest`；路径/哈希/计数/角色绑定 100%，dirty 修改为 0。正测当前基线；负测换 commit、空 baseline、改一字节、删/加受保护文件、`latest`、prep 写入 staging/runtime/formal。
 - **失败终态/证据/取回：** 可恢复缺失为 `HOLD_AUTHORITY_IDENTITY`，上游篡改为 `FAIL_PROTECTED_ARTIFACT_MUTATION`；证据在 `$P4_PREP_ROOT/work-items/T00/`，按 receipt 显式清单取回并逐哈希。
 
 ### T01：结果盲合同、Schema、CLI 和 acceptance 冻结
@@ -77,7 +79,7 @@ T02–T08 可在 T01 后按互不重叠模块并行；T10 可与产品实现并�
 - **目标/执行角色：** `contract_owner` 把总体设计的时间、身份、来源、日历、概率、指标、修订、研究、调度、故障/SLO 边界、角色、CLI、Schema 与 A01–A21 判定写成机器合同；不实现算法。
 - **前置输入及固定身份：** T00 PASS receipt/hash、两份上位合同和总体设计提交身份。
 - **允许修改/禁止修改：** 允许 `config/phase4/*.json`、`schemas/phase4/*.schema.json`、`docs/runbooks/phase-4-mvp-runtime.md`、`requirements/phase4.in` 候选；禁止产品实现、测试结果、正式 seeds/results 和 Phase 0–3。
-- **交付物及接口：** source/calendar/time/model/feature/metric/correction/decision/alpha/schedule/fault/SLO/CLI contracts，qualification preregistration skeleton、E2E registry、所有 data-release/calendar/schedule/forecast/ranking/metric/experiment/decision/champion/model-status/top-k-status/alpha/manifest/review/acceptance Schema；未知字段拒绝，三类状态键和值按总体设计固定。
+- **交付物及接口：** source/calendar/time/model/feature/metric/correction/decision/alpha/schedule/fault/SLO/CLI contracts；qualification preregistration 明列 P4E1 `scale=1024,bounds=[-4096,4096]`、三档 effect、LR e-process、每 family `W0=0.006`、150 周期、三种 seed domain、2,000 development/20,000 power/1,000 formal、simultaneous CP 和 aggregate binomial 算法；E2E registry；所有 data-release/calendar/schedule/forecast/ranking/metric/experiment/decision/champion/model-status/top-k-status/alpha/manifest/review/acceptance Schema。未知字段拒绝，三类状态键和值按总体设计固定。
 - **依赖/执行命令：** T00；`PYTHONPATH=src python3 scripts/phase4/validate_contract_bundle.py --config config/phase4 --schemas schemas/phase4 --authority-receipt "$P4_PREP_ROOT/work-items/T00/receipt.json" --output "$P4_PREP_ROOT/work-items/T01" --actor-assignments "$P4_PREP_ACTORS"`。
 - **独立验收标准与方法：** acceptance engineer 逐 Schema 构造最小正例和维度删除/未来阶段状态/未知字段负例，检查 CLI verbs/参数/退出码无省略，A01–A21 各有底层断言且六类交付物齐全。负测时间类混用、全局 improved、Champion promotion verb、宽松概率和隐式外部服务。
 - **失败终态/证据/取回：** `HOLD_MACHINE_CONTRACT`；若弱化上位合同为 `FAIL_CONTRACT_WEAKENED`。证据 `$P4_PREP_ROOT/work-items/T01/`，manifest 明列合同文件。
@@ -109,7 +111,7 @@ T02–T08 可在 T01 后按互不重叠模块并行；T10 可与产品实现并�
 - **允许修改/禁止修改：** 允许 `rules.py`、`probability.py`、`ranking.py` 及测试；禁止 float `isclose` tie、模型搜索、指标/acceptance。
 - **交付物及接口：** `distribution`, `normalization_proof`, `rank_histogram`, `top1000` pure APIs，hash vectors 和 product known-answer。
 - **依赖/执行命令：** T01,T02；`PYTHONPATH=src python3 -m unittest tests.phase4.test_rules_probability_ranking -v`；`PYTHONPATH=src python3 -m lottery_system.phase4 validate unit --scope probability-ranking --output "$P4_PREP_ROOT/work-items/T04"`。
-- **独立验收标准与方法：** T10 的 direct enumeration 小空间和独立 DP 真实空间逐值对比；严格正/归一、1000 数量/唯一/前缀、key 顺序、tie group/rank、M0 两空间 group size 全部 100%。负测 zero/negative/NaN/Inf、量化越界、输入排列、非传递近似、key 碰撞、跨 Top-K tie、非法号码。
+- **独立验收标准与方法：** T10 的 direct enumeration 小空间和独立分区枚举/DP 对真实空间逐值对比；对 `[-4096,4096]` 边界、资格菜单三档、A10 的 `[-64,0]`、M0 和 adversarial unique-sum fixtures 检查 Decimal 80 位、5 位 order key、reachable counts、严格正/归一、1000 数量/唯一/前缀、tie group/rank 全部 100%。负测 zero/negative/NaN/Inf、量化越界、50 位序列化成零、输入排列、非传递近似、key 碰撞、跨 Top-K tie、非法号码；无法 exact full-space rank 必须未接入或 HOLD。
 - **失败终态/证据/取回：** `HOLD_UNSUPPORTED_TIE_SEMANTICS`；错误结果被发布为 FAIL。证据 `$P4_PREP_ROOT/work-items/T04/`。
 
 ### T05：forecast、原子 lock、三类时间与 label capability
@@ -137,9 +139,9 @@ T02–T08 可在 T01 后按互不重叠模块并行；T10 可与产品实现并�
 - **目标/执行角色：** `statistical_owner` 冻结控制器，`implementation_author` 实现；该任务只拥有 research control plane。
 - **前置输入及固定身份：** T01 model/feature/decision/alpha contracts；T02 ledger/checkpoint；T06 current scores/correction hold port。
 - **允许修改/禁止修改：** 允许 `research/{registry,proposal,sequential,alpha,controller}.py` 及测试；禁止采集、规则、label、score、acceptance、Champion mutation和任意代码搜索。
-- **交付物及接口：** parameter/feature canonical diff、candidate ID、one-experiment-per-cycle decision、wealth events、resume、next-shadow eligibility。
+- **交付物及接口：** parameter/feature canonical diff、candidate ID、one-experiment-per-cycle decision、每 family `W0=0.006` 和 `alpha_t=W0/(t(t+1))` wealth events、Decimal LR e-process looks/stop、resume、next-shadow eligibility。
 - **依赖/执行命令：** T02,T06；`PYTHONPATH=src python3 -m unittest tests.phase4.test_research_controller -v`；`PYTHONPATH=src python3 -m lottery_system.phase4 research decide --fixture tests/phase4/fixtures/research/parameter-positive.json --runtime-root "$P4_RUNTIME_ROOT" --clock fixture:2026-01-03T00:00:00Z`。
-- **独立验收标准与方法：** independent ledger reducer 重算 family wealth/spend/look bounds/stop/decision；parameter 和 feature 正例均生成新 ID/diff 并改变 next shadow；no eligible/budget/guard/no-change 产生零实验理由。负测多个 family 同 experiment、unregistered diff、negative wealth、look after stop、duplicate spending、revision refund、direct Champion、config change no output。
+- **独立验收标准与方法：** independent ledger reducer 从每期冻结的 `p0_t,p1_t,Y_t` 重算 `log E_n`、首次 `E_n>=1/alpha_t`、family wealth/spend/stop/decision；uniform exact enumeration 验证每个 LR increment 在 M0 下的条件均值为 1，跨所有 family 总 spend `<=0.018`。parameter 和 feature 正例均生成新 ID/diff 并改变 next shadow；no eligible/budget/guard/no-change 产生零实验理由。负测逐 look 再拆 alpha、未来数据构造 `p1_t`、多个 family 同 experiment、unregistered diff、negative wealth、look after stop、duplicate spending、revision refund、direct Champion、config change no output。
 - **失败终态/证据/取回：** `FAIL_ALPHA_OR_GOVERNANCE`；能力未实现 `HOLD_ADJUSTMENT_CAPABILITY`。证据 `$P4_PREP_ROOT/work-items/T07/`。
 
 ### T08：计划触发、并发、恢复和告警
@@ -164,12 +166,12 @@ T02–T08 可在 T01 后按互不重叠模块并行；T10 可与产品实现并�
 
 ### T10：独立概率、指标和 full-rule oracle
 
-- **目标/执行角色：** `independent_oracle_author` 编写不导入产品包的直接枚举/Decimal DP 参考路径；不修改产品实现。
-- **前置输入及固定身份：** T01 mathematical contracts；可以读取 T04/T06 的接口格式但不能复制其核心源码或正式输出。
-- **允许修改/禁止修改：** 只允许 `scripts/phase4_independent/oracle_*.py`、`tests/phase4_oracle/`、`qualification-design/full-rule-spec-candidate.json`；禁止 `src/lottery_system/phase4/` 和顶层 PASS 信任。
-- **交付物及接口：** 小空间概率/rank/metric vectors、full-rule 八单元 oracle、import audit、误差界、独立 source hash。
-- **依赖/执行命令：** T01；`python3 scripts/phase4_independent/run_known_answers.py --spec config/phase4 --output "$P4_PREP_ROOT/work-items/T10"`；`python3 scripts/phase4_independent/check_import_independence.py scripts/phase4_independent`。
-- **独立验收标准与方法：** acceptance engineer 静态检查无产品 import，并用 hand-calculated tiny cases交叉核对；相同数学输入 hash 稳定。负测产品输出反构造 distribution、少 K、布尔-only better、容差/规则缺失、import 产品 normalization/top-k。
+- **目标/执行角色：** `independent_oracle_author` 编写不导入产品包的直接枚举/Decimal DP 参考路径，并在任何 development 结果前证明资格候选空间存在可完成设计；不修改产品实现。
+- **前置输入及固定身份：** T01 mathematical/qualification contracts、总体设计 7/10/13 节；可以读取 T04/T06 的接口格式但不能复制其核心源码或正式输出。
+- **允许修改/禁止修改：** 只允许 `scripts/phase4_independent/{oracle_*.py,check_qualification_feasibility.py}`、`tests/phase4_oracle/`、`qualification-design/{full-rule-spec-candidate,analytic-feasibility-spec}.json`；禁止 `src/lottery_system/phase4/`、development/power/formal results 和顶层 PASS 信任。
+- **交付物及接口：** 小空间概率/rank/metric vectors；P4E1 边界/menu/A10/M0/adversarial exact tie/Top-1000/Decimal vectors；full-rule 八单元 oracle；解析 feasibility certificate，逐候选列 `mu,sum_range_squared,sequence_bound,G0/G+`；import audit、误差界、独立 source/input hash。
+- **依赖/执行命令：** T01；`python3 scripts/phase4_independent/run_known_answers.py --spec config/phase4 --tick-bound 4096 --output "$P4_PREP_ROOT/work-items/T10/known-answers"`；`python3 scripts/phase4_independent/check_qualification_feasibility.py --spec qualification-design/analytic-feasibility-spec.json --decimal-precision 80 --output "$P4_PREP_ROOT/work-items/T10/feasibility"`；`python3 scripts/phase4_independent/check_import_independence.py scripts/phase4_independent`。
+- **独立验收标准与方法：** acceptance engineer 静态检查无产品 import，以 hand-calculated tiny cases 交叉核对并从全部 120 个组合重算 LR 输入；checker 必须固定 `N=10,k=3,scale=1024,n=150,W0=0.006,alpha1=0.003,q=[1536,1792,2048],ramp=100`，最弱候选的 uniform aggregate 下界 `>0.9999999999`、六个 positive 中最坏 sequence 下界 `>=0.93954` 且 aggregate 下界 `>0.99999950`。真实规则 exact histogram 总数、Top-1000 hash、50 位概率非零且跨两条独立路径一致；相同数学输入 hash 稳定。负测产品输出反构造 distribution、恢复旧 32-tick/Hoeffding 组合、改变幅度/alpha/ramp、少 K、布尔-only better、容差/规则缺失、import 产品 normalization/top-k。
 - **失败终态/证据/取回：** `HOLD_ORACLE_NOT_FROZEN|HOLD_INDEPENDENCE`；证据 `$P4_PREP_ROOT/work-items/T10/`。
 
 ### T11：产品单元/Schema/正负 E2E 与 final validator 资格
@@ -184,23 +186,23 @@ T02–T08 可在 T01 后按互不重叠模块并行；T10 可与产品实现并�
 
 ### T12：development-seed 资格设计选择
 
-- **目标/执行角色：** `statistical_owner` 只在总体设计固定效应菜单和控制器空间内，用 development domain 选择最弱可行 design；不是正式功效或资格。
-- **前置输入及固定身份：** T07 controller、T10 oracle、T11 qualification harness、T01 prereg skeleton。
-- **允许修改/禁止修改：** 允许 `$P4_PREP_ROOT/qualification-design/development/` 和候选 design；禁止 power/formal seed、正式 release、菜单外调参和把开发结果用于 acceptance。
-- **交付物及接口：** 全菜单运行、逐 design 失败也保留、确定选择 receipt、candidate design ID、generator/controller source hashes。
-- **依赖/执行命令：** T07,T10,T11；`PYTHONPATH=src python3 -m lottery_system.phase4 research run --mode development-design-selection --preregistration config/phase4/qualification-preregistration.json --output "$P4_PREP_ROOT/qualification-design/development" --seed-domain development --clock fixture`。
-- **独立验收标准与方法：** 独立脚本重派生 development seeds、重算菜单顺序和“首个可行”选择，未运行/删除/挑选为 0；结果明确 `non_formal=true`。边界测试无可行 design 必须诚实 HOLD，不自动加大菜单。
+- **目标/执行角色：** `statistical_owner` 只在 T01/T10 已冻结且解析可行的三个 effect design 内，用 development domain 选择最弱可行 design；不是正式功效或资格。
+- **前置输入及固定身份：** T07 LR e-process controller source/hash、T10 analytic certificate/oracle hashes、T11 qualification harness、T01 prereg/seed/confidence skeleton。
+- **允许修改/禁止修改：** 允许 `$P4_PREP_ROOT/qualification-design/development/` 和一个 candidate design descriptor；禁止 power/formal seed、正式 release、菜单/alpha/150 周期/门外调参和把开发结果用于 acceptance。
+- **交付物及接口：** 三个幅度 design × 8 game/world cells × 每 cell 2,000 development terminals，全菜单失败也保留；经验 rate 明标 `descriptive_non_selection=true`；按解析门、100% 实现一致性、`q ascending,canonical config bytes` 的确定选择 receipt；candidate design ID；generator/controller/analytic source hashes；`non_formal=true`。
+- **依赖/执行命令：** T07,T10,T11；`PYTHONPATH=src python3 -m lottery_system.phase4 research run --mode development-design-selection --preregistration config/phase4/qualification-preregistration.json --feasibility "$P4_PREP_ROOT/work-items/T10/feasibility/certificate.json" --sequences-per-cell 2000 --output "$P4_PREP_ROOT/qualification-design/development" --seed-domain development --clock fixture`。
+- **独立验收标准与方法：** 独立脚本从 `P4-SEED-v2` 重派生全部 development seeds，验证与尚未生成的 power/formal domain 字符串不同，重算 150 个 LR looks、非统计 guards 和 next-shadow hash。选择算法严格为：T10 uniform/positive aggregate 解析下界各 `>=0.99` 且 positive sequence 下界 `>=0.93`；product/independent terminal、LR、guard、hash 一致率 100%；再取 `q ascending,canonical config bytes` 首项。三项均运行、未运行/删除/越序挑选为 0；经验 rate 不得进入 predicate。首项实现不一致必须 HOLD 修复，不能跳到强 effect；无解析可行 design 也必须 HOLD。修改菜单只能发布新 prereg/design family 并重跑 T10/T12，不能在本目录追加强度。
 - **失败终态/证据/取回：** `HOLD_NO_DESIGN_CANDIDATE`；证据 `$P4_PREP_ROOT/qualification-design/development/`。
 
 ### T13：独立 power-confirmation 与 qualification-design 冻结
 
-- **目标/执行角色：** `independent_reviewer` 使用未参与选择的 power-confirmation seeds，确认 uniform 门与六个正控门预计通过概率均至少 90%，随后冻结 design；不允许反馈调参。
-- **前置输入及固定身份：** T12 selected design ID/hash、T01 seed derivation/confidence contract、T10 oracle。
-- **允许修改/禁止修改：** 允许 `$P4_PREP_ROOT/qualification-design/power/` 和 signed design freeze；禁止产品/selected design 原地修改、development/formal seed 和删除失败 power。
-- **交付物及接口：** 7 个门的 pass probability/95% interval、seed-set hashes/intersection report、full-rule spec/oracle expected values、`qualification-design.json` 签署。
-- **依赖/执行命令：** T12；`python3 scripts/phase4_independent/confirm_power.py --design "$P4_PREP_ROOT/qualification-design/development/selected-design.json" --seed-domain power-confirmation --output "$P4_PREP_ROOT/qualification-design/power"`。
-- **独立验收标准与方法：** acceptance engineer 从序列终态重算概率/区间、domain strings/集合交集 0、设计 hash；所有门 `>=0.90` 才 PASS。边界含 0.899999、缺序列、重复 seed、事后 design change。
-- **失败终态/证据/取回：** `HOLD_DESIGN_NOT_POWERED`；后续必须新 design ID 和确定新 power seeds，旧目录保留。证据按 power manifest 取回。
+- **目标/执行角色：** `independent_reviewer` 先签收 T12 candidate 与冻结产品 controller hashes，再用未参与选择的 power-confirmation seeds，以独立生成器驱动该 controller 的黑盒 CLI，分别确认 8 个 game/world 的 sequence-level 性能以及各自新的 1,000-sequence formal batch 的 aggregate gate pass probability；随后冻结 design，结果绝不反馈调参。
+- **前置输入及固定身份：** T12 selected design ID/hash 与完整 development manifest、T01 `P4-SEED-v2`/simultaneous confidence/binomial contract、T10 analytic certificate/source hash；运行前 power 目录必须不存在且 formal seed 尚未发放。
+- **允许修改/禁止修改：** 只允许新建 `$P4_PREP_ROOT/qualification-design/power/` 并在所有对象内绑定 candidate design ID/hash、冻结 controller command/code hash 和 signed design freeze；独立脚本可把冻结 CLI 当子进程调用，但禁止 import/复制产品 controller、修改产品或 selected design、使用 development/formal seed、pooling games、删除失败 power 或把 power terminal 写入 formal。
+- **交付物及接口：** 每个 8 cell 恰好 20,000 个独立 sequence terminals；sequence success count/rate 和 Bonferroni simultaneous 95% Clopper–Pearson `[L,U]`；prospective aggregate point/interval；seed-set hashes/intersection=0；analytic comparison；full-rule spec/oracle expected values；`qualification-design.json` 签署。字段必须分名为 `sequence_rate_estimate`、`sequence_rate_simultaneous_interval`、`formal_1000_gate_pass_probability_estimate`、`formal_1000_gate_pass_probability_interval`，禁止把 rate 写成 gate probability。
+- **依赖/执行命令：** T12；`python3 scripts/phase4_independent/confirm_power.py --design "$P4_PREP_ROOT/qualification-design/development/selected-design.json" --selection-receipt "$P4_PREP_ROOT/qualification-design/development/selection-receipt.json" --controller-command config/phase4/power-controller-command.json --seed-domain power-confirmation --sequences-per-cell 20000 --confidence-family 0.95 --output "$P4_PREP_ROOT/qualification-design/power"`；再运行 `python3 scripts/phase4_independent/reduce_power.py --input "$P4_PREP_ROOT/qualification-design/power" --formal-sequences 1000 --uniform-max-successes 50 --positive-min-successes 900 --decimal-precision 80 --output "$P4_PREP_ROOT/qualification-design/power/aggregate-gates.json"`。
+- **独立验收标准与方法：** acceptance engineer 从 160,000 原始 draws、黑盒 CLI terminals 和冻结 `p0_t,p1_t` 独立重算 seed、LR 首次越门、guard、next-shadow hash、success count 和 8 个区间；CLI 与独立 reducer 对逐序列终态必须 100% 一致。每区间双侧 tail 固定 `0.05/(2*8)`，CP 端点用 binomial CDF 二分到 `1e-12`。再独立计算 uniform `G0(q)=P[Binom(1000,q)<=50]` 的点值/`[G0(U),G0(L)]`，positive `G+(p)=P[Binom(1000,p)>=900]` 的点值/`[G+(L),G+(U)]`。每个 cell 必须同时满足不利 sequence 端 `U<=0.05` 或 `L>=0.90`、aggregate 点值 `>=0.90`、aggregate lower bound `>=0.90`；analytic certificate 也仍 PASS，domain 集合交集 0、独立脚本产品 import 0、controller/candidate/design hash 未变。边界含 0.899999、把一次 1,000 rate 当概率、错误单/双尾、pooling、缺/重序列、重复 seed、事后 design 或 controller change。
+- **失败终态/证据/取回：** 任一项失败即 `HOLD_DESIGN_NOT_POWERED`，T15 不得启动；后续必须发布新 design ID，回到 T10/T12 并由新 ID 确定新 development/power seeds，旧 power 目录和不利结果保留。证据按 power manifest 显式取回。
 
 ### T14：依赖冻结、wheelhouse 和干净离线重建
 
@@ -214,31 +216,31 @@ T02–T08 可在 T01 后按互不重叠模块并行；T10 可与产品实现并�
 
 ### T15：benchmark、资源/seed/acceptance identity 冻结并创建正式 release
 
-- **目标/执行角色：** `release_controller` 把观察 benchmark 代入固定公式，冻结批准 workload、formal actor assignment、formal seed、code/input/contracts/dependencies 和唯一空 release；这是正式结果前最后门。
-- **前置输入及固定身份：** T00–T14 全 PASS；T13 design；T14 wheelhouse；当前 clean Git commit。
-- **允许修改/禁止修改：** 允许 `$P4_RELEASE_ROOT/{control,contracts,inputs,qualification-design,readiness,work-items/T15}`；禁止运行 formal sequence、修改 prep evidence/Phase 0–3 和预存成功结果。
-- **交付物及接口：** 8 benchmark units×20、p95/RSS/bytes、并行选择、25% budget/timeout/checkpoint；formal 8,000 sequence identities/master hash、artifact whitelist、commands、actor assignment、acceptance contract、formal authorization=false->true receipt。
+- **目标/执行角色：** `release_controller` 只消费 T13 已签署 PASS design，把观察 benchmark 代入固定公式，冻结批准 workload、formal actor assignment、formal seed、code/input/contracts/dependencies 和唯一空 release；这是正式结果前最后门，不能重新选择 design。
+- **前置输入及固定身份：** T00–T14 全 PASS；T13 signed design、analytic/power manifests 和 8 aggregate lower bounds；T14 wheelhouse；当前 clean Git commit；formal root 原先不存在且 formal terminal count 为 0。
+- **允许修改/禁止修改：** 允许 `$P4_RELEASE_ROOT/{control,contracts,inputs,qualification-design,readiness,work-items/T15}`；只读 `$P4_PREP_ROOT`；禁止运行 formal sequence、修改或只复制有利 prep evidence、重算/重选 effect、修改 Phase 0–3 和预存成功结果。
+- **交付物及接口：** probability/rank 边界、两条真实规则、one-cycle、qualification、formal 8,000、correction/recovery/replay/validator 等冻结 benchmark units 各 warm-up 后 20 次的 p95/RSS/reachable counts/bytes/hash；并行选择、25% budget/timeout/checkpoint；formal 8,000 sequence identities/master hash；完整复制且逐 SHA 绑定的 signed design、analytic/power manifests；artifact whitelist、commands、actor assignment、acceptance contract、formal authorization=false->true receipt。
 - **依赖/执行命令：** T13,T14；`PYTHONPATH=src python3 -m lottery_system.phase4 release assemble --phase prepare-formal --prep-root "$P4_PREP_ROOT" --release-root "$P4_RELEASE_ROOT" --design "$P4_PREP_ROOT/qualification-design/power/qualification-design.json" --actor-assignments "$P4_FORMAL_ACTORS" --output "$P4_RELEASE_ROOT/work-items/T15"`。
-- **独立验收标准与方法：** verifier 重算全部 inputs/hashes/seed disjoint/workload formula、release 原先不存在、正式结果计数 0、dirty 0、角色无冲突、evidence-return canary path可写。负测预算缺 unit、并行改变 hash、release reuse、预存 result、角色自审、formal seed overlap。
+- **独立验收标准与方法：** verifier 从 T13 manifest 重算全部 inputs/hashes、8 cell sequence/aggregate lower bounds 均 `>=0.90`、development/power/formal seed disjoint、workload formula和真实规则 exact histogram/Top-1000/Decimal hash；release 原先不存在、正式结果计数 0、dirty 0、角色无冲突、evidence-return canary path可写。负测漏复制失败 power、预算缺 unit、边界 tick benchmark不 exact、并行改变 hash、release reuse、预存 result、角色自审、formal seed overlap、T13 后 design byte change。
 - **失败终态/证据/取回：** `HOLD_DEPENDENCY_OR_BUDGET|HOLD_FORMAL_FREEZE`；身份已发放则封存，重试新 release ID。证据 `$P4_RELEASE_ROOT/work-items/T15/`。
 
 ### T16：正式小空间资格与 full-rule A07–A10
 
-- **目标/执行角色：** `run_operator` 只执行冻结 workload；不能修改代码、设计、seeds、thresholds 或选择输出。
-- **前置输入及固定身份：** T15 formal authorization、同一 release contracts/design/8,000 sequence identities、离线 venv。
+- **目标/执行角色：** `run_operator` 只执行冻结的 8,000-sequence formal workload 和 A10 oracle workload；不能估计概率、修改代码/设计/seeds/thresholds 或选择输出。
+- **前置输入及固定身份：** T15 formal authorization、同一 release contracts/signed design/8,000 sequence identities、T13 aggregate gate定义、离线 venv。
 - **允许修改/禁止修改：** 只允许 `$P4_RELEASE_ROOT/qualification/`、ledger/checkpoints/logs、T16 receipt；禁止网络、输入/代码/阈值、删除失败序列和 Champion。
-- **交付物及接口：** 2,000 uniform、六个各 1,000 正控的逐 sequence terminals，alpha events，formal summary；八个 full-rule product/oracle 数值和误差界。
+- **交付物及接口：** 2 个 uniform 和 6 个正控各恰好 1,000 的逐 sequence terminals、LR looks/alpha events、每 cell `success_count,sequence_rate,gate_threshold,gate_pass` formal summary；八个 full-rule product/oracle 数值和误差界。formal summary 禁止出现 `gate_pass_probability`，因为一次实现批次只观测门结果。
 - **依赖/执行命令：** T15；先 `PYTHONPATH=src python3 -m lottery_system.phase4 research run --mode formal-qualification --release-root "$P4_RELEASE_ROOT" --stop-after-sequences 10` 得受控 exit 20/checkpoint；再同 identity `--resume` 完成；随后 `python3 scripts/phase4_independent/run_full_rule_oracle.py --release-root "$P4_RELEASE_ROOT" --output "$P4_RELEASE_ROOT/qualification/full-rule-oracle"`。
-- **独立验收标准与方法：** independent reducer 从 8,000 terminals 重算 uniform false proposal `<=5%`、六 recovery `>=90%`、wealth/stop match 100%、Champion changes 0；八 K candidate coverage 严格大于 `K/M` 且产品/oracle在容差内。负测 missing/duplicate sequence、换 seed/effect、resume wrong hash、budget after exhaustion、选择性删除。
+- **独立验收标准与方法：** independent reducer 不读取 formal summary 的判定字段，从 8,000 terminals 重算两个 uniform error counts 各 `<=50`、六个 correct recovery counts 各 `>=900`、LR/wealth/stop match 100%、next-shadow changes 与 recovery count 一一对应、Champion changes 0；再核对 T13 的 prospective probability 字段未被 formal rate 覆盖。八 K candidate coverage 严格大于 `K/M`，产品/oracle在容差内，expanded tick 边界的 exact tie/rank/Top-1000 回归仍 PASS。负测 missing/duplicate sequence、把 rate 重命名为 probability、换 seed/effect/design、resume wrong hash、budget after exhaustion、选择性删除。
 - **失败终态/证据/取回：** 数值门失败为 `FAIL_FORMAL_QUALIFICATION`（不是换配置重试）；可恢复中断为 HOLD；证据 `$P4_RELEASE_ROOT/qualification/` 全量按 manifest 取回。
 
 ### T17：同 release 正负 E2E、修订、canary 与 Phase 1 保护
 
 - **目标/执行角色：** `acceptance_engineer` 运行冻结 fixture/virtual-clock E2E 和只读官方 canary；不修实现、不创造结论。
 - **前置输入及固定身份：** T16 PASS、T15 E2E registry/source policy/protected inventory，同一 code/input contracts。
-- **允许修改/禁止修改：** 只允许 `$P4_RELEASE_ROOT/e2e/`、`readiness/official-canary/`、T17 receipt和隔离 `artifacts/phase-4-staging/<canary-id>/`；禁止 Phase 1 写入、等待未来开奖、真实 performance 结论。
+- **允许修改/禁止修改：** 只允许 `$P4_RELEASE_ROOT/e2e/`、`readiness/official-canary/`、T17 receipt和冻结的隔离 `$P4_STAGING_ROOT`；禁止 Phase 1、prep/runtime 写入、等待未来开奖、真实 performance 结论。
 - **交付物及接口：** 所有正负 receipts、correction interruption/resume、virtual clock、canary raw/parse/dedup/revision/compatibility/network terminals、Phase 1 before/after inventories。
-- **依赖/执行命令：** T16；`PYTHONPATH=src python3 -m lottery_system.phase4 validate e2e --registry "$P4_RELEASE_ROOT/contracts/e2e-registry.json" --release-root "$P4_RELEASE_ROOT" --output "$P4_RELEASE_ROOT/e2e" --clock fixture`；`PYTHONPATH=src python3 -m lottery_system.phase4 data ingest --mode readonly-canary --source-policy "$P4_RELEASE_ROOT/contracts/source-policy.json" --staging-root artifacts/phase-4-staging/$P4_RELEASE_ID-canary --output "$P4_RELEASE_ROOT/readiness/official-canary"`。
+- **依赖/执行命令：** T16；`PYTHONPATH=src python3 -m lottery_system.phase4 validate e2e --registry "$P4_RELEASE_ROOT/contracts/e2e-registry.json" --release-root "$P4_RELEASE_ROOT" --output "$P4_RELEASE_ROOT/e2e" --clock fixture`；`PYTHONPATH=src python3 -m lottery_system.phase4 data ingest --mode readonly-canary --source-policy "$P4_RELEASE_ROOT/contracts/source-policy.json" --staging-root "$P4_STAGING_ROOT" --output "$P4_RELEASE_ROOT/readiness/official-canary"`。
 - **独立验收标准与方法：** registry双向覆盖/guard命中 100%；两 game 已公开期次解析、rule/revision/dedup/Phase1 Schema compatible；网络失败命中注册 terminal也可作为失败语义证据，但每个 game 都至少有一个成功官方主源响应才 A14 readiness PASS。Phase 1 before/after exact match。
 - **失败终态/证据/取回：** canary不可恢复时 `HOLD_DATA_SOURCE_READINESS`，负向被接受 FAIL，Phase1变化 `FAIL_PROTECTED_ARTIFACT_MUTATION`。证据为显式 canary/E2E manifests。
 
@@ -290,13 +292,13 @@ T02–T08 可在 T01 后按互不重叠模块并行；T10 可与产品实现并�
 | --- | --- | --- | --- | --- |
 | P4-MVP-A01 | 4、9、10 | T05,T07,T09,T11,T17 | 双 game cycle/lock/capability/next forecast | E,R,V；`e2e/*cycle*`, `replay/replay.json` |
 | P4-MVP-A02 | 7 | T04,T05,T10,T11 | forecast/ranking Schema、1000 tickets | U,O,E,R |
-| P4-MVP-A03 | 7 | T04,T10,T11 | probability/order/tie vectors | O,E,R,V |
+| P4-MVP-A03 | 7 | T04,T10,T11,T15 | expanded-bound probability/order/tie vectors、exact benchmark | O,E,R,V |
 | P4-MVP-A04 | 7 | T04,T10,T16 | M0 full-space known answers | O,Q,R |
 | P4-MVP-A05 | 8、10 | T07,T11,T17 | parameter diff/child shadow | E,R,V |
 | P4-MVP-A06 | 8、10 | T07,T11,T17 | feature snapshot/diff/shadow | E,R,V |
-| P4-MVP-A07 | 10、13 | T12,T13,T16 | 2,000 uniform sequence terminals | Q,R,V；`qualification/uniform/` |
+| P4-MVP-A07 | 10、13 | T07,T10,T12,T13,T16 | Ville/解析 certificate、power intervals、2,000 formal uniform terminals | O,Q,R,V；`qualification/uniform/` |
 | P4-MVP-A08 | 8、10、12 | T07,T11,T16 | alpha ledger/stop/governance | Q,E,R |
-| P4-MVP-A09 | 10、13 | T12,T13,T16 | power + six 1,000 positive cells | Q,R,V |
+| P4-MVP-A09 | 10、13 | T07,T10,T12,T13,T16 | sequence power + prospective aggregate probability、六个 1,000 formal cells | O,Q,R,V |
 | P4-MVP-A10 | 7、13 | T10,T13,T16 | full-rule spec/eight numeric cells | O,Q,R |
 | P4-MVP-A11 | 9、12 | T01,T05,T11,T17 | time/label/tamper receipts | E,R,V |
 | P4-MVP-A12 | 4、8、12 | T07,T09,T11,T17 | game/governance isolation | E,R,V |
@@ -316,7 +318,7 @@ T02–T08 可在 T01 后按互不重叠模块并行；T10 可与产品实现并�
 
 | 上位合同六类交付物 | 负责子任务 | 固定主要路径 | 覆盖门 |
 | --- | --- | --- | --- |
-| 1 定义与合同 | T00,T01,T13,T15 | `docs/`、`config/phase4/`、formal `contracts/qualification-design` | T19 coverage + T20 validator |
+| 1 定义与合同 | T00,T01,T10,T13,T15 | `docs/`、`config/phase4/`、prep analytic/power、formal `contracts/qualification-design` | T19 coverage + T20 validator |
 | 2 实现 | T02–T09 | `src/lottery_system/phase4/`、`deploy/systemd-user/` | T11 E2E、T20 replay |
 | 3 机器接口 | T01,T09,T14 | `schemas/phase4/`、CLI、config、`requirements/phase4.lock` | Schema/CLI/clean install |
 | 4 验证资产 | T10–T13,T16,T17 | `tests/phase4*`、`scripts/phase4_independent/`、`qualification/`、`e2e/` | oracle/qualification/E2E 100% |
@@ -327,9 +329,9 @@ T02–T08 可在 T01 后按互不重叠模块并行；T10 可与产品实现并�
 
 ## 6. 冻结、正式运行和不可变迭代边界
 
-T00 冻结 authority/genesis/protection；T01 冻结语义和机器接口；T12 只能选择 design；T13 在 power 前冻结 design 并在结果后禁止反馈修改；T14 冻结依赖；T15 同时冻结 code/input/contracts/dependencies、正式 seeds/sequence identities、workload/resource budget、formal actors、E2E/acceptance identity，并确认正式结果为 0。只有 T15 PASS 才能运行 T16。T16 后任何影响数学、seed、阈值、资格、metric、time、source、calendar、状态或 acceptance 的变更都必须新 `P4_RELEASE_ID`，旧 release 原样封存；不能在当前 release 修补语义。
+T00 冻结 authority/genesis/protection 和 prep/staging/runtime/formal 路径合同；T01 冻结表示边界、LR/alpha、效应菜单、重复数、置信与 aggregate 算法等语义和机器接口；T10 在看到任何随机结果前冻结独立解析 certificate/source hash；T12 只能用 development domain 按固定顺序选择 candidate；T13 在读取 power terminal 前先签收 candidate hash，随后只生成独立 power confirmation，结果后禁止反馈修改同一 design。T14 冻结依赖；T15 只接受 T13 PASS design，并同时冻结 code/input/contracts/dependencies、正式 seeds/sequence identities、workload/resource budget、formal actors、E2E/acceptance identity，确认正式结果为 0。只有 T15 PASS 才能运行 T16。T16 后任何影响数学、seed、阈值、资格、metric、time、source、calendar、状态或 acceptance 的变更都必须新 `P4_RELEASE_ID`，旧 release 原样封存；不能在当前 release 修补语义。
 
-可恢复的环境/网络/中断使用同一逻辑对象的新 attempt，从验证通过的 checkpoint 继续，失败 attempt 永久存在。实现 bug 若不改变合同，可在 prep 阶段回到最早 T02–T11 节点，产生新 code commit、receipt 并重新执行全部依赖节点；正式 T15 后发现则必须新 release。power 不足创建新 design ID 和新 deterministic power seed set；formal threshold 失败不能改 effect/controller/seed重跑。acceptance 可在同一完全未改变 evidence release 上最多补一次纯验收材料 iteration `I02`，只能修复签名/manifest引用等不改变底层证据的问题；任何底层文件变化均新 release。
+可恢复的环境/网络/中断使用同一逻辑对象的新 attempt，从验证通过的 checkpoint 继续，失败 attempt 永久存在。实现 bug 若不改变合同，可在 prep 阶段回到最早 T02–T11 节点，产生新 code commit、receipt 并重新执行全部依赖节点；正式 T15 后发现则必须新 release。power 不足封存当前 design 的 development/power 全部结果；任何修订先回到 T10/T12，创建新 design ID，并由该 ID 派生全新的 development 与 power seed sets，不能只换 power seed 重抽。formal threshold 失败不能改 effect/controller/seed重跑。acceptance 可在同一完全未改变 evidence release 上最多补一次纯验收材料 iteration `I02`，只能修复签名/manifest引用等不改变底层证据的问题；任何底层文件变化均新 release。
 
 失败、超时、负向、低功效、不利 sequence、source conflict、canary network failure、review finding 和 acceptance attempt 不得删除、覆盖、重命名成成功或从 manifest 中选择性遗漏。`FAIL` 现场立即封存；`HOLD` receipt 必须写最早恢复节点、固定输入、未完成输出和唯一恢复命令。证据取回始终按显式 manifest 路径核对源端/接收端路径集合、bytes 和 SHA，不通过 `latest`、glob 或修改时间。
 
@@ -339,4 +341,4 @@ T00 冻结 authority/genesis/protection；T01 冻结语义和机器接口；T12 
 
 没有任务依赖未来真实开奖：T03/T11/T16/T17 使用固定或合成 fixture/虚拟时钟，T17 canary 读取已公开期次；T18 只审计安装快照。没有任务要求为 Phase 1 历史记录补造 PIT；外部特征没有真实 `available_at` 就 fail closed。未声明外部服务为 0：正式资格断网，仅 readiness 使用四个 source policy 中的公开 GET；无数据库、队列、公共 API。没有 sudo/root 任务；systemd 是 `--user`。没有通用硬件阈值；T15 只以批准 workload 的 20 次 benchmark 和固定公式裁决。没有 Phase 0–3 修改权限；T00/T17/T20 递归前后保护。
 
-复杂工作量只能通过新 benchmark identity 调整并行度、batch 和 checkpoint 频率；sequence 数量/长度、效应、seed、控制器、阈值、概率/tie/rank、metric 或 evidence 不得降低。正确 full-space tie/rank、正式 8,000 序列、八个 full-rule 单元、独立 replay 或递归证据在批准预算内仍不能完成时，工程终态为 HOLD，不生成近似科学或概率结果。
+复杂工作量只能通过新 benchmark identity 调整并行度、batch 和 checkpoint 频率；sequence 数量/长度、效应、seed、控制器、A07/A09 阈值、概率/tie/rank、metric 或 evidence 不得降低。扩大 P4E1 边界后仍必须用 sparse exact histogram/独立分区枚举正确完成 full-space tie/rank、50 位正概率和 Top-1000；正式 8,000 序列、八个 full-rule 单元、独立 replay 或递归证据在批准预算内仍不能完成时，工程终态为 HOLD，不接入候选，也不生成近似科学或概率结果。

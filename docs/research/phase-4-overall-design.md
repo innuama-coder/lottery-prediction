@@ -1,6 +1,6 @@
 # Phase 4 预测与 AutoResearch 闭环 MVP 总体设计
 
-版本：1.0
+版本：1.1
 
 状态：实施设计候选；本文件与详细计划合入固定开发基线后，后续预注册和机器验收合同必须按本文冻结点产生新身份
 
@@ -34,7 +34,7 @@ Phase 3 正式 acceptance 是 `artifacts/phase-3/P3-R07-2c0fa97-20260810-I01/acc
 | --- | --- | --- | --- | --- |
 | 上位合同、代码、Phase 3 | 本节所列固定 Git/文件/release 身份 | T00 完成 | `config/phase4/authority-freeze.json` | `HOLD_AUTHORITY_IDENTITY` |
 | Phase 1 genesis | `baseline-v1` 加 manifest/draws/observations 三个固定 SHA，即四项身份 | T00 完成 | `config/phase4/genesis.json` | `HOLD_GENESIS_MISMATCH` |
-| 自有路径 | staging `artifacts/phase-4-staging/<staging-id>/`；runtime `artifacts/phase-4-runtime/<runtime-id>/`；正式 `artifacts/phase-4/<release-id>/` | T00 完成 | authority freeze | `HOLD_PATH_CONTRACT` |
+| 自有路径 | 准备 `artifacts/phase-4-prep/<prep-id>/`；staging `artifacts/phase-4-staging/<staging-id>/`；runtime `artifacts/phase-4-runtime/<runtime-id>/`；正式 `artifacts/phase-4/<release-id>/`；四者互斥且不得用 `latest` | T00 完成 | authority freeze | `HOLD_PATH_CONTRACT` |
 | 来源与核验 | SSQ：`swlc` 官方主源、`ydniu` 核对源；DLT：`gdlottery` 官方主源、`ydniu` 核对源；仅 GET、保存原始响应；两源核心事实一致才 verified | T01 合同冻结 | `config/phase4/source-policy.json` | `HOLD_SOURCE_POLICY`/`HOLD_SOURCE_CONFLICT` |
 | 日历与截止 | 每个 release 显式列目标期/开奖业务日；prepare 为前一日 12:00、predict/lock 为当日 17:00、硬截止 18:00、结果探测 22:30 及次日 08:30，均 `Asia/Shanghai` | 每个 calendar release 发布前 | `config/phase4/calendar-policy.json` 与 release | `HOLD_CALENDAR_AMBIGUOUS` |
 | 时间合同 | `retrospective_sequence_safe`、`external_point_in_time`、`official_result_label` 三类互斥 | T01 | `config/phase4/time-contract.json` | `FAIL_TIME_CLASS_MIXED` |
@@ -60,7 +60,7 @@ Phase 3 正式 acceptance 是 `artifacts/phase-3/P3-R07-2c0fa97-20260810-I01/acc
 | 调度 | `systemd --user` `.timer/.service` 每 5 分钟运行 `schedule tick`；`Persistent=true`、`RandomizedDelaySec=0`，应用层计划账本 | cron、APScheduler、system service | 普通用户可审计且支持漏跑触发；不把 timer 当真值。用户 manager/linger 不可用且无法在权限内配置时 `HOLD_SCHEDULER_UNAVAILABLE` |
 | checkpoint/恢复 | 每个动作阶段写不可变 checkpoint，绑定 run/plan/ledger-head/input/output hashes；恢复先全量重验，再从最后完整阶段追加 | 覆盖 checkpoint、盲重跑 | RPO 可计算且不重复 side effect；需要更多哈希。身份/头哈希不符即新失败 attempt，禁止续写 |
 | 概率/排名 | 量化加性固定基数指数族；Decimal 80 位；整数 log-weight ticks；DP 归一与完整空间 score histogram；best-first Top-1000 | 任意 ML 概率、浮点 `isclose` tie、全空间内存排序 | 精确 tie/rank、严格正概率、预算可控；模型表达力受限。无法实现精确 histogram 的模型不接入或 `HOLD_UNSUPPORTED_TIE_SEMANTICS` |
-| AutoResearch | 闭集参数/特征、一次单因素 proposal、alpha-spending 顺序门、最多 shadow | 无界 agent 搜索、结果后挑选 | 可归因、可重算；探索慢。未注册搜索或越权 Champion 为 FAIL |
+| AutoResearch | 闭集参数/特征、一次单因素 proposal、likelihood-ratio e-process + family alpha-spending、最多 shadow | 逐 look alpha 拆分的 Hoeffding 门、无界 agent 搜索、结果后挑选 | Ville 控制任意停止错误且在 150 周期内保留功效；只适用于结果前冻结且相对 M0 的可计算 predictive density。未注册搜索或越权 Champion 为 FAIL |
 | 独立 replay/oracle | `scripts/phase4_independent/` 只用 stdlib Decimal/itertools/JSON；不导入 `lottery_system.phase4` | 调用产品 validator | 防止同源错误；重复实现成本高。import graph 或作者冲突即 `HOLD_INDEPENDENCE` |
 | manifest | 分层递归 manifest：对象 manifest -> evidence manifest -> review/validator closure；逐路径 SHA/bytes/role/parents | tar 文件存在或顶层 PASS | 可 bottom-up 复核并避免自哈希循环；manifest 多。缺失/额外/哈希差异即 HOLD/FAIL |
 | 依赖/部署 | `requirements/phase4.lock` 全转移依赖哈希；构建 wheelhouse 后 `--no-index` 安装到 release venv；用户目录部署 | 在线 pip、容器/root 服务 | 不依赖隐式网络或 sudo；wheelhouse 较大。干净环境不能重建则 `HOLD_INSTALL` |
@@ -103,7 +103,7 @@ forecast 使用无循环的两阶段派生：先对含 game/issue/rule/model/mod
 
 首个 Phase 4 data release 同时声明：`base_phase1_release_id=baseline-v1`、`base_phase1_manifest_sha256=0ddcccb72dce7662af665b369995b1c1fd28c68554b32e175f4561fc9f9683d1`、`base_phase1_records_sha256=f2e34a88fbd43a378d7fb6255d39deee1354216b918934f355a06ef986be60c1`、`base_phase1_observations_sha256=dc974863c845da1e895ecf623bc6e878ba6aa6710c902357bce68ad5e661966e` 和 `previous_phase4_release_id=null`。它在自有 release 中按 manifest 引用或复制内容寻址的 baseline blobs，离线重算必须得到相同三哈希。后继保持四项 genesis 不变并严格引用直接前驱；每个预测绑定实际读取的链头。
 
-runtime 写 `artifacts/phase-4-runtime/<runtime-id>/data-releases/<data-release-id>/`；canary 只写 `artifacts/phase-4-staging/<staging-id>/raw/` 和 `receipts/`。正式 qualification 把冻结输入复制到 `artifacts/phase-4/<release-id>/inputs/`，不得用 runtime 的可变 current pointer决定身份。派生 `current-view.json` 只是一份可删除重建的投影，不能作为血缘父。
+开发、oracle、development-seed 和 power-confirmation 只写 `artifacts/phase-4-prep/<prep-id>/`；runtime 写 `artifacts/phase-4-runtime/<runtime-id>/data-releases/<data-release-id>/`；canary 只写 `artifacts/phase-4-staging/<staging-id>/raw/` 和 `receipts/`；正式 qualification 只写 `artifacts/phase-4/<release-id>/`，并把冻结输入复制到其 `inputs/`。四个根的 ID 均由 controller 显式发放，路径解析后不得互为祖先、不得复用 ID，也不得用 runtime 的可变 current pointer 决定正式身份。派生 `current-view.json` 只是一份可删除重建的投影，不能作为血缘父。
 
 断链、父不存在、同一前驱分叉被拼接、换 genesis、空 baseline、Schema 相容但内容哈希不同、target issue 倒退或 revision 旧链头复活均 `HOLD_DATA_CHAIN`；若已据此锁 forecast 则该 release `FAIL_CAUSAL_INPUT`. 正当修订追加新 result revision/data release、标记旧 current view superseded 并启动第 9.4 节闭包。换 Phase 1 基线必须发布新上位合同和新的 Phase 4 genesis family；不能修订现有链。
 
@@ -117,21 +117,21 @@ runtime 写 `artifacts/phase-4-runtime/<runtime-id>/data-releases/<data-release-
 
 规则身份继承注册的 `ssq-ns-33c6-16c1-v1`（`C(33,6)*C(16,1)=17,721,088`）和 `dlt-ns-35c5-12c2-v1`（`C(35,5)*C(12,2)=21,425,712`）。每区号码严格升序，区内唯一，跨 game/rule/config/data/alpha/metric/status 的 join 全部拒绝。两彩种只能共享纯函数代码。
 
-Phase 4 可接入概率族限定为 P4E1：每区固定基数指数族，号码 `i` 的 canonical log-weight 是整数 tick，固定 scale `1/1024`。唯一规范化规则是从全向量减去号码 1 的原始 tick，使 `w_1=0`；规范化后每个 `w_i` 必须在 `[-64,64]`，否则该配置拒绝。组合未归一 log mass 是所含 ticks 之和；分区 partition function 用 Decimal 80 位的 elementary-symmetric DP 计算 `Z_k`，联合概率为两个分区概率乘积。所有合法组合因 `exp(w_i/1024)>0` 而严格正；归一证明为两个 DP 分区和之积，在 `abs=1e-45, rel=1e-40` 内等于 1。序列化概率为 50 位小数 Decimal 字符串，log score 以 Decimal 80 位计算；零、负、溢出、NaN、Infinity、下溢成零或容差外结果拒绝。
+Phase 4 可接入概率族限定为 P4E1：每区固定基数指数族，号码 `i` 的 canonical log-weight 是整数 tick，固定 scale `1/1024`。唯一规范化规则是从全向量减去号码 1 的原始 tick，使 `w_1=0`；规范化后每个 `w_i` 必须在 `[-4096,4096]`，否则该配置拒绝。扩大的边界是 qualification 正控可完成性所需的表示合同，不授权任意连续参数或跳过 registry。组合未归一 log mass 是所含 ticks 之和；分区 partition function 用 Decimal 80 位的 elementary-symmetric DP 计算 `Z_k`，联合概率为两个分区概率乘积。所有合法组合因 `exp(w_i/1024)>0` 而严格正；归一证明为两个 DP 分区和之积，在 `abs=1e-45, rel=1e-40` 内等于 1。两种彩票每注共选 7 个号码，规范组合 score 在 `[-28672,28672]`，任意两注 log-mass 差至多 56；因此最小规范概率大于 `exp(-56)/21,425,712 > 1e-32`，50 位小数 Decimal 序列化不会把正概率写成零。log score 以 Decimal 80 位计算；零、负、溢出、NaN、Infinity、下溢成零或容差外结果拒绝。
 
-从训练前缀到 ticks 的唯一估计也冻结。先按 P02 取最近 `50|100|150` 或 expanding 的严格历史窗口；P03 为 `none` 时每期权重 1，为半衰期 `h` 时距训练截止 `age` 期的权重为 `2^(-age/h)`。令 `c_i=sum(weight*1[i appeared])`、`n=sum(weight)`、`e=n*k/N`，按 Phase 3 可复算收缩式计算 `r_i=ln((c_i+lambda)/(e+lambda))/max(lambda+e,1)`，其中 lambda 只能取 P01 闭集。原始 tick 为 `round_half_even(1024*r_i)`，再减去号码 1 的 tick；P04 或 F02 的注册整数 offset 只能在此后相加，再次以号码 1 锚定并检查 `[-64,64]`。禁止 clipping，因为 clipping 会改变未登记的等价类；越界候选直接 rejected。M0 不经过估计，全部 ticks 固定为 0。
+从训练前缀到 ticks 的唯一估计也冻结。先按 P02 取最近 `50|100|150` 或 expanding 的严格历史窗口；P03 为 `none` 时每期权重 1，为半衰期 `h` 时距训练截止 `age` 期的权重为 `2^(-age/h)`。令 `c_i=sum(weight*1[i appeared])`、`n=sum(weight)`、`e=n*k/N`，按 Phase 3 可复算收缩式计算 `r_i=ln((c_i+lambda)/(e+lambda))/max(lambda+e,1)`，其中 lambda 只能取 P01 闭集。原始 tick 为 `round_half_even(1024*r_i)`，再减去号码 1 的 tick；P04 或 F02 的注册整数 offset 只能在此后相加，再次以号码 1 锚定并检查 `[-4096,4096]`。禁止 clipping，因为 clipping 会改变未登记的等价类；越界候选直接 rejected。M0 不经过估计，全部 ticks 固定为 0。
 
-`probability_order_key` 是 `P4Q1024-<score+1024 的 4 位十进制>`，其中 joint score 为当前彩种前、后两个分区所选号码 ticks 的整数和；两彩种每注均选 7 个号码，故范围 `[-448,448]`。字符串降序与概率降序严格一致。`tie_key=sha256(model_contract_id|probability_order_key)`；`tie_group_id=sha256(forecast_id|tie_key)`，摘要碰撞时必须比较完整 key。只有 order key 完全相同才 tie；禁止 `isclose` 聚类、运行时 float 文本或输入遍历顺序。
+`probability_order_key` 是 `P4Q1024-<score+28672 的 5 位十进制>`，其中 joint score 为当前彩种前、后两个分区所选号码 ticks 的整数和，范围 `[-28672,28672]`。字符串降序与概率降序严格一致。`tie_key=sha256(model_contract_id|probability_order_key)`；`tie_group_id=sha256(forecast_id|tie_key)`，摘要碰撞时必须比较完整 key。只有 order key 完全相同才 tie；禁止 `isclose` 聚类、运行时 float 文本或输入遍历顺序。
 
-完整空间 tie histogram 用按 `(position,chosen_count,tick_sum)` 的整数 DP 计算每个分区组合数，再卷积前后区。对 score `s`，`tie_group_size=h[s]`，`tie_rank_lower=1+sum_{u>s}h[u]`，`tie_rank_upper=sum_{u>=s}h[u]`，`tie_midrank=(lower+upper)/2`。M0 全 ticks 为 0，故一个 group 的 size 正好是完整空间大小、rank `[1,M]`、midrank `(M+1)/2`。
+完整空间 tie histogram 使用 sparse integer map：每区可用按 `(position,chosen_count,tick_sum)` 的 DP，独立 oracle 另以该区合法组合直接枚举；随后只对实际存在的前/后区 score keys 做精确卷积。必须分别证明分区 histogram 计数为 `C(N,k)`、联合计数为完整空间 `M`。对 score `s`，`tie_group_size=h[s]`，`tie_rank_lower=1+sum_{u>s}h[u]`，`tie_rank_upper=sum_{u>=s}h[u]`，`tie_midrank=(lower+upper)/2`。M0 全 ticks 为 0，故一个 group 的 size 正好是完整空间大小、rank `[1,M]`、midrank `(M+1)/2`。
 
-Top-1000 使用两个层次的确定 best-first：各区按 `(tick_sum desc, combination lexicographic asc)` 产生前 1,000 个固定基数组合；再在前/后区单调乘积格上以 heap 按 `(joint_tick_sum desc, full_ticket lexicographic asc)` 弹出恰好 1,000 个。证明：任一分区索引大于 1,000 的 pair 至少有 1,000 个不低分且 tie-break 更早的 pair，不可能进入规范前 1,000。输出位置 1–1,000 唯一，Top-10/100/200 是同一数组严格前缀；每行同时写 display position、probability/order/tie 字段及全空间 rank。复杂度为 histogram `O((N_front*k_front+N_back*k_back)*S + S^2)`（本合同 `S<=1025`）、Top-K `O(K*(k_front+k_back)*log K)`、内存 `O(S+K)`。20 次真实规则 benchmark 记录 p50/p95、峰值 RSS、bytes 和 hash；若批准预算不能正确完成，候选未接入或工程 `HOLD`，绝不近似 rank。
+Top-1000 使用两个层次的确定 best-first：各区按 `(tick_sum desc, combination lexicographic asc)` 产生前 1,000 个固定基数组合；再在前/后区单调乘积格上以 heap 按 `(joint_tick_sum desc, full_ticket lexicographic asc)` 弹出恰好 1,000 个。证明：任一分区索引大于 1,000 的 pair 至少有 1,000 个不低分且 tie-break 更早的 pair，不可能进入规范前 1,000。输出位置 1–1,000 唯一，Top-10/100/200 是同一数组严格前缀；每行同时写 display position、probability/order/tie 字段及全空间 rank。若 `U_f,U_b` 是两个区实际 reachable score 数，histogram DP 为 `O(sum_zone N*k*U_zone)`、精确卷积为 `O(U_f*U_b)`、内存为 `O(U_f+U_b+U_joint)`；独立枚举 oracle 至多枚举 `C(35,5)+C(12,2)` 个分区组合而不是 2,100 万张整票。Top-K 为 `O(K*(k_front+k_back)*log K)`。T10 对边界 ticks、菜单三档、M0、A10 full-rule 和 adversarial unique-sum fixtures 核对 histogram/Top-1000/Decimal；T15 对两条真实规则各 20 次记录 p50/p95、峰值 RSS、reachable counts、bytes 和 hash。若批准预算不能正确完成，候选未接入或工程 `HOLD`，绝不近似 rank。
 
 ## 8. Champion、shadow 与候选边界
 
 M0 永久存在且每 game 独立。Phase 4 不提供 `promote champion` 命令。`champion_by_game` 事件只能由 genesis contract 写入 M0；任何历史/合成路径写新 Champion 为 `FAIL_GOVERNANCE_BYPASS`。shadow 必须已有 `shadow_candidate` 资格 receipt，绑定 game、parent、candidate config、qualification 和 expiry；过期、修订待处理或守护失败不进入 next forecast。
 
-允许研究空间是闭集：P01 `shrinkage in {1,5,20,100}`；P02 `training_window in {50,100,150,expanding}`；P03 `recency_half_life in {26,52,104,none}`；P04 单号码 tick 在 `[-64,64]` 且每个 proposal 最多改变一个预声明 tick group。F01 是 strictly-earlier `prior_draw_frequency`；F02 是最多 8 类的 `external_context_categorical_v1`，只有每个原子值有真实 `available_at_utc < prediction_locked_at` 才可启用；真实 runtime 默认禁用 F02，合成 useful-feature fixture 可用独立 fixture capability。一次 experiment 只能修改一个 P 或 F family，diff 是规范 JSON Patch 的排序闭集，禁止任意代码、任意表达式、未知字段、全量特征搜索和高容量模型。
+允许研究空间是闭集：P01 `shrinkage in {1,5,20,100}`；P02 `training_window in {50,100,150,expanding}`；P03 `recency_half_life in {26,52,104,none}`；P04 单号码 raw offset 为整数且 proposal 应用、重新锚定后全部 canonical ticks 必须在 `[-4096,4096]`，每个 proposal 最多改变一个预声明 tick group。F01 是 strictly-earlier `prior_draw_frequency`；F02 是最多 8 类的 `external_context_categorical_v1`，只有每个原子值有真实 `available_at_utc < prediction_locked_at` 才可启用；真实 runtime 默认禁用 F02，合成 useful-feature fixture 可用独立 fixture capability。一次 experiment 只能修改一个 P 或 F family，diff 是规范 JSON Patch 的排序闭集，禁止任意代码、任意表达式、未知字段、全量特征搜索和高容量模型。
 
 `candidate_id` 由 parent model/config、单一 diff、game、hypothesis family、code/data/feature/prereg identities 派生。生命周期严格为 `proposal -> registered -> historical/synthetic qualification -> rejected|archived|shadow_candidate -> prospective shadow`。正向参数/特征 E2E 都必须比较 parent/child config 和下一 forecast 的 probability vector/Top-1000 hash；只有文件 diff 而输出未变为失败。
 
@@ -163,9 +163,9 @@ score 键为 `(forecast_id,result_revision_id,metric_contract_id)`；relative sk
 
 ## 10. AutoResearch、顺序检验与恢复
 
-假设族逐 game 分为 `static_parameter`、`slow_drift_parameter`、`context_feature`，初始 alpha wealth 分别为 `0.020,0.015,0.015`，合计每 game `0.05`。family 内第 t 个注册实验（1-based）spend `alpha_t=W0/(t*(t+1))`，累计永不超过 W0；Phase 4 reward 固定为 0，修订也不退款。每期开奖/合成周期最多注册 1 个实验，优先顺序为 preregistration 中最早 eligible proposal 的 `(family,canonical_diff)`；每 family 每 decision 至多一个 proposal。wealth 不能为负，spend 在 experiment start 前原子追加；重复 identity 返回原 event。
+假设族逐 game 分为 `static_parameter`、`slow_drift_parameter`、`context_feature`，初始 alpha wealth 均为 `W0=0.006`，合计每 game `0.018`。family 内第 t 个注册实验（1-based）spend `alpha_t=W0/(t*(t+1))`，首个实验 `alpha_1=0.003`，累计永不超过 W0；Phase 4 reward 固定为 0，修订也不退款。每期开奖/合成周期最多注册 1 个实验，优先顺序为 preregistration 中最早 eligible proposal 的 `(family,canonical_diff)`；每 family 每 decision 至多一个 proposal。wealth 不能为负，spend 在 experiment start 前原子追加；重复 identity 返回原 event。三个 family 的终身并集错误上界为 `0.018 < A07 0.05`，留下了使 1,000-sequence aggregate uniform 门高概率通过所需的余量，而没有降低 A07。
 
-每个 experiment 最多看 150 个周期，最早 30；单期 log-skill 因 tick 边界具有预先解析的有限范围 `[a,b]`。第 n 次 look 将本 experiment alpha 按 `alpha_n=alpha_t*6/(pi^2*(n-29)^2)` 分配，Hoeffding lower bound `mean-(b-a)*sqrt(log(1/alpha_n)/(2*n))`；只有 lower bound 严格大于 preregistered `delta=0`，方向/稳定性、Brier、概率、时间和治理 guards 全通过才可 proposal。每次 look、未过门和停止均写入。最大 150、wealth 不足、无 eligible hypothesis、guard hold、effect wrong direction、timeout 分别得到机器终态；`experiment_count=0` 的 decision 理由只允许 `no_eligible_hypothesis|budget_exhausted|guard_hold|scheduled_no_change`。
+每个 experiment 最多看 150 个周期，最早 30；在观察第 t 个结果前，preregistration 必须已冻结 Champion 条件分布 `p0_t`、候选条件分布 `p1_t` 及其输入。定义 likelihood-ratio e-process `E_n=product_{t=1..n} p1_t(Y_t)/p0_t(Y_t)`，实现保存 Decimal 80 位 `log_E_n=sum(log p1_t(Y_t)-log p0_t(Y_t))`。Phase 4 Champion 固定为 M0；在注册 null 下 `p0_t` 严格为正，且 `p1_t` 只依赖严格先前数据/冻结 context，故 `E_n` 是非负均值 1 martingale。实验在任一 `30<=n<=150` 首次满足 `E_n >= 1/alpha_t`，且正确方向/config、稳定性、Brier、概率、时间和治理 guards 全通过时 proposal；否则到 150 停止。Ville 不等式给出 `P0(exists n:E_n>=1/alpha_t)<=alpha_t`，无需也禁止再把 `alpha_t` 逐 look 拆分。跨实验按可预测注册顺序应用 alpha spending 和 union bound。每个 look、未过门和停止均写入；最大 150、wealth 不足、无 eligible hypothesis、guard hold、effect wrong direction、timeout 分别得到机器终态。`experiment_count=0` 的 decision 理由只允许 `no_eligible_hypothesis|budget_exhausted|guard_hold|scheduled_no_change`。
 
 checkpoint 绑定 decision/experiment、已消费 score IDs、look ordinal、sufficient statistics、alpha event、RNG state（实际为派生计数器）、ledger head 和输出 hashes。恢复先验证所有绑定，再从下一个未提交 look 追加；spend、proposal、decision、next shadow 均以 identity 去重。checkpoint 不完整保留失败 attempt，新 attempt 引用它但不能重复 side effect。任何永远 `no_change` 的实现会被参数/特征正向 E2E 和 A09 拒绝。
 
@@ -189,11 +189,17 @@ calendar release 不用星期递推猜期号；它显式列出经来源政策核
 
 ## 13. Qualification design、功效、oracle 和资源预算
 
-A07–A09 使用小空间 `N=10,k=3`、每彩种/每世界 1,000 序列、每序列 150 周期。uniform 的序列事件为是否出现任一错误 shadow proposal，率必须 `<=5%`。正控分别为静态偏差、慢漂移和 useful feature，逐 game/类型恢复定义为在正确 family、正确方向/config 产生 proposal 且 next shadow hash 改变，率各 `>=90%`。
+A07–A09 使用小空间 `N=10,k=3`、每彩种/每世界 1,000 序列、每序列恰好 150 周期。uniform 的 sequence-level 事件为是否在任一 family/任一 look 出现错误 shadow proposal，率必须 `<=5%`。正控分别为静态偏差、慢漂移和 useful feature；逐 game/类型的 sequence-level recovery 是在 150 周期内由正确 family、正确方向/config 产生 proposal，全部非统计 guards 通过且 next shadow hash 改变，率各 `>=90%`。正控 fixture 只启用一个预注册的正确-family 首实验，因此使用 `alpha_1=0.003`，而不是结果后搜索多个候选。
 
-效应配置只从固定菜单选择：静态 ticks 幅度 `{16,24,32}` 乘向量 `[1,1,1,0,0,0,0,-1,-1,-1]`；漂移用同幅度从 0 线性 ramp 到目标、ramp 周期 `{50,75,100}`；feature 为 balanced context bit，在 context=1 时对预注册前三号码加 `{16,24,32}`、后三号码减同值，context=0 反向。开发种子在菜单内选择；确定规则是按 `(幅度,ramp,config bytes)` 从弱到强取同时满足各 power gate 预计通过概率 `>=90%` 的首项，不允许结果后挑强证据。
+生成器和效应菜单完全结果盲。令 `v=[1,1,1,0,0,0,0,-1,-1,-1]`，幅度菜单按弱到强固定为 `q in [1536,1792,2048]` ticks；应用 `q*v` 后以号码 1 重新锚定，最强配置落在 `[-4096,0]`。静态从周期 1 起固定为 `q*v`；slow drift 在周期 t 使用 `round_half_even(q*min(t,100)/100)*v`；feature 使用严格交替且每 150 周期 75/75 平衡的 context bit，context 1 使用 `q*v`、context 0 使用 `-q*v`，context 在抽取开奖号前固定。每期从相应固定基数指数分布独立抽取一个组合；uniform 使用 120 个组合等概率。完整 design 候选顺序为三个幅度的 `(static=q,slow=q/ramp100,feature=q)`，再按 canonical config bytes。development 必须运行全部候选；确定选择规则先保留 T10 中 uniform/positive aggregate 解析下界均 `>=0.99` 且 positive sequence 解析下界 `>=0.93` 的候选，再要求 product 与 independent reducer 的逐 sequence terminal/LR/guard/hash 一致率 100%，最后取排序首项。development 的经验 rate 只作描述和错误诊断，不参与强弱选择；首项不一致时 HOLD 修实现，不能跳到更强 q 掩盖错误，也不能在 power/formal 结果后改变菜单。
 
-种子派生为 `uint256(sha256('P4-SEED-v1|' + design_id + '|' + domain + '|' + game + '|' + world + '|' + sequence_ordinal))`；domain 严格为 `development`、`power-confirmation`、`formal-qualification`，集合哈希和交集 0 写入制品。开发结果不可进入 power/acceptance。选择完成后冻结 design ID，再用未参与选择的 power seeds 估计 uniform 门和六个正控门的通过概率及 95% Clopper-Pearson 区间；任一预计通过概率低于 90% 即 `HOLD_DESIGN_NOT_POWERED`，不得启动正式资格。修改产生新 design ID/新确定性 power seed，旧失败保留。formal master seed 和全部 8,000 序列身份（2 games × 4 worlds × 1,000）在正式运行前冻结；重试只能同序列 checkpoint。
+在任何 development simulation 前，T10 的独立解析 feasibility checker 对每个候选固定计算。对正控令 `Z_t=log(p1_t(Y_t)/p0_t(Y_t))`、`mu=sum_t E1[Z_t]`、`R_t=max_y Z_t-min_y Z_t`、`h=log(1/0.003)`；当 `mu>h` 时，独立性和 Hoeffding 给出 sequence recovery 的保守下界 `p_seq >= 1-exp(-2*(mu-h)^2/sum_t R_t^2)`，因为 terminal `log E_150>=h` 已蕴含曾越过门。最弱 `q=1536` 的静态/feature 有 `mu>=176.99,sum R_t^2<=12150.01,p_seq>=0.9919`；最难的 100 周期 slow ramp 有 `mu>=103.4133,sum R_t^2<=6790.653,p_seq>=0.93954`。uniform 由 Ville + 三 family spending 得 `q_seq<=0.018`。把这些界代入冻结的 1,000 序列门，`G0(q)=P[Binom(1000,q)<=50]` 和 `G+(p)=P[Binom(1000,p)>=900]`，得到 `G0(0.018)>0.9999999999`、最坏 `G+(0.93954)>0.99999950`。checker 固定 Decimal 80 位、枚举全部 120 组合、对 amplitudes/ramp 逐周期计算、binomial recurrence、向不利方向取整并输出公式输入/中间量/source hash；这些是设计存在通过机会的结果盲解析 certificate，不替代 T13 独立模拟。
+
+种子派生为 `uint256(sha256('P4-SEED-v2|' + design_id + '|' + domain + '|' + game + '|' + world + '|' + sequence_ordinal))`；domain 严格为 `development`、`power-confirmation`、`formal-qualification`，集合哈希和交集 0 写入制品。development 每 game/world/design 固定 2,000 序列，仅能用于上述确定选择。选出 candidate design 后先冻结 candidate、产品 controller command/code hashes；独立 power driver 不导入产品核心，用未参与选择的 power-confirmation domain 生成 draws 并通过黑盒 CLI 驱动该冻结 controller，对 8 个 game/world cell（2 个 uniform、6 个正控）各运行 `R=20,000` 序列；独立 reducer 再从 raw draws 和冻结 `p0_t,p1_t` 重算每个终态。qualification-design 的正式门对象相应是 2 个 uniform aggregate gates 和 6 个 positive aggregate gates；不得把两个 game pooling 后掩盖单元失败。
+
+power-confirmation 对每个 cell 先报告 sequence-level 计数、率和 simultaneous 95% Clopper–Pearson 区间：8 个双侧区间用 Bonferroni tail `eta=0.05/(2*8)`，端点由 Decimal 80 位 binomial CDF 单调二分到绝对宽度 `1e-12`。随后才计算“正式聚合门预计通过概率”：它是一个新的、与 power 数据独立的 1,000-sequence formal batch 在冻结生成器/控制器下通过合同计数门的概率，不是 power batch 的恢复率，也不是将来一次 formal 结果。uniform 点估计/区间为 `G0(q_hat)` 和 `[G0(q_U),G0(q_L)]`；positive 为 `G+(p_hat)` 和 `[G+(p_L),G+(p_U)]`，均用 Decimal 80 位 binomial recurrence。每个 cell 必须同时满足 sequence interval 的不利端 `q_U<=0.05` 或 `p_L>=0.90`、aggregate point estimate `>=0.90`、aggregate simultaneous lower bound `>=0.90`，否则 `HOLD_DESIGN_NOT_POWERED`。选择完成后的 power 数据不能反馈到同一 design；任何控制器、幅度、ramp、alpha、重复数或算法变更都产生新 design ID，回到 development 并使用由新 ID 派生的新 seeds，旧失败原样保留。
+
+T15 只在 T13 PASS 后冻结 formal master seed 和全部 8,000 序列身份（2 games × 4 worlds × 1,000）。T16 对每个 formal cell 只报告实际 success count、sequence rate、门 `<=50/1000` 或 `>=900/1000` 的布尔结果和底层 terminals；一次 1,000-sequence 的实际率不得命名为“正式门通过概率”。重试只能恢复同一序列 checkpoint，正式结果失败不能换 seed、效应或 design 重跑。
 
 A10 full-rule 生成分布使用独立数学规格 P4E1：对每个长度 `N>=8` 的分区，原始 ticks 在位置 1–4 依次为 `32,24,16,8`，位置 `N-3..N` 依次为 `-8,-16,-24,-32`，其余位置为 0，再按 P4E1 减去位置 1 的 tick 规范化；这一定落入 `[-64,0]`。SSQ 后区 `N=16`、DLT 后区 `N=12` 也使用同一明确规则，不是从候选输出反推。能力用 candidate 是结果前 fixture registry 中恰好声明上述 ticks 的 `P4E1-full-rule-known-answer-v1`，产品路径必须自行从该 config 生成 Top-K，oracle 不读取其输出。oracle 在正式 candidate 前冻结源码 hash、rule IDs、Decimal 80 位、八个 K 和每单元 `M0=K/M`、candidate 覆盖、差值及误差界；不导入产品模块。八单元 candidate 真覆盖都必须严格大于 M0，产品/oracle 超容差或任一不优即 A10 FAIL，不换分布、K 或 oracle。
 
@@ -217,9 +223,9 @@ readiness 只读 official canary 可读取已经公开期次，保存 raw/transp
 | P4-MVP-A04 | 7 | M0/rank DP | 两彩种 M0 full-space histogram known-answer | `FAIL_M0_TIE` |
 | P4-MVP-A05 | 8、10 | research_controller/forecast | parameter diff 与 child next shadow E2E | `HOLD_PARAMETER_ADJUSTMENT_MISSING` |
 | P4-MVP-A06 | 8、10 | feature registry/controller | feature snapshot/diff/lineage/output E2E | `HOLD_FEATURE_ADJUSTMENT_MISSING` |
-| P4-MVP-A07 | 10、13 | sequential qualifier | 2,000 uniform sequence terminals、独立率重算 | `FAIL_UNIFORM_FALSE_PROPOSAL_RATE` |
+| P4-MVP-A07 | 10、13 | e-process qualifier | 2,000 uniform formal terminals、Ville/解析 certificate、独立率重算 | `FAIL_UNIFORM_FALSE_PROPOSAL_RATE` |
 | P4-MVP-A08 | 8、10、12 | alpha ledger/governance | 全 experiment 独立 wealth/stop 重算、越权负控 | `FAIL_ALPHA_OR_GOVERNANCE` |
-| P4-MVP-A09 | 10、13 | qualifier/power | 六个 1,000-sequence rates、power artifact、seed isolation | `HOLD_DESIGN_NOT_POWERED` 或 FAIL |
+| P4-MVP-A09 | 10、13 | qualifier/power | 六个 1,000-sequence rates、sequence 与 aggregate power/区间、seed isolation | `HOLD_DESIGN_NOT_POWERED` 或 FAIL |
 | P4-MVP-A10 | 7、13 | full-rule oracle/product rank | 八单元数值、误差界、独立 import audit | `FAIL_FULL_RULE_CAPABILITY` |
 | P4-MVP-A11 | 9、12 | time gate/label/metric lock | sequence/PIT/capability/time-travel/tamper E2E | `FAIL_CAUSALITY_OR_TAMPER` |
 | P4-MVP-A12 | 4、7、8、12 | game-scoped registries/state | cross-game/governance negative E2E | `FAIL_GAME_OR_GOVERNANCE_ISOLATION` |
@@ -235,10 +241,10 @@ readiness 只读 official canary 可读取已经公开期次，保存 raw/transp
 
 ## 16. 风险、不可完成条件、降级和决策记录
 
-主要风险是 full-space tie/rank 的计算预算、官方页面结构/可用性、用户 systemd 能力、文件系统原子语义、顺序控制器功效、证据体积和独立实现同源。对应封闭方式分别是限制 P4E1 tick 空间并 benchmark、固定响应加只读 canary/冲突终态、安装审计、原子语义 probe、结果盲 power gate、manifest-driven batching、禁止独立路径 import 产品模块。
+主要风险是扩展 tick 后 full-space tie/rank 的 reachable-state 预算、官方页面结构/可用性、用户 systemd 能力、文件系统原子语义、e-process 实现或功效确认偏差、证据体积和独立实现同源。对应封闭方式分别是 sparse exact histogram + 分区枚举 oracle + 边界 benchmark、固定响应加只读 canary/冲突终态、安装审计、原子语义 probe、解析 certificate + 独立 20,000-sequence power gate、manifest-driven batching、禁止独立路径 import 产品模块。
 
 不可完成条件包括：上位合同或四项 genesis 不一致；Phase 1 保护清单不能稳定重算；选定文件系统不能提供所需原子持久化；两个彩种任一不能正确生成严格正归一概率或 exact tie/rank；正式 design 未 powered；批准 workload 在不改科学语义下仍不能完成；官方适配 readiness 或 systemd 用户适配器不能在权限内安装审计；角色不能分离；独立 replay/manifest 不能闭合。它们都产生明确 HOLD；因果泄漏、锁后改写、选择性证据、伪造或越权产生 FAIL。
 
 允许降级仅是：单 source/network 暂停 unlock、单 game 故障隔离、无 eligible hypothesis 的诚实 no-change、未支持 candidate 不接 registry、减少并行并从同 checkpoint 恢复、M0 继续 Champion。禁止降级概率精度、tie/rank、时间证据、资格数量/阈值、独立性、递归证据或角色分离；不能用展示位冒充 rank、合成证据冒充真实改善或用顶层 PASS 代替重算。
 
-决策记录：ADR-P4-001 选择 filesystem content-addressed ledger；ADR-P4-002 选择 P4-CJSON-1；ADR-P4-003 限制 P4E1 quantized additive family 以获得 exact rank；ADR-P4-004 选择 user systemd timer；ADR-P4-005 选择 alpha-spending/zero reward；ADR-P4-006 选择 staged recursive manifest；ADR-P4-007 official canary 只作 readiness；ADR-P4-008 M0 永久 Champion 且 Phase 4 无 promotion surface。任何改变必须新 ADR、影响分析、新合同/seed/release identity，并保留旧失败证据。
+决策记录：ADR-P4-001 选择 filesystem content-addressed ledger；ADR-P4-002 选择 P4-CJSON-1；ADR-P4-003 选择边界 `[-4096,4096]` 的 P4E1 quantized additive family、sparse exact histogram 和边界 benchmark；ADR-P4-004 选择 user systemd timer；ADR-P4-005 选择 LR e-process、每 family `W0=0.006`、alpha-spending/zero reward；ADR-P4-006 选择 staged recursive manifest；ADR-P4-007 official canary 只作 readiness；ADR-P4-008 M0 永久 Champion 且 Phase 4 无 promotion surface；ADR-P4-009 区分 sequence rate 与 prospective 1,000-sequence aggregate gate probability，并采用 simultaneous CP 传播。任何改变必须新 ADR、影响分析、新合同/seed/release identity，并保留旧失败证据。

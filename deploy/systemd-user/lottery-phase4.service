@@ -1,0 +1,10 @@
+[Unit]
+Description=Lottery Phase 4 deterministic scheduler tick
+After=network-online.target
+
+[Service]
+Type=oneshot
+UMask=0077
+WorkingDirectory=/home/royzuo/lottery-phase4/current
+EnvironmentFile=/home/royzuo/lottery-phase4/current/config/phase4/runtime-provenance.env
+ExecStart=/home/royzuo/lottery-phase4/current/.venv/bin/python3 -m lottery_system.phase4 schedule tick --schedule /home/royzuo/lottery-phase4/current/config/phase4/runtime-schedule.json --runtime-root /home/royzuo/lottery-phase4/current/artifacts/phase-4-runtime/production-v1 --clock system

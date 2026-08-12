@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/work-item-receipt.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "task_id", "identity", "source_commit", "actor_assignment_sha256", "task_producer_set", "acceptance_actor_provenance", "role_inequalities", "inputs", "outputs", "command", "started_at_utc", "ended_at_utc", "process_exit_code", "status", "terminal"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"}, "artifact_type": {"const": "phase4_work_item_receipt"},
+    "task_id": {"type": "string", "pattern": "^T(?:0[0-9]|1[0-9]|2[0-4])$"}, "identity": {"$ref": "#/$defs/id"},
+    "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "actor_assignment_sha256": {"$ref": "#/$defs/sha256"},
+    "task_producer_set": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "acceptance_actor_provenance": {"$ref": "#/$defs/acceptor"},
+    "role_inequalities": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "boolean"}},
+    "inputs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/artifact"}},
+    "outputs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/outputArtifact"}},
+    "command": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "started_at_utc": {"type": "string", "format": "date-time"}, "ended_at_utc": {"type": "string", "format": "date-time"},
+    "process_exit_code": {"type": "integer"}, "status": {"enum": ["PASS", "HOLD", "FAIL"]}, "terminal": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^(?!.*latest)(?!.*[*/]).+$"}, "safePath": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*latest)(?!.*\\*).+$"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"$ref": "#/$defs/safePath"}, "sha256": {"$ref": "#/$defs/sha256"}}},
+    "outputArtifact": {"type": "object", "additionalProperties": false, "required": ["path", "sha256", "bytes", "producer_actor_id", "task_id", "session_id", "source_commit", "role"], "properties": {"path": {"$ref": "#/$defs/safePath"}, "sha256": {"$ref": "#/$defs/sha256"}, "bytes": {"type": "integer", "minimum": 0}, "producer_actor_id": {"type": "string", "minLength": 1}, "task_id": {"const": "T01"}, "session_id": {"type": "string", "minLength": 1}, "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "role": {"enum": ["contract_owner", "statistical_owner"]}}},
+    "acceptor": {"type": "object", "additionalProperties": false, "required": ["actor_id", "session_id", "task_record_path", "task_record_sha256"], "properties": {"actor_id": {"type": "string", "minLength": 1}, "session_id": {"type": "string", "minLength": 1}, "task_record_path": {"$ref": "#/$defs/safePath"}, "task_record_sha256": {"$ref": "#/$defs/sha256"}}}
+  }
+}

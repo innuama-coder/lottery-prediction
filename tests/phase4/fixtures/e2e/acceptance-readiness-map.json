@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_t11_acceptance_readiness_map",
+  "entries": [
+    {"acceptance_id":"P4-MVP-A01","e2e_cases":["ssq_complete_cycle","dlt_complete_cycle","parameter_adjustment","feature_adjustment"],"remaining_closure_tasks":["T16","T17"]},
+    {"acceptance_id":"P4-MVP-A02","e2e_cases":["illegal_combination","duplicate_top1000"],"remaining_closure_tasks":["T16"]},
+    {"acceptance_id":"P4-MVP-A03","e2e_cases":["cross_k_tie","invalid_probability_or_order_key","nontransitive_approximate_tie","lax_probability_contract"],"remaining_closure_tasks":["T16","T20"]},
+    {"acceptance_id":"P4-MVP-A04","e2e_cases":["m0_full_space_tie"],"remaining_closure_tasks":["T16"]},
+    {"acceptance_id":"P4-MVP-A05","e2e_cases":["parameter_adjustment"],"remaining_closure_tasks":["T17"]},
+    {"acceptance_id":"P4-MVP-A06","e2e_cases":["feature_adjustment"],"remaining_closure_tasks":["T17"]},
+    {"acceptance_id":"P4-MVP-A07","e2e_cases":["duplicate_spending"],"remaining_closure_tasks":["T13","T16"]},
+    {"acceptance_id":"P4-MVP-A08","e2e_cases":["cross_game_alpha","direct_champion_change","search_after_budget_exhausted","duplicate_spending"],"remaining_closure_tasks":["T16","T20"]},
+    {"acceptance_id":"P4-MVP-A09","e2e_cases":["parameter_adjustment","feature_adjustment"],"remaining_closure_tasks":["T13","T16"]},
+    {"acceptance_id":"P4-MVP-A10","e2e_cases":["m0_full_space_tie","cross_k_tie","invalid_probability_or_order_key"],"remaining_closure_tasks":["T16","T20"]},
+    {"acceptance_id":"P4-MVP-A11","e2e_cases":["time_class_mixed","historical_pit_fabricated","future_field","prelock_label","cross_pid_capability","locked_forecast_mutation"],"remaining_closure_tasks":["T17"]},
+    {"acceptance_id":"P4-MVP-A12","e2e_cases":["cross_game_state","cross_game_alpha","direct_champion_change"],"remaining_closure_tasks":["T17"]},
+    {"acceptance_id":"P4-MVP-A13","e2e_cases":["checkpoint_resume","checkpoint_tamper","concurrent_or_duplicate_trigger","stale_ledger_head"],"remaining_closure_tasks":["T18"]},
+    {"acceptance_id":"P4-MVP-A14","e2e_cases":["data_chain_break","changed_genesis","empty_baseline","source_policy_expired","source_use_mismatch","single_source","source_conflict","source_network_failure","protected_phase0_3_write"],"remaining_closure_tasks":["T17"]},
+    {"acceptance_id":"P4-MVP-A15","e2e_cases":["wrong_identity_or_hash","staged_closure_tamper","acceptance_tamper"],"remaining_closure_tasks":["T19","T20"]},
+    {"acceptance_id":"P4-MVP-A16","e2e_cases":["prohibited_scientific_wording","acceptance_tamper"],"remaining_closure_tasks":["T21","T22","T23","T24"]},
+    {"acceptance_id":"P4-MVP-A17","e2e_cases":["checkpoint_resume","missing_directory_fsync"],"remaining_closure_tasks":["T12","T14","T15","T18"]},
+    {"acceptance_id":"P4-MVP-A18","e2e_cases":["cross_game_state","global_improved","future_phase_state","implicit_external_service"],"remaining_closure_tasks":["T20"]},
+    {"acceptance_id":"P4-MVP-A19","e2e_cases":["systemd_virtual_tick","forecast_after_deadline","concurrent_or_duplicate_trigger","missed_trigger","target_issue_rollback"],"remaining_closure_tasks":["T18"]},
+    {"acceptance_id":"P4-MVP-A20","e2e_cases":["wrong_comparator","wrong_window","wrong_revision","invalid_probability_or_order_key"],"remaining_closure_tasks":["T17","T20"]},
+    {"acceptance_id":"P4-MVP-A21","e2e_cases":["official_revision_full_closure","partial_correction","wrong_revision","checkpoint_resume"],"remaining_closure_tasks":["T17","T20"]}
+  ],
+  "readiness_semantics": "T11 qualifies registered bottom-up test seams only; remaining formal closure tasks must still execute and cannot be inferred PASS here."
+}

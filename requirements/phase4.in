@@ -1,0 +1,4 @@
+# Phase 4 runtime remains intentionally small. T14 must compile a fully
+# transitive, hash-locked requirements/phase4.lock and freeze a wheelhouse.
+jsonschema==4.26.0
+tzdata==2026.3; platform_system == "Windows"

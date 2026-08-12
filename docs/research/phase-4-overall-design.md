@@ -1,8 +1,8 @@
 # Phase 4 预测与 AutoResearch 闭环 MVP 总体设计
 
-版本：1.4
+版本：1.5
 
-状态：实施设计候选；本文件与详细计划合入固定开发基线后，后续预注册和机器验收合同必须按本文冻结点产生新身份
+状态：实施设计候选；本版移除阶段内人类参与，机器终态为 `READY_FOR_HUMAN_ACCEPTANCE`；本文件与详细计划合入固定开发基线后，后续预注册和机器验收合同必须按本文冻结点产生新身份
 
 预期上位合同内容：`ROADMAP.md` SHA-256 `24ba28e72c33959a91e505fd518718bd0c948c84b7e2e4cd5591a26f0a0b0149`，`tasks/phase4/README.md` SHA-256 `13b099c584c24c2bb7324f5fa852c9fac2dff7ad934245598eae2d117e701a75`。设计阶段不提前伪造其 `main` 身份；本文与 `docs/plans/phase-4-detailed-plan.md` 不在自身中写入自哈希，而由合入后的单一 Git 提交原子绑定。T00 必须在开发开始前从 `origin/main` 解析并冻结同时包含两份精确上位合同、本文和详细计划的 `P4_AUTHORITY_COMMIT`，从 Git 对象逐文件记录内容 SHA-256，并机器证明该提交是 `origin/main` 的祖先。当前分支尚未合入时只能得到 `HOLD_AUTHORITY_NOT_ON_MAIN`；包含旧版本文或旧版详细计划的提交只能得到 `HOLD_AUTHORITY_IDENTITY`。
 
@@ -12,7 +12,7 @@
 
 Phase 4 把已验收的 Phase 3 历史研究能力扩展成无界面、可部署、可调度、可恢复且可独立验收的双彩种 MVP。SSQ 和 DLT 各自完成 `prepare -> predict -> lock -> ingest -> verify -> unlock -> score -> autoresearch -> decision -> next forecast`；每个有效 Champion 或 shadow forecast 恰好发布 1,000 注合法、唯一的完整组合，按严格正且归一的完整空间联合概率排序，并保留真实 tie 等价类和完整空间 rank。每个新核验标签产生唯一 score 和唯一 AutoResearch decision。参数和允许特征的正向 fixture 必须真正改变下一期 shadow，而历史或合成证据不能修改 Champion。
 
-成功的唯一工程终态是同一冻结 release 上 `P4-MVP-A01` 至 `P4-MVP-A21` 全部通过、blocking findings 为 0、递归证据闭合并由独立验收角色签发 `SYSTEM_MVP_GO`。成功可以同时伴随 `champion_by_game={ssq:M0,dlt:M0}`、模型状态 `baseline_only` 和八个 Top-K 单元 `insufficient_observation`；这不是效果改善声明。
+成功的唯一机器工程终态是同一冻结 release 上 `P4-MVP-A01` 至 `P4-MVP-A21` 全部通过、blocking findings 为 0、递归证据闭合并由独立机器验收角色签发 `READY_FOR_HUMAN_ACCEPTANCE`。该终态表示技术交付已封存、可取回，之后才进行阶段外人类最终验收。成功可以同时伴随 `champion_by_game={ssq:M0,dlt:M0}`、模型状态 `baseline_only` 和八个 Top-K 单元 `insufficient_observation`；这不是效果改善声明。
 
 非目标包括 Phase 5 的连续真实前瞻窗口和 SLO、Phase 6 的 Champion 晋升治理、发现真实规律、真实 Top-K lift、WebUI、公共 HTTP API、移动端、购彩、投注、支付、资金和收益系统。Phase 4 不等待未来开奖，不用历史回填冒充 forecast lock，不补造 Phase 1 历史 `available_at_utc`，也不修改 Phase 0–3 任何冻结制品。
 
@@ -24,7 +24,7 @@ Phase 3 正式 acceptance 是 `artifacts/phase-3/P3-R07-2c0fa97-20260810-I01/acc
 
 受保护根固定为整个 `artifacts/phase-0/`、`artifacts/phase-0-multisource/`、`artifacts/phase-1/`、`artifacts/phase-2/`、`artifacts/phase-2.1/` 和 `artifacts/phase-3/`。实现只读这些树。`protected-artifact-inventory.json` 必须由 `P4_AUTHORITY_COMMIT` 的 `git ls-tree` 与逐文件 SHA-256、字节数生成，递归包含所有路径和文件类型；T00、正式 release 创建前、canary 前后、replay 前和最终 acceptance 后分别重算路径集合、类型、大小和哈希，差一项即 `FAIL_PROTECTED_ARTIFACT_MUTATION`。Phase 1 四项 genesis 仍单独重算，不能以全量 inventory 代替其语义检查。
 
-信任边界不以角色名称猜测，而由每个文件/事实的 `producer_actor_id,task_id,session_id,source_commit` 归属派生 actor 集合。任何写入产品源码或生成产品事实的 actor（包括以 data custodian 身份实现适配器的 actor）都进入 `product_producer_set`；生成 oracle、development/power、formal qualification、E2E/readiness、manifest、replay 或 validator 证据的 actor 进入对应 `evidence_producer_set`。每个任务的验收 receipt 同样记录实际 actor provenance，详细计划固定其验收执行角色；除终局 T24 由完全独立的 acceptance approver 直接裁决外，任务验收 actor 必须与该任务全部产物 producer actor 不相交。power operator 必须与 product producer、statistical owner 和 oracle author 不同；T16/T17 的 run operator 必须与 acceptance engineer 不同；独立 reviewer 必须与其审查的所有 product/evidence producer、release controller 和 validator 不同；acceptance engineer 不是 product producer 或正式证据运行者；人类签署者在 T00 前明确接受职责，且不在被签署的 producer/reviewer 集合中；acceptance approver 必须与 T00–T23 所有 producer、controller、operator、oracle、replay、reviewer、validator 和 signatory actor 不同。所有不等式从 manifest provenance 机器派生，不允许靠更换角色标签规避。研究执行进程没有数据采集、规则、label store、评分器、状态验收器、既有 forecast/score 或 Champion 的写能力。
+信任边界不以角色名称猜测，而由每个文件/事实的 `producer_actor_id,task_id,session_id,source_commit` 归属派生 actor 集合。任何写入产品源码或生成产品事实的 actor（包括以 data custodian 身份实现适配器的 actor）都进入 `product_producer_set`；生成 oracle、development/power、formal qualification、E2E/readiness、manifest、replay 或 validator 证据的 actor 进入对应 `evidence_producer_set`。每个任务的验收 receipt 同样记录实际 actor provenance，详细计划固定其验收执行角色；终局 T24 由完全独立的机器 `acceptance_approver` 直接裁决，任务验收 actor 必须与该任务全部产物 producer actor 不相交。power operator 必须与 product producer、statistical owner 和 oracle author 不同；T16/T17 的 run operator 必须与 acceptance engineer 不同；独立 reviewer 必须与其审查的所有 product/evidence producer、release controller 和 validator 不同；acceptance engineer 不是 product producer 或正式证据运行者；机器交付声明 actor 必须与被声明的 producer/reviewer 集合不相交；`acceptance_approver` 必须与 T00–T23 所有 producer、controller、operator、oracle、replay、reviewer、validator 和 delivery-statement actor 不同。所有不等式从 manifest provenance 机器派生，不允许靠更换角色标签规避。研究执行进程没有数据采集、规则、label store、评分器、状态验收器、既有 forecast/score 或 Champion 的写能力。
 
 ## 2. 设计输入冻结登记
 
@@ -48,7 +48,7 @@ Phase 3 正式 acceptance 是 `artifacts/phase-3/P3-R07-2c0fa97-20260810-I01/acc
 | full-rule oracle | 两彩种数学分布、八 K、独立源码/容差/预期数值 | 产品候选正式运行前 | `qualification-design/full-rule-oracle.json` | `HOLD_ORACLE_NOT_FROZEN` |
 | 调度适配器 | 用户级 systemd timer，5 分钟 tick，应用层幂等/并发/补偿 | VPS readiness 前 | unit/timer 模板及安装审计 | `HOLD_SCHEDULER_AUDIT` |
 | 依赖/部署/资源 | Python 3.12、哈希 lock/wheelhouse、venv、无服务依赖；T12 在任何 development/power 模拟前对 48,000/160,000 序列及 720 万/2,400 万观测的计算、分片、存储和取回导出动态预算；T15 另冻结 formal/replay/validator 预算 | T12 准备期门，T15 正式门 | lock、wheel manifest、prep/formal benchmark、budget | `HOLD_PREQUALIFICATION_BUDGET`/`HOLD_DEPENDENCY_OR_BUDGET` |
-| 角色与 acceptance | 第 1.1、14 节的 provenance-derived actor 集合和完整不等式；人类签署者必须在实现开始前被明确指派并确认 | T00 前置核对、T15 正式重冻、T19–T24 逐层续验 | actor assignments、per-file provenance、signatory acknowledgement、acceptance contract | `HOLD_ROLE_OR_SIGNATORY_MISSING`/`HOLD_ROLE_CONFLICT` |
+| 角色与 acceptance | 第 1.1、14 节的 provenance-derived actor 集合和完整不等式；机器交付声明与终局机器验收角色在实现开始前固定 | T00 前置核对、T15 正式重冻、T19–T24 逐层续验 | actor assignments、per-file provenance、machine-delivery-statement、acceptance contract | `HOLD_MACHINE_DELIVERY_STATEMENT`/`HOLD_MACHINE_ACCEPTANCE_ROLE`/`HOLD_ROLE_CONFLICT` |
 
 ## 3. 技术路线和取舍
 
@@ -85,10 +85,10 @@ Phase 3 正式 acceptance 是 `artifacts/phase-3/P3-R07-2c0fa97-20260810-I01/acc
 | `official_adapter` | 原始 GET observation receipt | source policy、transport port | verified result 单方真值 |
 | `cli_orchestrator` | 命令顺序和退出码 | 上述 application ports | 领域算法 |
 | `independent_replay` | 独立重算报告/finding | 冻结底层输入、evidence manifest | 产品写路径、validator/review/acceptance |
-| `final_validator` | A01–A21 底层判定 | replay closure、oracles、evidence manifest | 生成被验收产品事实、review/签署 |
-| `independent_reviewer` | release review 与 independence findings | validator/replay/evidence closures | 修改被复核事实、人工签署 |
-| `human_signatory` | 交付完整性与科学措辞人工签署 | review/validator closures | 生成技术事实、修改证据 |
-| `acceptance_approver` | 唯一工程终态 | signature/review/validator/replay/evidence closures | 修改任何既有证据 |
+| `final_validator` | A01–A21 底层判定 | replay closure、oracles、evidence manifest | 生成被验收产品事实、review/delivery |
+| `independent_reviewer` | release review 与 independence findings | validator/replay/evidence closures | 修改被复核事实、交付声明 |
+| `machine_delivery_statement` | 交付完整性与科学措辞一致性机器检查 | review/validator closures | 生成技术事实、修改证据 |
+| `acceptance_approver` | 唯一机器工程终态 | delivery-statement/review/validator/replay/evidence closures | 修改任何既有证据 |
 
 数据流是 `Phase1 genesis + official raw observations -> Phase4 data release -> label-free training snapshot -> probabilities/ranks -> forecast diagnostic -> lock -> verified result revision -> guarded unlock -> score/window -> decision/experiment -> candidate -> next shadow`。控制流由 schedule plan 触发同一 CLI；每一步先解析固定 identity，取得单 plan lease，核对前置终态，在对应 ledger lock 内以 expected head 追加 `started`，锁外完成纯计算，再次以 expected head/CAS 提交不可变对象和唯一终态。head 已变化时重新验证或创建失败 attempt，不能覆盖。组件不能同时生成并独立验收自己的事实。
 
@@ -184,7 +184,7 @@ calendar release 不用星期递推猜期号；它显式列出经来源政策核
 
 ## 12. 状态、告警、故障和安全
 
-工程状态键 `(system_release_id)`，Phase 4 只写 `HOLD|FAIL|SYSTEM_MVP_GO`。模型键 `(game,model_id,comparator_champion_id,model_release_id,window_id)`，只写 `baseline_only|shadow_candidate`；`prospective_improvement_confirmed` 禁用。Top-K 键 `(game,K,model_id,comparator_champion_id,model_release_id,window_id)`，Phase 4 真实单元只能 `insufficient_observation`；`no_confirmed_lift|confirmed_lift` 禁用。Schema 删除任一维度、跨 game/K/window 外推或全局 `improved=true` 均拒绝。
+工程状态键 `(system_release_id)`，Phase 4 只写 `HOLD|FAIL|READY_FOR_HUMAN_ACCEPTANCE`。模型键 `(game,model_id,comparator_champion_id,model_release_id,window_id)`，只写 `baseline_only|shadow_candidate`；`prospective_improvement_confirmed` 禁用。Top-K 键 `(game,K,model_id,comparator_champion_id,model_release_id,window_id)`，Phase 4 真实单元只能 `insufficient_observation`；`no_confirmed_lift|confirmed_lift` 禁用。Schema 删除任一维度、跨 game/K/window 外推或全局 `improved=true` 均拒绝。
 
 结构化 alert 至少含 `alert_id,severity,game,object_id,reason_code,first_seen,last_event_id,runbook_ref,ack_state`。reason codes 固定覆盖：source/network/conflict/revision、calendar ambiguity、late/missed deadline、concurrent trigger、lock mutation、label denial、probability/tie/rank、metric/comparator、alpha exhausted/negative、checkpoint mismatch、disk/write/hash、dependency、protected artifact、manifest/replay/review。日志不得含凭据或完整外部响应；原始公开响应按 hash 保存并限制权限。
 
@@ -214,7 +214,7 @@ benchmark 分为两个先后都必须通过的动态门。两门只能使用 T11
 
 正向 E2E 为两彩种完整 cycle、参数调整、特征调整、no-change、断点恢复、修订全链、M0 tie、跨 K tie、systemd 虚拟 tick。负向至少覆盖三类时间混用、历史 PIT 补造、未来字段、pre-lock label、跨 PID capability、锁后 mutation、错误 identity/hash、非法组合/概率/order key、非传递近似、重复 Top-1000、跨 game 状态/alpha、直接 Champion、预算耗尽后搜索、重复 spending、截止后补 forecast、并发/漏跑/倒退期号、stale ledger head/缺目录 fsync、data 断链/换 genesis/空 baseline、source policy 过期/用途不匹配/单源/conflict/network、错误 comparator/window/revision、partial correction、checkpoint tamper、staged closure/acceptance tamper、任一 Phase 0–3 protected root 写入和越界科学措辞。每例在隔离 staging 做真实单点 mutation，以独立进程观察注册 guard code；无关异常不算命中。
 
-正式 release 的 `contracts/`、`inputs/`、`qualification/`、`e2e/`、`readiness/`、`runs/`、`replay/`、`validator/`、`review/`、`signatures/`、`manifest/`、`acceptance/` 全在同一 `artifacts/phase-4/<release-id>/`。T15 必须在 `inputs/preparation-evidence/` 内完整复制内容寻址的 T10 oracle/analytic、T12 全部 development、T13 全部 power 和其 raw draw-observation/terminal/reducer/seed/receipt 无损压缩分片；每个分片列 path/content-encoding/uncompressed-bytes/record-count/SHA/producer provenance，可从正式 release 单独解压重算，禁止依赖 prep 路径继续存在。T15 还必须保存 `control/execution-environment.json`、完整 `inputs/wheelhouse/` 和从固定 implementation commit 导出的 `inputs/execution-scripts/`；装配先冻结 authority-continuity/code/input/contracts/seeds/dependencies/workload/execution identities，正式运行后不可换。闭包采用不可循环的分阶段链：T19 evidence manifest 覆盖 T15–T18，包括上述自包含 preparation evidence、wheelhouse、执行环境清单和脚本快照；T20 replay closure 绑定 evidence manifest；T21 validator closure 绑定 replay closure；T22 review closure 绑定 validator closure；T23 signature closure 绑定 review closure；T24 acceptance 与 postcheck 绑定 signature closure并验证所有阶段允许路径。每层显式列新增文件的 path/role/SHA/bytes/parents/producer provenance，不能修改前层。独立 replay 必须从正式 release 内的 genesis/raw fixtures/observations/ledger events 重新计算 T10–T18 事实，而不是信顶层 PASS；final validator 从 replay 与底层事实逐项推导 A01–A21、blocking findings、三类状态和工程终态。reviewer 和已在 T00 确认的人类签署者分别完成独立 review 与措辞签署；acceptance approver 最后原子写 acceptance。失败 attempt、qualification 序列和 acceptance iteration 不能删除、覆盖或只挑成功。
+正式 release 的 `contracts/`、`inputs/`、`qualification/`、`e2e/`、`readiness/`、`runs/`、`replay/`、`validator/`、`review/`、`delivery/`、`manifest/`、`acceptance/` 全在同一 `artifacts/phase-4/<release-id>/`。T15 必须在 `inputs/preparation-evidence/` 内完整复制内容寻址的 T10 oracle/analytic、T12 全部 development、T13 全部 power 和其 raw draw-observation/terminal/reducer/seed/receipt 无损压缩分片；每个分片列 path/content-encoding-uncompressed-bytes/record-count/SHA/producer provenance，可从正式 release 单独解压重算，禁止依赖 prep 路径继续存在。T15 还必须保存 `control/execution-environment.json`、完整 `inputs/wheelhouse/` 和从固定 implementation commit 导出的 `inputs/execution-scripts/`；装配先冻结 authority-continuity/code/input/contracts/seeds/dependencies/workload/execution identities，正式运行后不可换。闭包采用不可循环的分阶段链：T19 evidence manifest 覆盖 T15–T18，包括上述自包含 preparation evidence、wheelhouse、执行环境清单和脚本快照；T20 replay closure 绑定 evidence manifest；T21 validator closure 绑定 replay closure；T22 review closure 绑定 validator closure；T23 machine-delivery closure 绑定 review closure；T24 acceptance 与 postcheck 绑定 machine-delivery closure 并验证所有阶段允许路径。每层显式列新增文件的 path/role/SHA/bytes/parents/producer provenance，不能修改前层。独立 replay 必须从正式 release 内的 genesis/raw fixtures/observations/ledger events 重新计算 T10–T18 事实，而不是信顶层 PASS；final validator 从 replay 与底层事实逐项推导 A01–A21、blocking findings、三类状态和机器工程终态。reviewer 完成独立 review，机器交付声明器完成措辞边界与交付矩阵一致性检查；acceptance approver 最后原子写 acceptance。失败 attempt、qualification 序列和 acceptance iteration 不能删除、覆盖或只挑成功。
 
 来源 readiness 有两个门。T03 early canary 在任何昂贵 qualification 前，从目标 VPS 对 source policy 声明的四个必需来源读取已经公开且存在重叠的期次；四个 endpoint 均须成功、publisher 独立、每个 game 至少一个重叠 issue 的两份核心事实一致，且 source review 未过期，否则早期 `HOLD_SOURCE_READINESS`。T17 formal canary 在同一正式 release 再执行完全相同的必需来源集合，不得以“每种彩票一个官方源成功”替代双源可核验性。两次 canary 都保存 raw/transport/parser/revision/dedup/compatibility receipts 到隔离 staging，并在操作前后重算 Phase 0–3 全量 protected inventory；它们不等待新开奖、不产生真实前瞻结论。证据取回只按 staged closure 显式路径，以源/接收端文件数、字节和 SHA 全匹配为 PASS；不使用 `latest`、glob 或 mtime。
 
@@ -237,7 +237,7 @@ benchmark 分为两个先后都必须通过的动态门。两门只能使用 T11
 | P4-MVP-A13 | 4、10、12 | ledger/checkpoint/recovery | 每阶段故障注入、side-effect count、head hashes | `HOLD_RECOVERY_MISMATCH`；重复事实为 FAIL |
 | P4-MVP-A14 | 5、9.4、14 | data chain/official adapters | Phase 4 source review、early/final 双源 canary、fixed response、genesis/全量 protection/chain tests | `HOLD_DATA_SOURCE_OR_CHAIN`；保护变化为 FAIL |
 | P4-MVP-A15 | 3、14 | independent replay | 正式 release 自包含 T10–T13 底层证据；bottom-up power/probabilities/rank/metric/state/alpha/manifest match | `HOLD_REPLAY_MISMATCH` |
-| P4-MVP-A16 | 14 | validator/review/acceptance | 六类交付覆盖、blocking 0、人工措辞签署 | `HOLD_DELIVERY_INCOMPLETE` 或 FAIL |
+| P4-MVP-A16 | 14 | validator/review/delivery/acceptance | 六类交付覆盖、blocking 0、机器措辞一致性检查 | `HOLD_DELIVERY_INCOMPLETE` 或 FAIL |
 | P4-MVP-A17 | 3、13、14 | dependency/deploy/readiness | prep/formal 双资源门、wheel manifest、clean rebuild、smoke/recovery/replay/return | `HOLD_INSTALL_OR_WORKLOAD` |
 | P4-MVP-A18 | 12 | state_projection/schemas | 完整键、允许/禁用转换与维度污染负控 | `FAIL_STATE_MATRIX` |
 | P4-MVP-A19 | 11 | calendar/schedule/systemd | virtual clock E2E、unit audit、plan/alert replay | `HOLD_SCHEDULER_AUDIT` 或 deadline FAIL |
@@ -248,7 +248,7 @@ benchmark 分为两个先后都必须通过的动态门。两门只能使用 T11
 
 主要风险是扩展 tick 后 full-space tie/rank 的 reachable-state 预算、官方页面结构/可用性与来源政策有效期、用户 systemd 能力、文件系统原子语义和并发 head、e-process 实现或功效确认偏差、3120 万准备期 draw observations 的计算/存储/取回、正式命令从工作树漂移、证据闭包丢失底层分片和独立实现同源。对应封闭方式分别是 sparse exact histogram + 分区枚举 oracle + 边界 benchmark、T03 早期全必需来源 canary 加 T17 正式复核/冲突终态、T08 早期 user-systemd capability probe 加 T18 安装审计、文件/目录持久化与 lock/CAS probe、解析 certificate + 独立 20,000-sequence power gate、T12 在模拟前的动态预算/无损分片门、T14/T15 的 commit-wheel-venv-script 闭包和逐任务执行身份复核、T15 自包含 preparation evidence 并由 T20 断开 prep root 重放、provenance-derived actor 不等式与产品 import 禁令。
 
-不可完成条件包括：上位合同尚未进入固定 `main` commit 或四项 genesis 不一致；Phase 0–3 全量保护清单不能稳定重算；选定文件系统不能提供所需原子持久化、目录持久化、锁和 head CAS；两个彩种任一不能正确生成严格正归一概率或 exact tie/rank；正式 design 未 powered；批准 workload 在不改科学语义下仍不能完成；Phase 4 source policy 未获准/已过期、四个必需来源任一不能完成早期或正式双源 canary；systemd 用户适配器不能在权限内安装审计；人类签署者未在 T00 明确确认；角色不能分离；独立 replay/staged closure 不能闭合。它们都产生明确 HOLD；因果泄漏、锁后改写、选择性证据、伪造或越权产生 FAIL。
+不可完成条件包括：上位合同尚未进入固定 `main` commit 或四项 genesis 不一致；Phase 0–3 全量保护清单不能稳定重算；选定文件系统不能提供所需原子持久化、目录持久化、锁和 head CAS；两个彩种任一不能正确生成严格正归一概率或 exact tie/rank；正式 design 未 powered；批准 workload 在不改科学语义下仍不能完成；Phase 4 source policy 未获准/已过期、四个必需来源任一不能完成早期或正式双源 canary；systemd 用户适配器不能在权限内安装审计；机器交付声明器或终局机器验收角色缺失；角色不能分离；独立 replay/staged closure 不能闭合。它们都产生明确 HOLD；因果泄漏、锁后改写、选择性证据、伪造或越权产生 FAIL。
 
 允许降级仅是：单 source/network 暂停 unlock、单 game 故障隔离、无 eligible hypothesis 的诚实 no-change、未支持 candidate 不接 registry、减少并行并从同 checkpoint 恢复、M0 继续 Champion。禁止降级概率精度、tie/rank、时间证据、资格数量/阈值、独立性、递归证据或角色分离；不能用展示位冒充 rank、合成证据冒充真实改善或用顶层 PASS 代替重算。
 

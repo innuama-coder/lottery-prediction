@@ -1,10 +1,10 @@
 # Phase 4：预测与 AutoResearch 闭环 MVP 定义
 
-版本：1.4
+版本：1.5
 
 状态：阶段产品定义
 
-更新时间：2026-08-11
+更新时间：2026-08-13
 
 ## 1. 文档定位
 
@@ -77,11 +77,11 @@ MVP 使用 append-only 或等价不可变语义保存：
 
 | 状态类型 | 唯一记录键 | 允许值 |
 | --- | --- | --- |
-| 工程交付状态 | `(system_release_id)` | `HOLD`、`FAIL`、`SYSTEM_MVP_GO`、`PROSPECTIVE_GO`、`SYSTEM_GO` |
+| 工程交付状态 | `(system_release_id)` | `HOLD`、`FAIL`、`READY_FOR_HUMAN_ACCEPTANCE` |
 | 模型改进状态 | `(game,model_id,comparator_champion_id,model_release_id,window_id)` | `baseline_only`、`shadow_candidate`、`prospective_improvement_confirmed` |
 | Top-K 结果状态 | `(game,K,model_id,comparator_champion_id,model_release_id,window_id)` | `insufficient_observation`、`no_confirmed_lift`、`confirmed_lift` |
 
-上述允许值是跨阶段兼容 Schema。Phase 4 工程只能写 `HOLD|FAIL|SYSTEM_MVP_GO`；历史/合成证据最多把对应逐彩种模型记录变为 `shadow_candidate`，不能写 `prospective_improvement_confirmed`；没有真实冻结观察窗口时，全部真实 Top-K 状态必须保持 `insufficient_observation`，不能写 `no_confirmed_lift|confirmed_lift`。
+上述允许值是 Phase 4 机器交付状态。Phase 4 任务只能写 `HOLD|FAIL|READY_FOR_HUMAN_ACCEPTANCE`；`SYSTEM_MVP_GO` 不是 Phase 4 任务状态，而是阶段外最终验收在收到机器交付包后才可写入的后续项目状态。历史/合成证据最多把对应逐彩种模型记录变为 `shadow_candidate`，不能写 `prospective_improvement_confirmed`；没有真实冻结观察窗口时，全部真实 Top-K 状态必须保持 `insufficient_observation`，不能写 `no_confirmed_lift|confirmed_lift`。
 
 实验的 `rejected|archived`、执行的失败终态和模型改进状态属于不同对象，不能互相代填。项目级摘要只能列出完整逐彩种、逐模型、逐 K 矩阵，不得生成丢失 comparator、release 或 window 的全局 `improved=true`。
 
@@ -259,12 +259,12 @@ Phase 4 必须交付以下完整集合：
 
 1. **定义与合同：** 本产品定义、总体设计、详细计划、三类时间合同、预注册、机器验收合同、故障模型和 SLO 合同。
 2. **实现：** Phase 4 自有数据追加层、日历、预测/锁定、评分、AutoResearch、结果修订传播、三类状态矩阵、调度、恢复、告警和 replay 代码。
-3. **机器接口：** CLI、配置、依赖锁，以及 data-release、calendar、schedule、forecast、ranking、metric、experiment、decision、champion-by-game、model-status、top-k-status、alpha-wealth、manifest、review 和 acceptance Schema；model/top-k 可以由同一个 `scientific-status` Schema 承载，但记录类型、主键和允许值必须分离。
+3. **机器接口：** CLI、配置、依赖锁，以及 data-release、calendar、schedule、forecast、ranking、metric、experiment、decision、champion-by-game、model-status、top-k-status、alpha-wealth、manifest、review、machine-delivery 和 acceptance Schema；model/top-k 可以由同一个 `scientific-status` Schema 承载，但记录类型、主键和允许值必须分离。
 4. **验证资产：** 单元测试、Schema 测试、概率/排序和逐预测/窗口指标的独立 known-answer oracle、正负 E2E、修订传播 E2E、故障恢复、泄漏负控、合成资格 fixture 和结果前 qualification-design/power 制品。
 5. **运行材料：** 依赖 wheelhouse 及 manifest、隔离环境重建 receipt、benchmark，以及 VPS 部署、运行、故障处理、恢复、证据取回和验收手册。
-6. **正式证据：** readiness、独立 replay、独立 review、最终 validator、人工签署、递归 evidence manifest 和 `artifacts/phase-4/<release-id>/`。
+6. **正式证据：** readiness、独立 replay、独立机器 review、最终机器 validator、机器交付声明、递归 evidence manifest 和 `artifacts/phase-4/<release-id>/`。
 
-缺少其中任一类均不能得到 `SYSTEM_MVP_GO`。
+缺少其中任一类均不能得到 `READY_FOR_HUMAN_ACCEPTANCE`。
 
 ## 7. MVP 验收标准
 
@@ -287,7 +287,7 @@ Phase 4 必须交付以下完整集合：
 | P4-MVP-A13 | 幂等恢复 | 每项唯一终态；恢复不重复预测、解锁、评分、实验或 alpha spending | 各阶段故障注入、checkpoint 恢复和账本计数检查 |
 | P4-MVP-A14 | 官方接口与自有追加层 readiness | 两彩种目标期、增量结果、核验、修订、去重和 Phase 1 Schema 兼容均可执行；Phase 4 genesis 与固定 Phase 1 基线内容一致且后继链连续；只写 Phase 4 staging/runtime；失败有明确终态 | 固定响应测试、远端只读 canary、genesis 四项身份及离线内容重算、断链/换基线/空基线负控、隔离追加/修订/冲突/网络失败 E2E、Phase 1 前后递归哈希 |
 | P4-MVP-A15 | 独立重放 | 底层重算预测身份、Top-K、指标、Champion、三类状态矩阵、alpha wealth、决策和证据闭包一致 | 独立实现路径 replay 和递归 manifest 验证 |
-| P4-MVP-A16 | 最终交付 | 交付物覆盖率 100%，blocking findings 为 0，不含越界科学声明 | 最终 validator、独立 review、人工签署和 acceptance Schema |
+| P4-MVP-A16 | 最终交付 | 交付物覆盖率 100%，blocking findings 为 0，不含越界科学声明 | 最终机器 validator、独立机器 review、机器交付声明和 acceptance Schema |
 | P4-MVP-A17 | 安装与运行 readiness | 从冻结依赖在全新隔离环境完成安装、CLI smoke、固定 fixture、checkpoint 恢复和 release replay；无未锁定依赖或隐式外部服务 | wheelhouse manifest、离线重建 receipt、命令/退出码记录、环境事实、benchmark 和 evidence-return canary |
 | P4-MVP-A18 | 状态矩阵 | 工程、模型改进和 Top-K 状态使用各自完整主键；Phase 4 只写本阶段允许值；不存在跨 game/K/comparator/release/window 外推或全局 improved | Schema 正负测试、本阶段允许/未来阶段禁用转换 E2E、维度删除/混用/跨彩种污染负控和逐记录独立重算 |
 | P4-MVP-A19 | 调度 | 双彩种计划确定、触发幂等、截止保护、漏跑/迟到/重启/并发终态和隔离均正确；VPS 调度定义与冻结计划一致 | 虚拟时钟正负 E2E、安装/配置审计、重复及补偿触发测试、计划账本与告警重算 |
@@ -347,16 +347,16 @@ readiness 记录实际操作系统、架构、解释器、处理器、内存、�
 14. 干净隔离环境安装、CLI smoke、恢复及 release replay。
 15. 独立 bottom-up replay。
 16. 从正式 release 底层证据重算的最终 validator。
-17. 独立 review 和最终人工签署。
+17. 独立机器 review、机器交付声明和最终机器验收。
 
 只证明命令被触发、代码测试通过、存在 Top-1000 文件或顶层文件自报 `PASS`，均不足以验收 MVP。
 
 ## 8. 验收结论语义
 
-只有 P4-MVP-A01 至 P4-MVP-A21 全部通过、blocking findings 为 0，Phase 4 工程交付状态才能是：
+只有 P4-MVP-A01 至 P4-MVP-A21 全部通过、blocking findings 为 0，Phase 4 机器工程交付状态才能是：
 
 ```text
-SYSTEM_MVP_GO
+READY_FOR_HUMAN_ACCEPTANCE
 ```
 
 允许同时存在以下科学状态：
@@ -367,7 +367,7 @@ top_k_status[(game,K,model,comparator,release,window)] = insufficient_observatio
 champion_by_game = {SSQ: M0, DLT: M0}
 ```
 
-这表示预测与 AutoResearch 闭环产品已经合格，但尚无真实证据证明模型或 Top-K 表现改善。不得把参数变化、合成恢复、full-rule known-answer 或 `SYSTEM_MVP_GO` 表述为真实预测效果提高。
+这表示预测与 AutoResearch 闭环产品已经达到机器可交付标准，交付物已封存并可取回，随后才交由人类进行阶段外最终验收；尚无真实证据证明模型或 Top-K 表现改善。不得把参数变化、合成恢复、full-rule known-answer 或 `READY_FOR_HUMAN_ACCEPTANCE` 表述为真实预测效果提高。
 
 如果输入、运行、证据或复核尚可恢复但未完成，结论为 `HOLD`；出现不可恢复泄漏、锁后改写、选择性删除、证据伪造或越权 Champion 变更时，结论为 `FAIL`。模型科学状态不能覆盖工程 `HOLD|FAIL`。
 
@@ -392,4 +392,4 @@ Phase 4 进入正式实现和资格运行前，总体设计、详细计划、预
 - `Asia/Shanghai` 日历、UTC 映射、调度计划键、唯一终态、截止/补偿/并发策略和实际 VPS 调度适配器；
 - 角色分离、依赖锁/wheelhouse、隔离重建、执行命令、benchmark、资源预算、输出路径和 acceptance 合同。
 
-上述内容未冻结时，可以开展设计和实现准备，但不得生成 Phase 4 正式资格结果或 `SYSTEM_MVP_GO` acceptance。
+上述内容未冻结时，可以开展设计和实现准备，但不得生成 Phase 4 正式资格结果或 `READY_FOR_HUMAN_ACCEPTANCE` acceptance。人类最终验收不属于 Phase 4 任务、依赖或阻塞条件。

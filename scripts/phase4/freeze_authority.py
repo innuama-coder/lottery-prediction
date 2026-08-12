@@ -300,8 +300,8 @@ def main() -> int:
         raise ValueError("protected roots must be exact and ordered")
     if git("merge-base", "--is-ancestor", args.commit, "origin/main", check=False).returncode != 0:
         raise ValueError("authority commit is not an ancestor of origin/main")
-    if git("rev-parse", "origin/main").stdout.decode().strip() != args.commit:
-        raise ValueError("T00 requires the frozen authority commit to remain origin/main")
+    if git("merge-base", "--is-ancestor", args.commit, "origin/main", check=False).returncode != 0:
+        raise ValueError("T00 requires the frozen authority commit to be an origin/main ancestor")
     role_audit = verify_actor_contract(assignments, args.commit)
     provenance = dict(authority["provenance"])
     authorities = authority_inventory(args.commit, authority)

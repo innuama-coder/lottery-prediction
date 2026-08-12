@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "artifact_type": "phase4_authority_freeze",
-  "authority_commit": "f8a7a6abb46a55f8fa17e5ae3280c5c5432c363b",
+  "authority_commit": "bb25c5823e27ce81c40b6c73da0b77cfc906e4d7",
   "authority_files": [
     {
       "path": "ROADMAP.md",
@@ -9,15 +9,15 @@
     },
     {
       "path": "tasks/phase4/README.md",
-      "sha256": "13b099c584c24c2bb7324f5fa852c9fac2dff7ad934245598eae2d117e701a75"
+      "sha256": "aa3221652e2e0b9876f233b37191267d3be7f0f56cd0d0e82481dcf1c0aeb874"
     },
     {
       "path": "docs/research/phase-4-overall-design.md",
-      "sha256": "6cad930be241c1011996a9f17ad36f9fec20f2faf424e9076fb383a1c380ca4d"
+      "sha256": "b01e33b7047d88583fabd27faa7d2b7809bedb9a1e61d4b75fb142175832bd99"
     },
     {
       "path": "docs/plans/phase-4-detailed-plan.md",
-      "sha256": "f8c5f52b63ff116310a4bb09dd22222ffebcbeb586f22164c3e4256dfaff886a"
+      "sha256": "4bf3da4a5c772d2ccf0e77888f5f09501f460d68b3e00d00232e481a6546753f"
     }
   ],
   "phase3_acceptance": {

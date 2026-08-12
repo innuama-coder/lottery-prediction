@@ -13,7 +13,7 @@ from typing import Any
 from jsonschema import Draft202012Validator, FormatChecker, RefResolver
 
 
-AUTHORITY_COMMIT = "f8a7a6abb46a55f8fa17e5ae3280c5c5432c363b"
+AUTHORITY_COMMIT = "bb25c5823e27ce81c40b6c73da0b77cfc906e4d7"
 OWNER_ACTOR = "p4-contract-statistical-owner-i01"
 OWNER_SESSION = "/root/contract_statistical"
 ACCEPTANCE_ACTOR = "p4-acceptance-engineer-i01"

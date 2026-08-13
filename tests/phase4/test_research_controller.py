@@ -404,7 +404,8 @@ class ResearchControllerTests(unittest.TestCase):
             reject_floats=True,
         )
         current = qualification_design(1536)
-        self.assertNotEqual(current["design_id"], prior["design_id"])
+        self.assertEqual(current["design_id"], prior["design_id"])
+        self.assertEqual(current["controller_identity"], prior["controller_identity"])
         self.assertEqual(current["controller_identity"], identity)
 
     def test_non_scientific_fixture_runs_real_black_box_worker_deterministically(self):

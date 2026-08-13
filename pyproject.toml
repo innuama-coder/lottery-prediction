@@ -29,7 +29,7 @@ include-package-data = true
 "share/autoresearch-lotte/schemas/phase4" = ["schemas/phase4/*.json"]
 "share/autoresearch-lotte/qualification-design" = ["qualification-design/*.json"]
 "share/autoresearch-lotte/deploy/systemd-user" = ["deploy/systemd-user/*"]
-"share/autoresearch-lotte/tests/phase4/fixtures/benchmark" = ["tests/phase4/fixtures/benchmark/*"]
+"share/autoresearch-lotte/tests/phase4/fixtures/benchmark" = ["tests/phase4/fixtures/benchmark/*.json", "tests/phase4/fixtures/benchmark/*.py"]
 "share/autoresearch-lotte/tests/phase4/fixtures/e2e" = ["tests/phase4/fixtures/e2e/*.json"]
 
 [tool.setuptools.packages.find]

@@ -4,7 +4,7 @@
 
 状态：实施设计候选；本版移除阶段内人类参与，机器终态为 `READY_FOR_HUMAN_ACCEPTANCE`；本文件与详细计划合入固定开发基线后，后续预注册和机器验收合同必须按本文冻结点产生新身份
 
-预期上位合同内容：`ROADMAP.md` SHA-256 `24ba28e72c33959a91e505fd518718bd0c948c84b7e2e4cd5591a26f0a0b0149`，`tasks/phase4/README.md` SHA-256 `13b099c584c24c2bb7324f5fa852c9fac2dff7ad934245598eae2d117e701a75`。设计阶段不提前伪造其 `main` 身份；本文与 `docs/plans/phase-4-detailed-plan.md` 不在自身中写入自哈希，而由合入后的单一 Git 提交原子绑定。T00 必须在开发开始前从 `origin/main` 解析并冻结同时包含两份精确上位合同、本文和详细计划的 `P4_AUTHORITY_COMMIT`，从 Git 对象逐文件记录内容 SHA-256，并机器证明该提交是 `origin/main` 的祖先。当前分支尚未合入时只能得到 `HOLD_AUTHORITY_NOT_ON_MAIN`；包含旧版本文或旧版详细计划的提交只能得到 `HOLD_AUTHORITY_IDENTITY`。
+预期上位合同内容：`ROADMAP.md` SHA-256 `24ba28e72c33959a91e505fd518718bd0c948c84b7e2e4cd5591a26f0a0b0149`，`tasks/phase4/README.md` SHA-256 `aa3221652e2e0b9876f233b37191267d3be7f0f56cd0d0e82481dcf1c0aeb874`。设计阶段不提前伪造其 `main` 身份；本文与 `docs/plans/phase-4-detailed-plan.md` 不在自身中写入自哈希，而由合入后的单一 Git 提交原子绑定。T00 必须在开发开始前从 `origin/main` 解析并冻结同时包含两份精确上位合同、本文和详细计划的 `P4_AUTHORITY_COMMIT`，从 Git 对象逐文件记录内容 SHA-256，并机器证明该提交是 `origin/main` 的祖先。当前分支尚未合入时只能得到 `HOLD_AUTHORITY_NOT_ON_MAIN`；包含旧版本文或旧版详细计划的提交只能得到 `HOLD_AUTHORITY_IDENTITY`。
 
 继承 release：`P3-R07-2c0fa97-20260810-I01`
 

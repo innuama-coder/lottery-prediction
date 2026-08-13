@@ -26,6 +26,29 @@ def sha(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
+def load_scientific_command(path: Path) -> tuple[dict[str, Any], dict[str, str]]:
+    """Resolve the frozen exact-command selector to its scientific command.
+
+    The detailed plan intentionally reuses ``power-controller-command.json``
+    for the non-scientific T12 benchmark.  T13 must still invoke the separate,
+    result-blind scientific controller frozen beside that selector.
+    """
+    selector = json.loads(path.read_text(encoding="utf-8"))
+    selected_path = path
+    if selector.get("artifact_type") == "phase4_benchmark_controller_command":
+        selected_path = path.with_name("scientific-power-controller-command.json")
+        if not selected_path.is_file():
+            raise ValueError("frozen scientific controller command is absent")
+    command = json.loads(selected_path.read_text(encoding="utf-8"))
+    binding = {
+        "command_selector_path": path.as_posix(),
+        "command_selector_sha256": sha(path.read_bytes()),
+        "scientific_command_path": selected_path.as_posix(),
+        "scientific_command_sha256": sha(selected_path.read_bytes()),
+    }
+    return command, binding
+
+
 def seed(design_id: str, domain: str, game: str, world: str, ordinal: int) -> int:
     return int.from_bytes(hashlib.sha256(f"P4-SEED-v2|{design_id}|{domain}|{game}|{world}|{ordinal}".encode()).digest(), "big")
 
@@ -209,7 +232,7 @@ def main() -> int:
         raise ValueError("T13 requires exactly 20,000 sequences per cell")
     design = json.loads(args.design.read_text(encoding="utf-8"))
     receipt = json.loads(args.selection_receipt.read_text(encoding="utf-8"))
-    command = json.loads(args.controller_command.read_text(encoding="utf-8"))
+    command, command_binding = load_scientific_command(args.controller_command)
     if command.get("artifact_type") != "phase4_scientific_controller_command" or command.get("protocol") != "phase4_scientific_single_sequence_json_v1":
         raise ValueError("controller interface is not the frozen scientific protocol")
     if receipt.get("status") != "PASS" or receipt.get("selected_design_id") != design.get("design_id"):
@@ -231,6 +254,7 @@ def main() -> int:
     control = {"schema_version":"1.0.0", "artifact_type":"phase4_power_confirmation_raw",
                "design_id":design["design_id"], "seed_domain":args.seed_domain,
                "controller_identity":identity, "sequences_per_cell":args.sequences_per_cell,
+               "controller_command_binding":command_binding,
                "seed_set_sha256":sha(canonical(sorted(all_commitments))), "cells":cells}
     (args.output / "raw-control.json").write_bytes(canonical(control))
     summary_cells = []

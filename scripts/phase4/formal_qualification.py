@@ -37,7 +37,13 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
 def run_formal(release_root: Path, *, sequences: int = 1000, stop_after: int | None = None, resume: bool = False) -> dict[str, Any]:
     release_root = release_root.resolve()
     design = json.loads((release_root / "qualification-design/qualification-design.json").read_text(encoding="utf-8"))
-    command = json.loads((release_root / "contracts/power-controller-command.json").read_text(encoding="utf-8"))
+    command_path = release_root / "contracts/power-controller-command.json"
+    command = json.loads(command_path.read_text(encoding="utf-8"))
+    if command.get("artifact_type") == "phase4_benchmark_controller_command":
+        command_path = release_root / "contracts/scientific-power-controller-command.json"
+        command = json.loads(command_path.read_text(encoding="utf-8"))
+    if command.get("artifact_type") != "phase4_scientific_controller_command":
+        raise ValueError("frozen scientific controller command is invalid")
     out = release_root / "qualification"
     if out.exists() and not resume:
         raise ValueError("formal qualification identity already exists; use --resume")

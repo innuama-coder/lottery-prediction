@@ -27,14 +27,22 @@ class PowerToolTests(unittest.TestCase):
         module = load("reduce_power")
         cells = []
         for game in ("dlt", "ssq"):
-            cells.append({"game":game,"world":"uniform","sequence_rate_estimate":"0.01","sequence_rate_simultaneous_interval":["0.005","0.02"]})
+            cells.append({"game":game,"world":"uniform","sequence_count":20000,"sequence_rate_estimate":"0.01","sequence_rate_simultaneous_interval":["0.005","0.02"]})
             for world in ("static_bias","slow_drift","useful_feature"):
-                cells.append({"game":game,"world":world,"sequence_rate_estimate":"0.98","sequence_rate_simultaneous_interval":["0.96","0.99"]})
+                cells.append({"game":game,"world":world,"sequence_count":20000,"sequence_rate_estimate":"0.98","sequence_rate_simultaneous_interval":["0.96","0.99"]})
         result = module.reduce({"artifact_type":"phase4_power_confirmation_summary","design_id":"d","cells":cells},1000,50,900)
         self.assertEqual(result["status"], "PASS")
         for row in result["cells"]:
             lo, hi = map(Decimal, row["formal_1000_gate_pass_probability_interval"])
             self.assertLessEqual(lo, hi)
+
+    def test_exact_plan_selector_resolves_scientific_controller(self):
+        module = load("confirm_power")
+        command, binding = module.load_scientific_command(ROOT / "config/phase4/power-controller-command.json")
+        self.assertEqual(command["artifact_type"], "phase4_scientific_controller_command")
+        self.assertEqual(command["protocol"], "phase4_scientific_single_sequence_json_v1")
+        self.assertEqual(len(binding["command_selector_sha256"]), 64)
+        self.assertEqual(len(binding["scientific_command_sha256"]), 64)
 
     def test_parallel_cells_preserve_canonical_order_and_hashes(self):
         module = load("confirm_power")

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+import os
 import tempfile
 import unittest
 from decimal import Decimal
 from pathlib import Path
+from unittest import mock
 
 from lottery_system.phase4.identity import content_id, validate_stable_id, verify_content_id
 from lottery_system.phase4.serialization import (
@@ -62,6 +64,12 @@ class CanonicalIdentityTests(unittest.TestCase):
         self.assertEqual(validate_runtime_root(ROOT, runtime), runtime.resolve())
         with self.assertRaises(SecurityBoundaryError):
             validate_runtime_root(ROOT, ROOT / "artifacts/phase-1")
+        with tempfile.TemporaryDirectory() as raw:
+            external = Path(raw) / "artifacts/phase-4-runtime/runtime-formal-i01"
+            with mock.patch.dict(os.environ, {"P4_RUNTIME_ROOT": str(external)}):
+                self.assertEqual(validate_runtime_root(ROOT, external), external.resolve())
+                with self.assertRaises(SecurityBoundaryError):
+                    validate_runtime_root(ROOT, external.with_name("runtime-formal-i02"))
 
 
 if __name__ == "__main__":

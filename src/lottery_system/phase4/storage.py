@@ -108,7 +108,15 @@ def validate_runtime_root(project_root: Path, runtime_root: Path) -> Path:
     try:
         relative = candidate.relative_to(expected_parent)
     except ValueError as exc:
-        raise SecurityBoundaryError("runtime root is outside artifacts/phase-4-runtime") from exc
+        configured = os.environ.get("P4_RUNTIME_ROOT", "").strip()
+        external = Path(configured).resolve(strict=False) if configured else None
+        if (
+            external != candidate
+            or candidate.parent.name != "phase-4-runtime"
+            or candidate.parent.parent.name != "artifacts"
+        ):
+            raise SecurityBoundaryError("runtime root is outside artifacts/phase-4-runtime") from exc
+        relative = Path(candidate.name)
     if len(relative.parts) != 1:
         raise SecurityBoundaryError("runtime root must name exactly one immutable runtime identity")
     validate_stable_id(relative.parts[0], "runtime identity")

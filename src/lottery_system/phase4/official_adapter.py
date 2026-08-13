@@ -230,13 +230,17 @@ def capture_endpoint(
 def protected_inventory(project_root: Path) -> list[dict[str, Any]]:
     project = project_root.resolve()
     if not all((project / relative).exists() for relative in PROTECTED_ROOTS):
-        candidates = list((project / "inputs/preparation-evidence/work-items/T00").glob("protected-artifact-inventory.json"))
-        if len(candidates) != 1:
+        work_items = project / "inputs/preparation-evidence/work-items"
+        candidates = sorted(work_items.glob("T00*/protected-artifact-inventory.json"))
+        if not candidates:
             raise SourcePolicyError("protected roots and frozen T00 protected inventory are both unavailable")
-        frozen = load_json(candidates[0], reject_floats=True)
-        if frozen.get("artifact_type") != "phase4_protected_artifact_inventory":
+        inventories = [load_json(candidate, reject_floats=True) for candidate in candidates]
+        if any(item.get("artifact_type") != "phase4_protected_artifact_inventory" for item in inventories):
             raise SourcePolicyError("frozen T00 protected inventory identity is invalid")
-        return list(frozen["entries"])
+        entries = inventories[0]["entries"]
+        if any(item.get("entries") != entries for item in inventories[1:]):
+            raise SourcePolicyError("frozen T00 protected inventories disagree")
+        return list(entries)
     rows: list[dict[str, Any]] = []
     for relative_root in PROTECTED_ROOTS:
         root = resolve_inside(project, relative_root)

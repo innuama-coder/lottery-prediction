@@ -98,7 +98,14 @@ def main() -> int:
         (release / name).mkdir(parents=True, exist_ok=True)
     shutil.copytree(args.wheelhouse, release / "inputs/wheelhouse", dirs_exist_ok=False)
     shutil.copytree(args.prep_root, release / "inputs/preparation-evidence", dirs_exist_ok=False)
-    export_git(args.implementation_commit, release, ["config/phase4","schemas/phase4","schemas/phase1/draw-record.schema.json","qualification-design","deploy/systemd-user","tests/phase4","scripts/phase4","scripts/phase4_independent"])
+    export_git(args.implementation_commit, release, [
+        "config/phase4", "schemas/phase4", "schemas/phase1/draw-record.schema.json",
+        "qualification-design", "deploy/systemd-user", "tests/phase4",
+        "scripts/phase4", "scripts/phase4_independent", "src/lottery_system/phase4",
+        "artifacts/phase-1/baseline-v1/manifest.json",
+        "artifacts/phase-1/baseline-v1/draws.jsonl",
+        "artifacts/phase-1/baseline-v1/observations.jsonl",
+    ])
     shutil.copytree(release / "config/phase4", release / "contracts", dirs_exist_ok=True)
     shutil.copy2(release / "schemas/phase1/draw-record.schema.json", release / "contracts/phase1-draw-record.schema.json")
     power_design = args.prep_root / "qualification-design/power/qualification-design.json"

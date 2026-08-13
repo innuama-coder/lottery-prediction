@@ -11,7 +11,7 @@ import unittest
 from unittest import mock
 from pathlib import Path
 
-from lottery_system.phase4.cli_kernel import ContractEvidenceMismatch, build_parser, main, producer_provenance
+from lottery_system.phase4.cli_kernel import ContractEvidenceMismatch, build_parser, main, producer_provenance, source_commit
 from lottery_system.phase4.data_chain import (
     DataChainMismatch,
     StaleDataChainHead,
@@ -191,6 +191,16 @@ class DataChainTests(unittest.TestCase):
         invalid = dict(contexts[0], P4_SESSION_ID="/root/t22_reviewer")
         with mock.patch.dict(os.environ, invalid, clear=True), self.assertRaises(ContractEvidenceMismatch):
             producer_provenance(ROOT, "artifacts/phase-4-runtime/unit")
+
+    def test_frozen_release_resolves_commit_without_worktree_git_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            release = Path(raw)
+            (release / "control").mkdir()
+            expected = "a" * 40
+            (release / "control/execution-environment.json").write_text(
+                json.dumps({"implementation_commit": expected}), encoding="utf-8",
+            )
+            self.assertEqual(source_commit(release), expected)
 
 
 if __name__ == "__main__":

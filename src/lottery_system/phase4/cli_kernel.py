@@ -96,7 +96,10 @@ def source_commit(root: Path) -> str:
             [_GIT_EXECUTABLE, "rev-parse", "HEAD"], cwd=root, check=True, capture_output=True, text=True,
         ).stdout.strip()
     except (OSError, subprocess.CalledProcessError) as exc:
-        raise ContractEvidenceMismatch("source commit cannot be resolved") from exc
+        execution_environment = root / "control/execution-environment.json"
+        if not execution_environment.is_file():
+            raise ContractEvidenceMismatch("source commit cannot be resolved") from exc
+        value = str(load_json(execution_environment, reject_floats=True).get("implementation_commit", ""))
     if len(value) != 40 or any(character not in "0123456789abcdef" for character in value):
         raise ContractEvidenceMismatch("source commit is invalid")
     return value

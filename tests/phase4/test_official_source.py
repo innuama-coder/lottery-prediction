@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import io
 import json
+import os
 import tempfile
 import unittest
 from email.message import Message
 from pathlib import Path
+from unittest import mock
 
 from jsonschema import Draft202012Validator, RefResolver
 
@@ -182,6 +184,30 @@ class OfficialSourceTests(unittest.TestCase):
             self.assertGreater(pauses[0], 0)
             self.assertTrue((output / "protected-inventory-before.json").is_file())
             self.assertTrue((output / "protected-inventory-after.json").is_file())
+
+    def test_formal_canary_uses_release_readiness_and_distinct_staging_namespace(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            outer = Path(raw)
+            project = outer / "release"
+            policy_path = project / "contracts/source-policy.json"
+            policy_path.parent.mkdir(parents=True)
+            policy_path.write_bytes(POLICY.read_bytes())
+            phase1 = project / "contracts/phase1-draw-record.schema.json"
+            phase1.write_bytes((ROOT / "schemas/phase1/draw-record.schema.json").read_bytes())
+            for protected in ("phase-0", "phase-0-multisource", "phase-1", "phase-2", "phase-2.1", "phase-3"):
+                (project / "artifacts" / protected).mkdir(parents=True)
+            staging = outer / "artifacts/phase-4-staging/formal-unit"
+            output = project / "readiness/official-canary"
+            with mock.patch.dict(os.environ, {"P4_STAGING_ROOT": str(staging)}):
+                summary = run_readonly_canary(
+                    project_root=project, source_policy_path=policy_path, staging_root=staging,
+                    output_root=output, mode="readonly-canary", observed_at_utc=VALID_CLOCK,
+                    producer_provenance=PROVENANCE,
+                    open_response=lambda endpoint: _Response(RAW[(endpoint.game, endpoint.source_id)], endpoint.endpoint),
+                    pause=lambda _: None,
+                )
+            self.assertEqual(summary["status"], "PASS")
+            self.assertEqual(len(list((staging / "raw").glob("*/*/*.raw"))), 4)
 
 
 if __name__ == "__main__":

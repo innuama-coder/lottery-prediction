@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import time
 import urllib.error
 import urllib.parse
@@ -298,10 +299,25 @@ def run_readonly_canary(
     project = project_root.resolve()
     staging = staging_root.resolve(strict=False)
     output = output_root.resolve(strict=False)
-    staging.relative_to((project / "artifacts/phase-4-staging").resolve())
-    allowed_outputs = ((project / "artifacts/phase-4-prep").resolve(), (project / "artifacts/phase-4").resolve())
-    if not any(output == base or base in output.parents for base in allowed_outputs):
-        raise SourcePolicyError("canary output is outside Phase 4 preparation/formal evidence roots")
+    try:
+        staging.relative_to((project / "artifacts/phase-4-staging").resolve())
+    except ValueError as exc:
+        configured = os.environ.get("P4_STAGING_ROOT", "").strip()
+        external = Path(configured).resolve(strict=False) if configured else None
+        if (
+            external != staging
+            or staging.parent.name != "phase-4-staging"
+            or staging.parent.parent.name != "artifacts"
+        ):
+            raise SourcePolicyError("canary staging root is outside the explicit Phase 4 staging namespace") from exc
+    if mode == "early-readonly-canary":
+        allowed = (project / "artifacts/phase-4-prep").resolve()
+        valid_output = output == allowed or allowed in output.parents
+    else:
+        allowed = (project / "readiness/official-canary").resolve()
+        valid_output = output == allowed
+    if not valid_output:
+        raise SourcePolicyError("canary output is outside its mode-specific Phase 4 evidence root")
     policy, endpoints = load_source_policy(source_policy_path, at_utc=observed_at_utc)
     before = protected_inventory(project)
     write_once_json(resolve_inside(output, "protected-inventory-before.json"), before)

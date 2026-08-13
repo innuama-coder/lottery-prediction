@@ -49,8 +49,15 @@ def main() -> int:
         install_product=subprocess.run([str(python),"-m","pip","install","--no-index","--no-deps",str(product[0])],capture_output=True,text=True,check=False)
         if install_product.returncode: raise ValueError("offline product install failed")
         env={**os.environ,"P4_PROJECT_ROOT":str(Path.cwd().resolve())}; env.pop("PYTHONPATH",None)
-        smoke=subprocess.run([str(python),"-m","lottery_system.phase4","--help"],env=env,capture_output=True,check=False)
-        if smoke.returncode: raise ValueError("installed product CLI smoke failed")
+        smoke=subprocess.run(
+            [str(python),"-m","lottery_system.phase4","--help"],
+            env=env,capture_output=True,text=True,check=False,
+        )
+        if smoke.returncode:
+            raise ValueError(
+                "installed product CLI smoke failed "
+                f"(exit={smoke.returncode}, stdout={smoke.stdout!r}, stderr={smoke.stderr!r})"
+            )
         record_files=sorted(environment.rglob("*.dist-info/RECORD")); record_hash=hashlib.sha256(b"".join(path.read_bytes() for path in record_files)).hexdigest()
     wheels=[{"path":path.name,"sha256":sha(path),"bytes":path.stat().st_size} for path in sorted(args.wheelhouse.glob("*.whl"))]
     receipt={"artifact_type":"phase4_offline_rebuild_receipt","schema_version":"1.0.0","task_id":"T14","status":"PASS","terminal":"T14_OFFLINE_REBUILD_PASS","process_exit_code":0,"built_from_commit":args.built_from_commit,"lock_sha256":sha(args.lock),"product_wheel_sha256":sha(product[0]),"wheels":wheels,"source_files":source_rows,"distribution_record_tree_sha256":record_hash,"offline_install":True,"cli_smoke_exit_code":0}

@@ -82,7 +82,9 @@ def main() -> int:
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
     root = Path.cwd().resolve()
-    if args.release_root.exists() or args.release_venv.exists():
+    release = args.release_root.resolve()
+    release_venv = args.release_venv.resolve()
+    if release.exists() or release_venv.exists():
         raise ValueError("release or release venv identity already exists")
     if subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip() != args.implementation_commit:
         raise ValueError("implementation commit does not equal clean HEAD")
@@ -91,7 +93,7 @@ def main() -> int:
     for ancestor in (args.authority_commit, args.required_ancestor):
         if subprocess.run(["git","merge-base","--is-ancestor",ancestor,args.implementation_commit],check=False).returncode:
             raise ValueError("authority continuity failed")
-    release = args.release_root.resolve(); release.mkdir(parents=True)
+    release.mkdir(parents=True)
     for name in ("control","contracts","inputs","qualification-design","readiness","work-items/T15","manifest"):
         (release / name).mkdir(parents=True, exist_ok=True)
     shutil.copytree(args.wheelhouse, release / "inputs/wheelhouse", dirs_exist_ok=False)
@@ -107,8 +109,8 @@ def main() -> int:
     shutil.copytree(release / "scripts", scripts_root / "scripts")
     shutil.rmtree(release / "scripts")
     freeze_formal_assignment(args.actor_assignments, release)
-    venv.EnvBuilder(with_pip=True, clear=False).create(args.release_venv)
-    python = args.release_venv / "bin/python"
+    venv.EnvBuilder(with_pip=True, clear=False).create(release_venv)
+    python = release_venv / "bin/python"
     product = sorted((release / "inputs/wheelhouse").glob("autoresearch_lotte-*.whl"))
     if len(product) != 1:
         raise ValueError("wheelhouse must contain exactly one product wheel")

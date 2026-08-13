@@ -40,7 +40,7 @@ TASK_PASS_TERMINAL = {
 # The two T01 script paths are the only narrow executable-provider resolution
 # authorized by the controller. Everything else follows the task cards.
 TASK_SCOPES = {
-    "T00": ["config/phase4/authority-freeze.json", "config/phase4/genesis.json", "schemas/phase4/authority-freeze.schema.json", "schemas/phase4/genesis.schema.json", "schemas/phase4/protected-inventory.schema.json", "scripts/phase4/freeze_authority.py", "artifacts/phase-4-prep/*/control/**", "artifacts/phase-4-prep/*/work-items/T00/**"],
+    "T00": ["config/phase4/authority-freeze.json", "config/phase4/genesis.json", "schemas/phase4/authority-freeze.schema.json", "schemas/phase4/genesis.schema.json", "schemas/phase4/protected-inventory.schema.json", "scripts/phase4/freeze_authority.py", "artifacts/phase-4-prep/*/control/**", "artifacts/phase-4-prep/*/work-items/T00*/**"],
     "T01": ["config/phase4/*.json", "schemas/phase4/*.schema.json", "docs/runbooks/phase-4-mvp-runtime.md", "requirements/phase4.in", "scripts/phase4/validate_contract_bundle.py", "scripts/phase4_independent/validate_work_item.py", "artifacts/phase-4-prep/*/work-items/T01*/**"],
     "T02": ["src/lottery_system/phase4/serialization.py", "src/lottery_system/phase4/identity.py", "src/lottery_system/phase4/storage.py", "src/lottery_system/phase4/ledger.py", "src/lottery_system/phase4/checkpoint.py", "src/lottery_system/phase4/data_chain.py", "src/lottery_system/phase4/cli_kernel.py", "src/lottery_system/phase4/__main__.py", "src/lottery_system/phase4/commands/contract.py", "src/lottery_system/phase4/commands/data_core.py", "tests/phase4/test_identity.py", "tests/phase4/test_ledger.py", "tests/phase4/test_data_chain.py", "artifacts/phase-4-prep/*/work-items/T02*/**", "artifacts/phase-4-runtime/*/**"],
     "T03": ["src/lottery_system/phase4/official_adapter.py", "src/lottery_system/phase4/verification.py", "src/lottery_system/phase4/calendar.py", "src/lottery_system/phase4/commands/data_official.py", "src/lottery_system/phase4/commands/calendar.py", "config/phase4/source-policy.json", "config/phase4/calendar-policy.json", "scripts/phase4/*source*", "tests/phase4/*source*", "tests/phase4/*calendar*", "tests/phase4/fixtures/**", "artifacts/phase-4-prep/*/work-items/T03*/**", "artifacts/phase-4-staging/*/**"],
@@ -1264,7 +1264,7 @@ def _machine_delivery_statement_mutation_self_tests() -> dict[str, bool]:
     human = actor("machine-delivery-statement", "codex_session", ["machine_delivery_statement"], ["T23"])
     machine = actor("machine", "codex_session", ["release_controller"], ["T00", "T23"])
     base = {"assignments": [human, machine]}
-    machine_signer = {"assignments": [actor("machine-delivery-statement", "codex_session", ["machine_delivery_statement"], ["T23"]), machine]}
+    machine_signer = {"assignments": [actor("machine-delivery-statement", "human_session", ["machine_delivery_statement"], ["T23"]), machine]}
     mixed_signer = {"assignments": [actor("machine-delivery-statement", "codex_session", ["machine_delivery_statement", "independent_reviewer"], ["T22", "T23"]), machine]}
 
     current = _empty_sets(); current["task"] = {"machine-delivery-statement"}; current["all"] = {"machine-delivery-statement"}; current["evidence"] = {"machine-delivery-statement"}; current["delivery_statement"] = {"machine-delivery-statement"}

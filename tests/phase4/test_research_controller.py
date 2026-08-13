@@ -48,7 +48,7 @@ ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = ROOT / "tests/phase4/fixtures/research/parameter-positive.json"
 DEVELOPMENT_FIXTURE = ROOT / "tests/phase4/fixtures/research/development-small.json"
 SCIENTIFIC_WORKER_FIXTURE = ROOT / "tests/phase4/fixtures/research/scientific-worker-small.json"
-PREP = ROOT / "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i01"
+PREP = ROOT / "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i02"
 FEASIBILITY = PREP / "work-items/T10/attempts/T10-I01/feasibility/certificate.json"
 
 

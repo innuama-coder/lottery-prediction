@@ -35,7 +35,7 @@ from lottery_system.phase4.serialization import canonical_json_bytes, sha256_byt
 
 
 ROOT = Path(__file__).resolve().parents[2]
-ORACLE = ROOT / "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i01/work-items/T10/attempts/T10-I01/known-answers"
+ORACLE = ROOT / "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i02/work-items/T10/attempts/T10-I01/known-answers"
 
 
 def _load(name: str) -> dict:

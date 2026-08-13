@@ -27,7 +27,7 @@ from lottery_system.phase4.serialization import load_json
 
 ROOT = Path(__file__).resolve().parents[2]
 GENESIS = ROOT / "config/phase4/genesis.json"
-ACTOR_ASSIGNMENTS = "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i01/control/actor-assignments-preparation.json"
+ACTOR_ASSIGNMENTS = "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i02/control/actor-assignments-preparation.json"
 PROVENANCE = {
     "producer_actor_id": "p4-implementation-author-i01", "task_id": "T02",
     "session_id": "/root/implementation_author", "source_commit": "f8a7a6abb46a55f8fa17e5ae3280c5c5432c363b",
@@ -169,16 +169,16 @@ class DataChainTests(unittest.TestCase):
         with mock.patch.dict(os.environ, {}, clear=True):
             with self.assertRaises(ContractEvidenceMismatch):
                 producer_provenance(ROOT, "artifacts/phase-4-runtime/unit")
-        with mock.patch.dict(os.environ, {"P4_ACTOR_ID": "p4-r01-controller"}, clear=True):
+        with mock.patch.dict(os.environ, {"P4_ACTOR_ID": "p4-r01-i02-controller"}, clear=True):
             with self.assertRaises(ContractEvidenceMismatch):
                 producer_provenance(ROOT, "artifacts/phase-4-runtime/unit")
         contexts = (
             {
-                "P4_ACTOR_ID": "p4-r01-controller", "P4_SESSION_ID": "/root",
+                "P4_ACTOR_ID": "p4-r01-i02-controller", "P4_SESSION_ID": "/root",
                 "P4_TASK_ID": "T02", "P4_ROLE": "implementation_author", "P4_ACTOR_ASSIGNMENTS": ACTOR_ASSIGNMENTS,
             },
             {
-                "P4_ACTOR_ID": "p4-r01-contract-owner", "P4_SESSION_ID": "/root/independent_contract_audit",
+                "P4_ACTOR_ID": "p4-r01-i02-acceptance-engineer", "P4_SESSION_ID": "/root/acceptance_engineer_r01_i02",
                 "P4_TASK_ID": "T02", "P4_ROLE": "acceptance_engineer", "P4_ACTOR_ASSIGNMENTS": ACTOR_ASSIGNMENTS,
             },
         )

@@ -250,9 +250,9 @@ class CliStateIntegrationTests(unittest.TestCase):
             output = runtime / "explicit-output"
             args = type("Args", (), {"runtime_root": runtime, "output": output})()
             environment = {
-                "P4_ACTOR_ID": "p4-r01-controller", "P4_SESSION_ID": "/root",
+                "P4_ACTOR_ID": "p4-r01-i02-controller", "P4_SESSION_ID": "/root",
                 "P4_TASK_ID": "T09", "P4_ROLE": "implementation_author",
-                "P4_ACTOR_ASSIGNMENTS": "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i01/control/actor-assignments-preparation.json",
+                "P4_ACTOR_ASSIGNMENTS": "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i02/control/actor-assignments-preparation.json",
             }
             with mock.patch.dict(os.environ, environment, clear=False):
                 first = registry.provider("state", "project")(args)

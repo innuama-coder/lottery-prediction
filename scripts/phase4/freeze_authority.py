@@ -390,8 +390,6 @@ def main() -> int:
             for key in ("actor_id", "session_id", "task_record_path", "task_record_sha256")
         },
         "inputs": [
-            {"path": "config/phase4/authority-freeze.json", "sha256": file_sha(ROOT / "config/phase4/authority-freeze.json")},
-            {"path": "config/phase4/genesis.json", "sha256": file_sha(ROOT / "config/phase4/genesis.json")},
             {"path": args.actor_assignments.resolve().relative_to(ROOT).as_posix(), "sha256": file_sha(args.actor_assignments.resolve())},
         ],
         "outputs": output_rows,

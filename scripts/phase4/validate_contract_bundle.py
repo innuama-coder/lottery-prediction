@@ -61,11 +61,10 @@ def main() -> int:
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=False)
     source_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-    inventory = [{"path": path.resolve().relative_to(root).as_posix(), "sha256": sha(path), "bytes": path.stat().st_size, "producer_actor_id": owner["actor_id"], "task_id": "T01", "session_id": owner["session_id"], "source_commit": source_commit, "role": "contract_owner"} for path in configs + schemas]
     report = {"artifact_type": "phase4_contract_validation", "schema_version": "1.0.0", "config_count": len(configs), "schema_count": len(schemas), "cli_command_count": len(commands), "assertion_count": 21, "unknown_field_negative_controls": "PASS", "future_state_negative_controls": "PASS", "actor_inequalities": "PASS", "status": "PASS", "terminal": "T01_RESULT_BLIND_MACHINE_CONTRACT_FROZEN"}
     report_path = out / "contract-validation.json"
     report_path.write_bytes(canon(report))
-    inventory.append({"path": report_path.relative_to(root).as_posix(), "sha256": sha(report_path), "bytes": report_path.stat().st_size, "producer_actor_id": owner["actor_id"], "task_id": "T01", "session_id": owner["session_id"], "source_commit": source_commit, "role": "contract_owner"})
+    inventory = [{"path": report_path.relative_to(root).as_posix(), "sha256": sha(report_path), "bytes": report_path.stat().st_size, "producer_actor_id": owner["actor_id"], "task_id": "T01", "session_id": owner["session_id"], "source_commit": source_commit, "role": "contract_owner"}]
     now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     receipt = {"schema_version": "1.0.0", "artifact_type": "phase4_work_item_receipt", "task_id": "T01", "identity": out.parent.name, "source_commit": source_commit, "actor_assignment_sha256": sha(args.actor_assignments), "task_producer_set": [owner["actor_id"]], "acceptance_actor_provenance": {"actor_id": acceptor["actor_id"], "session_id": acceptor["session_id"], "task_record_path": acceptor["task_record_path"], "task_record_sha256": acceptor["task_record_sha256"]}, "role_inequalities": {"acceptor_not_producer": acceptor["actor_id"] != owner["actor_id"]}, "inputs": [{"path": args.authority_receipt.resolve().relative_to(root).as_posix(), "sha256": sha(args.authority_receipt)}], "outputs": inventory, "command": list(sys.argv), "started_at_utc": now, "ended_at_utc": now, "process_exit_code": 0, "status": "PASS", "terminal": "T01_RESULT_BLIND_MACHINE_CONTRACT_FROZEN"}
     (out / "receipt.json").write_bytes(canon(receipt))

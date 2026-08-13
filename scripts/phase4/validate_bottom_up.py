@@ -132,7 +132,10 @@ def validate_registry(registry: dict[str, Any], guard_map: dict[str, Any]) -> li
 def run_case(case: dict[str, Any], *, ordinal: int) -> tuple[dict[str, Any], bytes, bytes]:
     command = [sys.executable, "-m", "unittest", *case["selectors"], "-v"]
     environment = dict(os.environ)
-    environment.pop("PYTHONPATH", None)
+    if (ROOT / "src").is_dir():
+        environment["PYTHONPATH"] = "src"
+    else:
+        environment.pop("PYTHONPATH", None)
     process = subprocess.Popen(command, cwd=ROOT, env=environment, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
     execution_id = f"e2e-case-{ordinal:03d}-{uuid.uuid4()}"

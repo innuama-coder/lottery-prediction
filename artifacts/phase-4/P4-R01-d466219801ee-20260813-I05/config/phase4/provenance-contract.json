@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_provenance_contract",
+  "artifact_fields": ["producer_actor_id", "task_id", "session_id", "source_commit", "path", "role"],
+  "receipt_fields": ["task_producer_set", "acceptance_actor_provenance", "role_inequalities", "inputs", "outputs", "command", "process_exit_code", "started_at_utc", "ended_at_utc", "status", "terminal"],
+  "product_paths": ["src/lottery_system/phase4", "src/lottery_system/phase4/commands"],
+  "evidence_classes": ["unclassified", "product", "controller", "operator", "oracle", "development", "power", "formal_qualification", "e2e_readiness", "manifest", "replay", "validator", "reviewer", "delivery_statement"],
+  "actor_identity_fields": ["actor_id", "task_id", "session_id"],
+  "role_label_substitution_allowed": false,
+  "formal_assignment_stage": "before_T15_formal_evidence",
+  "formal_assignment_append_only": true
+  ,"write_scope_resolution": {
+    "authority_changed": false,
+    "interpretation": "An exact frozen command provider is an implicit executable deliverable when the same task contract requires that exact path, despite omission from the prose allowlist.",
+    "only_implicit_script_paths": ["scripts/phase4/validate_contract_bundle.py", "scripts/phase4_independent/validate_work_item.py"],
+    "other_script_paths_authorized": false,
+    "t00_t14_scope_enforced_by": "scripts/phase4_independent/validate_work_item.py"
+  },
+  "cumulative_actual_write_provenance": {
+    "source_links": "every recursively explicit receipt.inputs entry whose verified JSON payload is a receipt, manifest, closure, independent validation, preservation map, or standalone evidence container with actor provenance",
+    "receipt_traversal": "recursive_explicit_links_only",
+    "manifest_traversal": "explicit_files_with_producer_provenance",
+    "standalone_evidence_traversal": "top-level provenance, producer_provenance, named *_provenance, and registered direct reviewer/signer identity fields",
+    "unlinked_repository_discovery_allowed": false,
+    "historical_output_live_path_rehash_required": false,
+    "historical_container_hash_required": true,
+    "classification_precedence": ["explicit provenance role", "explicit evidence_class or artifact_type", "registered product path prefix"],
+    "conservative_unclassified_rule": "every historical actor enters all/evidence/historical_task and any actor without a typed category also enters unclassified; unclassified actors remain in T22/T24 prior universes",
+    "historical_set_names": ["historical_task", "all", "evidence", "acknowledgement_only", "unclassified", "product", "controller", "operator", "oracle", "development", "power", "formal", "e2e_readiness", "manifest", "replay", "validator", "reviewer", "delivery_statement"],
+    "derivation": "current task producer set derives only from current receipt outputs; historical sets retain the union of every actor fact from every recursively explicit prior container and are never reset to current producers",
+    "normal_acceptance_rule": "acceptance actor is disjoint from current task producer set",
+    "machine_delivery_statement_assignment_rule": "exactly one stable royzuo-codex_session-delivery_statement row; actor_type codex_session; roles exactly [machine_delivery_statement]; T23 assigned; every other actor is codex_session",
+    "machine_delivery_statement_rule": "phase4_machine_delivery_statement_acknowledgement enters acknowledgement_only but not all/evidence/historical_task/unclassified/delivery_statement production sets and is not T23 approval",
+    "t23_rule": "current machine-only signer may produce only the current T23 codex_session signature; signer must be disjoint from complete T00-T22 all/evidence/unclassified/product/controller/operator/oracle/development/power/formal/e2e_readiness/manifest/replay/validator/reviewer/delivery_statement sets",
+    "t22_rule": "current T22 reviewer may produce T22 review output but must be disjoint from complete T00-T21 historical all set and controller/operator/validator roles",
+    "t24_rule": "current T24 approver may directly produce T24 verdict and self-accept it but must be disjoint from complete T00-T23 historical all set and controller/operator/validator/reviewer/delivery_statement roles",
+    "inequalities_use_cumulative_sets": true
+  }
+}

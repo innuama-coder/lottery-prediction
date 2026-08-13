@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_attempt","failure":"source-tree E2E subprocesses removed PYTHONPATH before an installed formal wheel existed","process_exit_code":20,"schema_version":"1.0.0","status":"HOLD","task_id":"T11","terminal":"HOLD_E2E_INCOMPLETE"}

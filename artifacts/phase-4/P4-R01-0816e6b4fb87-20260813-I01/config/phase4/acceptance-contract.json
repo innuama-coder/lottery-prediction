@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_acceptance_contract",
+  "acceptance_ids": ["P4-MVP-A01", "P4-MVP-A02", "P4-MVP-A03", "P4-MVP-A04", "P4-MVP-A05", "P4-MVP-A06", "P4-MVP-A07", "P4-MVP-A08", "P4-MVP-A09", "P4-MVP-A10", "P4-MVP-A11", "P4-MVP-A12", "P4-MVP-A13", "P4-MVP-A14", "P4-MVP-A15", "P4-MVP-A16", "P4-MVP-A17", "P4-MVP-A18", "P4-MVP-A19", "P4-MVP-A20", "P4-MVP-A21"],
+  "all_must_pass": true,
+  "blocking_findings_required": 0,
+  "delivery_coverage_required": "100%",
+  "engineering_terminal": "READY_FOR_HUMAN_ACCEPTANCE",
+  "allowed_phase4_model_ceiling": "shadow_candidate",
+  "required_real_top_k_state": "insufficient_observation",
+  "required_champion_by_game": {"ssq": "M0", "dlt": "M0"},
+  "closure_order": ["evidence", "replay", "validator", "review", "machine_delivery", "acceptance_postcheck"],
+  "prohibited_summary_fields": ["global_improved", "real_world_improvement", "winning_guarantee"]
+}

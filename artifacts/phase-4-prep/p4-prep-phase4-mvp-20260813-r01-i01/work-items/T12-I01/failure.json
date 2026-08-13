@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_attempt","failure":"fresh feasibility certificate includes a fresh generated_at_utc and therefore could not equal the historical fixed receipt hash","process_exit_code":5,"schema_version":"1.0.0","status":"HOLD","task_id":"T12","terminal":"HOLD_STALE_FEASIBILITY_IDENTITY"}

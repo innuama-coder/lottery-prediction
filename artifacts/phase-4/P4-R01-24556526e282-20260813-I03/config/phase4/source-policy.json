@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_source_review",
+  "policy_id": "p4-source-policy-v1-20260811-i01",
+  "purpose": "phase4_scheduled_internal_mvp_readonly_collection",
+  "reviewed_at_utc": "2026-08-11T07:42:47Z",
+  "expires_at_utc": "2026-12-31T23:59:59Z",
+  "sources": [
+    {
+      "game": "ssq",
+      "source_id": "swlc",
+      "publisher": "Shanghai Welfare Lottery Issuance Center (上海市福利彩票发行中心; swlc.net.cn)",
+      "role": "primary",
+      "endpoint": "https://www.swlc.net.cn/shsflcpfxzx/lottery/ssq.html?view=previous&limit=30",
+      "method": "GET",
+      "rate_limit": "phase4-source-rate-v1:max_requests_per_endpoint_per_canary=1;minimum_same_host_interval_seconds=2;request_timeout_seconds=30;max_attempts=2;retry_backoff_seconds=2",
+      "redirect_policy": "same_source_only",
+      "maximum_response_bytes": 1048576
+    },
+    {
+      "game": "ssq",
+      "source_id": "ydniu",
+      "publisher": "Yidingniu Lottery Information Publisher (一定牛; ydniu.com)",
+      "role": "corroborating",
+      "endpoint": "https://www.ydniu.com/open/ssq-500/1.html",
+      "method": "GET",
+      "rate_limit": "phase4-source-rate-v1:max_requests_per_endpoint_per_canary=1;minimum_same_host_interval_seconds=2;request_timeout_seconds=30;max_attempts=2;retry_backoff_seconds=2",
+      "redirect_policy": "same_source_only",
+      "maximum_response_bytes": 1048576
+    },
+    {
+      "game": "dlt",
+      "source_id": "gdlottery",
+      "publisher": "Guangdong Sports Lottery Center (广东省体育彩票中心; gdlottery.cn)",
+      "role": "primary",
+      "endpoint": "https://www.gdlottery.cn/f_html/kjgg/gameNumber.json",
+      "method": "GET",
+      "rate_limit": "phase4-source-rate-v1:max_requests_per_endpoint_per_canary=1;minimum_same_host_interval_seconds=2;request_timeout_seconds=30;max_attempts=2;retry_backoff_seconds=2",
+      "redirect_policy": "same_source_only",
+      "maximum_response_bytes": 2097152
+    },
+    {
+      "game": "dlt",
+      "source_id": "ydniu",
+      "publisher": "Yidingniu Lottery Information Publisher (一定牛; ydniu.com)",
+      "role": "corroborating",
+      "endpoint": "https://www.ydniu.com/open/dlt-500/1.html",
+      "method": "GET",
+      "rate_limit": "phase4-source-rate-v1:max_requests_per_endpoint_per_canary=1;minimum_same_host_interval_seconds=2;request_timeout_seconds=30;max_attempts=2;retry_backoff_seconds=2",
+      "redirect_policy": "same_source_only",
+      "maximum_response_bytes": 1048576
+    }
+  ],
+  "scheduled_internal_mvp_collection_approved": true,
+  "reviewer_provenance": {
+    "producer_actor_id": "p4-data-custodian-i01",
+    "task_id": "T03",
+    "session_id": "/root/data_custodian_t00",
+    "source_commit": "f8a7a6abb46a55f8fa17e5ae3280c5c5432c363b",
+    "path": "config/phase4/source-policy.json",
+    "role": "data_custodian"
+  }
+}

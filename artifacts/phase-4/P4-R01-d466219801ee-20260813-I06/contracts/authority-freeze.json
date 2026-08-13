@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_authority_freeze",
+  "authority_commit": "b6dcb2b575abb12046985c4cbcd9fb2367549d48",
+  "required_ancestor_commit": "bb25c5823e27ce81c40b6c73da0b77cfc906e4d7",
+  "authority_files": [
+    {
+      "path": "ROADMAP.md",
+      "sha256": "24ba28e72c33959a91e505fd518718bd0c948c84b7e2e4cd5591a26f0a0b0149"
+    },
+    {
+      "path": "tasks/phase4/README.md",
+      "sha256": "aa3221652e2e0b9876f233b37191267d3be7f0f56cd0d0e82481dcf1c0aeb874"
+    },
+    {
+      "path": "docs/research/phase-4-overall-design.md",
+      "sha256": "5a172ffd370222fc90b1e6084d59c41069e41947c6d86de4c119769c039c1dba"
+    },
+    {
+      "path": "docs/plans/phase-4-detailed-plan.md",
+      "sha256": "c2e7715121baad25fee4e1b5f696e7709ce365d3e1bb00ab65029223cba40811"
+    }
+  ],
+  "phase3_acceptance": {
+    "path": "artifacts/phase-3/P3-R07-2c0fa97-20260810-I01/acceptance/I01/acceptance.json",
+    "release_id": "P3-R07-2c0fa97-20260810-I01",
+    "sha256": "415bfc69cc04704265e231fd7d6e36bd2daa06b970b0def30703c4a7f04570c9"
+  },
+  "protected_roots": [
+    "artifacts/phase-0",
+    "artifacts/phase-0-multisource",
+    "artifacts/phase-1",
+    "artifacts/phase-2",
+    "artifacts/phase-2.1",
+    "artifacts/phase-3"
+  ],
+  "namespace_contract": [
+    {
+      "id": "p4-prep-phase4-mvp-20260813-r01-i02",
+      "kind": "preparation",
+      "path": "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i02"
+    },
+    {
+      "id": "p4-staging-phase4-mvp-20260813-r01-i02",
+      "kind": "staging",
+      "path": "artifacts/phase-4-staging/p4-staging-phase4-mvp-20260813-r01-i02"
+    },
+    {
+      "id": "p4-runtime-phase4-mvp-20260813-r01-i02",
+      "kind": "runtime",
+      "path": "artifacts/phase-4-runtime/p4-runtime-phase4-mvp-20260813-r01-i02"
+    },
+    {
+      "id": "p4-formal-phase4-mvp-20260813-r01-i02",
+      "kind": "formal",
+      "path": "artifacts/phase-4"
+    }
+  ],
+  "provenance": {
+    "producer_actor_id": "p4-r01-i02-controller",
+    "role": "release_controller",
+    "session_id": "/root",
+    "source_commit": "b6dcb2b575abb12046985c4cbcd9fb2367549d48",
+    "task_id": "T00"
+  }
+}

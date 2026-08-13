@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_attempt","failure":"recursive checker followed historical genesis provenance from the pre-I02 authority identity","process_exit_code":20,"schema_version":"1.0.0","status":"HOLD","task_id":"T01","terminal":"HOLD_HISTORICAL_PROVENANCE"}

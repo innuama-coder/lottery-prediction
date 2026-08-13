@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_state_contract",
+  "engineering": {"key": ["system_release_id"], "phase4_values": ["HOLD", "FAIL", "READY_FOR_HUMAN_ACCEPTANCE"]},
+  "model": {"key": ["game", "model_id", "comparator_champion_id", "model_release_id", "window_id"], "phase4_values": ["baseline_only", "shadow_candidate"], "forbidden_phase4_values": ["prospective_improvement_confirmed"]},
+  "top_k": {"key": ["game", "K", "model_id", "comparator_champion_id", "model_release_id", "window_id"], "phase4_values": ["insufficient_observation"], "forbidden_phase4_values": ["no_confirmed_lift", "confirmed_lift"]},
+  "global_improved_field_allowed": false,
+  "champion_by_game": {"ssq": "M0", "dlt": "M0"}
+}

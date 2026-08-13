@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_acceptance_assertion_registry",
+  "assertions": [
+    {"acceptance_id": "P4-MVP-A01", "bottom_assertions": ["ssq_cycle_complete", "dlt_cycle_complete", "lock_verify_unlock_causal_order", "next_shadow_lineage"]},
+    {"acceptance_id": "P4-MVP-A02", "bottom_assertions": ["forecast_count_1000", "tickets_legal_unique", "top_k_strict_prefixes"]},
+    {"acceptance_id": "P4-MVP-A03", "bottom_assertions": ["full_space_positive_normalized", "canonical_probability_order", "tie_rank_separate_from_display", "permutation_stable", "nontransitive_approximation_rejected"]},
+    {"acceptance_id": "P4-MVP-A04", "bottom_assertions": ["m0_one_full_space_tie", "m0_group_size_exact", "m0_rank_bounds_exact", "m0_midrank_exact"]},
+    {"acceptance_id": "P4-MVP-A05", "bottom_assertions": ["parameter_diff_nonempty_registered", "child_candidate_identity_changed", "next_shadow_output_changed"]},
+    {"acceptance_id": "P4-MVP-A06", "bottom_assertions": ["feature_diff_registered", "feature_snapshot_bound", "next_shadow_uses_child_config", "next_shadow_output_changed"]},
+    {"acceptance_id": "P4-MVP-A07", "bottom_assertions": ["two_uniform_cells_each_1000", "each_sequence_150_cycles", "false_proposals_each_cell_le_50", "terminals_complete"]},
+    {"acceptance_id": "P4-MVP-A08", "bottom_assertions": ["wealth_recompute_match_100_percent", "stop_recompute_match_100_percent", "wealth_never_negative", "champion_changes_zero"]},
+    {"acceptance_id": "P4-MVP-A09", "bottom_assertions": ["six_positive_cells_each_1000", "each_sequence_150_cycles", "recoveries_each_cell_ge_900", "power_design_passed_before_formal"]},
+    {"acceptance_id": "P4-MVP-A10", "bottom_assertions": ["eight_game_k_cells_present", "candidate_coverage_each_strictly_gt_m0", "product_oracle_within_tolerance", "oracle_product_imports_zero"]},
+    {"acceptance_id": "P4-MVP-A11", "bottom_assertions": ["three_time_classes_positive", "time_class_mixing_rejected", "prelock_label_rejected", "future_feature_rejected", "lock_mutation_rejected", "metric_contract_mutation_rejected"]},
+    {"acceptance_id": "P4-MVP-A12", "bottom_assertions": ["cross_game_evidence_rejected", "cross_game_state_rejected", "champion_mutation_rejected"]},
+    {"acceptance_id": "P4-MVP-A13", "bottom_assertions": ["unique_terminals", "resume_no_duplicate_forecast", "resume_no_duplicate_unlock", "resume_no_duplicate_score", "resume_no_duplicate_experiment_or_spend"]},
+    {"acceptance_id": "P4-MVP-A14", "bottom_assertions": ["four_required_endpoints_ready", "two_source_core_match_each_game", "phase1_genesis_content_match", "phase4_successor_chain_continuous", "protected_roots_unchanged", "network_conflict_fail_closed"]},
+    {"acceptance_id": "P4-MVP-A15", "bottom_assertions": ["replay_forecast_identity_match", "replay_top_k_probability_rank_match", "replay_metrics_state_wealth_decisions_match", "recursive_manifest_match", "preparation_evidence_self_contained"]},
+    {"acceptance_id": "P4-MVP-A16", "bottom_assertions": ["six_delivery_classes_100_percent", "blocking_findings_zero", "prohibited_wording_zero", "review_closed", "machine_delivery_closed"]},
+    {"acceptance_id": "P4-MVP-A17", "bottom_assertions": ["hash_locked_wheelhouse", "clean_offline_install", "cli_fixture_checkpoint_replay_pass", "approved_workload_within_budget", "evidence_return_hash_match"]},
+    {"acceptance_id": "P4-MVP-A18", "bottom_assertions": ["engineering_key_complete", "model_key_complete", "top_k_key_complete", "future_phase_states_rejected", "global_improved_rejected", "cross_dimension_projection_rejected"]},
+    {"acceptance_id": "P4-MVP-A19", "bottom_assertions": ["dual_game_plan_deterministic", "trigger_idempotent", "deadline_guarded", "late_missed_restart_concurrent_terminals", "game_failures_isolated", "systemd_audit_matches"]},
+    {"acceptance_id": "P4-MVP-A20", "bottom_assertions": ["diagnostic_prelock_and_result_blind", "score_key_and_formulas_match_oracle", "window_key_boundary_bins_minimum_match", "phase3_metric_regression", "wrong_comparator_revision_rejected"]},
+    {"acceptance_id": "P4-MVP-A21", "bottom_assertions": ["new_revision_supersedes_old", "score_aggregate_corrected", "remediation_and_requalification_complete", "locked_forecasts_unchanged", "alpha_not_refunded_or_duplicated", "one_observation_per_issue", "correction_resume_idempotent"]}
+  ],
+  "coverage_required": "100%"
+}

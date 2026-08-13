@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_feature_registry",
+  "features": [
+    {
+      "feature_id": "F01",
+      "name": "prior_draw_frequency",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true
+    },
+    {
+      "feature_id": "F02",
+      "name": "external_context_categorical_v1",
+      "time_class": "external_point_in_time",
+      "maximum_categories": 8,
+      "real_runtime_default_enabled": false,
+      "synthetic_fixture_capability_required": true
+    }
+  ],
+  "unknown_features_allowed": false,
+  "one_family_per_experiment": true
+}

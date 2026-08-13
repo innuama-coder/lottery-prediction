@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_actor_inequality_contract",
+  "rules": [
+    "task_acceptance_actor_not_in_task_producer_set_except_T24_direct_verdict",
+    "independent_power_operator_not_in_product_producer_set",
+    "independent_power_operator_not_statistical_owner",
+    "independent_power_operator_not_independent_oracle_author",
+    "T16_T17_run_operator_not_acceptance_engineer",
+    "T22_current_independent_reviewer_may_be_T22_direct_producer",
+    "T22_independent_reviewer_not_in_complete_T00_T21_historical_task_evidence_product_controller_operator_or_validator_actor_sets",
+    "acceptance_engineer_not_in_product_producer_set_or_formal_evidence_runner_set",
+    "machine_delivery_statement_actor_is_codex_session_and_independent",
+    "T23_machine_delivery_statement_may_produce_only_current_machine_delivery_statement",
+    "T23_machine_delivery_statement_not_in_complete_T00_T22_product_evidence_controller_operator_oracle_power_formal_e2e_readiness_manifest_replay_validator_reviewer_sets",
+    "T24_current_acceptance_approver_may_be_T24_direct_producer_and_acceptance_actor",
+    "T24_acceptance_approver_not_in_complete_T00_T23_historical_task_evidence_product_controller_operator_oracle_power_formal_replay_validator_reviewer_delivery_statement_actor_sets"
+  ],
+  "derive_from": ["per_file_provenance", "task_receipts", "explicit_linked_manifests", "explicit_linked_standalone_evidence", "actor_assignments"],
+  "historical_task_set_never_reset_to_current": true,
+  "unclassified_historical_actor_is_conservatively_reviewed": true,
+  "machine_delivery_statement_assignment_is_codex_only": true,
+  "future_formal_roles": ["run_operator", "vps_operator", "independent_replay_operator", "independent_reviewer", "acceptance_engineer", "machine_delivery_statement", "acceptance_approver"],
+  "same_actor_different_role_satisfies_inequality": false,
+  "same_actor_different_session_satisfies_inequality": false
+}

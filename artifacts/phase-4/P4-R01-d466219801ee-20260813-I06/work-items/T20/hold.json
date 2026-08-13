@@ -1,0 +1,42 @@
+{
+  "actor_id": "p4-r01-i03-replay",
+  "artifact_type": "phase4_work_item_hold",
+  "failure": {
+    "cause": "The repo-relative --output path artifacts/phase-4/P4-R01-d466219801ee-20260813-I06/replay was passed to the frozen replay command while the release root was resolved to an absolute path. After replay.json was created, release_ops.file_row called Path.relative_to with the relative replay path and the absolute release root, raising ValueError before closure creation.",
+    "process_exit_code": 1,
+    "stage": "replay_closure_creation"
+  },
+  "partial_replay": {
+    "blocking_findings": 0,
+    "bytes": 426,
+    "checks": {
+      "e2e": true,
+      "formal_cell_count": 8,
+      "formal_gates": true,
+      "formal_sequence_count": 8000,
+      "manifest_files": 20636,
+      "official_canary": true,
+      "scheduler": true
+    },
+    "match_rate": "100%",
+    "path": "replay/replay.json",
+    "product_import_count": 0,
+    "sha256": "fd3da1ab65722f675b08f6f6cd82003c8fa5bf7657c64a1d6311b4b52df22203"
+  },
+  "preflight": {
+    "expected_commit": "d466219801ee10bcadac0d3e38f044f9490e0125",
+    "status": "PASS",
+    "terminal": "EXECUTION_ENVIRONMENT_PASS"
+  },
+  "release_id": "P4-R01-d466219801ee-20260813-I06",
+  "replay_closure": {
+    "exists": false,
+    "path": "manifest/replay-closure.json"
+  },
+  "role": "independent_replay_operator",
+  "schema_version": "1.0.0",
+  "session_id": "/root/t20_replay_i03",
+  "status": "HOLD",
+  "task_id": "T20",
+  "terminal": "HOLD_REPLAY_INCOMPLETE"
+}

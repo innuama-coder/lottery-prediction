@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_e2e_case_process_output","case_id":"missed_trigger","schema_version":"1.0.0","stderr_utf8":"test_early_late_and_missed_deadline (tests.phase4.test_scheduler_recovery.SchedulerRecoveryTests.test_early_late_and_missed_deadline) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.604s\n\nOK\n","stdout_utf8":""}

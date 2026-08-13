@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_e2e_registry",
+  "positive_cases": [
+    "ssq_complete_cycle", "dlt_complete_cycle", "parameter_adjustment", "feature_adjustment", "honest_no_change",
+    "checkpoint_resume", "official_revision_full_closure", "m0_full_space_tie", "cross_k_tie", "systemd_virtual_tick"
+  ],
+  "negative_cases": [
+    "time_class_mixed", "historical_pit_fabricated", "future_field", "prelock_label", "cross_pid_capability",
+    "locked_forecast_mutation", "wrong_identity_or_hash", "illegal_combination", "invalid_probability_or_order_key",
+    "nontransitive_approximate_tie", "duplicate_top1000", "cross_game_state", "cross_game_alpha", "direct_champion_change",
+    "search_after_budget_exhausted", "duplicate_spending", "forecast_after_deadline", "concurrent_or_duplicate_trigger",
+    "missed_trigger", "target_issue_rollback", "stale_ledger_head", "missing_directory_fsync", "data_chain_break",
+    "changed_genesis", "empty_baseline", "source_policy_expired", "source_use_mismatch", "single_source",
+    "source_conflict", "source_network_failure", "wrong_comparator", "wrong_window", "wrong_revision",
+    "partial_correction", "checkpoint_tamper", "staged_closure_tamper", "acceptance_tamper",
+    "protected_phase0_3_write", "prohibited_scientific_wording", "global_improved", "implicit_external_service", "lax_probability_contract", "future_phase_state"
+  ],
+  "mutation_contract": "one_real_isolated_mutation_per_case_observed_by_distinct_validator_process",
+  "unrelated_exception_counts_as_pass": false,
+  "expected_guard_hit_rate": "100%"
+}

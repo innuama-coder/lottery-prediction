@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_e2e_case_process_output","case_id":"wrong_window","schema_version":"1.0.0","stderr_utf8":"test_window_duplicate_issue_and_tamper_rejected (tests.phase4.test_metrics.MetricsTest.test_window_duplicate_issue_and_tamper_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.015s\n\nOK\n","stdout_utf8":""}

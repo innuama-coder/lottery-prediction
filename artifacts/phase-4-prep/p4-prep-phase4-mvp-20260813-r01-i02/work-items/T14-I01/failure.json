@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_attempt","failure":"setuptools data-files wildcard selected the benchmark __pycache__ directory during wheel construction","process_exit_code":1,"schema_version":"1.0.0","status":"HOLD","task_id":"T14","terminal":"HOLD_INSTALL_OR_DEPENDENCY"}

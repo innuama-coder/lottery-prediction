@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_attempt","failure":"schemas/phase4/actor-assignment.schema.json contained an empty allOf array rejected by Draft 2020-12 metaschema","process_exit_code":1,"schema_version":"1.0.0","status":"HOLD","task_id":"T01","terminal":"HOLD_SCHEMA_META_VALIDATION"}

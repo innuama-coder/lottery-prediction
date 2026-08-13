@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_t23_hold",
+  "release_id": "P4-R01-d466219801ee-20260813-I05",
+  "status": "HOLD",
+  "terminal": "HOLD_ROLE_CONFLICT",
+  "process_exit_code": 20,
+  "source_commit": "d466219801ee10bcadac0d3e38f044f9490e0125",
+  "producer_actor_id": "p4-r01-i02-delivery",
+  "producer_role": "machine_delivery_statement",
+  "producer_session_id": "/root/t23_delivery",
+  "task_id": "T23",
+  "preflight": {
+    "status": "PASS",
+    "terminal": "EXECUTION_ENVIRONMENT_PASS",
+    "process_exit_code": 0,
+    "expected_commit": "d466219801ee10bcadac0d3e38f044f9490e0125",
+    "verifier_sha256": "e4c90f55ba9260f81cf6991af480d9273645f9bf399eff6fb5b6be12612a219d"
+  },
+  "role_conflict": {
+    "reason": "formal actor assignments reuse one session for the T10 independent oracle evidence actor and T20 independent replay actor",
+    "session_id": "/root/independent_prep_audit",
+    "colliding_actor_ids": [
+      "p4-r01-i02-oracle",
+      "p4-r01-i02-replay"
+    ],
+    "colliding_assignments": [
+      {
+        "actor_id": "p4-r01-i02-oracle",
+        "role": "independent_oracle_author",
+        "task_id": "T10"
+      },
+      {
+        "actor_id": "p4-r01-i02-replay",
+        "role": "independent_replay_operator",
+        "task_id": "T20"
+      }
+    ]
+  },
+  "key_hashes": {
+    "control/actor-assignments-formal.json": "cb15914422efe939af4133e10a35a8bc89408938ddbe6f8ca1451b009fae1372",
+    "manifest/evidence-manifest.json": "c16d4a965f0812e11844a0d54dd8f7a6c575a57179e4975d2e4e05dcad5b9e4d",
+    "manifest/replay-closure.json": "98ffca3b403241519b4b8e84a6eadcdad8ecda5b35739ad473a381b5c6a7a2f0",
+    "manifest/validator-closure.json": "8e6bcdf164377ef9b6d528c1cbf6ed31be70c416700348efb71b481a90c6bb99",
+    "review/review.json": "8f79f4c3426623f437de908776c3b92c3822f99b3d46d923b98866a7c67227ca",
+    "manifest/review-closure.json": "4b97d10663295b61252746562b7ef89e66874e6a934b967d9dd7656cee02fd7b"
+  },
+  "delivery_outputs_created": false,
+  "absent_delivery_paths": [
+    "delivery/machine-delivery-statement.json",
+    "manifest/delivery-closure.json"
+  ]
+}

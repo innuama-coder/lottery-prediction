@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_qualification_preregistration",
+  "formal_run_authorized": false,
+  "probability_family": {"name": "P4E1", "scale": 1024, "normalized_tick_bounds": [-4096, 4096], "decimal_precision": 80},
+  "sequential_test": {"name": "likelihood_ratio_e_process", "definition": "E_n=product_{t=1..n}(p1_t(Y_t)/p0_t(Y_t))", "log_definition": "log_E_n=sum_{t=1..n}(ln(p1_t(Y_t))-ln(p0_t(Y_t)))", "family_initial_wealth": "0.006", "alpha_spending": "W0/(t*(t+1))", "first_alpha": "0.003", "reward": "0", "minimum_look": 30, "maximum_look": 150},
+  "small_space": {"N": 10, "k": 3, "space_size": 120},
+  "cycles_per_sequence": 150,
+  "worlds": ["uniform", "static_bias", "slow_drift", "useful_feature"],
+  "effect_vector": [1, 1, 1, 0, 0, 0, 0, -1, -1, -1],
+  "effect_ticks": [1536, 1792, 2048],
+  "slow_drift_ramp_cycles": 100,
+  "feature_context": "strict_alternation_75_75_context_fixed_before_draw",
+  "seed_derivation": "uint256(sha256('P4-SEED-v2|' + design_id + '|' + domain + '|' + game + '|' + world + '|' + sequence_ordinal))",
+  "seed_domains": ["development", "power-confirmation", "formal-qualification"],
+  "development_sequences_per_cell_design": 2000,
+  "power_sequences_per_cell": 20000,
+  "formal_sequences_per_cell": 1000,
+  "uniform_max_false_proposals": 50,
+  "positive_min_recoveries": 900,
+  "confidence": {
+    "family": "simultaneous_95_percent_clopper_pearson",
+    "cells": 8,
+    "bonferroni_tail": "0.05/(2*8)",
+    "decimal_precision": 80,
+    "binary_search_absolute_width": "1e-12"
+  },
+  "selection": {
+    "analytic_uniform_aggregate_lower_min": "0.99",
+    "analytic_positive_aggregate_lower_min": "0.99",
+    "analytic_positive_sequence_lower_min": "0.93",
+    "implementation_match_rate": "1",
+    "order": "q_ascending_then_canonical_config_bytes",
+    "empirical_rate_in_predicate": false
+  },
+  "formal_gate_probability_minimum": "0.90",
+  "aggregate_binomial_algorithms": {
+    "uniform": {"name": "G0", "definition": "G0(q)=P[Binom(1000,q)<=50]", "initial_term": "term_0=(1-q)^1000", "recurrence": "term_(j+1)=term_j*((1000-j)/(j+1))*(q/(1-q)); sum j=0..50", "interval_direction": "[G0(q_U),G0(q_L)]"},
+    "positive": {"name": "G+", "definition": "G+(p)=P[Binom(1000,p)>=900]", "initial_term": "term_900=C(1000,900)*p^900*(1-p)^100", "recurrence": "term_(j+1)=term_j*((1000-j)/(j+1))*(p/(1-p)); sum j=900..1000", "interval_direction": "[G+(p_L),G+(p_U)]"}
+  },
+  "seed_set_contract": {"set_hash": "sha256(P4-CJSON-1(sorted sequence identities and uint256 seeds))", "required_domains": ["development", "power-confirmation", "formal-qualification"], "pairwise_intersections_required": {"development_power": 0, "development_formal": 0, "power_formal": 0}, "all_set_hashes_required": true},
+  "champion_change_maximum": 0
+}

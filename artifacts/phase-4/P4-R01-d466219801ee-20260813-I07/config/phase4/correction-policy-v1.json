@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_correction_policy",
+  "correction_policy_version": "correction-policy-v1",
+  "idempotence_key": ["game", "issue_id", "new_result_revision_id", "correction_policy_version"],
+  "score_side": ["new_data_release", "current_view_replacement", "corrected_scores", "corrected_aggregates", "score_correction_impact"],
+  "research_side": ["remediation_decision", "archive_pending_requalification", "replay_or_requalify", "alpha_history_unchanged_proof"],
+  "closure_requires_both_sides": true,
+  "preserve": ["old_results", "old_scores", "old_aggregates", "old_decisions", "executed_experiments", "alpha_spending", "locked_forecasts"],
+  "alpha_refund": false,
+  "duplicate_observation_credit": false,
+  "partial_terminal": "HOLD_CORRECTION_INCOMPLETE"
+}

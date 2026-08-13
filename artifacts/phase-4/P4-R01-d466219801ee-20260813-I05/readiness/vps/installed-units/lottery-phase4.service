@@ -1,0 +1,10 @@
+[Unit]
+Description=Lottery Phase 4 deterministic scheduler tick
+After=network-online.target
+
+[Service]
+Type=oneshot
+UMask=0077
+WorkingDirectory=/home/royzuo/worktrees/lottery-prediction-phase4-mvp-20260813-r01/artifacts/phase-4/P4-R01-d466219801ee-20260813-I05
+EnvironmentFile=/home/royzuo/worktrees/lottery-prediction-phase4-mvp-20260813-r01/artifacts/phase-4-runtime/p4-runtime-phase4-mvp-20260813-r01-i02/runtime-provenance.env
+ExecStart=/home/royzuo/worktrees/lottery-prediction-phase4-mvp-20260813-r01/artifacts/phase-4-runtime/p4-runtime-phase4-mvp-20260813-r01-i02/release-venvs/P4-R01-d466219801ee-20260813-I05/bin/python -m lottery_system.phase4 schedule tick --schedule /home/royzuo/worktrees/lottery-prediction-phase4-mvp-20260813-r01/artifacts/phase-4/P4-R01-d466219801ee-20260813-I05/tests/phase4/fixtures/schedule/dual-game.json --runtime-root /home/royzuo/worktrees/lottery-prediction-phase4-mvp-20260813-r01/artifacts/phase-4-runtime/p4-runtime-phase4-mvp-20260813-r01-i02 --clock system

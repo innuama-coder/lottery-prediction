@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_calendar_contract",
+  "timezone": "Asia/Shanghai",
+  "entries_are_explicit": true,
+  "issue_inference_forbidden": true,
+  "actions": {
+    "prepare": "previous_business_day_12:00",
+    "predict_lock": "draw_business_day_17:00",
+    "hard_deadline": "draw_business_day_18:00",
+    "result_probe_primary": "draw_business_day_22:30",
+    "result_probe_compensation": "next_business_day_08:30"
+  },
+  "plan_key": ["game", "target_issue", "action", "planned_at_utc", "schedule_release_id"],
+  "terminal_on_ambiguity": "HOLD_CALENDAR_AMBIGUOUS"
+}

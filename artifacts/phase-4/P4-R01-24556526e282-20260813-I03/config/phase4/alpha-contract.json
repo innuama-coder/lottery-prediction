@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_alpha_contract",
+  "games": ["ssq", "dlt"],
+  "families": ["static_parameter", "slow_drift_parameter", "context_feature"],
+  "initial_wealth_per_game_family": "0.006",
+  "spending_formula": "W0/(t*(t+1))",
+  "first_spend": "0.003",
+  "reward": "0",
+  "maximum_total_spend_per_game": "0.018",
+  "minimum_look": 30,
+  "maximum_look": 150,
+  "threshold": "E_n>=1/alpha_t",
+  "e_process": "product_t(p1_t(Y_t)/p0_t(Y_t))",
+  "precision": 80,
+  "revision_refund_allowed": false,
+  "negative_wealth_allowed": false
+}

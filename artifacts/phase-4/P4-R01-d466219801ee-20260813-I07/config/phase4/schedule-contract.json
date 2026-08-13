@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_schedule_contract",
+  "adapter": "systemd_user_timer",
+  "tick_minutes": 5,
+  "timer": {"OnCalendar": "*-*-* *:0/5:00 Asia/Shanghai", "Persistent": true, "AccuracySec": "1s", "RandomizedDelaySec": "0"},
+  "service": {"Type": "oneshot", "UMask": "0077", "absolute_executable": true, "explicit_working_directory": true},
+  "plan_terminals": ["succeeded", "late_completed", "missed_deadline", "blocked", "failed", "skipped_idempotent"],
+  "lease": "atomic_plan_key_lease",
+  "game_isolation": true,
+  "checkpoint_every_sequences": 10,
+  "checkpoint_every_target_action": true
+}

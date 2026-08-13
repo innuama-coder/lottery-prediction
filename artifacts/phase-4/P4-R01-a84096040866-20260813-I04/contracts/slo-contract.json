@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_slo_contract",
+  "phase4": {
+    "locked_forecast_rpo": 0,
+    "ledger_rpo": 0,
+    "qualification_recovery_rto": "max(60s,4*recovery_action_p95)",
+    "benchmark_repetitions": 20,
+    "budget_margin": "25%",
+    "timeout": "max(60s,4*p95)",
+    "parallelism_candidates": [1, 2, 4]
+  },
+  "phase5_only_not_claimed": ["95_percent_ontime_lock", "24_hour_score", "4_hour_control_plane_rto", "continuous_slo"]
+}

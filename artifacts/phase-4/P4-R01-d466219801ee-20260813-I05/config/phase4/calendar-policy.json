@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_calendar_policy",
+  "policy_id": "p4-calendar-policy-v1-20260811-i01",
+  "timezone": "Asia/Shanghai",
+  "timezone_conversion": "Python zoneinfo.ZoneInfo with runtime interpreter and tzdata identity recorded in every calendar release",
+  "entries_are_explicit": true,
+  "issue_inference_forbidden": true,
+  "actions": {
+    "prepare": {
+      "contract_expression": "previous_business_day_12:00",
+      "date_relation": "previous_local_calendar_date",
+      "planned_at_local": "12:00:00+08:00",
+      "planned_at_utc_time": "04:00:00Z"
+    },
+    "predict_lock": {
+      "contract_expression": "draw_business_day_17:00",
+      "date_relation": "draw_business_date",
+      "planned_at_local": "17:00:00+08:00",
+      "planned_at_utc_time": "09:00:00Z"
+    },
+    "hard_deadline": {
+      "contract_expression": "draw_business_day_18:00",
+      "date_relation": "draw_business_date",
+      "planned_at_local": "18:00:00+08:00",
+      "planned_at_utc_time": "10:00:00Z",
+      "late_terminal": "missed_deadline",
+      "late_forecast_lock_allowed": false
+    },
+    "result_probe_primary": {
+      "contract_expression": "draw_business_day_22:30",
+      "date_relation": "draw_business_date",
+      "planned_at_local": "22:30:00+08:00",
+      "planned_at_utc_time": "14:30:00Z"
+    },
+    "result_probe_compensation": {
+      "contract_expression": "next_business_day_08:30",
+      "date_relation": "next_local_calendar_date",
+      "planned_at_local": "08:30:00+08:00",
+      "planned_at_utc_time": "00:30:00Z"
+    },
+    "unlock_score_research": {
+      "date_relation": "dynamic_after_verified_result",
+      "trigger": "verified_result_revision",
+      "idempotent": true
+    }
+  },
+  "calendar_entry_required_fields": [
+    "game",
+    "target_issue",
+    "draw_business_date",
+    "rule_id"
+  ],
+  "rule_by_game": {
+    "ssq": "ssq-ns-33c6-16c1-v1",
+    "dlt": "dlt-ns-35c5-12c2-v1"
+  },
+  "validation_rules": {
+    "source_policy_id": "p4-source-policy-v1-20260811-i01",
+    "calendar_entries_must_be_source_reviewed": true,
+    "target_issue_strictly_increasing_within_game": true,
+    "duplicate_game_issue_forbidden": true,
+    "duplicate_or_conflicting_mapping_terminal": "HOLD_CALENDAR_AMBIGUOUS",
+    "target_issue_rollback_terminal": "HOLD_CALENDAR_AMBIGUOUS",
+    "official_state_conflict_terminal": "HOLD_CALENDAR_AMBIGUOUS",
+    "weekday_or_recurrence_issue_guessing_allowed": false,
+    "server_local_timezone_allowed": false,
+    "utc_offset_hardcoding_as_conversion_allowed": false
+  },
+  "plan_key": [
+    "game",
+    "target_issue",
+    "action",
+    "planned_at_utc",
+    "schedule_release_id"
+  ],
+  "provenance": {
+    "producer_actor_id": "p4-data-custodian-i01",
+    "task_id": "T03",
+    "session_id": "/root/data_custodian_t00",
+    "source_commit": "f8a7a6abb46a55f8fa17e5ae3280c5c5432c363b",
+    "path": "config/phase4/calendar-policy.json",
+    "role": "data_custodian"
+  }
+}

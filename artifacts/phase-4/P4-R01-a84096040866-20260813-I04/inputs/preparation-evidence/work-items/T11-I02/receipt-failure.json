@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_attempt","failure":"receipt source commit was transcribed incorrectly; E2E manifest remains immutable and valid","process_exit_code":20,"schema_version":"1.0.0","status":"HOLD","task_id":"T11","terminal":"HOLD_WORK_ITEM_RECEIPT"}

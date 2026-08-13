@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_decision_contract",
+  "decision_contract_id": "phase4-decision-v1",
+  "key": ["game", "target_issue", "result_revision_id", "decision_contract_id", "trigger"],
+  "terminal_states": ["no_change", "rejected", "archived", "shadow_candidate_proposal", "remediation_completed", "failed"],
+  "zero_experiment_reasons": ["no_eligible_hypothesis", "budget_exhausted", "guard_hold", "scheduled_no_change"],
+  "maximum_experiments_per_cycle": 1,
+  "allowed_triggers": ["new_verified_result", "official_result_revision"],
+  "direct_champion_change_allowed": false
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/genesis.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "base_phase1_release_id", "base_phase1_manifest_path", "base_phase1_manifest_sha256", "base_phase1_records_path", "base_phase1_records_sha256", "base_phase1_observations_path", "base_phase1_observations_sha256", "previous_phase4_release_id", "provenance"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase4_genesis"},
+    "base_phase1_release_id": {"const": "baseline-v1"},
+    "base_phase1_manifest_path": {"const": "artifacts/phase-1/baseline-v1/manifest.json"},
+    "base_phase1_manifest_sha256": {"const": "0ddcccb72dce7662af665b369995b1c1fd28c68554b32e175f4561fc9f9683d1"},
+    "base_phase1_records_path": {"const": "artifacts/phase-1/baseline-v1/draws.jsonl"},
+    "base_phase1_records_sha256": {"const": "f2e34a88fbd43a378d7fb6255d39deee1354216b918934f355a06ef986be60c1"},
+    "base_phase1_observations_path": {"const": "artifacts/phase-1/baseline-v1/observations.jsonl"},
+    "base_phase1_observations_sha256": {"const": "dc974863c845da1e895ecf623bc6e878ba6aa6710c902357bce68ad5e661966e"},
+    "previous_phase4_release_id": {"type": "null"},
+    "provenance": {"$ref": "#/$defs/provenance"}
+  },
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["producer_actor_id", "role", "session_id", "source_commit", "task_id"],
+      "properties": {
+        "producer_actor_id": {"type": "string", "minLength": 1},
+        "role": {"const": "release_controller"},
+        "session_id": {"type": "string", "minLength": 1},
+        "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "task_id": {"const": "T00"}
+      }
+    }
+  }
+}

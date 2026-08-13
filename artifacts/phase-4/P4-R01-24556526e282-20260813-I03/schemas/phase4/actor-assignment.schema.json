@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/actor-assignment.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "assignment_id", "assignment_stage", "authority_commit", "created_at_utc", "created_by_actor_id", "parent_assignment_sha256", "assignments", "frozen_inequalities", "future_formal_assignment_rule", "status"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase4_actor_assignment"},
+    "assignment_id": {"$ref": "#/$defs/id"},
+    "assignment_stage": {"enum": ["preparation_before_T00", "formal_before_T15"]},
+    "authority_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "created_at_utc": {"type": "string", "format": "date-time"},
+    "created_by_actor_id": {"type": "string", "minLength": 1},
+    "parent_assignment_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "assignments": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/assignment"}},
+    "frozen_inequalities": {"type": "array", "items": {"$ref": "#/$defs/inequality"}},
+    "future_formal_assignment_rule": {"type": "string", "minLength": 1},
+    "status": {"enum": ["FROZEN", "SUPERSEDED"]}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^(?!.*latest)(?!.*[*/]).+$"},
+    "safePath": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*latest)(?!.*\\*).+$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "assignment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["actor_id", "actor_type", "roles", "session_id", "task_ids", "task_record_path", "task_record_sha256"],
+      "properties": {
+        "actor_id": {"type": "string", "minLength": 1}, "actor_type": {"const": "codex_session"},
+        "roles": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["release_controller", "data_custodian", "contract_owner", "implementation_author", "statistical_owner", "run_operator", "vps_operator", "independent_oracle_author", "independent_power_operator", "independent_replay_operator", "independent_reviewer", "acceptance_engineer", "machine_delivery_statement", "acceptance_approver"]}},
+        "session_id": {"type": "string", "minLength": 1}, "task_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "task_record_path": {"$ref": "#/$defs/safePath"}, "task_record_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "inequality": {"type": "object", "additionalProperties": false, "required": ["left", "operator", "right", "reason"], "properties": {"left": {"type": "string", "minLength": 1}, "operator": {"const": "!="}, "right": {"type": "string", "minLength": 1}, "reason": {"type": "string", "minLength": 1}}}
+  }
+}

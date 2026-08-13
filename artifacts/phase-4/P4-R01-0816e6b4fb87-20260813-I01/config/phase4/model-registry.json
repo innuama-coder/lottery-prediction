@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_model_registry",
+  "probability_family": {
+    "model_family": "P4E1",
+    "scale": 1024,
+    "decimal_precision": 80,
+    "normalized_tick_min": -4096,
+    "normalized_tick_max": 4096,
+    "anchor_number": 1
+  },
+  "models": [
+    {"model_id": "M0", "role": "permanent_champion", "ticks": "all_zero"},
+    {"model_id": "P4E1", "role": "registered_candidate_family", "ticks": "quantized_additive_fixed_cardinality"},
+    {"model_id": "P4E1-full-rule-known-answer-v1", "role": "result_blind_capability_fixture", "ticks": "full_rule_spec_v1"}
+  ],
+  "parameter_families": {
+    "P01": {"shrinkage": [1, 5, 20, 100]},
+    "P02": {"training_window": [50, 100, 150, "expanding"]},
+    "P03": {"recency_half_life": [26, 52, 104, "none"]},
+    "P04": {"single_registered_tick_group_only": true, "integer_offsets": true}
+  },
+  "champion_promotion_surface": false
+}

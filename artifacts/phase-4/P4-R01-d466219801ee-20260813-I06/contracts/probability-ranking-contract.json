@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_probability_ranking_contract",
+  "serialization": {
+    "name": "P4-CJSON-1",
+    "encoding": "UTF-8",
+    "sorted_keys": true,
+    "compact_separators": true,
+    "trailing_newline": false,
+    "non_finite_numbers": false,
+    "decimal_as_canonical_string": true
+  },
+  "games": {
+    "ssq": {"rule_id": "ssq-ns-33c6-16c1-v1", "front_n": 33, "front_k": 6, "back_n": 16, "back_k": 1, "space_size": 17721088},
+    "dlt": {"rule_id": "dlt-ns-35c5-12c2-v1", "front_n": 35, "front_k": 5, "back_n": 12, "back_k": 2, "space_size": 21425712}
+  },
+  "top_k": [10, 100, 200, 1000],
+  "forecast_size": 1000,
+  "joint_score_bounds": [-28672, 28672],
+  "probability_order_key": "P4Q1024-<score_plus_28672_as_5_decimal_digits>",
+  "tie_key": "sha256(model_contract_id|probability_order_key)",
+  "tie_group_id": "sha256(forecast_id|tie_key)",
+  "normalization_tolerance": {"absolute": "1e-45", "relative": "1e-40"},
+  "probability_decimal_places": 50,
+  "minimum_probability_lower_bound": "1e-32",
+  "tie_equivalence": "exact_probability_order_key",
+  "m0_semantics": "one_full_space_tie_group",
+  "approximate_tie_grouping_allowed": false
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_source_review_contract",
+  "required_sources": {
+    "ssq": {"primary": "swlc", "corroborating": "ydniu"},
+    "dlt": {"primary": "gdlottery", "corroborating": "ydniu"}
+  },
+  "transport": {
+    "method": "GET",
+    "raw_response_required": true,
+    "cross_source_redirect": false,
+    "cookie_login": false,
+    "unregistered_proxy": false
+  },
+  "verification": "two_independent_publishers_exact_core_fact_match",
+  "policy_required_fields": [
+    "policy_id", "purpose", "reviewed_at_utc", "expires_at_utc", "endpoint",
+    "publisher", "rate_limit", "redirect_policy", "maximum_response_bytes",
+    "scheduled_internal_mvp_collection_approved"
+  ],
+  "canary_modes": ["early-readonly-canary", "readonly-canary"],
+  "failure_terminals": ["HOLD_SOURCE_POLICY", "HOLD_SOURCE_READINESS", "HOLD_SOURCE_CONFLICT"]
+}

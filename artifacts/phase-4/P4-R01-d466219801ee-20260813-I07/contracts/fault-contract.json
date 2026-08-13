@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_fault_contract",
+  "retryable": ["network_failure", "single_source_missing"],
+  "hold": ["invalid_input", "budget_insufficient", "dependency_failure", "disk_failure", "process_interruption", "checkpoint_mismatch"],
+  "fail": ["causality_leak", "locked_forecast_mutation", "selective_deletion", "evidence_fabrication", "champion_governance_bypass", "protected_artifact_mutation"],
+  "registered_alert_reasons": ["source", "network", "conflict", "revision", "calendar_ambiguity", "late_or_missed_deadline", "concurrent_trigger", "lock_mutation", "label_denial", "probability_tie_rank", "metric_comparator", "alpha_exhausted_or_negative", "checkpoint_mismatch", "disk_write_hash", "dependency", "protected_artifact", "manifest", "replay", "review"],
+  "terminal_uniqueness": true,
+  "failed_attempts_preserved": true
+}

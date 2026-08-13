@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_attempt","failure":"bottom-up recursive validation exposed stale authority provenance in the accepted T00 input","process_exit_code":20,"schema_version":"1.0.0","status":"HOLD","task_id":"T01","terminal":"HOLD_HISTORICAL_PROVENANCE"}

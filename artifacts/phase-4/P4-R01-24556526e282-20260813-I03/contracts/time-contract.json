@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_time_contract",
+  "classes": {
+    "retrospective_sequence_safe": {
+      "applies_to": "phase1_historical_draw_features",
+      "predicate": "source_issue_strictly_before_target_issue_and_fit_reads_training_prefix_only",
+      "available_at_utc": "forbidden_to_fabricate"
+    },
+    "external_point_in_time": {
+      "applies_to": "external_time_varying_prediction_features",
+      "predicate": "verified_available_at_utc_strictly_before_prediction_locked_at"
+    },
+    "official_result_label": {
+      "applies_to": "verified_official_result",
+      "predicate": "prediction_locked_at<result_verified_at<=label_unlocked_at",
+      "capability": "pid_bound_nonserializable_scorer_only"
+    }
+  },
+  "mixed_class_terminal": "FAIL_TIME_CLASS_MIXED",
+  "lock_mutation_terminal": "FAIL_CAUSALITY_OR_TAMPER"
+}

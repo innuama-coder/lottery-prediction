@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_metric_contract",
+  "metric_contract_id": "phase4-metric-v1",
+  "forecast_diagnostics": ["normalization", "legal_unique_tickets", "top_k_nested", "coverage_at_k", "order_key_consistency", "histogram_total", "tie_rank", "m0_single_group"],
+  "per_forecast_metrics": ["hit_at_10", "hit_at_100", "hit_at_200", "hit_at_1000", "joint_log_score", "skill_vs_champion", "inclusion_brier", "tie_rank_lower", "tie_rank_upper", "tie_midrank", "midrank_percentile"],
+  "window_metrics": ["mean_joint_log_score", "mean_skill", "mean_inclusion_brier", "mean_rank_percentile", "cumulative_hit_rate", "wilson_95", "reliability", "ece", "stability"],
+  "minimum_observations": 30,
+  "reliability_bins": {"count": 10, "kind": "equal_width_left_closed_right_open_last_includes_one"},
+  "numeric_tolerance": {"absolute": "1e-40", "relative": "1e-35"},
+  "forecast_diagnostic_key": ["forecast_id", "metric_contract_id"],
+  "score_key": ["forecast_id", "result_revision_id", "metric_contract_id"],
+  "window_key": ["game", "model_id", "comparator_champion_id", "model_release_id", "window_id", "metric_contract_id"],
+  "insufficient_state": "insufficient_observation",
+  "zero_probability_allowed": false
+}

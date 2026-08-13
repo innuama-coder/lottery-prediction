@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/protected-inventory.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "authority_commit", "generated_at_utc", "roots", "entries", "entry_count", "file_count", "total_file_bytes", "inventory_sha256", "provenance"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase4_protected_artifact_inventory"},
+    "authority_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "generated_at_utc": {"type": "string", "format": "date-time"},
+    "roots": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"type": "string"}},
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "type", "bytes", "sha256", "git_object_id"],
+        "properties": {
+          "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+          "type": {"enum": ["file", "symlink", "tree"]},
+          "bytes": {"type": "integer", "minimum": 0},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "git_object_id": {"type": "string", "pattern": "^[0-9a-f]{40,64}$"}
+        }
+      }
+    },
+    "entry_count": {"type": "integer", "minimum": 1},
+    "file_count": {"type": "integer", "minimum": 1},
+    "total_file_bytes": {"type": "integer", "minimum": 1},
+    "inventory_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "provenance": {"$ref": "#/$defs/provenance"}
+  },
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["producer_actor_id", "role", "session_id", "source_commit", "task_id"],
+      "properties": {
+        "producer_actor_id": {"type": "string", "minLength": 1},
+        "role": {"const": "release_controller"},
+        "session_id": {"type": "string", "minLength": 1},
+        "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "task_id": {"const": "T00"}
+      }
+    }
+  }
+}

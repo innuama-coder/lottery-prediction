@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_schedule_tick_fixture",
+  "schedule": {
+    "schema_version": "1.0.0",
+    "artifact_type": "phase4_schedule_release",
+    "schedule_release_id": "schedule-release-v1:6ff08d03b1f7e820ad0b507c45158f3302f946c4b8846957817ab266af147555",
+    "calendar_release_id": "calendar-fixture-dual-game-v1",
+    "plans": [
+      {"game":"dlt","target_issue":"2026001","action":"prepare","planned_at_local":"2026-01-02T12:00:00+08:00","timezone":"Asia/Shanghai","planned_at_utc":"2026-01-02T04:00:00Z","schedule_release_id":"schedule-release-v1:6ff08d03b1f7e820ad0b507c45158f3302f946c4b8846957817ab266af147555"},
+      {"game":"ssq","target_issue":"2026001","action":"prepare","planned_at_local":"2026-01-02T12:00:00+08:00","timezone":"Asia/Shanghai","planned_at_utc":"2026-01-02T04:00:00Z","schedule_release_id":"schedule-release-v1:6ff08d03b1f7e820ad0b507c45158f3302f946c4b8846957817ab266af147555"},
+      {"game":"dlt","target_issue":"2026001","action":"predict_lock","planned_at_local":"2026-01-03T17:00:00+08:00","timezone":"Asia/Shanghai","planned_at_utc":"2026-01-03T09:00:00Z","schedule_release_id":"schedule-release-v1:6ff08d03b1f7e820ad0b507c45158f3302f946c4b8846957817ab266af147555"},
+      {"game":"ssq","target_issue":"2026001","action":"predict_lock","planned_at_local":"2026-01-03T17:00:00+08:00","timezone":"Asia/Shanghai","planned_at_utc":"2026-01-03T09:00:00Z","schedule_release_id":"schedule-release-v1:6ff08d03b1f7e820ad0b507c45158f3302f946c4b8846957817ab266af147555"},
+      {"game":"dlt","target_issue":"2026001","action":"result_probe_primary","planned_at_local":"2026-01-03T22:30:00+08:00","timezone":"Asia/Shanghai","planned_at_utc":"2026-01-03T14:30:00Z","schedule_release_id":"schedule-release-v1:6ff08d03b1f7e820ad0b507c45158f3302f946c4b8846957817ab266af147555"},
+      {"game":"ssq","target_issue":"2026001","action":"result_probe_primary","planned_at_local":"2026-01-03T22:30:00+08:00","timezone":"Asia/Shanghai","planned_at_utc":"2026-01-03T14:30:00Z","schedule_release_id":"schedule-release-v1:6ff08d03b1f7e820ad0b507c45158f3302f946c4b8846957817ab266af147555"},
+      {"game":"dlt","target_issue":"2026001","action":"result_probe_compensation","planned_at_local":"2026-01-04T08:30:00+08:00","timezone":"Asia/Shanghai","planned_at_utc":"2026-01-04T00:30:00Z","schedule_release_id":"schedule-release-v1:6ff08d03b1f7e820ad0b507c45158f3302f946c4b8846957817ab266af147555"},
+      {"game":"ssq","target_issue":"2026001","action":"result_probe_compensation","planned_at_local":"2026-01-04T08:30:00+08:00","timezone":"Asia/Shanghai","planned_at_utc":"2026-01-04T00:30:00Z","schedule_release_id":"schedule-release-v1:6ff08d03b1f7e820ad0b507c45158f3302f946c4b8846957817ab266af147555"}
+    ]
+  },
+  "behaviors": []
+}

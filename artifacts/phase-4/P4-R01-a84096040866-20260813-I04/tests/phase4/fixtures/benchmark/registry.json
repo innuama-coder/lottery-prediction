@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_benchmark_fixture_registry",
+  "benchmark_fixture_id": "benchmark-fixture-v1:5edefaa63c80c5c8c938d20dd48c87096250344ba3f533252b0a4344a11994c7",
+  "non_scientific": true,
+  "qualification_seed_domain": null,
+  "forbidden_seed_domains": ["development", "power-confirmation", "formal-qualification"],
+  "input": {
+    "path": "tests/phase4/fixtures/benchmark/controller-input.json",
+    "sha256": "91593eeda046577644226a1eeed98132550fa4614e7b40e0bbba2e0ddf451530",
+    "sequence_count": 20
+  },
+  "controller_fixture": {
+    "path": "tests/phase4/fixtures/benchmark/controller-command.json",
+    "sha256": "11fa45cbd2f1d43c5fea65e3df377e986d0a0603567fcbf21fa9288c49cef49d"
+  },
+  "controller_source": {
+    "path": "tests/phase4/fixtures/benchmark/controller_worker.py",
+    "sha256": "010905fa0f382fa49b6ee2619e9320fc73c3be40c12dda95c36c6635c5ea494b"
+  },
+  "representative_batches": [
+    {"unit_id":"qualification_sequence","sequence_count":20},
+    {"unit_id":"black_box_controller","sequence_count":20},
+    {"unit_id":"checkpoint_every_10","sequence_count":20},
+    {"unit_id":"lossless_shard","sequence_count":20},
+    {"unit_id":"manifest_recompute","sequence_count":20},
+    {"unit_id":"evidence_return","sequence_count":20}
+  ]
+}

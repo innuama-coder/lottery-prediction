@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_calendar_build_fixture",
+  "calendar_policy_path": "config/phase4/calendar-policy.json",
+  "calendar_policy_sha256": "79ae43a35b5f83d1c424994c9b7ac34b812faa6d619d34ac9e3000afb44c8bbf",
+  "source_review_receipt_path": "tests/phase4/fixtures/source/source-review-pass.json",
+  "source_review_receipt_sha256": "982f8967a0d43ad5d61b5cb054b71bcdb7d7f883943a61c886fe8873dd700f36",
+  "entries": [
+    {"game": "ssq", "target_issue": "2026088", "draw_business_date": "2026-08-02", "rule_id": "ssq-ns-33c6-16c1-v1"},
+    {"game": "dlt", "target_issue": "2026086", "draw_business_date": "2026-08-01", "rule_id": "dlt-ns-35c5-12c2-v1"},
+    {"game": "ssq", "target_issue": "2026089", "draw_business_date": "2026-08-04", "rule_id": "ssq-ns-33c6-16c1-v1"},
+    {"game": "dlt", "target_issue": "2026087", "draw_business_date": "2026-08-03", "rule_id": "dlt-ns-35c5-12c2-v1"}
+  ]
+}

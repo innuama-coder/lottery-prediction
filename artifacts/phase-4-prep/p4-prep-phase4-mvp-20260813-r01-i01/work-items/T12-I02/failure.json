@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_attempt","failure":"bottom-up T01 validation found contract_owner and acceptance_engineer shared one actor; in-progress development workload was interrupted and this identity was retired","process_exit_code":20,"schema_version":"1.0.0","status":"HOLD","task_id":"T12","terminal":"HOLD_ROLE_CONFLICT"}

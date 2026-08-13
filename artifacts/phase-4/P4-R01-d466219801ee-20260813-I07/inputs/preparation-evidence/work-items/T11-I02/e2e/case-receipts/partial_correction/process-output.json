@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_e2e_case_process_output","case_id":"partial_correction","schema_version":"1.0.0","stderr_utf8":"test_partial_propagation_rejected (tests.phase4.test_correction.CorrectionTest.test_partial_propagation_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n","stdout_utf8":""}

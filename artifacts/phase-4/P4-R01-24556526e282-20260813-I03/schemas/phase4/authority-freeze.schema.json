@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/authority-freeze.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "authority_commit", "required_ancestor_commit", "authority_files", "phase3_acceptance", "protected_roots", "namespace_contract", "provenance"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase4_authority_freeze"},
+    "authority_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "required_ancestor_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "authority_files": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/pathHash"}
+    },
+    "phase3_acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "release_id", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/safePath"},
+        "release_id": {"const": "P3-R07-2c0fa97-20260810-I01"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "protected_roots": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/safePath"}
+    },
+    "namespace_contract": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "path"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^(?!.*latest)(?!.*[*/]).+$"},
+          "kind": {"enum": ["preparation", "staging", "runtime", "formal"]},
+          "path": {"$ref": "#/$defs/safePath"}
+        }
+      }
+    },
+    "provenance": {"$ref": "#/$defs/provenance"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "safePath": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*latest)(?!.*\\*).+$"},
+    "pathHash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {"path": {"$ref": "#/$defs/safePath"}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["producer_actor_id", "role", "session_id", "source_commit", "task_id"],
+      "properties": {
+        "producer_actor_id": {"type": "string", "minLength": 1},
+        "role": {"const": "release_controller"},
+        "session_id": {"type": "string", "minLength": 1},
+        "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "task_id": {"const": "T00"}
+      }
+    }
+  }
+}

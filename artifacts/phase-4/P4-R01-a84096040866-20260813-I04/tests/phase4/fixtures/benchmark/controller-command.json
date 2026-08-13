@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_benchmark_controller_command",
+  "argv": ["python3", "tests/phase4/fixtures/benchmark/controller_worker.py"],
+  "protocol": "json_stdin_stdout_v1",
+  "non_scientific": true,
+  "qualification_seed_domain": null
+}

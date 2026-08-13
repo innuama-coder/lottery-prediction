@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_full_rule_oracle_spec_candidate",
+  "spec_id": "P4E1-full-rule-known-answer-v1",
+  "result_blind": true,
+  "probability_family": "P4E1",
+  "decimal_precision": 80,
+  "scale": 1024,
+  "games": {
+    "ssq": {"rule_id": "ssq-ns-33c6-16c1-v1", "front_n": 33, "front_k": 6, "back_n": 16, "back_k": 1, "space_size": 17721088},
+    "dlt": {"rule_id": "dlt-ns-35c5-12c2-v1", "front_n": 35, "front_k": 5, "back_n": 12, "back_k": 2, "space_size": 21425712}
+  },
+  "top_k": [10, 100, 200, 1000],
+  "raw_tick_rule": {"positions_1_to_4": [32, 24, 16, 8], "positions_n_minus_3_to_n": [-8, -16, -24, -32], "all_other_positions": 0},
+  "normalization": "subtract_raw_tick_at_number_1",
+  "normalized_tick_range": [-64, 0],
+  "candidate_source": "mathematical_spec_only_not_product_output",
+  "m0_coverage": "K/full_space_size",
+  "candidate_coverage": "sum_exact_candidate_probability_over_deterministic_top_K",
+  "strict_gate": "candidate_coverage>M0_coverage_for_all_eight_cells",
+  "absolute_error_bound": "1e-60",
+  "t01_probability_contract_sha256": "3d122a337a8c13840963e578b0c670169983c893409b2b299112575e2d228d2c"
+}

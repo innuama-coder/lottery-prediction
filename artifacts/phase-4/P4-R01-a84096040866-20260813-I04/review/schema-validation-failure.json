@@ -1,0 +1,60 @@
+{
+  "artifact_type": "phase4_t22_schema_validation_failure",
+  "schema_version": "1.0.0",
+  "release_id": "P4-R01-a84096040866-20260813-I04",
+  "reviewer_actor_id": "p4-r01-i02-reviewer",
+  "reviewer_session_id": "/root/t22_reviewer",
+  "task_id": "T22",
+  "source_commit": "a840960408669f2242c937fe1e1de62efd7be525",
+  "generated_at_utc": "2026-08-13T02:48:40Z",
+  "decision": "HOLD",
+  "terminal": "T22_REVIEW_HOLD_SCHEMA_MISMATCH",
+  "blocking_findings": [
+    {
+      "finding_id": "T22-REVIEW-SCHEMA-001",
+      "severity": "blocking",
+      "reason_code": "REVIEW_SCHEMA_MISMATCH",
+      "description": "The frozen check_review_closure.py exited zero and emitted review/review.json, but that document does not validate against the release-frozen schemas/phase4/review.schema.json.",
+      "schema_errors": {
+        "artifact_type": {
+          "expected": "phase4_independent_review",
+          "actual": "phase4_release_review"
+        },
+        "missing_required_properties": [
+          "review_id",
+          "reviewer_task_id",
+          "reviewer_session_id",
+          "validator_closure_sha256",
+          "replay_closure_sha256",
+          "evidence_manifest_sha256",
+          "a01_a21_disposition",
+          "independence_audit"
+        ],
+        "wrong_property_shapes": {
+          "blocking_findings": "schema requires an array; generated document contains integer 0"
+        },
+        "disallowed_additional_properties": [
+          "assertion_dispositions",
+          "independence_review",
+          "terminal"
+        ]
+      }
+    }
+  ],
+  "command_results": {
+    "verify_execution_environment_exit_code": 0,
+    "independent_bottom_up_review_exit_code": 0,
+    "check_review_closure_exit_code": 0,
+    "review_schema_postcheck_exit_code": 1
+  },
+  "hashes": {
+    "check_review_closure_script_sha256": "76a5b109f532cd591e3de0eebc2b74fca5eeaae8e5c9348b584ea568b7ba26c2",
+    "review_schema_sha256": "e99ff3547e039a6183b1083d2ce2aa360ba5db81186e637fbc8bb778754bee7f",
+    "evidence_manifest_sha256": "e4f4ee4c9ee8ae107a4d8f54267190b1f260705d3c32361195faa9829b1f608c",
+    "replay_closure_sha256": "3a9b5a3042d1b5cca50708b4351b7c48451355c1954366960a9d7df457498c2a",
+    "validator_closure_sha256": "e622c093a735592ccebdcf98e5fc5718fd904a249c51fba7f0c705a2fc7bbfa4",
+    "generated_review_sha256": "77e9465a6ab0535f170bbe0f60b5c72fa89f81dee89b8c1192f1c2fecb941c4b",
+    "generated_review_closure_sha256": "857b8627be949730a8112547da8348173e3456b50c248d8a3518770c12163444"
+  },
+  "disposition": "Preserve this release as a failed append-only attempt. Repair the implementation on a new commit, assemble a fresh release identity, and rerun the affected formal DAG. T23 is prohibited for this release."
+}

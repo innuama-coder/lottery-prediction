@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/window-metric.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_type", "game", "model_id", "comparator_champion_id", "model_release_id", "window_id", "metric_contract_id", "observation_count", "score_ids", "aggregate_state", "values"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_type": {"const": "phase4_window_metric"},
+    "game": {"enum": ["ssq", "dlt"]},
+    "model_id": {"type": "string", "minLength": 1},
+    "comparator_champion_id": {"type": "string", "minLength": 1},
+    "model_release_id": {"type": "string", "minLength": 1},
+    "window_id": {"type": "string", "minLength": 1},
+    "metric_contract_id": {"type": "string", "minLength": 1},
+    "observation_count": {"type": "integer", "minimum": 0},
+    "score_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "aggregate_state": {"enum": ["insufficient_observation", "available"]},
+    "values": {"oneOf": [{"$ref": "#/$defs/metricValues"}, {"type": "null"}]}
+  },
+  "allOf": [
+    {"if": {"properties": {"aggregate_state": {"const": "available"}}, "required": ["aggregate_state"]}, "then": {"properties": {"observation_count": {"minimum": 30}, "score_ids": {"minItems": 30}, "values": {"$ref": "#/$defs/metricValues"}}}},
+    {"if": {"properties": {"aggregate_state": {"const": "insufficient_observation"}}, "required": ["aggregate_state"]}, "then": {"properties": {"observation_count": {"maximum": 29}, "values": {"const": null}}}}
+  ],
+  "$defs": {
+    "decimal": {"type": "string", "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"},
+    "rateMap": {"type": "object", "additionalProperties": false, "required": ["10", "100", "200", "1000"], "properties": {"10": {"$ref": "#/$defs/decimal"}, "100": {"$ref": "#/$defs/decimal"}, "200": {"$ref": "#/$defs/decimal"}, "1000": {"$ref": "#/$defs/decimal"}}},
+    "interval": {"type": "object", "additionalProperties": false, "required": ["lower", "upper"], "properties": {"lower": {"$ref": "#/$defs/decimal"}, "upper": {"$ref": "#/$defs/decimal"}}},
+    "intervalMap": {"type": "object", "additionalProperties": false, "required": ["10", "100", "200", "1000"], "properties": {"10": {"$ref": "#/$defs/interval"}, "100": {"$ref": "#/$defs/interval"}, "200": {"$ref": "#/$defs/interval"}, "1000": {"$ref": "#/$defs/interval"}}},
+    "reliabilityBin": {"type": "object", "additionalProperties": false, "required": ["bin_index", "lower", "upper", "count", "mean_predicted_probability", "observed_rate"], "properties": {"bin_index": {"type": "integer", "minimum": 0, "maximum": 9}, "lower": {"$ref": "#/$defs/decimal"}, "upper": {"$ref": "#/$defs/decimal"}, "count": {"type": "integer", "minimum": 0}, "mean_predicted_probability": {"oneOf": [{"$ref": "#/$defs/decimal"}, {"type": "null"}]}, "observed_rate": {"oneOf": [{"$ref": "#/$defs/decimal"}, {"type": "null"}]}}},
+    "metricValues": {"type": "object", "additionalProperties": false, "required": ["mean_joint_log_score", "mean_skill", "mean_inclusion_brier", "mean_rank_percentile", "cumulative_hit_rate", "wilson_95", "reliability", "ece", "stability"], "properties": {"mean_joint_log_score": {"$ref": "#/$defs/decimal"}, "mean_skill": {"$ref": "#/$defs/decimal"}, "mean_inclusion_brier": {"$ref": "#/$defs/decimal"}, "mean_rank_percentile": {"$ref": "#/$defs/decimal"}, "cumulative_hit_rate": {"$ref": "#/$defs/rateMap"}, "wilson_95": {"$ref": "#/$defs/intervalMap"}, "reliability": {"type": "array", "minItems": 10, "maxItems": 10, "items": {"$ref": "#/$defs/reliabilityBin"}}, "ece": {"$ref": "#/$defs/decimal"}, "stability": {"$ref": "#/$defs/decimal"}}}
+  }
+}

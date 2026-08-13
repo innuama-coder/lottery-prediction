@@ -1,0 +1,836 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no"><!-- <meta name="viewport" content="width=1250,initial-scale=0,maximum-scale=2" /> --><meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="renderer" content="webkit"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="stylesheet" href="/static/frontend/css/lotterynew_2021style_css_bootstrap.css"><link rel="stylesheet" href="/static/frontend/css/reset.css"><link rel="stylesheet" href="/static/frontend/css/drawnotice.css"><link rel="stylesheet" href="/static/frontend/css/cashaprize.css"><link rel="stylesheet" href="/static/frontend/css/lotterynew_2021style_css_head.css"><link rel="stylesheet" href="/static/frontend/css/lotterynew_2021style_css_footer.css?v=20260803"><title>上海市福利彩票发行中心官方网站</title><style>.drawNotice_shuangse p.blue{background-color:#2f71d0;}</style><style>        .cashaprize_rightSideBar .Selectcolor a{color:#fff;}
+        .cashaprize_rightSideBar>div{position: relative;}
+        .drawNotice_shuangse p.blue{background-color:#2f71d0;}
+        .cashaprize_check_panel{width:615px;margin:70px auto 0;text-align:center;}
+        .cashaprize_check_label{font-size:18px;color:#333;margin:0 0 14px;}
+        .cashaprize_check_input input{width:615px;height:42px;border:1px solid #e5e5e5;padding:0 12px;font-size:18px;}
+        .cashaprize_check_hint{margin-top:12px;color:#999;font-size:14px;text-align:left;}
+        .cashaprize_check_radio{display:flex;justify-content:center;gap:28px;margin:28px 0 34px;font-size:14px;}
+        .cashaprize_check_radio input{margin-right:5px;accent-color:#e9000f;}
+        .cashaprize_check_select select{width:615px;height:42px;border:1px solid #e5e5e5;padding:0 12px;font-size:20px;color:#e95522;background:#fff;}
+        .cashaprize_check_btn{margin-top:70px;text-align:center;}
+        .cashaprize_check_btn button{width:240px;height:52px;border:0;border-radius:28px;background:#e9000f;color:#fff;font-size:26px;font-weight:700;cursor:pointer;}
+        .three-d-check-panel{margin-top:54px;}
+        .three-d-check-panel .cashaprize_check_hint{width:615px;margin:12px auto 0;text-align:left;}
+        .three-d-play-types{display:inline-flex;align-items:center;justify-content:center;gap:24px;margin:2px 0 34px;background:#fff;font-size:14px;}
+        .three-d-play-type{display:inline-flex;align-items:center;color:#111;cursor:pointer;}
+        .three-d-play-type input{margin:0 4px 0 0;appearance:auto;accent-color:#e9000f;}
+        .three-d-check-btn{margin-top:70px;}
+        .three-d-message-prompt{margin-top:70px;}
+        .cashaprize_btn button{display:block;width:100%;height:100%;padding:0;border:0;background:transparent;color:inherit;font:inherit;line-height:inherit;cursor:pointer;}
+        .df6j1-number-ball.selected,.df6j1-animal-ball.selected,.c15c5-number-ball.selected,.qlc-number-ball.selected{background:#e9000f!important;color:#fff!important;}
+        .cashaprize_check_result{text-align:center;margin-top:28px;font-size:18px;}
+        .Messageprompt{margin-top:70px;text-align:center;font-size:20px;color:#111;}
+        .check-result-page{padding-top:40px;}
+        .check-result-card{position:relative;z-index:2;width:600px;margin:0 auto;background:#fff;border:1px solid #999;padding:18px 20px 20px;}
+        .check-result-title{text-align:center;color:#c60000;font-size:18px;font-weight:700;border-bottom:1px solid #d8d8d8;padding:6px 0;}
+        .check-result-issue{text-align:right;font-size:14px;margin:4px 0 18px;}
+        .check-result-balls{text-align:center;margin:20px 0 35px;}
+        .check-result-balls span{display:inline-block;width:42px;height:42px;line-height:42px;border-radius:50%;background:#b04747;color:#fff;font-size:22px;font-weight:700;margin:0 5px;box-shadow:inset 0 6px 8px rgba(255,255,255,.35);}
+        .check-result-balls span.red{background:#b04747;}
+        .check-result-balls span.blue{background:#2f71d0;}
+        .check-result-section{text-align:center;color:#c60000;font-size:18px;font-weight:700;margin:0 0 8px;}
+        .check-result-table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+        .check-result-table th,.check-result-table td{height:28px;padding:4px 8px;text-align:right;font-size:14px;}
+        .check-result-table th{background:#f1f0eb;color:#111;text-align:center;}
+        .check-result-table td:first-child,.check-result-table th:first-child{text-align:left;padding-left:28px;}
+        .check-result-table tr.total td{background:#f1f0eb;font-weight:700;}
+        .check-result-message{font-size:16px;line-height:1.7;font-weight:700;}
+        .check-result-notice{margin-top:14px;padding-top:8px;border-top:1px solid #e5e5e5;font-size:16px;line-height:1.8;font-weight:700;}
+        .check-result-red-band{position:relative;z-index:1;height:148px;background:#d80000;margin-top:-74px;}
+        .check-result-logo{text-align:center;color:#fff;padding-top:96px;font-size:14px;}
+        .ssq-check-panel{width:100%;margin:30px auto 0;}
+        .ssq-check-title{font-size:18px;color:#5b5b5b;text-align:center;width:100%;margin:22px 0 0;}
+        .ssq-ball-grid{display:flex;flex-wrap:wrap;width:90%;margin:20px auto 30px;padding:0 25px 20px;border:1px solid #e8e8e8;}
+        .ssq-ball{width:35px;height:35px;padding:0;border:0;border-radius:30px;color:#fff;cursor:pointer;font-size:18px;line-height:35px;margin-left:7px;margin-top:10px;}
+        .ssq-ball.red{background:#e9000f;}
+        .ssq-ball.blue{background:#549fe2;}
+        .ssq-ball.red.selected,.ssq-ball.blue.selected{background:#ea8c05;}
+        .ssq-selected-row{display:block;margin-top:24px;}
+        .ssq-selected-label{display:block;font-size:18px;color:#5b5b5b;text-align:center;width:100%;margin-top:14px;}
+        .ssq-selected-row input{display:block;width:90%;height:42px;margin:10px auto 0;border:1px solid #e8e8e8;background:#fff;padding:0 10px;text-align:center;}
+        .ssq-clear{display:block;height:34px;padding:0 18px;margin:15px auto 0;border:0;border-radius:17px;background:#eee;cursor:pointer;}
+        .ssq-check-select select{width:90%;display:block;height:42px;margin:10px auto 30px;text-align:center;text-align-last:center;font-size:18px;color:#da6424;border:1px solid #e8e8e8;background:#fff;}
+        .ssq-check-panel .cashaprize_btn button{width:100%;height:50px;border:0;background:transparent;color:#fff;font-size:25px;font-weight:bold;cursor:pointer;}
+        .ssq-error{text-align:center;color:#d71920;margin-top:18px;}
+        @media(max-width:900px){
+            .ssq-check-scroll{overflow-x:auto;}
+            .ssq-check-panel{min-width:760px;}
+        }
+        .header_tab > div:hover > .index_subMenu_box{display:block;}
+        .previous-3d-tools{display:flex;align-items:center;justify-content:space-between;margin:25px 0 18px;font-size:17px;color:#888;}
+        .previous-3d-buttons{display:flex;align-items:center;gap:10px;}
+        .previous-3d-buttons a,.previous-3d-custom{display:inline-flex;align-items:center;justify-content:center;min-width:88px;height:30px;border:1px solid #bfbfbf;background:#fff;color:#999;text-decoration:none;font-size:16px;font-family:inherit;cursor:pointer;}
+        .previous-3d-buttons a.active{border-color:#e9000f;color:#e9000f;}
+        .previous-3d-custom{gap:8px;}
+        .previous-3d-custom:after{content:"";width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #aaa;}
+        .previous-3d-custom-wrap{position:relative;display:inline-flex;}
+        .previous-3d-custom-panel{display:none;position:absolute;right:0;top:44px;z-index:20;width:310px;background:#fff;border:1px solid #f24855;padding:24px 22px 20px;color:#333;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+        .previous-3d-custom-panel.is-open{display:block;}
+        .previous-3d-custom-title{text-align:center;font-size:17px;font-weight:bold;margin-bottom:18px;}
+        .previous-3d-custom-row{display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;}
+        .previous-3d-custom-row input{width:90px;height:34px;border:1px solid #aaa;text-align:center;font-size:15px;}
+        .previous-3d-custom-note{text-align:center;color:#e9000f;font-size:14px;margin:10px 0 18px;}
+        .previous-3d-custom-actions{display:flex;justify-content:center;gap:16px;}
+        .previous-3d-custom-actions button,.previous-3d-custom-actions a{width:94px;height:30px;line-height:30px;border:0;color:#fff;text-align:center;font-size:16px;text-decoration:none;cursor:pointer;}
+        .previous-3d-custom-actions button{background:#1683e8;}
+        .previous-3d-custom-actions a{background:#d93645;}
+        .previous-3d-table{width:100%;border-collapse:collapse;text-align:center;font-size:16px;color:#333;}
+        .previous-3d-table th{height:58px;background:#ddd;border:1px solid #fff;font-weight:bold;}
+        .previous-3d-table td{height:54px;
+            /* background:#f7f7f7; */
+            border:1px solid #fff;}
+        /* .previous-3d-table tr:nth-child(even) td{background:#eee;} */
+        .previous-3d-ball{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;margin:0 2px;border-radius:50%;background:#559fde;color:#fff;font-size:15px;}
+        .previous-3d-detail{font-size:24px;color:#8b8b8b;text-decoration:none;}
+
+        .ssq-previous-tools{display:flex;align-items:center;justify-content:space-between;margin:25px 0 18px;font-size:16px;color:#999999;}
+        .ssq-previous-label{font-size:17px;color:#888;}
+        .ssq-previous-query{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+        .ssq-previous-query span{white-space:nowrap;}
+        .cashaprize_news1.ssq-previous-news{line-height:24px;padding-top:7px;box-sizing:border-box;}
+        .cashaprize_news1.ssq-previous-news div{height:24px;line-height:24px;}
+        .cashaprize_news1.c15c5-single-news{height:36px;line-height:36px;padding-top:0;box-sizing:border-box;}
+        .cashaprize_news1.c15c5-single-news div{display:block;height:36px!important;line-height:36px!important;margin:0!important;padding:0!important;transform:translateY(13px);}
+        .cashaprize_news1>div{margin-top:0!important;}
+        .ssq-previous-query a,.ssq-previous-custom{display:inline-flex;align-items:center;justify-content:center;height:30px;padding:0 7px;border:1px solid #bfbfbf;background:#fff;color:#999;text-decoration:none;font-size:16px;box-sizing:border-box;outline: none;}
+        .ssq-previous-query a.active{border-color:#e9000f;color:#e9000f;}
+        .ssq-previous-custom{min-width:104px;gap:8px;cursor:pointer;font-family:inherit;}
+        .ssq-previous-custom:after{content:"";width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #aaa;}
+        .ssq-custom-wrap{position:relative;display:inline-flex;}
+        .ssq-custom-panel{display:none;position:absolute;top:42px;right:0;z-index:9;width:310px;padding:22px 20px 20px;border:2px solid #e9000f;background:#fff;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.12);}
+        .ssq-custom-panel.is-open{display:block;}
+        .ssq-custom-panel:before{content:"";position:absolute;top:-8px;right:28px;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:8px solid #e9000f;}
+        .ssq-custom-title{font-size:17px;color:#333;margin-bottom:18px;}
+        .ssq-custom-row{display:flex;align-items:center;justify-content:center;gap:10px;color:#333;font-size:16px;}
+        .ssq-custom-row input{width:82px;height:34px;border:1px solid #aaa;text-align:center;font-size:15px;}
+        .ssq-custom-note{margin-top:10px;color:#e9000f;font-size:14px;}
+        .ssq-custom-actions{display:flex;justify-content:center;gap:12px;margin-top:16px;}
+        .ssq-custom-actions button,.ssq-custom-actions a{width:88px;height:30px;line-height:30px;border:0;color:#fff;text-align:center;text-decoration:none;font-size:16px;cursor:pointer;}
+        .ssq-custom-actions button{background:#1683e8;}
+        .ssq-custom-actions a{background:#d93645;}
+        .ssq-previous-scroll{width:100%;overflow-x:auto;padding-bottom:8px;}
+        .ssq-previous-table{min-width:1360px;width:100%;border-collapse:collapse;text-align:center;font-size:16px;color:#333;}
+        .ssq-previous-table th{height:46px;background:#ddd;border:1px solid #fff;font-weight:bold;}
+        .ssq-previous-table td{height:54px;
+            /* background:#f7f7f7; */
+            border:1px solid #fff;}
+        /* .ssq-previous-table tr:nth-child(even) td{background:#eee;} */
+        .ssq-previous-table .drawNotice_shuangse p{width:28px;height:28px;line-height:28px;font-size:15px;margin:0 3px;border-radius:50%;display:inline-block;background:#e9000f;color:#fff;float:none;}
+        .ssq-previous-table .drawNotice_shuangse p.blue{background:#549fe2;}
+        .ssq-first-prize{white-space:nowrap;}
+        .ssq-detail-link{display:inline-block;width:34px;height:28px;text-decoration:none;color:#8b8b8b;line-height:24px;}
+        /* .ssq-detail-link:before{content:"";display:inline-block;width:24px;height:18px;border:2px solid #8b8b8b;border-radius:14px;box-sizing:border-box;} */
+        /* .ssq-detail-link:after{content:"";display:inline-block;width:6px;height:6px;border-left:2px solid #8b8b8b;border-bottom:2px solid #8b8b8b;transform:translate(-19px,7px) rotate(-25deg);background:#f7f7f7;} */
+        @media(max-width:1100px){.ssq-previous-tools{align-items:flex-start;flex-direction:column;gap:12px}.ssq-previous-query{justify-content:flex-start}}
+        .qlc-previous-scroll{width:100%;overflow-x:auto;padding-bottom:8px;}
+        .qlc-previous-table{min-width:1600px;border-collapse:collapse;text-align:center;font-size:15px;color:#333;}
+        .qlc-previous-table th{height:48px;background:#ddd;border:1px solid #fff;font-weight:bold;}
+        .qlc-previous-table td{height:44px;
+            /* background:#f7f7f7; */
+            border:1px solid #fff;}
+        /* .qlc-previous-table tr:nth-child(even) td{background:#eee;} */
+        .qlc-previous-table .drawNotice_shuangse p{width:26px;height:26px;line-height:26px;font-size:14px;margin:0 2px;border-radius:50%;display:inline-block;background:#e9000f;color:#fff;float:none;}
+        .qlc-previous-table .drawNotice_shuangse p.blue{background:#549fe2;}
+        .kl8-previous-tools{display:flex;align-items:center;justify-content:space-between;margin:25px 0 18px;font-size:17px;color:#888;}
+        .kl8-previous-label{font-size:17px;color:#888;}
+        .kl8-previous-query{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+        .kl8-previous-query span{white-space:nowrap;}
+        .cashaprize_news1.kl8-previous-news{line-height:24px;padding-top:7px;box-sizing:border-box;}
+        .cashaprize_news1.kl8-previous-news div{height:24px;line-height:24px;}
+        .kl8-previous-query a,.kl8-previous-custom{display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:30px;padding:0 12px;border:1px solid #bfbfbf;background:#fff;color:#999;text-decoration:none;font-size:16px;box-sizing:border-box;}
+        .kl8-previous-query a.active{border-color:#e9000f;color:#e9000f;}
+        .kl8-previous-custom{min-width:104px;gap:8px;cursor:pointer;font-family:inherit;}
+        .kl8-previous-custom:after{content:"";width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #aaa;}
+        .kl8-custom-wrap{position:relative;display:inline-flex;}
+        .kl8-custom-panel{display:none;position:absolute;top:42px;right:0;z-index:9;width:310px;padding:22px 20px 20px;border:2px solid #e9000f;background:#fff;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.12);}
+        .kl8-custom-panel.is-open{display:block;}
+        .kl8-custom-panel:before{content:"";position:absolute;top:-8px;right:28px;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:8px solid #e9000f;}
+        .kl8-custom-title{font-size:17px;color:#333;margin-bottom:18px;}
+        .kl8-custom-row{display:flex;align-items:center;justify-content:center;gap:10px;color:#333;font-size:16px;}
+        .kl8-custom-row input{width:82px;height:34px;border:1px solid #aaa;text-align:center;font-size:15px;}
+        .kl8-custom-note{margin-top:10px;color:#e9000f;font-size:14px;}
+        .kl8-custom-actions{display:flex;justify-content:center;gap:12px;margin-top:16px;}
+        .kl8-custom-actions button,.kl8-custom-actions a{width:88px;height:30px;line-height:30px;border:0;color:#fff;text-align:center;text-decoration:none;font-size:16px;cursor:pointer;}
+        .kl8-custom-actions button{background:#1683e8;}
+        .kl8-custom-actions a{background:#d93645;}
+        .kl8-previous-table{width:100%;border-collapse:collapse;text-align:center;font-size:15px;color:#333;}
+        .kl8-previous-table th{height:46px;background:#ddd;border:1px solid #fff;font-weight:bold;}
+        .kl8-previous-table td{height:44px;
+            /* background:#f7f7f7; */
+            border:1px solid #fff;}
+        /* .kl8-previous-table tr:nth-child(even) td{background:#eee;} */
+        .kl8-previous-table .drawNotice_shuangse p{width:24px;height:24px;line-height:24px;font-size:13px;margin:0 2px;border-radius:50%;display:inline-block;background:#e9000f;color:#fff;float:none;}
+        .kl8-previous-detail{font-size:22px;color:#8b8b8b;text-decoration:none;}
+        @media(max-width:1100px){.kl8-previous-tools{align-items:flex-start;flex-direction:column;gap:12px}.kl8-previous-query{justify-content:flex-start}}
+        .previous-15c5-wide{width:1180px;margin-left:50%;transform:translateX(-50%);}
+        .previous-15c5-tools{display:flex;align-items:center;justify-content:space-between;margin:25px 0 18px;font-size:17px;color:#888;white-space:nowrap;}
+        .previous-15c5-tools > div:first-child{width:330px;}
+        .previous-15c5-buttons{display:flex;align-items:center;gap:10px;}
+        .previous-15c5-buttons a,.previous-15c5-custom{display:inline-flex;align-items:center;justify-content:center;min-width:88px;height:30px;border:1px solid #bfbfbf;background:#fff;color:#999;text-decoration:none;font-size:16px;}
+        .previous-15c5-buttons a.active{border-color:#e9000f;color:#e9000f;}
+        .previous-15c5-custom{min-width:118px;gap:8px;}
+        .previous-15c5-custom:after{content:"";width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #aaa;}
+        .previous-15c5-table-wrap{width:100%;overflow-x:auto;margin-top:24px;padding-bottom:8px;}
+        .previous-15c5-table{width:1600px;border-collapse:collapse;text-align:center;}
+        .previous-15c5-table th{height:58px;vertical-align:middle;text-align:center;background:#ddd;border:1px solid #fff;font-weight:bold;}
+        .previous-15c5-table td{height:54px;
+            /* background:#f7f7f7; */
+            border:1px solid #fff;}
+        /* .previous-15c5-table tr:nth-child(even) td{background:#eee;} */
+        .previous-15c5-ball{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;margin:0 2px;border-radius:50%;background:#e9000f;color:#fff;font-size:12px;}
+        .previous-ttcx4-wide{width:1180px;margin-left:50%;transform:translateX(-50%);}
+        .previous-ttcx4-tools{display:flex;align-items:center;justify-content:space-between;margin:25px 0 18px;font-size:17px;color:#888;white-space:nowrap;}
+        .previous-ttcx4-tools > div:first-child{width:330px;}
+        .previous-ttcx4-buttons{display:flex;align-items:center;gap:10px;}
+        .previous-ttcx4-buttons a,.previous-ttcx4-custom{display:inline-flex;align-items:center;justify-content:center;min-width:88px;height:30px;border:1px solid #bfbfbf;background:#fff;color:#999;text-decoration:none;font-size:16px;}
+        .previous-ttcx4-buttons a.active{border-color:#e9000f;color:#e9000f;}
+        .previous-ttcx4-custom{min-width:118px;gap:8px;}
+        .previous-ttcx4-custom:after{content:"";width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #aaa;}
+        .previous-ttcx4-table-wrap{width:100%;overflow-x:auto;margin-top:24px;padding-bottom:8px;}
+        .previous-ttcx4-table{width:1600px;border-collapse:collapse;text-align:center;}
+        .previous-ttcx4-table th{height:58px;vertical-align:middle;text-align:center;background:#ddd;border:1px solid #fff;font-weight:bold;}
+        .previous-ttcx4-table td{height:54px;
+            /* background:#f7f7f7; */
+            border:1px solid #fff;}
+        /* .previous-ttcx4-table tr:nth-child(even) td{background:#eee;} */
+        .previous-ttcx4-ball{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;margin:0 2px;border-radius:50%;background:#e9000f;color:#fff;font-size:12px;}
+        #threeDCustomToggle:focus{outline: none;}
+        .drawNotice_table1 th,.drawNotice_table1 td{
+            font-size: 14px;
+        }
+        table {
+            border-collapse: collap se;
+            border: white 1px solid;
+            height: auto;
+            /* width: 1600px !important; */
+        }
+        th,
+        tr {
+            border: 1px solid #ffffff;
+        }
+
+        .table thead th {
+            vertical-align: inherit !important;
+        }
+
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 0px solid #dee2e6;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 0px solid #dee2e6;
+            text-align: center;
+            border: 1px solid #ffffff;
+        }
+
+        .add1-ball{
+            background-color: #e9000f;
+        }
+        .drawNotice_table1 .table-bordered thead th {
+            font-size: 18px;
+            border-bottom-width: 2px;
+            border: 1px solid #dee2e6;
+        }
+        .drawNotice_table1 .table-bordered  td {
+            font-size: 18px;
+            border: 1px solid #dee2e6;
+        }
+       input[type="radio"]+label::before {
+            content: " ";
+            display: inline-block;
+            vertical-align: middle;
+            width: .853333rem;
+            height: .853333rem;
+            border-radius: 50%;
+            border: .064rem solid #e9000f;
+            margin-right: .213333rem;
+            box-sizing: border-box;
+        }
+
+        input[type="radio"]:checked+label::before {
+            background-color: #e9000f;
+            background-clip: content-box;
+            padding: .149333rem;
+            box-sizing: border-box;
+        }
+    </style></head><body><form action="/shsflcpfxzx/lottery" id="frmDetail" method="post"><input type="hidden" name="r" value="1085619649" /><div class="title_box container"><link rel="stylesheet" href="/static/frontend/css/indexh5.css?v=20260803"><div id="header" class="container1"><div class="header_name">上海市福利彩票发行中心官方网站</div><div class="header_logo clearfix"><img class="logo" src="/static/frontend/images/indexheader_02.jpg" alt=""><div class="header_QRcode_box"><div class="header_QRcode_box1"><div><img style="height:91px" src="/static/frontend/images/erweima1.png" alt=""></div><div>上海福彩订阅号</div></div><div class="header_QRcode_box1"><div><img style="height:91px" src="/static/frontend/images/erweima2.png" alt=""></div><div>上海福彩客户端</div></div></div></div><div class="header_tab_box clearfix"><div class="header_tab"><div class=""><a href="/shsflcpfxzx/index.html" class="indexico">首页</a></div><div class=""><a href="/shsflcpfxzx/bszx/bszx.html">福彩资讯</a><ul class="index_subMenu_box"><li><a href="/shsflcpfxzx/bszx/bszx.html">本市资讯</a></li><li><a href="/shsflcpfxzx/qgcs/qgcs.html">全国彩市</a></li></ul></div><div class="header_tabBackground"><a href="/shsflcpfxzx/lottery">开奖公告</a></div><div class=""><a href="javascript:void(0)">游戏玩法</a><ul class="index_subMenu_box"><li><a href="https://www.cwl.gov.cn/fcpz/yxjs/ssq/">双色球</a></li><li><a href="https://www.cwl.gov.cn/fcpz/yxjs/kl8/">快乐8</a></li><li><a href="/shsflcpfxzx/3d/3d.html">3D</a></li><li><a href="/shsflcpfxzx/qlc/qlc.html">七乐彩</a></li><li><a href="/shsflcpfxzx/df6j1/df6j1.html">东方6+1</a></li><li><a href="/shsflcpfxzx/15x5/15x5.html">15选5</a></li><li><a href="/shsflcpfxzx/ttcx4/ttcx4.html">天天彩选4</a></li><li><a href="/shsflcpfxzx/ggl/ggl.html">刮刮乐</a></li></ul></div><div class=""><a href="/shsflcpfxzx/ggl/ggl.html">刮刮乐</a></div><div class=""><a href="/shsflcpfxzx/xswd/xswd.html">销售网点</a><ul class="index_subMenu_box"><li><a href="/shsflcpfxzx/xswd/xswd.html">网点明细</a></li><li><a href="/shsflcpfxzx/qjd/qjd.html">旗舰店一览</a></li></ul></div><div class=""><a href="/shsflcpfxzx/shzrbg/shzrbg.html">责任彩票</a><ul class="index_subMenu_box"><li><a href="/shsflcpfxzx/shzrbg/shzrbg.html" style="font-size:15px">责任彩票报告</a></li><li><a href="https://www.cwl.gov.cn/shzr/zrcpsc/" target="_blank" style="font-size:15px">责任彩票手册</a></li><li><a href="/shsflcpfxzx/lxgc/lxgc.html">理性购彩</a></li><li><a href="/shsflcpfxzx/fcgysh/fcgysh.html">福彩公益</a></li></ul></div><div class=""><a href="/shsflcpfxzx/fcwh/fcwh.html">福彩文化</a></div><div class=""><a href="/shsflcpfxzx/tzgg/tzgg.html">信息公开</a><ul class="index_subMenu_box"><li><a href="/shsflcpfxzx/tzgg/tzgg.html">通知公告</a></li><li><a href="/shsflcpfxzx/zcfg/zcfg.html">政策法规</a></li></ul></div></div><div class="Line"></div><div style="width:1180px;margin:auto"><div class="input_box"><form id="newsSearchForm" method="get" action="/shsflcpfxzx/search"><div class="input_name"><input type="text" placeholder="请输入关键词" name="query"><span onclick="document.getElementById('newsSearchForm').submit()"></span></div><input type="hidden" name="flag" value="1"></form><div class="search_btn" onclick="document.getElementById('newsSearchForm').submit()">搜索</div></div></div></div></div><div class="header-tab-box-h5"><div class="menu"><div style=" margin: auto;"><div class="input_box"><form name="searchForm2" id="searchForm2" method="get" action="/shsflcpfxzx/search" target="_self"><div class="input_name"><input type="text" placeholder="请输入关键词"  name="query""><span></span></div><input type="hidden" name="flag" value="1"><input type="hidden" name="siteId" id="siteId" value="7561d539-befa-4297-9b56-7d7ccfbccde5"><input type="hidden" name="siteName" id="siteName" value="上海市福利彩票发行中心"></form><div class="search_btn" onclick="document:searchForm2.submit();">搜索</div></div></div><div class="menu1"></div><div class="menu2"></div><div class="Line"></div><div class="header_tab_box clearfix header-tab-box-h5 header-tab-box-menu"><div class="header_tab-h5"><div class=""><a href="/shsflcpfxzx" class="indexico title" style="">首页</a></div><div class="title"><a class="title" href="javascript:void(0)">福彩资讯</a><ul class="header_tab-h5-cont"><li><a href="/shsflcpfxzx/bszx/bszx.html">本市资讯</a></li><li><a href="/shsflcpfxzx/qgcs/qgcs.html">全国彩市</a></li></ul></div><div><a class="title" href="/shsflcpfxzx/lottery/ssq.html">开奖公告</a></div><div><a class="title" href="javascript:void(0)">游戏玩法</a><ul class="header_tab-h5-cont"><li><a href="https://www.cwl.gov.cn/fcpz/yxjs/ssq/">双色球</a></li><li><a href="/shsflcpfxzx/qlc/qlc.html">七乐彩</a></li><li><a href="/shsflcpfxzx/3d/3d.html">3D</a></li><li><a href="https://www.cwl.gov.cn/fcpz/yxjs/kl8/">快乐8</a></li><li><a href="/shsflcpfxzx/df6j1/df6j1.html">东方6+1</a></li><li><a href="/shsflcpfxzx/15x5/15x5.html">15选5</a></li><li><a href="/shsflcpfxzx/ttcx4/ttcx4.html">天天彩选4</a></li><li><a href="/shsflcpfxzx/ggl/ggl.html">刮刮乐</a></li></ul></div><div><a class="title" href="/shsflcpfxzx/ggl/ggl.html">刮刮乐</a></div><div><a class="title" href="javascript:void(0)">销售网点</a><ul class="header_tab-h5-cont"><li><a href="/shsflcpfxzx/xswd/xswd.html" >网点明细</a></li><li><a href="/shsflcpfxzx/qjd/qjd.html" >旗舰店一览</a></li></ul></div><div><a class="title" href="javascript:void(0)">责任彩票</a><ul class="header_tab-h5-cont"><li><a href="/shsflcpfxzx/shzrbg/shzrbg.html">责任彩票报告</a></li><li><a href="https://www.cwl.gov.cn/shzr/zrcpsc/">责任彩票手册</a></li><li><a href="/shsflcpfxzx/lxgc/lxgc.html">理性购彩</a></li><li><a href="/shsflcpfxzx/fcgysh/fcgysh.html">福彩公益</a></li></ul></div><div><a class="title" href="/shsflcpfxzx/fcwh/fcwh.html">福彩文化</a></div><div><a class="title" href="/shsflcpfxzx/tzgg/tzgg.html">信息公开</a></div></div></div></div></div></div><script src="/static/frontend/js/jquery-3.5.1.min.js"></script><script>    $(".index_subMenu_box li").on({
+        mouseover: function() {
+            //鼠标移入回调
+            $(this).addClass('index_subMenu_li')
+            $(this).children().addClass('index_subMenu_li1')
+                // $(this).children('.index_subMenu_box').show()
+        },
+        mouseout: function() {
+            //鼠标移出回调
+            $(this).removeClass('index_subMenu_li');
+            $(this).children().removeClass('index_subMenu_li1')
+                // $(this).children('.index_subMenu_box').hide()
+        }
+    });
+
+    $(".header_tab div").on({
+        mouseover: function() {
+            //鼠标移入回调
+            $(this).addClass('header_tabBackground')
+            $(this).children('.index_subMenu_box').show()
+        },
+        mouseout: function() {
+            //鼠标移出回调
+            $(this).removeClass('header_tabBackground');
+            $(this).children('.index_subMenu_box').hide()
+        }
+    });
+
+
+    $('.journalism_tab_box>div').click(function() {
+        var i = $(this).index(); //下标第一种写法
+        $(this).addClass('index_cont_box5_tab_boxshowimg').siblings().removeClass('index_cont_box5_tab_boxshowimg');
+        $('.journalism_cont1').eq(i).show().siblings('.journalism_cont1').hide();
+    });
+
+    $(document).ready(function() {
+        $(".header_tab a").each(function() {
+            $this = $(this);
+            if ($this[0].href == String(window.location)) {
+                $this.addClass("header_tabBackground");
+            }
+        });
+    });
+    $(function() {
+        $(".title").click(function() {　　　　　　　　　　
+            $(this).siblings().slideDown().parent().siblings().children("ul").slideUp();
+
+        })
+
+        $(".menu1").click(function() {　　　　　　　　　　
+            $('.header-tab-box-menu').slideDown();
+            $('.menu1').hide();
+            $('.menu2').show();
+
+        })
+        $(".menu2").click(function() {　　　　　　　　　　
+            $('.header-tab-box-menu').slideUp();
+            $('.menu2').hide();
+            $('.menu1').show();
+
+        })
+
+    })
+</script><div class="cashaprize"><div class="cashaprize_menu" style="height: 64px;"><div id="cashaprize_logo1"><img src="/static/frontend/images/ssq.png" alt="双色球"></div><div class="cashaprize_select"><select name="lottery_type" id="tabs"><option value="tb" selected>双色球</option><option value="kl8" >快乐8</option><option value="3d" >3D</option><option value="h7" >七乐彩</option><option value="6p1" >东方6+1</option><option value="15c5" >15选5</option><option value="4d" >天天彩选4</option></select></div><div class="cashaprize_news1 ssq-previous-news"><div>每周二、四、日、21：15开奖</div><div>发布渠道：中国教育电视台一套</div></div><div class="cashaprize_rightSideBar"><div class="Selectcolor3"><a href="/shsflcpfxzx/lottery/ssq.html">开奖公告</a><span></span></div><div class="Selectcolor"><a href="/shsflcpfxzx/lottery/ssq.html?view=previous">往期开奖</a><span></span></div><div class="Selectcolor3"><a href="/shsflcpfxzx/ssqxb/ssqxb.html">大奖情况</a><span></span></div><div class="Selectcolor3"><a href="/shsflcpfxzx/lottery/ssq.html?view=check">中奖查询</a><span></span></div></div></div><div id="content" style="width: 100%;margin-top:30px;"><div id="chanpin"><div class="ssq-previous-tools"><div class="ssq-previous-label">往期开奖号和中奖情况</div><div class="ssq-previous-query"><span>按期次查询：</span><a class="active" href="/shsflcpfxzx/lottery/ssq.html?view=previous&limit=30">近30期</a><a class="" href="/shsflcpfxzx/lottery/ssq.html?view=previous&limit=50">近50期</a><a class="" href="/shsflcpfxzx/lottery/ssq.html?view=previous&limit=100">近100期</a><span class="ssq-custom-wrap"><button type="button" id="ssqCustomToggle" class="ssq-previous-custom" style="outline: none;">自定义查询</button><form id="ssqCustomPanel" class="ssq-custom-panel" method="get" action="/shsflcpfxzx/lottery/ssq.html"><input type="hidden" name="view" value="previous"><input type="hidden" name="limit" value="30"><div class="ssq-custom-title">按期号</div><div class="ssq-custom-row">第 <input type="text" name="start_issue" value="" maxlength="7"> 至 <input type="text" name="end_issue" value="" maxlength="7"></div><div class="ssq-custom-note">注：期号格式为 2017041</div><div class="ssq-custom-actions"><button type="submit">查询</button><a href="/shsflcpfxzx/lottery/ssq.html?view=previous&limit=30">重置</a></div></form></span><span>按星期查询：</span><a style="margin:0 -8px;" class="" href="/shsflcpfxzx/lottery/ssq.html?view=previous&limit=30&weekday=2">二</a><a class="" href="/shsflcpfxzx/lottery/ssq.html?view=previous&limit=30&weekday=4">四</a><a style="margin:0 -8px;" class="" href="/shsflcpfxzx/lottery/ssq.html?view=previous&limit=30&weekday=0">日</a><a class="active" href="/shsflcpfxzx/lottery/ssq.html?view=previous&limit=30">全</a></div></div><div class="drawNotice_table1 ssq-previous-scroll"><table class="ssq-previous-table table table-striped"><thead><tr><th rowspan="2" scope="col">期号</th><th rowspan="2" scope="col">开奖日期</th><th colspan="2" scope="col">中奖号码</th><th rowspan="2" scope="col">总销售额(元)</th><th colspan="2" scope="col" class="ssq-first-prize">一等奖</th><th rowspan="2" scope="col">奖池（元）</th><th rowspan="2" scope="col">详情</th></tr><tr><th scope="col">红号</th><th scope="col">蓝号</th></tr></thead><tbody><tr><td>2026092</td><td>2026-08-11(二)</td><td class="drawNotice_shuangse"><p>09</p><p>11</p><p>12</p><p>25</p><p>30</p><p>33</p></td><td class="drawNotice_shuangse"><p class="blue">11</p></td><td>339633672</td><td>12</td><td>6466298</td><td>571623532</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026091</td><td>2026-08-09(日)</td><td class="drawNotice_shuangse"><p>02</p><p>13</p><p>14</p><p>16</p><p>20</p><p>24</p></td><td class="drawNotice_shuangse"><p class="blue">05</p></td><td>367362274</td><td>4</td><td>10000000</td><td>583235682</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026090</td><td>2026-08-06(四)</td><td class="drawNotice_shuangse"><p>02</p><p>04</p><p>15</p><p>23</p><p>25</p><p>27</p></td><td class="drawNotice_shuangse"><p class="blue">03</p></td><td>348980318</td><td>3</td><td>10000000</td><td>545331466</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026089</td><td>2026-08-04(二)</td><td class="drawNotice_shuangse"><p>05</p><p>18</p><p>23</p><p>24</p><p>27</p><p>33</p></td><td class="drawNotice_shuangse"><p class="blue">03</p></td><td>345041020</td><td>3</td><td>10000000</td><td>489539135</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026088</td><td>2026-08-02(日)</td><td class="drawNotice_shuangse"><p>06</p><p>07</p><p>11</p><p>18</p><p>22</p><p>33</p></td><td class="drawNotice_shuangse"><p class="blue">05</p></td><td>373747432</td><td>34</td><td>2941176</td><td>442158322</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026087</td><td>2026-07-30(四)</td><td class="drawNotice_shuangse"><p>04</p><p>06</p><p>10</p><p>18</p><p>23</p><p>31</p></td><td class="drawNotice_shuangse"><p class="blue">11</p></td><td>349545040</td><td>8</td><td>7296989</td><td>473791046</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026086</td><td>2026-07-28(二)</td><td class="drawNotice_shuangse"><p>02</p><p>05</p><p>14</p><p>25</p><p>30</p><p>32</p></td><td class="drawNotice_shuangse"><p class="blue">05</p></td><td>345608568</td><td>7</td><td>7501853</td><td>463257269</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026085</td><td>2026-07-26(日)</td><td class="drawNotice_shuangse"><p>06</p><p>09</p><p>13</p><p>17</p><p>24</p><p>28</p></td><td class="drawNotice_shuangse"><p class="blue">15</p></td><td>368292652</td><td>17</td><td>5882352</td><td>450096595</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026084</td><td>2026-07-23(四)</td><td class="drawNotice_shuangse"><p>01</p><p>05</p><p>06</p><p>10</p><p>12</p><p>16</p></td><td class="drawNotice_shuangse"><p class="blue">05</p></td><td>348718788</td><td>10</td><td>6809591</td><td>480566551</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026083</td><td>2026-07-21(二)</td><td class="drawNotice_shuangse"><p>07</p><p>14</p><p>15</p><p>23</p><p>28</p><p>33</p></td><td class="drawNotice_shuangse"><p class="blue">03</p></td><td>348240258</td><td>0</td><td>0</td><td>480802779</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026082</td><td>2026-07-19(日)</td><td class="drawNotice_shuangse"><p>05</p><p>07</p><p>10</p><p>14</p><p>21</p><p>28</p></td><td class="drawNotice_shuangse"><p class="blue">04</p></td><td>375000824</td><td>10</td><td>7104774</td><td>409487566</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026081</td><td>2026-07-16(四)</td><td class="drawNotice_shuangse"><p>06</p><p>10</p><p>12</p><p>15</p><p>24</p><p>27</p></td><td class="drawNotice_shuangse"><p class="blue">12</p></td><td>350765488</td><td>5</td><td>8082773</td><td>401606257</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026080</td><td>2026-07-14(二)</td><td class="drawNotice_shuangse"><p>04</p><p>05</p><p>11</p><p>19</p><p>27</p><p>32</p></td><td class="drawNotice_shuangse"><p class="blue">01</p></td><td>344697650</td><td>8</td><td>7579965</td><td>384218118</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026079</td><td>2026-07-12(日)</td><td class="drawNotice_shuangse"><p>01</p><p>11</p><p>17</p><p>22</p><p>24</p><p>29</p></td><td class="drawNotice_shuangse"><p class="blue">04</p></td><td>373452200</td><td>1</td><td>10000000</td><td>367458887</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026078</td><td>2026-07-09(四)</td><td class="drawNotice_shuangse"><p>07</p><p>11</p><p>14</p><p>16</p><p>27</p><p>28</p></td><td class="drawNotice_shuangse"><p class="blue">06</p></td><td>355852948</td><td>15</td><td>5983174</td><td>285632700</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026077</td><td>2026-07-07(二)</td><td class="drawNotice_shuangse"><p>01</p><p>04</p><p>05</p><p>14</p><p>18</p><p>25</p></td><td class="drawNotice_shuangse"><p class="blue">04</p></td><td>353662546</td><td>6</td><td>8516882</td><td>320076738</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026076</td><td>2026-07-05(日)</td><td class="drawNotice_shuangse"><p>01</p><p>03</p><p>19</p><p>20</p><p>24</p><p>25</p></td><td class="drawNotice_shuangse"><p class="blue">07</p></td><td>382507054</td><td>6</td><td>7355406</td><td>292048181</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026075</td><td>2026-07-02(四)</td><td class="drawNotice_shuangse"><p>08</p><p>12</p><p>18</p><p>21</p><p>24</p><p>30</p></td><td class="drawNotice_shuangse"><p class="blue">01</p></td><td>370657052</td><td>5</td><td>7840223</td><td>283183968</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026074</td><td>2026-06-30(二)</td><td class="drawNotice_shuangse"><p>02</p><p>23</p><p>24</p><p>26</p><p>28</p><p>32</p></td><td class="drawNotice_shuangse"><p class="blue">04</p></td><td>370952514</td><td>4</td><td>8277839</td><td>308183968</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026073</td><td>2026-06-28(日)</td><td class="drawNotice_shuangse"><p>09</p><p>10</p><p>13</p><p>16</p><p>19</p><p>21</p></td><td class="drawNotice_shuangse"><p class="blue">08</p></td><td>398594042</td><td>10</td><td>6111492</td><td>328183968</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026072</td><td>2026-06-25(四)</td><td class="drawNotice_shuangse"><p>07</p><p>08</p><p>12</p><p>15</p><p>17</p><p>21</p></td><td class="drawNotice_shuangse"><p class="blue">01</p></td><td>377591844</td><td>4</td><td>8287457</td><td>378183968</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026071</td><td>2026-06-23(二)</td><td class="drawNotice_shuangse"><p>03</p><p>08</p><p>19</p><p>25</p><p>31</p><p>33</p></td><td class="drawNotice_shuangse"><p class="blue">05</p></td><td>373089958</td><td>8</td><td>5867768</td><td>398183968</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026070</td><td>2026-06-21(日)</td><td class="drawNotice_shuangse"><p>03</p><p>06</p><p>08</p><p>14</p><p>26</p><p>27</p></td><td class="drawNotice_shuangse"><p class="blue">08</p></td><td>398555946</td><td>11</td><td>5811271</td><td>438183968</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026069</td><td>2026-06-18(四)</td><td class="drawNotice_shuangse"><p>12</p><p>14</p><p>16</p><p>17</p><p>18</p><p>32</p></td><td class="drawNotice_shuangse"><p class="blue">08</p></td><td>373992648</td><td>22</td><td>4545454</td><td>493183968</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026068</td><td>2026-06-16(二)</td><td class="drawNotice_shuangse"><p>03</p><p>05</p><p>16</p><p>18</p><p>29</p><p>32</p></td><td class="drawNotice_shuangse"><p class="blue">04</p></td><td>379517740</td><td>14</td><td>5649404</td><td>588469423</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026067</td><td>2026-06-14(日)</td><td class="drawNotice_shuangse"><p>04</p><p>19</p><p>27</p><p>29</p><p>30</p><p>32</p></td><td class="drawNotice_shuangse"><p class="blue">13</p></td><td>414869642</td><td>3</td><td>10000000</td><td>658469423</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026066</td><td>2026-06-11(四)</td><td class="drawNotice_shuangse"><p>05</p><p>11</p><p>21</p><p>23</p><p>24</p><p>29</p></td><td class="drawNotice_shuangse"><p class="blue">16</p></td><td>392786646</td><td>7</td><td>6728458</td><td>671837950</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026065</td><td>2026-06-09(二)</td><td class="drawNotice_shuangse"><p>07</p><p>08</p><p>16</p><p>24</p><p>30</p><p>32</p></td><td class="drawNotice_shuangse"><p class="blue">02</p></td><td>386314046</td><td>7</td><td>6944530</td><td>706837950</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026064</td><td>2026-06-07(日)</td><td class="drawNotice_shuangse"><p>01</p><p>09</p><p>15</p><p>18</p><p>29</p><p>33</p></td><td class="drawNotice_shuangse"><p class="blue">15</p></td><td>427210484</td><td>15</td><td>6021460</td><td>741837950</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr><tr><td>2026063</td><td>2026-06-04(四)</td><td class="drawNotice_shuangse"><p>02</p><p>08</p><p>25</p><p>28</p><p>30</p><p>31</p></td><td class="drawNotice_shuangse"><p class="blue">02</p></td><td>393294950</td><td>20</td><td>5000000</td><td>816837950</td><td><a class="ssq-detail-link" href="https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/" target="_blank" rel="noopener" title="详情"><img style="width: 27px; height: 27px;" src="/static/frontend/images/xinxi.png" alt="详情" /></a></td></tr></tbody></table></div></div></div></div><div id="footer"><div class="footer_top"><p class="friendship">友情链接</p><p><a href="https://www.cwl.gov.cn/" target="_blank">中国福彩网</a></p><p><a href="https://mzj.sh.gov.cn/" target="_blank">上海市民政局</a></p></div><div class="special_img_box"><img src="/static/frontend/images/specialbg_01_03.jpg" alt=""></div><div class="footer_bottom_information"><div class="footer_bottom_information_box"><div class="footer_bottom_name1"><div><a href="https://beian.miit.gov.cn/" target="_blank" style="color:#ffffff">沪ICP备17012055号-3</a></div><div><a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011002006421" target="_blank" style="color:#ffffff"><img src="/static/frontend/images/ba.png" width="20px"> 沪公网安备31011002006421号</a></div></div><div class="footer_bottom_name1"><div>地址:上海市杨浦区长阳路518号F楼</div><div>邮政编码:200082</div><div>电话:021-64729999</div></div><div class="footer_bottom_name1"><div>版权所有 上海市福利彩票发行中心 未经许可不得转载 </div></div><div class="footer_bottom_name1"><div id="_ideConac"><!--<img src="/static/frontend/images/shiye.png" alt="">--><a href="https://bszs.conac.cn/sitename?method=show&amp;id=095EB1B428654C64E053012819ACD3A6" target="_blank"><img id="imgConac" vspace="0" hspace="0" border="0" src="/static/frontend/images/blue.png" data-bd-imgshare-binded="1"></a></div></div><div class="footer_bottom_name1"><div>温馨提示：量力而行&nbsp;&nbsp; 理性购彩 &nbsp;&nbsp;未成年人不得购彩及兑奖</div></div></div></div></div></div></form><script src="/static/frontend/js/lotterynew_2021style_js_bootstrap.js"></script><script src="/static/frontend/js/lotterynew_2021style_js_common.js"></script><script>        $('.consultingservice_left_title div').click(function () {
+            var i = $(this).index(); //下标第一种写法
+            // $(this).addClass('index_cont_box5_tab_boxshowimg').siblings().removeClass('index_cont_box5_tab_boxshowimg');
+            $('.consultingservice_left ul').eq(i).show().siblings('.consultingservice_left ul').hide();
+        });
+        $('.drawNotice_tablenum div').click(function () {
+            var i = $(this).index(); //下标第一种写法
+            $(this).addClass('drawNotice_tablenumColor').siblings().removeClass('drawNotice_tablenumColor');
+        })
+        $(function () {
+
+            var li = $('#tabs');
+            var cc = $('#tabs option') + 1;
+            var len = cc.length;
+            var params = new URLSearchParams(window.location.search);
+            var view = params.get('view');
+            li.change(function () {
+                //$("#frmDetail").submit();
+
+                var map1 = {
+                    "tb":"/shsflcpfxzx/lottery/ssq.html"+(view ? "?view="+view : ""),
+                    "kl8":view =='check'? "https://www.cwl.gov.cn/ygkj/wqkjgg/kl8/":"/shsflcpfxzx/lottery/kl8.html"+(view ?  "?view="+view : ""),
+                    "3d":"/shsflcpfxzx/lottery/3d.html"+(view ? "?view="+view : ""),
+                    "6p1":"/shsflcpfxzx/lottery/df6j1.html"+(view ? "?view="+view : ""),
+                    "h7":"/shsflcpfxzx/lottery/qlc.html"+(view ? "?view="+view : ""),
+                    "15c5":"/shsflcpfxzx/lottery/15c5.html"+(view ? "?view="+view : ""),
+                    "4d":"/shsflcpfxzx/lottery/ttcx4.html"+(view ? "?view="+view : "")};
+                var map2 = {
+                    "tb":"https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/",
+                    "kl8":"https://www.cwl.gov.cn/ygkj/wqkjgg/kl8/",
+                    "3d":"/shsflcpfxzx/lottery/3d.html"+(view ? "?view="+view : ""),
+                    "6p1":"/shsflcpfxzx/lottery/df6j1.html"+(view ? "?view="+view : ""),
+                    "h7":"https://www.cwl.gov.cn/ygkj/wqkjgg/qlc/",
+                    "15c5":"/shsflcpfxzx/lottery/15c5.html"+(view ? "?view="+view : ""),
+                    "4d":"/shsflcpfxzx/lottery/ttcx4.html"+(view ? "?view="+view : "")
+                }
+                var map_ = view ? map1 : map2;
+                window.location.href = map_[li.val()] || "https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/";
+                //var t = parseInt(li.get(0).selectedIndex) + 1;
+                //console.log(t)
+                //for (var i = 0; i < len; i++) {
+                //    console.log(i)
+                //    if (t == i) {
+                //        $('#cashaprize_logo' + i).show();
+                //        $('#chanpin' + i).show();
+                //        $('.cashaprize_news' + i).show()
+                //    } else {
+                //        $('#chanpin' + i).hide();
+                //        $('#cashaprize_logo' + i).hide();
+                //        $('.cashaprize_news' + i).hide()
+                //    }
+
+                //}
+
+            });
+        });
+
+        $(".cashaprize_rightSideBar div").on({
+            mouseover: function () {
+                //鼠标移入回调
+                $(this).addClass('Selectcolor2')
+
+            },
+            mouseout: function () {
+                //鼠标移出回调
+                $(this).removeClass('Selectcolor2');
+
+            }
+        });
+
+        $(".cashaprize_rightSideBar div a").on({
+            mouseover: function () {
+                //鼠标移入回调
+                $(this).addClass('Selectcolor1')
+
+            },
+            mouseout: function () {
+                //鼠标移出回调
+                $(this).removeClass('Selectcolor1');
+
+            }
+        });
+
+        function JumpPre() {
+            var selectItem = $("#tabs").val();
+            if (selectItem == "3d") {
+                window.location.href = "/shsflcpfxzx/lottery/3d.html?view=previous";
+            } else if (selectItem == "15c5") {
+                window.location.href = "/shsflcpfxzx/lottery/15c5.html?view=previous";
+            } else if (selectItem == "6p1") {
+                window.location.href = "/shsflcpfxzx/lottery/df6j1.html?view=previous";
+            } else if (selectItem == "h7") {
+                window.location.href = "/shsflcpfxzx/lottery/qlc.html?view=previous";
+            } else if (selectItem == "tb") {
+                window.location.href = "/shsflcpfxzx/lottery/ssq.html?view=previous";
+            } else if (selectItem == "4d") {
+                window.location.href = "/shsflcpfxzx/lottery/ttcx4.html?view=previous";
+            } else if (selectItem == "kl8") {
+                window.location.href = "/shsflcpfxzx/lottery/kl8.html?view=previous";
+            }
+        }
+
+
+        function jumpDJ() {
+            var selectItem = $("#tabs").val();
+            if (selectItem == "3d") {
+                window.location.href = "javascript:void(0);";
+            } else if (selectItem == "15c5") {
+                window.location.href = "javascript:void(0);";
+            } else if (selectItem == "6p1") {
+                window.location.href = "javascript:void(0);";
+            } else if (selectItem == "h7") {
+                window.location.href = "javascript:void(0);";
+            } else if (selectItem == "tb") {
+                window.location.href = "javascript:void(0);";
+            } else if (selectItem == "4d") {
+                window.location.href = "javascript:void(0);";
+            }
+        }
+
+    </script><!-- 插入统计代码3 --><div style="display: none"></div><script>(function () {
+  var lotteryNames = {"tb":"双色球","kl8":"快乐8","3d":"3D","6p1":"六加一","h7":"七乐彩","15c5":"15选5","4d":"天天彩选4"};
+  var annMap = {"tb":"https://www.cwl.gov.cn/ygkj/wqkjgg/ssq/","kl8":"https://www.cwl.gov.cn/ygkj/wqkjgg/kl8/","3d":"/shsflcpfxzx/lottery/3d.html","6p1":"/shsflcpfxzx/lottery/df6j1.html","h7":"https://www.cwl.gov.cn/ygkj/wqkjgg/qlc/","15c5":"/shsflcpfxzx/lottery/15c5.html","4d":"/shsflcpfxzx/lottery/ttcx4.html"};
+  var previousMap = {"tb":"/shsflcpfxzx/lottery/ssq.html?view=previous","kl8":"/shsflcpfxzx/lottery/kl8.html?view=previous","3d":"/shsflcpfxzx/lottery/3d.html?view=previous","6p1":"/shsflcpfxzx/lottery/df6j1.html?view=previous","h7":"/shsflcpfxzx/lottery/qlc.html?view=previous","15c5":"/shsflcpfxzx/lottery/15c5.html?view=previous","4d":"/shsflcpfxzx/lottery/ttcx4.html?view=previous"};
+  var awardMap = {"tb":"/shsflcpfxzx/ssqxb/ssqxb.html","h7":"/shsflcpfxzx/qlcxb/qlcxb.html","kl8":"/shsflcpfxzx/kl8xb/kl8xb.html"};
+  var checkMap = {"tb":"/shsflcpfxzx/lottery/ssq.html?view=check","3d":"/shsflcpfxzx/lottery/3d.html?view=check","6p1":"/shsflcpfxzx/lottery/df6j1.html?view=check","h7":"/shsflcpfxzx/lottery/qlc.html?view=check","15c5":"/shsflcpfxzx/lottery/15c5.html?view=check","4d":"/shsflcpfxzx/lottery/ttcx4.html?view=check"};
+  var checkExternalMap = {};
+
+  function selectedType() {
+    var tabs = document.getElementById('tabs');
+    return tabs && tabs.value ? tabs.value : 'tb';
+  }
+
+  function go(map, fallbackMap) {
+    var type = selectedType();
+    var target = map[type] || (fallbackMap && fallbackMap[type]);
+    if (target) window.location.href = target;
+  }
+
+  window.JumpTab = function () { go(previousMap); };
+  window.JumpPre = function () { go(previousMap); };
+  window.jumpKJGG = function () { go(annMap); };
+  window.jumpDJ = function () { go(awardMap); };
+  window.jumpCheck = function () { go(checkMap, checkExternalMap); };
+
+  function ensureLotteryOptions() {
+    var tabs = document.getElementById('tabs');
+    if (!tabs) return;
+    var current = tabs.value || 'tb';
+    var existing = {};
+    Array.prototype.forEach.call(tabs.options, function (option) { existing[option.value] = true; });
+    Object.keys(lotteryNames).forEach(function (type) {
+      if (existing[type]) return;
+      var option = document.createElement('option');
+      option.value = type;
+      option.text = lotteryNames[type];
+      tabs.appendChild(option);
+    });
+    if (lotteryNames[current]) tabs.value = current;
+  }
+
+  function wireCustomQuery(toggleId, panelId) {
+    var toggle = document.getElementById(toggleId);
+    var panel = document.getElementById(panelId);
+    if (!toggle || !panel) return;
+    toggle.addEventListener('click', function (event) {
+      event.stopPropagation();
+      panel.classList.toggle('is-open');
+    });
+    panel.addEventListener('click', function (event) { event.stopPropagation(); });
+    document.addEventListener('click', function () { panel.classList.remove('is-open'); });
+  }
+
+  wireCustomQuery('ssqCustomToggle', 'ssqCustomPanel');
+  wireCustomQuery('qlcCustomToggle', 'qlcCustomPanel');
+  wireCustomQuery('kl8CustomToggle', 'kl8CustomPanel');
+  wireCustomQuery('df6j1CustomToggle', 'df6j1CustomPanel');
+  wireCustomQuery('c15c5CustomToggle', 'c15c5CustomPanel');
+  wireCustomQuery('ttcx4CustomToggle', 'ttcx4CustomPanel');
+  wireCustomQuery('threeDCustomToggle', 'threeDCustomPanel');
+  function wireSectionLinks() {
+    var links = document.querySelectorAll('.Selectcolor1 a, .Selectcolor2 a, .Selectcolor3 a');
+    console.log(links);
+    Array.prototype.forEach.call(links, function (link) {
+      var text = (link.textContent || '').replace(/\s+/g, '');
+      var href = link.getAttribute('href') || '';
+      if (href.indexOf('/ssqxb/') >= 0 || href.indexOf('ssqxb.html') >= 0) {
+        link.href = awardMap[selectedType()] || link.href;
+        console.log(link.href);
+        link.onclick = function () { window.jumpDJ(); return false; };
+        return;
+      }
+      if (text.indexOf('开奖公告') >= 0) {
+        link.href = annMap[selectedType()] || link.href;
+        link.onclick = function () { window.jumpKJGG(); return false; };
+      } else if (text.indexOf('往期开奖') >= 0) {
+        link.href = previousMap[selectedType()] || link.href;
+        link.onclick = function () { window.JumpPre(); return false; };
+      } else if (text.indexOf('中奖查询') >= 0) {
+        link.href = checkMap[selectedType()] || checkExternalMap[selectedType()] || link.href;
+        link.onclick = function () { window.jumpCheck(); return false; };
+      }
+    });
+  }
+
+  ensureLotteryOptions();
+  wireSectionLinks();
+  var tabs = document.getElementById('tabs');
+  if (tabs) tabs.addEventListener('change', wireSectionLinks);
+})();
+</script><script>(function () {
+  var form = document.getElementById('ssqCheckForm');
+  if (!form) return;
+  var red = new Set();
+  var blue = new Set();
+  var redButtons = form.querySelectorAll('.ssq-ball.red');
+  var blueButtons = form.querySelectorAll('.ssq-ball.blue');
+  var redText = document.getElementById('ssqRedText');
+  var blueText = document.getElementById('ssqBlueText');
+  var hidden = document.getElementById('ssqHiddenInputs');
+
+  function pad(number) {
+    return number < 10 ? '0' + number : String(number);
+  }
+
+  function sorted(set) {
+    return Array.from(set).sort(function (a, b) { return a - b; });
+  }
+
+  function render() {
+    var redValues = sorted(red);
+    var blueValues = sorted(blue);
+    redText.value = redValues.map(pad).join(',');
+    blueText.value = blueValues.map(pad).join(',');
+    hidden.innerHTML = '';
+    redValues.forEach(function (value) {
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'red_numbers[]';
+      input.value = value;
+      hidden.appendChild(input);
+    });
+    blueValues.forEach(function (value) {
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'blue_numbers[]';
+      input.value = value;
+      hidden.appendChild(input);
+    });
+  }
+
+  function bind(buttons, set, max) {
+    Array.prototype.forEach.call(buttons, function (button) {
+      var value = parseInt(button.getAttribute('data-value'), 10);
+      if (button.classList.contains('selected')) set.add(value);
+      button.addEventListener('click', function () {
+        if (set.has(value)) {
+          set.delete(value);
+          button.classList.remove('selected');
+        } else {
+          if (set.size >= max) return;
+          set.add(value);
+          button.classList.add('selected');
+        }
+        render();
+      });
+    });
+  }
+
+  bind(redButtons, red, 12);
+  bind(blueButtons, blue, 16);
+  document.getElementById('ssqClear').addEventListener('click', function () {
+    red.clear();
+    blue.clear();
+    Array.prototype.forEach.call(form.querySelectorAll('.ssq-ball.selected'), function (button) {
+      button.classList.remove('selected');
+    });
+    render();
+  });
+  form.addEventListener('submit', function (event) {
+    if (red.size < 6 || red.size > 12 || blue.size < 1 || blue.size > 16) {
+      event.preventDefault();
+      alert('红色球最少选择6个，最多选择12个。蓝色球最少选择1个，最多选择16个。');
+    }
+  });
+  render();
+})();
+</script><script>(function () {
+  var form = document.getElementById('qlcCheckForm');
+  if (!form) return;
+  var selected = new Set();
+  var numberInput = document.getElementById('qlcNumber');
+  var textInput = document.getElementById('qlcSelectedNumber');
+  var buttons = form.querySelectorAll('.qlc-number-ball');
+
+  function sorted() {
+    return Array.from(selected).sort(function (a, b) { return parseInt(a, 10) - parseInt(b, 10); });
+  }
+
+  function normalize(value) {
+    value = String(value || '').replace(/\D/g, '');
+    if (value === '') return '';
+    return value.length === 1 ? '0' + value : value;
+  }
+
+  function render() {
+    var value = sorted().join(',');
+    numberInput.value = value;
+    textInput.value = value;
+  }
+
+  function qlcSelectBall(button) {
+    var value = button.getAttribute('data-value');
+    if (selected.has(value)) {
+      selected.delete(value);
+      button.classList.remove('selected');
+    } else {
+      if (selected.size >= 12) {
+        alert('最多选择12个球。');
+        return;
+      }
+      selected.add(value);
+      button.classList.add('selected');
+    }
+    render();
+  }
+
+  function qlcClearSelects() {
+    selected.clear();
+    Array.prototype.forEach.call(buttons, function (button) { button.classList.remove('selected'); });
+    render();
+  }
+
+  function qlcCheckNumber(event) {
+    render();
+    var issueSelect = document.getElementById('Numberofperiods');
+    var issue = issueSelect && issueSelect.options[issueSelect.selectedIndex] ? issueSelect.options[issueSelect.selectedIndex].value : '';
+    if (selected.size < 7 || selected.size > 12) {
+      event.preventDefault();
+      alert('最少选择7个球，最多选择12个球。');
+      return false;
+    }
+    if (issue === '') {
+      event.preventDefault();
+      alert('“对奖期数”必须选择。');
+      return false;
+    }
+    return true;
+  }
+
+  (numberInput.value || '').split(',').forEach(function (value) {
+    value = normalize(value);
+    if (value !== '') selected.add(value);
+  });
+
+  Array.prototype.forEach.call(buttons, function (button) {
+    if (selected.has(button.getAttribute('data-value'))) button.classList.add('selected');
+    button.addEventListener('click', function () { qlcSelectBall(button); });
+  });
+
+  document.getElementById('qlcClear').addEventListener('click', qlcClearSelects);
+  form.addEventListener('submit', qlcCheckNumber);
+  render();
+})();
+</script><script>(function () {
+  var form = document.getElementById('c15c5CheckForm');
+  if (!form) return;
+  var selected = new Set();
+  var numberInput = document.getElementById('c15c5Number');
+  var textInput = document.getElementById('txtNumber2');
+  var buttons = form.querySelectorAll('.c15c5-number-ball');
+
+  function sorted() {
+    return Array.from(selected).sort(function (a, b) { return parseInt(a, 10) - parseInt(b, 10); });
+  }
+
+  function render() {
+    var value = sorted().join(',');
+    numberInput.value = value;
+    textInput.value = value;
+  }
+
+  (numberInput.value || '').split(',').forEach(function (value) {
+    value = value.replace(/\D/g, '');
+    if (value === '') return;
+    selected.add(value.length === 1 ? '0' + value : value);
+  });
+
+  Array.prototype.forEach.call(buttons, function (button) {
+    var value = button.getAttribute('data-value');
+    if (selected.has(value)) button.classList.add('selected');
+    button.addEventListener('click', function () {
+      if (selected.has(value)) {
+        selected.delete(value);
+        button.classList.remove('selected');
+      } else {
+        if (selected.size >= 5) return;
+        selected.add(value);
+        button.classList.add('selected');
+      }
+      render();
+    });
+  });
+
+  document.getElementById('c15c5Clear').addEventListener('click', function () {
+    selected.clear();
+    Array.prototype.forEach.call(buttons, function (button) { button.classList.remove('selected'); });
+    render();
+  });
+
+  form.addEventListener('submit', function (event) {
+    render();
+    if (selected.size !== 5) {
+      event.preventDefault();
+      alert('请选择5个号码。');
+    }
+  });
+  render();
+})();
+</script><script>(function () {
+  var form = document.getElementById('df6j1CheckForm');
+  if (!form) return;
+  var selectedNumbers = ['', '', '', '', '', ''];
+  var selectedAnimal = '';
+  var numberInput = document.getElementById('df6j1Number');
+  var animalInput = document.getElementById('df6j1Animal');
+  var textArea = document.getElementById('txtNumber1');
+  var numberButtons = form.querySelectorAll('.df6j1-number-ball');
+  var animalButtons = form.querySelectorAll('.df6j1-animal-ball');
+
+  function render() {
+    var number = selectedNumbers.join('');
+    numberInput.value = number;
+    animalInput.value = selectedAnimal;
+    textArea.value = number || selectedAnimal ? (number + (selectedAnimal ? '+' + selectedAnimal : '')) : '';
+  }
+
+  function markInitialState() {
+    var initialNumber = (numberInput.value || '').replace(/\D/g, '').slice(0, 6);
+    for (var i = 0; i < initialNumber.length; i++) {
+      selectedNumbers[i] = initialNumber.charAt(i);
+    }
+    selectedAnimal = animalInput.value || '';
+    Array.prototype.forEach.call(numberButtons, function (button) {
+      var pos = parseInt(button.getAttribute('data-pos'), 10) - 1;
+      if (selectedNumbers[pos] === button.getAttribute('data-value')) {
+        button.classList.add('selected');
+      }
+    });
+    Array.prototype.forEach.call(animalButtons, function (button) {
+      if (selectedAnimal === button.getAttribute('data-value')) {
+        button.classList.add('selected');
+      }
+    });
+    render();
+  }
+
+  Array.prototype.forEach.call(numberButtons, function (button) {
+    button.addEventListener('click', function () {
+      var pos = parseInt(button.getAttribute('data-pos'), 10) - 1;
+      Array.prototype.forEach.call(form.querySelectorAll('.df6j1-number-ball[data-pos="' + (pos + 1) + '"]'), function (peer) {
+        peer.classList.remove('selected');
+      });
+      selectedNumbers[pos] = button.getAttribute('data-value');
+      button.classList.add('selected');
+      render();
+    });
+  });
+
+  Array.prototype.forEach.call(animalButtons, function (button) {
+    button.addEventListener('click', function () {
+      Array.prototype.forEach.call(animalButtons, function (peer) {
+        peer.classList.remove('selected');
+      });
+      selectedAnimal = button.getAttribute('data-value');
+      button.classList.add('selected');
+      render();
+    });
+  });
+
+  document.getElementById('df6j1Clear').addEventListener('click', function () {
+    selectedNumbers = ['', '', '', '', '', ''];
+    selectedAnimal = '';
+    Array.prototype.forEach.call(form.querySelectorAll('.df6j1-number-ball.selected,.df6j1-animal-ball.selected'), function (button) {
+      button.classList.remove('selected');
+    });
+    render();
+  });
+
+  form.addEventListener('submit', function (event) {
+    render();
+    if (!/^\d{6}$/.test(numberInput.value) || animalInput.value === '') {
+      event.preventDefault();
+      alert('请选择完整的6位号码和生肖码。');
+    }
+  });
+
+  markInitialState();
+})();
+</script><script>(function () {
+//   var toggle = document.getElementById('ssqCustomToggle');
+//   var panel = document.getElementById('ssqCustomPanel');
+//   if (!toggle || !panel) {
+//     return;
+//   }
+//   toggle.addEventListener('click', function (event) {
+//     event.preventDefault();
+//     panel.classList.toggle('is-open');
+//   });
+})();
+</script></body></html>

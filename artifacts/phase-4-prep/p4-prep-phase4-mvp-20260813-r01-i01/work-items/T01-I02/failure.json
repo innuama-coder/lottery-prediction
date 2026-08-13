@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_attempt","failure":"relative contract paths were not resolved before project-root containment validation","process_exit_code":1,"schema_version":"1.0.0","status":"HOLD","task_id":"T01","terminal":"HOLD_CONTRACT_PATH_RESOLUTION"}

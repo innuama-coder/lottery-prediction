@@ -24,7 +24,7 @@
     {"verb":"score window","required_flags":["--runtime-root","--window-id","--metric-contract-id","--clock"],"allowed_exit_codes":[0,4,5,6,20,30]},
     {"verb":"score correct","required_flags":["--fixture","--oracle","--runtime-root","--clock"],"allowed_exit_codes":[0,4,5,6,20,30]},
     {"verb":"research decide","required_flags":["--fixture","--runtime-root","--clock"],"allowed_exit_codes":[0,4,5,6,20,30]},
-    {"verb":"research run","required_flags":["--mode","--preregistration","--feasibility","--sequences-per-cell","--output","--seed-domain","--clock"],"allowed_exit_codes":[0,4,5,6,20,30]},
+    {"verb":"research run","required_flags":["--mode"],"allowed_exit_codes":[0,4,5,6,20,30]},
     {"verb":"research resume","required_flags":["--runtime-root|--release-root","--experiment-id","--checkpoint-id","--contract-id","--clock"],"allowed_exit_codes":[0,4,5,6,20,30]},
     {"verb":"state project","required_flags":["--runtime-root","--output"],"allowed_exit_codes":[0,4,5,6,20,30]},
     {"verb":"state show","required_flags":["--runtime-root","--object-id"],"allowed_exit_codes":[0,4,5,6,20,30]},
@@ -32,7 +32,7 @@
     {"verb":"validate unit","required_flags":["--scope","--oracle","--output"],"allowed_exit_codes":[0,4,5,6,20,30]},
     {"verb":"validate e2e","required_flags":["--registry","--output","--clock"],"allowed_exit_codes":[0,4,5,6,20,30]},
     {"verb":"validate final","required_flags":["--release-root","--replay","--output","--actor-assignments"],"allowed_exit_codes":[0,4,5,6,20,30]},
-    {"verb":"release assemble","required_flags":["--phase","--release-root","--output","--actor-assignments"],"allowed_exit_codes":[0,4,5,6,20,30]},
+    {"verb":"release assemble","required_flags":["--phase","--release-root","--output"],"allowed_exit_codes":[0,4,5,6,20,30]},
     {"verb":"release accept","required_flags":["--release-root","--iteration","--validator","--review","--delivery-statement","--actor-assignments","--output"],"allowed_exit_codes":[0,4,5,6,20,30]}
   ],
   "exit_codes": {"0":"PASS_OR_READY","4":"IDENTITY_REUSE","5":"CONTRACT_OR_EVIDENCE_MISMATCH","6":"SECURITY_OR_CAUSALITY_FAILURE","20":"HOLD","30":"RETRYABLE_TERMINAL_RECORDED"},

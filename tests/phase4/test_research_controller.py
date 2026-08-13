@@ -48,7 +48,8 @@ ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = ROOT / "tests/phase4/fixtures/research/parameter-positive.json"
 DEVELOPMENT_FIXTURE = ROOT / "tests/phase4/fixtures/research/development-small.json"
 SCIENTIFIC_WORKER_FIXTURE = ROOT / "tests/phase4/fixtures/research/scientific-worker-small.json"
-FEASIBILITY = ROOT / "artifacts/phase-4-prep/p4-prep-controller-issued-i01/work-items/T10/feasibility/certificate.json"
+PREP = ROOT / "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i01"
+FEASIBILITY = PREP / "work-items/T10/attempts/T10-I01/feasibility/certificate.json"
 
 
 def configs():
@@ -399,7 +400,7 @@ class ResearchControllerTests(unittest.TestCase):
             (ROOT / identity["worker_source_path"]).read_bytes()
         ).hexdigest())
         prior = load_json(
-            ROOT / "artifacts/phase-4-prep/p4-prep-controller-issued-i01/qualification-design/development/selected-design.json",
+            PREP / "qualification-design/development/selected-design.json",
             reject_floats=True,
         )
         current = qualification_design(1536)

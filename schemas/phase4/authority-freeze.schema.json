@@ -3,11 +3,12 @@
   "$id": "https://lottery.local/schemas/phase4/authority-freeze.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_type", "authority_commit", "authority_files", "phase3_acceptance", "protected_roots", "namespace_contract", "provenance"],
+  "required": ["schema_version", "artifact_type", "authority_commit", "required_ancestor_commit", "authority_files", "phase3_acceptance", "protected_roots", "namespace_contract", "provenance"],
   "properties": {
     "schema_version": {"const": "1.0.0"},
     "artifact_type": {"const": "phase4_authority_freeze"},
     "authority_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "required_ancestor_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
     "authority_files": {
       "type": "array",
       "minItems": 4,

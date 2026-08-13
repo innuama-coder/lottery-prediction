@@ -27,7 +27,7 @@ from lottery_system.phase4.serialization import load_json
 
 ROOT = Path(__file__).resolve().parents[2]
 GENESIS = ROOT / "config/phase4/genesis.json"
-ACTOR_ASSIGNMENTS = "artifacts/phase-4-prep/p4-prep-controller-issued-i01/control/actor-assignments-preparation.json"
+ACTOR_ASSIGNMENTS = "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i01/control/actor-assignments-preparation.json"
 PROVENANCE = {
     "producer_actor_id": "p4-implementation-author-i01", "task_id": "T02",
     "session_id": "/root/implementation_author", "source_commit": "f8a7a6abb46a55f8fa17e5ae3280c5c5432c363b",
@@ -154,7 +154,7 @@ class DataChainTests(unittest.TestCase):
             with self.assertRaises(DataChainMismatch):
                 create_genesis(ROOT, Path(raw) / "other", changed, clock="2026-01-01T00:00:00Z", producer_provenance=PROVENANCE)
 
-    def test_cli_contract_registry_and_unimplemented_provider_hold(self) -> None:
+    def test_cli_contract_registry_and_delivered_replay_fails_closed(self) -> None:
         parser, specifications = build_parser(ROOT)
         expected = {tuple(row["verb"].split(" ", 1)) for row in load_json(ROOT / "config/phase4/cli-contract.json")["commands"]}
         self.assertEqual(set(specifications), expected)
@@ -163,22 +163,22 @@ class DataChainTests(unittest.TestCase):
             code = main([
                 "replay", "release", "--release-root", "x", "--manifest", "y", "--output", "z",
             ])
-        self.assertEqual(code, 20)
+        self.assertEqual(code, 5)
 
     def test_invocation_provenance_is_complete_and_matches_actual_actor(self) -> None:
         with mock.patch.dict(os.environ, {}, clear=True):
             with self.assertRaises(ContractEvidenceMismatch):
                 producer_provenance(ROOT, "artifacts/phase-4-runtime/unit")
-        with mock.patch.dict(os.environ, {"P4_ACTOR_ID": "p4-implementation-author-i01"}, clear=True):
+        with mock.patch.dict(os.environ, {"P4_ACTOR_ID": "p4-r01-controller"}, clear=True):
             with self.assertRaises(ContractEvidenceMismatch):
                 producer_provenance(ROOT, "artifacts/phase-4-runtime/unit")
         contexts = (
             {
-                "P4_ACTOR_ID": "p4-implementation-author-i01", "P4_SESSION_ID": "/root/implementation_author",
+                "P4_ACTOR_ID": "p4-r01-controller", "P4_SESSION_ID": "/root",
                 "P4_TASK_ID": "T02", "P4_ROLE": "implementation_author", "P4_ACTOR_ASSIGNMENTS": ACTOR_ASSIGNMENTS,
             },
             {
-                "P4_ACTOR_ID": "p4-acceptance-engineer-i01", "P4_SESSION_ID": "/root/acceptance_engineer",
+                "P4_ACTOR_ID": "p4-r01-contract-owner", "P4_SESSION_ID": "/root/independent_contract_audit",
                 "P4_TASK_ID": "T02", "P4_ROLE": "acceptance_engineer", "P4_ACTOR_ASSIGNMENTS": ACTOR_ASSIGNMENTS,
             },
         )
@@ -188,7 +188,7 @@ class DataChainTests(unittest.TestCase):
                 self.assertEqual(provenance["producer_actor_id"], context["P4_ACTOR_ID"])
                 self.assertEqual(provenance["session_id"], context["P4_SESSION_ID"])
                 self.assertEqual(provenance["role"], context["P4_ROLE"])
-        invalid = dict(contexts[0], P4_SESSION_ID="/root/acceptance_engineer")
+        invalid = dict(contexts[0], P4_SESSION_ID="/root/t22_reviewer")
         with mock.patch.dict(os.environ, invalid, clear=True), self.assertRaises(ContractEvidenceMismatch):
             producer_provenance(ROOT, "artifacts/phase-4-runtime/unit")
 

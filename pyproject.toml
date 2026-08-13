@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=75"]
+requires = ["setuptools>=68.1.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -25,6 +25,12 @@ include-package-data = true
 "share/autoresearch-lotte/tests/phase1/fixtures/spec" = ["tests/phase1/fixtures/spec/spec-bundle-freeze.json", "tests/phase1/fixtures/spec/hash-vectors.json"]
 "share/autoresearch-lotte/tests/phase1/fixtures/live-execution" = ["tests/phase1/fixtures/live-execution/*.json"]
 "share/autoresearch-lotte/docs/data" = ["docs/data/lottery-data-spec-v1.md"]
+"share/autoresearch-lotte/config/phase4" = ["config/phase4/*.json"]
+"share/autoresearch-lotte/schemas/phase4" = ["schemas/phase4/*.json"]
+"share/autoresearch-lotte/qualification-design" = ["qualification-design/*.json"]
+"share/autoresearch-lotte/deploy/systemd-user" = ["deploy/systemd-user/*"]
+"share/autoresearch-lotte/tests/phase4/fixtures/benchmark" = ["tests/phase4/fixtures/benchmark/*"]
+"share/autoresearch-lotte/tests/phase4/fixtures/e2e" = ["tests/phase4/fixtures/e2e/*.json"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

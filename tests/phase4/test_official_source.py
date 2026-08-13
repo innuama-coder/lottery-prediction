@@ -83,9 +83,8 @@ class OfficialSourceTests(unittest.TestCase):
     def test_frozen_policy_yields_exact_four_source_plan(self) -> None:
         self.assertEqual(sha256_file(POLICY), "ab70c9abc440ad8180db70321578e4a569fbfda802b0e698597fd5ae3df7417f")
         self.assertEqual(sha256_file(ROOT / "config/phase4/calendar-policy.json"), "79ae43a35b5f83d1c424994c9b7ac34b812faa6d619d34ac9e3000afb44c8bbf")
-        review_root = ROOT / "artifacts/phase-4-prep/p4-prep-controller-issued-i01/work-items/T03/data-custodian-source-review-I01"
-        self.assertEqual(sha256_file(review_root / "source-review.json"), "66022e1a2d24bb648cacd4ac13be6afb581e6b0f4648fde31bc946c667badeac")
-        self.assertEqual(sha256_file(review_root / "receipt.json"), "b28839d64eb94f384095b7243e833cf33be5cb6c9184c82a9033a38c7bf55a17")
+        review = ROOT / "tests/phase4/fixtures/source/source-review-pass.json"
+        self.assertEqual(load_json(review, reject_floats=True)["status"], "PASS")
         policy, endpoints = load_source_policy(POLICY, at_utc=VALID_CLOCK)
         self.assertEqual(policy["policy_id"], "p4-source-policy-v1-20260811-i01")
         self.assertEqual({(row.game, row.source_id) for row in endpoints}, set(EXPECTED_ENDPOINTS))

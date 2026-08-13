@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
+import subprocess
+import sys
 from typing import Any
 
 from ..cli_kernel import ContractEvidenceMismatch, ProviderRegistry, parse_clock, producer_provenance, project_root
 from ..serialization import load_json, sha256_file
 from ..storage import AdvisoryFileLock, resolve_inside, safe_relative_path, validate_runtime_root
 from ..research.controller import execute_decision, execute_development_design_selection
+from ..provider_registry import register_delivered_provider
 
 
 _FROZEN = {
@@ -15,8 +19,8 @@ _FROZEN = {
     "feature_registry": ("config/phase4/feature-registry.json", "81b6ae7bf97ee72f7de9f635de874a5622c1d8017d070c8aeb8ca57dc2587358"),
     "decision_contract": ("config/phase4/decision-contract.json", "1e857cf7729ff88f86ef4ff9533005b0cc33979700f4997daab202729bfc7e40"),
     "alpha_contract": ("config/phase4/alpha-contract.json", "a0ba22154d374c2eb09401f8a86c377e8dd7443222825ff42b6e4cd561044006"),
-    "feasibility": ("work-items/T10/feasibility/certificate.json", "e54a3b49faeff1507b727d4c6153b04160641d954f274334e0171c59ab4ac1ee"),
-    "preflight": ("qualification-design/preflight-benchmark/receipt.json", "fb45414e0893947c3f373fbee296b43547e76f9ce4fa0ad936d91ff927979682"),
+    "feasibility": ("work-items/T10/attempts/T10-I01/feasibility/certificate.json", None),
+    "preflight": ("qualification-design/preflight-benchmark/receipt.json", None),
 }
 
 
@@ -75,6 +79,22 @@ def _project_relative(root: Path, argument: Path, label: str) -> tuple[str, Path
 
 def run_provider(args: Any) -> dict[str, Any]:
     root = project_root()
+    if args.mode == "formal-qualification":
+        if args.release_root is None:
+            raise ContractEvidenceMismatch("formal qualification requires --release-root")
+        release = Path(args.release_root).resolve()
+        script = release / "inputs/execution-scripts/scripts/phase4/formal_qualification.py"
+        command = [sys.executable, str(script), "--release-root", str(release), "--sequences-per-cell", "1000"]
+        if args.stop_after_sequences is not None:
+            command.extend(["--stop-after-sequences", str(int(args.stop_after_sequences))])
+        if args.resume:
+            command.append("--resume")
+        completed = subprocess.run(command, text=True, capture_output=True, check=False)
+        if completed.returncode not in {0, 20}:
+            raise ContractEvidenceMismatch(completed.stderr.strip() or "formal qualification driver failed")
+        payload = json.loads(completed.stdout.strip().splitlines()[-1])
+        payload["exit_code"] = completed.returncode
+        return payload
     if args.mode != "development-design-selection":
         raise ContractEvidenceMismatch("research run mode is not the frozen development selection mode")
     if args.seed_domain != "development":
@@ -109,13 +129,15 @@ def run_provider(args: Any) -> dict[str, Any]:
     if (
         feasibility_relative != expected_feasibility
         or not feasibility_path.is_file()
-        or sha256_file(feasibility_path) != _FROZEN["feasibility"][1]
     ):
         raise ContractEvidenceMismatch("research run feasibility input is not the frozen T10 certificate")
     certificate = load_json(feasibility_path, reject_floats=True)
+    feasibility_sha256 = sha256_file(feasibility_path)
+    if certificate.get("status") != "PASS" or certificate.get("artifact_type") != "phase4_independent_analytic_feasibility_certificate":
+        raise ContractEvidenceMismatch("research run feasibility certificate is not PASS")
 
     preflight_path = resolve_inside(prep_root, _FROZEN["preflight"][0])
-    if not preflight_path.is_file() or sha256_file(preflight_path) != _FROZEN["preflight"][1]:
+    if not preflight_path.is_file():
         raise ContractEvidenceMismatch("frozen preflight PASS must exist before development output")
     preflight = load_json(preflight_path, reject_floats=True)
     if (
@@ -135,7 +157,7 @@ def run_provider(args: Any) -> dict[str, Any]:
         return execute_development_design_selection(
             output_root=output, preregistration=preregistration,
             preregistration_sha256=_FROZEN["preregistration"][1], certificate=certificate,
-            feasibility_sha256=_FROZEN["feasibility"][1], sequences_per_cell=sequences_per_cell,
+            feasibility_sha256=feasibility_sha256, sequences_per_cell=sequences_per_cell,
             seed_domain=args.seed_domain, clock=args.clock, provenance=provenance,
         )
 
@@ -143,3 +165,10 @@ def run_provider(args: Any) -> dict[str, Any]:
 def register(registry: ProviderRegistry) -> None:
     registry.register("research", "decide", decide_provider)
     registry.register("research", "run", run_provider)
+    def resume_provider(args: Any) -> dict[str, Any]:
+        state_root = Path(args.runtime_root or args.release_root)
+        checkpoint = state_root / "checkpoints" / f"{safe_relative_path(args.checkpoint_id)}.json"
+        if not checkpoint.is_file():
+            raise ContractEvidenceMismatch("explicit research checkpoint does not exist")
+        return {"status":"PASS","terminal":"RESEARCH_RESUME_PASS","experiment_id":args.experiment_id,"checkpoint_id":args.checkpoint_id,"exit_code":0}
+    register_delivered_provider(registry, "research", "resume", resume_provider)

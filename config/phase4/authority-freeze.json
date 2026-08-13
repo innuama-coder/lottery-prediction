@@ -1,7 +1,8 @@
 {
   "schema_version": "1.0.0",
   "artifact_type": "phase4_authority_freeze",
-  "authority_commit": "bb25c5823e27ce81c40b6c73da0b77cfc906e4d7",
+  "authority_commit": "b6dcb2b575abb12046985c4cbcd9fb2367549d48",
+  "required_ancestor_commit": "bb25c5823e27ce81c40b6c73da0b77cfc906e4d7",
   "authority_files": [
     {
       "path": "ROADMAP.md",
@@ -13,11 +14,11 @@
     },
     {
       "path": "docs/research/phase-4-overall-design.md",
-      "sha256": "b01e33b7047d88583fabd27faa7d2b7809bedb9a1e61d4b75fb142175832bd99"
+      "sha256": "5a172ffd370222fc90b1e6084d59c41069e41947c6d86de4c119769c039c1dba"
     },
     {
       "path": "docs/plans/phase-4-detailed-plan.md",
-      "sha256": "4bf3da4a5c772d2ccf0e77888f5f09501f460d68b3e00d00232e481a6546753f"
+      "sha256": "c2e7715121baad25fee4e1b5f696e7709ce365d3e1bb00ab65029223cba40811"
     }
   ],
   "phase3_acceptance": {
@@ -35,31 +36,31 @@
   ],
   "namespace_contract": [
     {
-      "id": "p4-prep-controller-issued-i01",
+      "id": "p4-prep-phase4-mvp-20260813-r01-i01",
       "kind": "preparation",
-      "path": "artifacts/phase-4-prep/p4-prep-controller-issued-i01"
+      "path": "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i01"
     },
     {
-      "id": "p4-staging-canary-i01",
+      "id": "p4-staging-phase4-mvp-20260813-r01-i01",
       "kind": "staging",
-      "path": "artifacts/phase-4-staging/p4-staging-canary-i01"
+      "path": "artifacts/phase-4-staging/p4-staging-phase4-mvp-20260813-r01-i01"
     },
     {
-      "id": "p4-runtime-readiness-i01",
+      "id": "p4-runtime-phase4-mvp-20260813-r01-i01",
       "kind": "runtime",
-      "path": "artifacts/phase-4-runtime/p4-runtime-readiness-i01"
+      "path": "artifacts/phase-4-runtime/p4-runtime-phase4-mvp-20260813-r01-i01"
     },
     {
-      "id": "p4-formal-namespace-i01",
+      "id": "p4-formal-phase4-mvp-20260813-r01-i01",
       "kind": "formal",
       "path": "artifacts/phase-4"
     }
   ],
   "provenance": {
-    "producer_actor_id": "p4-release-controller-orchestrator-i01",
+    "producer_actor_id": "p4-r01-release-controller",
     "role": "release_controller",
     "session_id": "/root",
-    "source_commit": "f8a7a6abb46a55f8fa17e5ae3280c5c5432c363b",
+    "source_commit": "b6dcb2b575abb12046985c4cbcd9fb2367549d48",
     "task_id": "T00"
   }
 }

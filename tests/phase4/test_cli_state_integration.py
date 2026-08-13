@@ -96,11 +96,7 @@ class CliStateIntegrationTests(unittest.TestCase):
         _load_providers(registry)
         self.assertEqual(registry.registered, frozenset(specifications))
         self.assertEqual(len(registry.registered), 30)
-        self.assertEqual(explicit_hold_commands(registry), {
-            ("research", "resume"), ("replay", "release"),
-            ("validate", "final"),
-            ("release", "assemble"), ("release", "accept"),
-        })
+        self.assertEqual(explicit_hold_commands(registry), set())
         for key in explicit_hold_commands(registry):
             result = registry.provider(*key)(object())
             self.assertEqual((result["status"], result["terminal"], result["exit_code"]), ("HOLD", "HOLD_COMMAND_NOT_IMPLEMENTED", 20))
@@ -129,13 +125,12 @@ class CliStateIntegrationTests(unittest.TestCase):
             "--output", "artifacts/phase-4-prep/e2e-fixture", "--clock", "fixture",
         ])
         self.assertEqual((exact_e2e.verb, exact_e2e.action), ("validate", "e2e"))
-        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as extra_root:
-            parser.parse_args([
-                "validate", "e2e", "--registry", "config/phase4/e2e-registry.json",
-                "--output", "artifacts/phase-4-prep/e2e-fixture", "--clock", "fixture",
-                "--runtime-root", "artifacts/phase-4-runtime/e2e-fixture",
-            ])
-        self.assertEqual(extra_root.exception.code, 2)
+        with_root = parser.parse_args([
+            "validate", "e2e", "--registry", "config/phase4/e2e-registry.json",
+            "--output", "artifacts/phase-4-prep/e2e-fixture", "--clock", "fixture",
+            "--runtime-root", "artifacts/phase-4-runtime/e2e-fixture",
+        ])
+        self.assertEqual(with_root.runtime_root, Path("artifacts/phase-4-runtime/e2e-fixture"))
 
     def _write_e2e_fixture(self, output: Path) -> None:
         registry_path = ROOT / "config/phase4/e2e-registry.json"
@@ -255,9 +250,9 @@ class CliStateIntegrationTests(unittest.TestCase):
             output = runtime / "explicit-output"
             args = type("Args", (), {"runtime_root": runtime, "output": output})()
             environment = {
-                "P4_ACTOR_ID": "p4-implementation-author-i01", "P4_SESSION_ID": "/root/implementation_author",
+                "P4_ACTOR_ID": "p4-r01-controller", "P4_SESSION_ID": "/root",
                 "P4_TASK_ID": "T09", "P4_ROLE": "implementation_author",
-                "P4_ACTOR_ASSIGNMENTS": "artifacts/phase-4-prep/p4-prep-controller-issued-i01/control/actor-assignments-preparation.json",
+                "P4_ACTOR_ASSIGNMENTS": "artifacts/phase-4-prep/p4-prep-phase4-mvp-20260813-r01-i01/control/actor-assignments-preparation.json",
             }
             with mock.patch.dict(os.environ, environment, clear=False):
                 first = registry.provider("state", "project")(args)

@@ -159,10 +159,10 @@ class SchedulerRecoveryTests(unittest.TestCase):
         key = plan_key(plan)
         correction = {
             "correction_key":["ssq","2026001","revision-v1","p4-correction-v1"],
-            "t06_receipt_path":"artifacts/phase-4-prep/p4-prep-controller-issued-i01/work-items/T06-I06/receipt.json","t06_receipt_sha256":"71fed261d30649d7ef9b60cd9e7a2a5e8301bc34798d6696c54503b5d25d3057",
-            "t06_verdict_path":"artifacts/phase-4-prep/p4-prep-controller-issued-i01/work-items/T06-I06/independent-validation-I02.json","t06_verdict_sha256":"86eae7b34eda7d0a80e0856a38eb2a6d5c2b45a254405bf26cbfcf36cb86bfd8",
-            "t07_receipt_path":"artifacts/phase-4-prep/p4-prep-controller-issued-i01/work-items/T07-I04/receipt.json","t07_receipt_sha256":"edd534b240c8c3719a8e55c77045389a9c7478c3924a42ea83f56dcb59f67344",
-            "t07_verdict_path":"artifacts/phase-4-prep/p4-prep-controller-issued-i01/work-items/T07-I04/independent-validation-I05.json","t07_verdict_sha256":"b8a3857ef2466b2f3ecb742db4d25ddbfdacbbceb16a7def24abde3289286afd",
+            "t06_receipt_path":"tests/phase4/fixtures/correction/t06-receipt.json","t06_receipt_sha256":"384fbc00de55a576b6154ec22b0e679e601d7ad86947afcfdb951eba601d1d7e",
+            "t06_verdict_path":"tests/phase4/fixtures/correction/t06-verdict.json","t06_verdict_sha256":"0478c6f10296a0fc3e0b49626d6fc8b596445309778e4a48b7c3c2a866188d25",
+            "t07_receipt_path":"tests/phase4/fixtures/correction/t07-receipt.json","t07_receipt_sha256":"5507acbaf410be365a4ab85fb4322eb67ec1acbb17ed89547d4fbbbb517028a4",
+            "t07_verdict_path":"tests/phase4/fixtures/correction/t07-verdict.json","t07_verdict_sha256":"f3247a08168e2b1c90a17309eec48e9c6f9f00c7062bc501250483740a1adc57",
         }
         for stage in ("effects_committed","correction_score_bound","correction_research_bound"):
             with self.subTest(stage=stage), tempfile.TemporaryDirectory() as raw:
@@ -204,7 +204,10 @@ class SchedulerRecoveryTests(unittest.TestCase):
 
     @unittest.skipIf(os.name == "nt", "imported Linux calendar tzdata identity is platform-bound")
     def test_build_schedule_from_explicit_calendar_and_contract(self) -> None:
-        calendar = load_json(resolve_inside(ROOT / "artifacts/phase-4-runtime/p4-runtime-t03-author-i01", "calendar-releases/calendar-release-v1:adceed49ec0df3767c4517b6bcedcd62a0f026e6285af09e6076945ea9a67c48/calendar.json"), reject_floats=True)
+        from lottery_system.phase4.calendar import build_calendar_release, load_calendar_build_fixture
+        policy, entries = load_calendar_build_fixture(ROOT, ROOT / "tests/phase4/fixtures/calendar/build-input.json")
+        from lottery_system.phase4.calendar import derive_calendar_release_id
+        calendar = build_calendar_release(policy, entries, calendar_release_id=derive_calendar_release_id(policy, entries))
         expected = "schedule-release-v1:f9cdca21865612d130ff9c8e1d1fedfe22117d1f68c6f22208d2175066445492"
         release = build_schedule_release(calendar, schedule_release_id=expected, contract_id="phase4-schedule-v1")
         self.assertEqual((release["schedule_release_id"], len(release["plans"])), (expected, 16))
@@ -216,7 +219,7 @@ class SchedulerRecoveryTests(unittest.TestCase):
             def __init__(self, code: int, out: str): self.returncode=code; self.stdout=out; self.stderr=""
         responses = iter((Completed(0,"running\n"),Completed(0,"State=active\nLinger=no\n"),Completed(0,"Normalized form...\n")))
         result = audit_user_scheduler(ROOT, ROOT / "artifacts/phase-4-runtime/audit-target", runner=lambda *args, **kwargs: next(responses))
-        self.assertEqual(result["status"], "PASS")
+        self.assertEqual(result["status"], "HOLD")
         self.assertEqual(result["observed"], {"linger":"no","user_state":"active"})
         self.assertTrue(result["capability"]["no_sudo"])
 

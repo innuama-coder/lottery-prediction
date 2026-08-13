@@ -205,6 +205,8 @@ def main() -> int:
     args = parser.parse_args()
     if args.seed_domain != "power-confirmation" or args.confidence_family != "0.95":
         raise ValueError("T13 seed domain/confidence family mismatch")
+    if args.sequences_per_cell != 20000:
+        raise ValueError("T13 requires exactly 20,000 sequences per cell")
     design = json.loads(args.design.read_text(encoding="utf-8"))
     receipt = json.loads(args.selection_receipt.read_text(encoding="utf-8"))
     command = json.loads(args.controller_command.read_text(encoding="utf-8"))
@@ -216,6 +218,7 @@ def main() -> int:
     if design.get("controller_identity", {}).get("controller_identity_id") != identity["controller_identity_id"]:
         raise ValueError("design is not bound to the frozen controller identity")
     args.output.mkdir(parents=True, exist_ok=False)
+    (args.output / "qualification-design.json").write_bytes(canonical(design))
     cells, all_commitments = collect_cells(
         design=design,
         identity=identity,
@@ -243,6 +246,9 @@ def main() -> int:
                "confidence_family":"simultaneous_95_percent_clopper_pearson",
                "bonferroni_two_sided_tail":"0.05/(2*8)", "cells":summary_cells}
     (args.output / "summary.json").write_bytes(canonical(summary))
+    shard_rows = [{"path": cell["terminals_path"], "sha256": cell["terminals_sha256"], "sequence_count": cell["sequence_count"]} for cell in cells]
+    freeze = {"schema_version":"1.0.0","artifact_type":"phase4_machine_qualification_design_freeze","design_id":design["design_id"],"design_sha256":sha((args.output / "qualification-design.json").read_bytes()),"controller_identity":identity,"sequence_count":sum(cell["sequence_count"] for cell in cells),"observation_count":sum(cell["sequence_count"] for cell in cells) * 150,"shards":shard_rows,"status":"PASS","terminal":"T13_POWER_DESIGN_FROZEN"}
+    (args.output / "design-freeze.json").write_bytes(canonical(freeze))
     return 0
 
 

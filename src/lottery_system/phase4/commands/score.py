@@ -31,7 +31,7 @@ from ..windows import (
 )
 
 
-T10_I07_MANIFEST_SHA256 = "8073aa54c1d1fa8d06ff1fc56e9c2fa1c625744cd3d81e17b9575906f8157803"
+T10_I07_MANIFEST_SHA256 = "3f85d9fc36eb67452da3dc4552e07a2c7635ece1ab865a922587640856e40f0c"
 T10_I07_METRIC_SHA256 = "b424553bef790ad0d99269a6741f95309dc4da2b698662d233603a51b877efd9"
 
 
@@ -487,7 +487,7 @@ def _validate_metric_oracle(oracle_root: Path) -> dict[str, Any]:
         raise MetricViolation("T10-I07 metric oracle identity mismatch")
     manifest = load_json(manifest_path, reject_floats=True)
     matches = [row for row in manifest.get("files", []) if row.get("sha256") == T10_I07_METRIC_SHA256]
-    if len(matches) != 1 or not matches[0].get("path", "").endswith("/T10-I07/known-answers/small-space-metrics.json"):
+    if len(matches) != 1 or not matches[0].get("path", "").endswith("/T10/attempts/T10-I01/known-answers/small-space-metrics.json"):
         raise MetricViolation("T10-I07 metric oracle is absent from its frozen manifest")
     expected = load_json(metric_path, reject_floats=True)
     fixture = expected["fixture"]

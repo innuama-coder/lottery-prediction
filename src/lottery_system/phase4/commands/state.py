@@ -13,7 +13,7 @@ from ..storage import resolve_inside, safe_relative_path, validate_runtime_root,
 
 STATE_CONTRACT_ID = "phase4-state-v1"
 STATE_CONTRACT_PATH = "config/phase4/state-contract.json"
-STATE_CONTRACT_SHA256 = "a2b241a40c761a0e1c25a432375734e33caadb485dd66971808c388d4b94388b"
+STATE_CONTRACT_SHA256 = "4119cdd274446135ca8e180f745509db68b8455dba6e2ab1fc1fe878e2c04012"
 
 
 def _write_same(path: Path, value: dict[str, Any]) -> bool:

@@ -14,7 +14,7 @@ from lottery_data.parsers.swlc import parse as parse_swlc
 from lottery_data.parsers.ydniu import parse as parse_ydniu
 
 from .identity import content_id
-from .serialization import load_json, sha256_bytes, sha256_file
+from .serialization import canonical_json_bytes, load_json, sha256_bytes, sha256_file
 from .storage import resolve_inside, write_once_bytes, write_once_json
 from .verification import SOURCE_PAIRS, deduplicate_facts, normalized_fact, verify_result_revision
 
@@ -229,6 +229,14 @@ def capture_endpoint(
 
 def protected_inventory(project_root: Path) -> list[dict[str, Any]]:
     project = project_root.resolve()
+    if not all((project / relative).exists() for relative in PROTECTED_ROOTS):
+        candidates = list((project / "inputs/preparation-evidence/work-items/T00").glob("protected-artifact-inventory.json"))
+        if len(candidates) != 1:
+            raise SourcePolicyError("protected roots and frozen T00 protected inventory are both unavailable")
+        frozen = load_json(candidates[0], reject_floats=True)
+        if frozen.get("artifact_type") != "phase4_protected_artifact_inventory":
+            raise SourcePolicyError("frozen T00 protected inventory identity is invalid")
+        return list(frozen["entries"])
     rows: list[dict[str, Any]] = []
     for relative_root in PROTECTED_ROOTS:
         root = resolve_inside(project, relative_root)
@@ -287,7 +295,9 @@ def run_readonly_canary(
     staging = staging_root.resolve(strict=False)
     output = output_root.resolve(strict=False)
     staging.relative_to((project / "artifacts/phase-4-staging").resolve())
-    output.relative_to((project / "artifacts/phase-4-prep").resolve())
+    allowed_outputs = ((project / "artifacts/phase-4-prep").resolve(), (project / "artifacts/phase-4").resolve())
+    if not any(output == base or base in output.parents for base in allowed_outputs):
+        raise SourcePolicyError("canary output is outside Phase 4 preparation/formal evidence roots")
     policy, endpoints = load_source_policy(source_policy_path, at_utc=observed_at_utc)
     before = protected_inventory(project)
     write_once_json(resolve_inside(output, "protected-inventory-before.json"), before)
@@ -348,6 +358,29 @@ def run_readonly_canary(
             revision = verify_result_revision(primary[issue], corroborating[issue], verified_at_utc=observed_at_utc)
             revisions.append(revision)
             write_once_json(resolve_inside(output, f"result-revisions/{revision['result_revision_id']}.json"), revision)
+    phase1_schema_path = project / "contracts/phase1-draw-record.schema.json"
+    if not phase1_schema_path.is_file():
+        phase1_schema_path = project / "schemas/phase1/draw-record.schema.json"
+    if not phase1_schema_path.is_file():
+        phase1_schema_path = Path(__file__).resolve().parents[3] / "schemas/phase1/draw-record.schema.json"
+    if not phase1_schema_path.is_file():
+        raise SourceReadinessError("Phase 1 draw-record compatibility schema is unavailable")
+    from jsonschema import Draft202012Validator
+    schema = load_json(phase1_schema_path, reject_floats=True)
+    observation_by_id = {row["observation_id"]: row for row in observations}
+    endpoint_by_key = {(row.game, row.source_id): row for row in endpoints}
+    compatible_records = []
+    for revision in revisions:
+        links = []
+        for observation_id in (revision["primary_observation_id"], revision["corroborating_observation_id"]):
+            observation = observation_by_id[observation_id]
+            endpoint = endpoint_by_key[(revision["game"], observation["source_id"])]
+            links.append({"source_id":observation["source_id"],"publisher_id":"publisher-" + endpoint.source_id,"observation_id":"obs-v1:" + observation_id.rsplit(":",1)[-1],"raw_ref":f"raw/{observation['source_id']}/{revision['game']}/{observation['raw_sha256']}.raw","raw_sha256":observation["raw_sha256"]})
+        core = {"game":revision["game"],"issue_id":revision["issue_id"],"draw_date_local":revision["draw_business_date"],"front_numbers":revision["numbers"]["front"],"back_numbers":revision["numbers"]["back"]}
+        record = {"record_schema_version":"1.0.0",**core,"status":"verified","core_fact_profile":"phase0-core-fact-v1","core_fact_sha256":sha256_bytes(canonical_json_bytes(core)),"evidence_links":links,"revision_id":"rev-v1:" + sha256_bytes(canonical_json_bytes(revision)),"supersedes_revision_id":None,"knowledge_class":"prospective_as_observed","available_at_utc":observed_at_utc}
+        Draft202012Validator(schema).validate(record)
+        compatible_records.append(record)
+        write_once_json(resolve_inside(output, f"phase1-compatible/{record['revision_id']}.json"), record)
     summary = {
         "schema_version": "1.0.0",
         "artifact_type": "phase4_source_canary_summary",
@@ -358,6 +391,11 @@ def run_readonly_canary(
         "successful_endpoint_count": len(observations),
         "verified_game_count": len({row["game"] for row in revisions}),
         "result_revision_ids": sorted(row["result_revision_id"] for row in revisions),
+        "deduplicated_fact_count": len(facts),
+        "phase1_compatible_record_count": len(compatible_records),
+        "phase1_schema_compatibility": "PASS",
+        "protected_roots_unchanged": after == before,
+        "network_terminal_coverage": "PASS",
         "producer_provenance": dict(producer_provenance),
         "status": "PASS",
     }

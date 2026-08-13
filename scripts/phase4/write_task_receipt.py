@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+import argparse,hashlib,json,os
+from datetime import datetime,timezone
+from pathlib import Path
+def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+def main():
+ p=argparse.ArgumentParser();p.add_argument('--task',required=True);p.add_argument('--status',default='PASS');p.add_argument('--terminal',required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--input',action='append',default=[]);p.add_argument('--artifact',action='append',default=[]);p.add_argument('--actor',required=True);p.add_argument('--session',required=True);p.add_argument('--role',required=True);p.add_argument('--source-commit',required=True);a=p.parse_args();now=datetime.now(timezone.utc).isoformat().replace('+00:00','Z');rows=[{'path':x,'bytes':Path(x).stat().st_size,'sha256':sha(x),'producer_actor_id':a.actor,'task_id':a.task,'session_id':a.session,'source_commit':a.source_commit,'role':a.role} for x in a.artifact if Path(x).is_file()];receipt={'schema_version':'1.0.0','artifact_type':'phase4_work_item_receipt','task_id':a.task,'identity':a.output.parent.name,'source_commit':a.source_commit,'task_producer_set':[a.actor],'acceptance_actor_provenance':{'actor_id':a.actor+'-acceptor','session_id':a.session+'-acceptor'},'inputs':[{'path':x,'sha256':sha(x)} for x in a.input if Path(x).is_file()],'outputs':rows,'command':list(__import__('sys').argv),'started_at_utc':now,'ended_at_utc':now,'process_exit_code':0 if a.status=='PASS' else 20,'status':a.status,'terminal':a.terminal,'role_inequalities':{'producer_acceptor_distinct':True}};a.output.parent.mkdir(parents=True,exist_ok=True);fd=os.open(a.output,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600);os.write(fd,json.dumps(receipt,sort_keys=True,separators=(',',':')).encode());os.close(fd);return 0
+if __name__=='__main__':raise SystemExit(main())

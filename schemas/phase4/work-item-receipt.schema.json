@@ -11,7 +11,7 @@
     "task_producer_set": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "acceptance_actor_provenance": {"$ref": "#/$defs/acceptor"},
     "role_inequalities": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "boolean"}},
-    "inputs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/artifact"}},
+    "inputs": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/artifact"}},
     "outputs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/outputArtifact"}},
     "command": {"type": "array", "minItems": 1, "items": {"type": "string"}},
     "started_at_utc": {"type": "string", "format": "date-time"}, "ended_at_utc": {"type": "string", "format": "date-time"},
@@ -20,7 +20,7 @@
   "$defs": {
     "id": {"type": "string", "pattern": "^(?!.*latest)(?!.*[*/]).+$"}, "safePath": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*latest)(?!.*\\*).+$"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "artifact": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"$ref": "#/$defs/safePath"}, "sha256": {"$ref": "#/$defs/sha256"}}},
-    "outputArtifact": {"type": "object", "additionalProperties": false, "required": ["path", "sha256", "bytes", "producer_actor_id", "task_id", "session_id", "source_commit", "role"], "properties": {"path": {"$ref": "#/$defs/safePath"}, "sha256": {"$ref": "#/$defs/sha256"}, "bytes": {"type": "integer", "minimum": 0}, "producer_actor_id": {"type": "string", "minLength": 1}, "task_id": {"const": "T01"}, "session_id": {"type": "string", "minLength": 1}, "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "role": {"enum": ["contract_owner", "statistical_owner"]}}},
+    "outputArtifact": {"type": "object", "additionalProperties": false, "required": ["path", "sha256", "bytes", "producer_actor_id", "task_id", "session_id", "source_commit", "role"], "properties": {"path": {"$ref": "#/$defs/safePath"}, "sha256": {"$ref": "#/$defs/sha256"}, "bytes": {"type": "integer", "minimum": 0}, "producer_actor_id": {"type": "string", "minLength": 1}, "task_id": {"type":"string","pattern":"^T(?:0[0-9]|1[0-9]|2[0-4])$"}, "session_id": {"type": "string", "minLength": 1}, "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "role": {"enum": ["release_controller","data_custodian","contract_owner","implementation_author","statistical_owner","run_operator","vps_operator","independent_oracle_author","independent_power_operator","independent_replay_operator","independent_reviewer","acceptance_engineer","machine_delivery_statement","acceptance_approver"]}}},
     "acceptor": {"type": "object", "additionalProperties": false, "required": ["actor_id", "session_id", "task_record_path", "task_record_sha256"], "properties": {"actor_id": {"type": "string", "minLength": 1}, "session_id": {"type": "string", "minLength": 1}, "task_record_path": {"$ref": "#/$defs/safePath"}, "task_record_sha256": {"$ref": "#/$defs/sha256"}}}
   }
 }

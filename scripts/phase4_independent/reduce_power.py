@@ -55,6 +55,8 @@ def reduce(summary: dict[str, Any], formal: int, uniform_max: int, positive_min:
     cells = summary.get("cells")
     if not isinstance(cells, list) or len(cells) != 8:
         raise ValueError("exactly eight power cells are required")
+    if any(cell.get("sequence_count") != 20000 for cell in cells):
+        raise ValueError("each power cell must contain exactly 20,000 sequences")
     rows = []
     with localcontext() as context:
         context.prec = PRECISION

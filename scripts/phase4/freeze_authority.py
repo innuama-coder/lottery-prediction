@@ -21,6 +21,11 @@ EXPECTED_ROLES = {
     "release_controller",
     "statistical_owner",
     "machine_delivery_statement",
+    "run_operator",
+    "vps_operator",
+    "independent_replay_operator",
+    "independent_reviewer",
+    "acceptance_approver",
 }
 
 
@@ -278,7 +283,9 @@ def main() -> int:
     parser.add_argument("--close-deliverables", action="store_true")
     args = parser.parse_args()
     started = utc_now()
-    if args.prep_id != "p4-prep-controller-issued-i01":
+    authority = load_json(ROOT / "config/phase4/authority-freeze.json")
+    expected_prep = next(row["id"] for row in authority["namespace_contract"] if row["kind"] == "preparation")
+    if args.prep_id != expected_prep:
         raise ValueError("unexpected controller-issued preparation identity")
     if args.phase3_release != "P3-R07-2c0fa97-20260810-I01":
         raise ValueError("Phase 3 release identity mismatch")
@@ -291,11 +298,12 @@ def main() -> int:
         preserved = all((output / f"attempts/{attempt}/failure.json").is_file() for attempt in ("A01", "A02"))
         if existing != {"attempts"} or not preserved:
             raise FileExistsError(f"immutable T00 output already exists: {output}")
-    authority = load_json(ROOT / "config/phase4/authority-freeze.json")
     genesis = load_json(ROOT / "config/phase4/genesis.json")
     assignments = load_json(args.actor_assignments.resolve())
     if args.commit != authority["authority_commit"]:
         raise ValueError("authority commit argument mismatch")
+    if git("merge-base", "--is-ancestor", authority["required_ancestor_commit"], args.commit, check=False).returncode != 0:
+        raise ValueError("required authority commit is not an ancestor of selected authority")
     if args.protected_root != authority["protected_roots"]:
         raise ValueError("protected roots must be exact and ordered")
     if git("merge-base", "--is-ancestor", args.commit, "origin/main", check=False).returncode != 0:
@@ -362,7 +370,10 @@ def main() -> int:
     for name, payload in artifacts.items():
         (output / name).write_bytes(canonical(payload))
     output_rows = [
-        {"path": path.relative_to(ROOT).as_posix(), "sha256": file_sha(path)}
+        {"path": path.relative_to(ROOT).as_posix(), "sha256": file_sha(path), "bytes": path.stat().st_size,
+         "producer_actor_id": require_actor(assignments, "release_controller")["actor_id"], "task_id": "T00",
+         "session_id": require_actor(assignments, "release_controller")["session_id"], "source_commit": args.commit,
+         "role": "release_controller"}
         for path in sorted(output.rglob("*"))
         if path.is_file()
     ]

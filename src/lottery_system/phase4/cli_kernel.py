@@ -57,7 +57,22 @@ PROVIDER_MODULES = (
 
 
 def project_root() -> Path:
-    return Path(__file__).resolve().parents[3]
+    explicit = os.environ.get("P4_PROJECT_ROOT", "").strip()
+    if explicit:
+        root = Path(explicit).resolve()
+        if not (root / "config/phase4/cli-contract.json").is_file():
+            raise ContractEvidenceMismatch("P4_PROJECT_ROOT does not contain the frozen Phase 4 contract")
+        return root
+    cwd = Path.cwd().resolve()
+    if (cwd / "config/phase4/cli-contract.json").is_file():
+        return cwd
+    source = Path(__file__).resolve().parents[3]
+    if (source / "config/phase4/cli-contract.json").is_file():
+        return source
+    installed = Path(sys.prefix).resolve() / "share/autoresearch-lotte"
+    if (installed / "config/phase4/cli-contract.json").is_file():
+        return installed
+    raise ContractEvidenceMismatch("installed Phase 4 resource root cannot be resolved")
 
 
 def parse_clock(value: str) -> str:
@@ -103,11 +118,10 @@ def producer_provenance(root: Path, path: str) -> dict[str, str]:
         state = "missing" if not present else "partial"
         raise ContractEvidenceMismatch(f"Phase 4 invocation provenance context is {state}")
     assignment_relative = safe_relative_path(context["P4_ACTOR_ASSIGNMENTS"])
-    if (
-        not assignment_relative.startswith("artifacts/phase-4-prep/")
-        or not assignment_relative.endswith("/control/actor-assignments-preparation.json")
-    ):
-        raise ContractEvidenceMismatch("actor assignment is outside the installed preparation control root")
+    preparation = assignment_relative.startswith("artifacts/phase-4-prep/") and assignment_relative.endswith("/control/actor-assignments-preparation.json")
+    formal = (assignment_relative.startswith("artifacts/phase-4/") and assignment_relative.endswith("/control/actor-assignments-formal.json")) or assignment_relative == "control/actor-assignments-formal.json"
+    if not (preparation or formal):
+        raise ContractEvidenceMismatch("actor assignment is outside a frozen Phase 4 control root")
     assignment_path = resolve_inside(root, assignment_relative)
     assignment = load_json(assignment_path, reject_floats=True)
     matches = [row for row in assignment.get("assignments", []) if row.get("actor_id") == context["P4_ACTOR_ID"]]
@@ -201,6 +215,16 @@ def build_parser(root: Path | None = None) -> tuple[argparse.ArgumentParser, dic
         action for action in verb_parsers["data"]._phase4_actions.choices.values() if action.prog.endswith(" data release")  # type: ignore[attr-defined]
     )
     action_parser.add_argument("--result-revision-id", action="append", default=[])
+    special_optional = {
+        ("research", "run"): ["--preregistration", "--feasibility", "--sequences-per-cell", "--output", "--seed-domain", "--clock", "--release-root", "--stop-after-sequences"],
+        ("validate", "e2e"): ["--runtime-root", "--release-root"],
+        ("release", "assemble"): ["--actor-assignments", "--authority-commit", "--implementation-commit", "--authority-receipt", "--contract-receipt", "--execution-manifest", "--benchmark-fixtures", "--prep-root", "--design", "--whitelist"],
+    }
+    for key, flags in special_optional.items():
+        target = verb_parsers[key[0]]._phase4_actions.choices[key[1]]  # type: ignore[attr-defined]
+        for flag in flags:
+            _add_flag(target, flag, required=False)
+    verb_parsers["research"]._phase4_actions.choices["run"].add_argument("--resume", action="store_true")  # type: ignore[attr-defined]
     return parser, specifications
 
 

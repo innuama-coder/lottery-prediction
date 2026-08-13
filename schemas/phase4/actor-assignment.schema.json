@@ -30,8 +30,7 @@
         "roles": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["release_controller", "data_custodian", "contract_owner", "implementation_author", "statistical_owner", "run_operator", "vps_operator", "independent_oracle_author", "independent_power_operator", "independent_replay_operator", "independent_reviewer", "acceptance_engineer", "machine_delivery_statement", "acceptance_approver"]}},
         "session_id": {"type": "string", "minLength": 1}, "task_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
         "task_record_path": {"$ref": "#/$defs/safePath"}, "task_record_sha256": {"$ref": "#/$defs/sha256"}
-      },
-      "allOf": []
+      }
     },
     "inequality": {"type": "object", "additionalProperties": false, "required": ["left", "operator", "right", "reason"], "properties": {"left": {"type": "string", "minLength": 1}, "operator": {"const": "!="}, "right": {"type": "string", "minLength": 1}, "reason": {"type": "string", "minLength": 1}}}
   }

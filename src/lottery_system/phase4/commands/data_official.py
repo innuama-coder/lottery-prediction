@@ -39,9 +39,12 @@ def data_ingest(args: Any) -> dict[str, Any]:
         )
     except (ProtectedRootMutation, RetryableSourceError, SourcePolicyError, SourceReadinessError, SourceVerificationError) as exc:
         code = getattr(exc, "exit_code", 20)
+        terminal = getattr(exc, "terminal", "HOLD_SOURCE_READINESS")
+        if args.mode == "readonly-canary":
+            terminal = "FAIL_PROTECTED_ARTIFACT_MUTATION" if code == 6 else "HOLD_DATA_SOURCE_READINESS"
         return {
             "status": "FAIL" if code == 6 else "HOLD",
-            "terminal": getattr(exc, "terminal", "HOLD_SOURCE_READINESS"),
+            "terminal": terminal,
             "error": str(exc),
             "exit_code": code,
         }

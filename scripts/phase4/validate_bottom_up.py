@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.environ.get("P4_PROJECT_ROOT", Path(__file__).resolve().parents[2])).resolve()
 GUARD_MAP = ROOT / "tests/phase4/fixtures/e2e/guard-map.json"
 
 
@@ -132,7 +132,7 @@ def validate_registry(registry: dict[str, Any], guard_map: dict[str, Any]) -> li
 def run_case(case: dict[str, Any], *, ordinal: int) -> tuple[dict[str, Any], bytes, bytes]:
     command = [sys.executable, "-m", "unittest", *case["selectors"], "-v"]
     environment = dict(os.environ)
-    environment["PYTHONPATH"] = "src"
+    environment.pop("PYTHONPATH", None)
     process = subprocess.Popen(command, cwd=ROOT, env=environment, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
     execution_id = f"e2e-case-{ordinal:03d}-{uuid.uuid4()}"
@@ -163,11 +163,21 @@ def run_case(case: dict[str, Any], *, ordinal: int) -> tuple[dict[str, Any], byt
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--registry", required=True, type=Path)
+    parser.add_argument("--registry", type=Path)
     parser.add_argument("--runtime-root", type=Path)
+    parser.add_argument("--release-root", type=Path)
+    parser.add_argument("--replay", type=Path)
+    parser.add_argument("--actor-assignments", type=Path)
     parser.add_argument("--output", required=True, type=Path)
-    parser.add_argument("--clock", required=True)
+    parser.add_argument("--clock")
     arguments = parser.parse_args()
+    if arguments.replay is not None:
+        from lottery_system.phase4.commands.validation import validate_final
+        result = validate_final(arguments)
+        sys.stdout.buffer.write(canonical_bytes(result))
+        return int(result["exit_code"])
+    if arguments.registry is None or arguments.clock is None:
+        raise SystemExit("E2E mode requires --registry and --clock")
     try:
         registry_path = arguments.registry.resolve()
         registry_path.relative_to(ROOT)

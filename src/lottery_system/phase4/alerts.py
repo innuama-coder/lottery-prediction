@@ -96,8 +96,10 @@ def audit_user_scheduler(
 ) -> dict[str, Any]:
     release = release_root.resolve(strict=False)
     runtime = runtime_root.resolve(strict=False)
-    service_path = release / "deploy/systemd-user/lottery-phase4.service"
-    timer_path = release / "deploy/systemd-user/lottery-phase4.timer"
+    installed_snapshot = release / "readiness/vps/installed-units"
+    unit_root = installed_snapshot if installed_snapshot.is_dir() else release / "deploy/systemd-user"
+    service_path = unit_root / "lottery-phase4.service"
+    timer_path = unit_root / "lottery-phase4.timer"
     if not service_path.is_file() or not timer_path.is_file():
         raise AlertViolation("systemd user unit templates are missing from the explicit release")
     service_text = service_path.read_text(encoding="utf-8")
@@ -137,6 +139,7 @@ def audit_user_scheduler(
         "release_target_writable":_writable_target(release),
         "runtime_target_writable":_writable_target(runtime),
         "no_sudo":all(argv[0] != "sudo" for argv in commands),
+        "linger_enabled":bool(linger_match and linger_match.group(1) == "yes"),
     }
     passed = all(static.values()) and all(capability.values())
     return {

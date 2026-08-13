@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from ..cli_kernel import ContractEvidenceMismatch, ProviderRegistry
-from ..release_ops import actor_for, assemble_evidence, sha256_file, write_once
+from ..release_ops import actor_for, assemble_evidence, provenance, sha256_file, write_once
 from ..serialization import load_json
 from ..provider_registry import register_delivered_provider
 
@@ -35,12 +35,61 @@ def accept(args: Any) -> dict[str, Any]:
     expected = [f"P4-MVP-A{i:02d}" for i in range(1, 22)]
     if [row.get("assertion_id") for row in assertions] != expected or any(row.get("status") != "PASS" for row in assertions) or validator.get("blocking_findings") != 0:
         raise ContractEvidenceMismatch("T24 A01-A21 or blocker gate failed")
+    dispositions = {row["assertion_id"]: row["status"] for row in assertions}
+    if review.get("a01_a21_disposition") != dispositions or review.get("blocking_findings") != []:
+        raise ContractEvidenceMismatch("T24 review disposition or blocker gate failed")
+    assignments = load_json(Path(args.actor_assignments), reject_floats=True)
     actor = actor_for(Path(args.actor_assignments), "acceptance_approver")
-    prior_actors = set(load_json(Path(args.actor_assignments), reject_floats=True).get("prior_producer_actor_ids", []))
+    prior_actors = {
+        row["actor_id"]
+        for row in assignments["assignments"]
+        if any(int(task_id[1:]) <= 23 for task_id in row.get("task_ids", []))
+    }
     if actor["actor_id"] in prior_actors:
         raise ContractEvidenceMismatch("T24 acceptance approver conflicts with prior producer")
-    acceptance = {"schema_version":"1.0.0","artifact_type":"phase4_acceptance","release_id":release.name,"iteration":args.iteration,"status":"PASS","engineering_status":"READY_FOR_HUMAN_ACCEPTANCE","blocking_findings":0,"assertions":assertions,"delivery_coverage":"100%","champion_by_game":{"ssq":"M0","dlt":"M0"},"model_status":"baseline_only","top_k_status":"insufficient_observation","closure_hashes":{"validator":sha256_file(Path(args.validator)),"review":sha256_file(Path(args.review)),"delivery":sha256_file(Path(args.delivery_statement))},"acceptance_actor":{"actor_id":actor["actor_id"],"session_id":actor["session_id"]}}
+    evidence_manifest = release / "manifest/evidence-manifest.json"
+    replay_closure = release / "manifest/replay-closure.json"
+    validator_closure = release / "manifest/validator-closure.json"
+    review_closure = release / "manifest/review-closure.json"
+    delivery_closure = release / "manifest/delivery-closure.json"
+    review_closure_value = load_json(review_closure, reject_floats=True)
+    delivery_closure_value = load_json(delivery_closure, reject_floats=True)
+    if (
+        review_closure_value.get("parent_sha256") != sha256_file(validator_closure)
+        or delivery_closure_value.get("parent_sha256") != sha256_file(review_closure)
+        or delivery.get("review_closure_sha256") != sha256_file(review_closure)
+        or delivery.get("validator_closure_sha256") != sha256_file(validator_closure)
+    ):
+        raise ContractEvidenceMismatch("T24 closure hash chain mismatch")
+    model_status = [
+        {"schema_version":"1.0.0","artifact_type":"phase4_model_status","game":game,"model_id":"M0","comparator_champion_id":"M0","model_release_id":release.name,"window_id":"formal-qualification","status":"baseline_only"}
+        for game in ("ssq", "dlt")
+    ]
+    top_k_status = [
+        {"schema_version":"1.0.0","artifact_type":"phase4_top_k_status","game":game,"K":k,"model_id":"M0","comparator_champion_id":"M0","model_release_id":release.name,"window_id":"formal-qualification","status":"insufficient_observation"}
+        for game in ("ssq", "dlt") for k in (10, 100, 200, 1000)
+    ]
     output = Path(args.output)
+    acceptance = {
+        "schema_version":"1.0.0",
+        "artifact_type":"phase4_acceptance",
+        "release_id":release.name,
+        "iteration":args.iteration,
+        "status":"PASS",
+        "engineering_status":"READY_FOR_HUMAN_ACCEPTANCE",
+        "a01_a21":dispositions,
+        "blocking_findings":[],
+        "delivery_coverage":"100%",
+        "champion_by_game":{"ssq":"M0","dlt":"M0"},
+        "model_status":model_status,
+        "top_k_status":top_k_status,
+        "evidence_manifest_sha256":sha256_file(evidence_manifest),
+        "replay_closure_sha256":sha256_file(replay_closure),
+        "validator_closure_sha256":sha256_file(validator_closure),
+        "review_closure_sha256":sha256_file(review_closure),
+        "machine_delivery_closure_sha256":sha256_file(delivery_closure),
+        "approver_provenance":provenance(actor,"acceptance_approver","T24",load_json(release / "control/execution-environment.json",reject_floats=True)["implementation_commit"]) | {"path":f"acceptance/{args.iteration}/acceptance.json"},
+    }
     write_once(output / "acceptance.json", acceptance)
     return {"status":"PASS","engineering_status":"READY_FOR_HUMAN_ACCEPTANCE","terminal":"T24_READY_FOR_HUMAN_ACCEPTANCE","exit_code":0,"acceptance_sha256":sha256_file(output / "acceptance.json")}
 

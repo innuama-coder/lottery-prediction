@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tempfile
 import venv
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -45,6 +46,27 @@ def export_git(commit: str, destination: Path, paths: list[str]) -> None:
         with archive.open("wb") as handle:
             subprocess.run(["git","archive","--format=tar",commit,"--",*paths],check=True,stdout=handle)
         subprocess.run(["tar","-xf",str(archive),"-C",str(destination)],check=True)
+
+
+def freeze_formal_assignment(source: Path, release: Path) -> Path:
+    assignment = json.loads(source.read_text(encoding="utf-8"))
+    assignment["assignment_id"] = f"p4-formal-{release.name}"
+    assignment["assignment_stage"] = "formal_before_T15"
+    assignment["created_at_utc"] = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+    assignment["parent_assignment_sha256"] = sha(source)
+    records = release / "control/actor-records"
+    records.mkdir(parents=True, exist_ok=False)
+    for row in assignment["assignments"]:
+        if "release_controller" in row["roles"] and "T19" not in row["task_ids"]:
+            row["task_ids"].append("T19")
+        record = {key: row[key] for key in ("actor_id", "actor_type", "roles", "session_id", "task_ids")}
+        record_path = records / f"{row['actor_id']}.json"
+        write_once(record_path, record)
+        row["task_record_path"] = record_path.relative_to(release).as_posix()
+        row["task_record_sha256"] = sha(record_path)
+    destination = release / "control/actor-assignments-formal.json"
+    write_once(destination, assignment)
+    return destination
 
 
 def main() -> int:
@@ -84,10 +106,7 @@ def main() -> int:
     scripts_root = release / "inputs/execution-scripts"
     shutil.copytree(release / "scripts", scripts_root / "scripts")
     shutil.rmtree(release / "scripts")
-    shutil.copy2(args.actor_assignments, release / "control/actor-assignments-formal.json")
-    actor_records = args.actor_assignments.parent / "actor-records"
-    if actor_records.is_dir():
-        shutil.copytree(actor_records, release / "control/actor-records")
+    freeze_formal_assignment(args.actor_assignments, release)
     venv.EnvBuilder(with_pip=True, clear=False).create(args.release_venv)
     python = args.release_venv / "bin/python"
     product = sorted((release / "inputs/wheelhouse").glob("autoresearch_lotte-*.whl"))

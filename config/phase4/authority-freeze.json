@@ -4,12 +4,12 @@
   "task_id": "D00",
   "task_branch": "codex/phase4-real-model-mvp-20260815-r01",
   "input_commit": "ec975d5228240db57be8eb767ad83a4c8e356bcf",
-  "authority_commit": "7df763cd71f01783bf4b00cb0e3ba9aed4e64c1e",
+  "authority_commit": "95f3c6cbe1a43c7ed390907795cc89f4a64b51a9",
   "authority_files": [
-    {"path": "ROADMAP.md", "sha256": "6978fa075d4f75809405b1200dc4fd5175996cab6c996e45826406f47b7fe030"},
-    {"path": "tasks/phase4/README.md", "sha256": "c679aa2bb727f6ae0686424accab3d066c51ceeab0230edb953909a0c8da8fab"},
-    {"path": "docs/research/phase-4-overall-design.md", "sha256": "f2086c908fdb4e7850705c931d3c9c164ae68dd61fc8de690c742a8fc1605599"},
-    {"path": "docs/plans/phase-4-detailed-plan.md", "sha256": "7f0d41ea7f6b68864b28cb37164c8a7da3013bdc1f288d0831bc13ba5dec7e56"}
+    {"path": "ROADMAP.md", "sha256": "bc6c57738294071fbb28444b7c60dabcd3e85dbee6be121691b745af45b7b939"},
+    {"path": "tasks/phase4/README.md", "sha256": "d713598facf3da0d97cf2d949e4ee6e7430fba670e4b6dd2721df153ebd0d36c"},
+    {"path": "docs/research/phase-4-overall-design.md", "sha256": "fc70d45becb7a26222548ff630422c3340b8a997f1b21f2cf8c25300c989a254"},
+    {"path": "docs/plans/phase-4-detailed-plan.md", "sha256": "ff26177acf2614ea0c4dd063b89acc0237b3bbcb427c290cebbcf3018f14eeca"}
   ],
   "requirement_ids": ["P4-R01", "P4-R02", "P4-R03", "P4-R04", "P4-R05", "P4-R06", "P4-R07", "P4-R08", "P4-R09", "P4-R10", "P4-R11", "P4-R12", "P4-R13", "P4-R14", "P4-R15", "P4-R16", "P4-R17"],
   "required_semantics": {

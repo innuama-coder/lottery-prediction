@@ -3,72 +3,37 @@
   "$id": "https://lottery.local/schemas/phase4/authority-freeze.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_type", "authority_commit", "authority_files", "phase3_acceptance", "protected_roots", "namespace_contract", "provenance"],
+  "required": ["schema_version", "artifact_type", "task_id", "task_branch", "input_commit", "authority_commit", "authority_files", "requirement_ids", "required_semantics", "protected_roots"],
   "properties": {
-    "schema_version": {"const": "1.0.0"},
-    "artifact_type": {"const": "phase4_authority_freeze"},
-    "authority_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-    "authority_files": {
-      "type": "array",
-      "minItems": 4,
-      "maxItems": 4,
-      "uniqueItems": true,
-      "items": {"$ref": "#/$defs/pathHash"}
-    },
-    "phase3_acceptance": {
+    "schema_version": {"const": "2.0.0"},
+    "artifact_type": {"const": "phase4_real_model_authority_freeze"},
+    "task_id": {"const": "D00"},
+    "task_branch": {"const": "codex/phase4-real-model-mvp-20260815-r01"},
+    "input_commit": {"$ref": "#/$defs/commit"},
+    "authority_commit": {"$ref": "#/$defs/commit"},
+    "authority_files": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/pathHash"}},
+    "requirement_ids": {"type": "array", "minItems": 17, "maxItems": 17, "uniqueItems": true, "items": {"type": "string", "pattern": "^P4-R(0[1-9]|1[0-7])$"}},
+    "required_semantics": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["path", "release_id", "sha256"],
+      "required": ["games", "serving_model_per_game", "serving_must_be_non_m0", "serving_must_be_non_uniform", "baseline_only_product_pass_allowed", "m0_product_lock_allowed", "final_machine_state", "authority_hold_released_by"],
       "properties": {
-        "path": {"$ref": "#/$defs/safePath"},
-        "release_id": {"const": "P3-R07-2c0fa97-20260810-I01"},
-        "sha256": {"$ref": "#/$defs/sha256"}
+        "games": {"const": ["ssq", "dlt"]},
+        "serving_model_per_game": {"const": true},
+        "serving_must_be_non_m0": {"const": true},
+        "serving_must_be_non_uniform": {"const": true},
+        "baseline_only_product_pass_allowed": {"const": false},
+        "m0_product_lock_allowed": {"const": false},
+        "final_machine_state": {"const": "READY_FOR_LOCAL_PRODUCT_ACCEPTANCE"},
+        "authority_hold_released_by": {"const": "D00_TWO_CHECKERS_PASS"}
       }
     },
-    "protected_roots": {
-      "type": "array",
-      "minItems": 6,
-      "maxItems": 6,
-      "uniqueItems": true,
-      "items": {"$ref": "#/$defs/safePath"}
-    },
-    "namespace_contract": {
-      "type": "array",
-      "minItems": 4,
-      "maxItems": 4,
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["id", "kind", "path"],
-        "properties": {
-          "id": {"type": "string", "pattern": "^(?!.*latest)(?!.*[*/]).+$"},
-          "kind": {"enum": ["preparation", "staging", "runtime", "formal"]},
-          "path": {"$ref": "#/$defs/safePath"}
-        }
-      }
-    },
-    "provenance": {"$ref": "#/$defs/provenance"}
+    "protected_roots": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"$ref": "#/$defs/safePath"}}
   },
   "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "safePath": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*latest)(?!.*\\*).+$"},
-    "pathHash": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["path", "sha256"],
-      "properties": {"path": {"$ref": "#/$defs/safePath"}, "sha256": {"$ref": "#/$defs/sha256"}}
-    },
-    "provenance": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["producer_actor_id", "role", "session_id", "source_commit", "task_id"],
-      "properties": {
-        "producer_actor_id": {"type": "string", "minLength": 1},
-        "role": {"const": "release_controller"},
-        "session_id": {"type": "string", "minLength": 1},
-        "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "task_id": {"const": "T00"}
-      }
-    }
+    "pathHash": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"$ref": "#/$defs/safePath"}, "sha256": {"$ref": "#/$defs/sha256"}}}
   }
 }

@@ -230,9 +230,17 @@ def scan_formal_history(
         (destination / "results/power.json").resolve(),
     } if completed_bundle else set()
     for scan_root in roots:
-        if not scan_root.is_dir():
+        try:
+            accessible = scan_root.is_dir()
+        except OSError:
+            accessible = False
+        if not accessible:
             continue
-        for path in sorted(scan_root.rglob("*.json")):
+        try:
+            candidates = sorted(scan_root.rglob("*.json"))
+        except OSError:
+            candidates = []
+        for path in candidates:
             if path.resolve() in completed_outputs:
                 continue
             try:

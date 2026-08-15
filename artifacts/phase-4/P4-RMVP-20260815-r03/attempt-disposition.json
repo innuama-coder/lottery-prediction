@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_attempt_disposition","attempt_id":"P4-RMVP-20260815-r03","blocking_findings":["Phase 2.1 regression raised PermissionError while probing an inaccessible historical absolute path"],"failed_receipt":"validation/attempts/A05-phase2-1/receipt.json","replacement_release_id":"P4-RMVP-20260815-r04","status":"HOLD","terminal":"HOLD_PHASE2_1_PORTABILITY"}

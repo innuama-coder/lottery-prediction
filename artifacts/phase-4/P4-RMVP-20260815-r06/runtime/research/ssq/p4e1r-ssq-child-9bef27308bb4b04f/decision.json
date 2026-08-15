@@ -1,0 +1,1 @@
+{"allowed_change":{"zone0_theta_multiplier":0.75},"artifact_type":"phase4_research_decision","child_model_release_id":"p4e1r-ssq-child-9bef27308bb4b04f","decision":"shadow_only","game":"ssq","parent_model_release_id":"p4e1r-ssq-64888cdada3fd22e","probability_changed":true,"serving_changed":false,"status":"PASS","top1000_changed":true}

@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_attempt_disposition","attempt_id":"P4-RMVP-20260815-r04","blocking_findings":["builder invocation recorded a mistyped source commit instead of git rev-parse HEAD"],"replacement_release_id":"P4-RMVP-20260815-r05","status":"HOLD","terminal":"HOLD_SOURCE_COMMIT_IDENTITY"}

@@ -1,65 +1,26 @@
 {
-  "schema_version": "1.0.0",
-  "artifact_type": "phase4_authority_freeze",
-  "authority_commit": "bb25c5823e27ce81c40b6c73da0b77cfc906e4d7",
+  "schema_version": "2.0.0",
+  "artifact_type": "phase4_real_model_authority_freeze",
+  "task_id": "D00",
+  "task_branch": "codex/phase4-real-model-mvp-20260815-r01",
+  "input_commit": "ec975d5228240db57be8eb767ad83a4c8e356bcf",
+  "authority_commit": "7df763cd71f01783bf4b00cb0e3ba9aed4e64c1e",
   "authority_files": [
-    {
-      "path": "ROADMAP.md",
-      "sha256": "24ba28e72c33959a91e505fd518718bd0c948c84b7e2e4cd5591a26f0a0b0149"
-    },
-    {
-      "path": "tasks/phase4/README.md",
-      "sha256": "aa3221652e2e0b9876f233b37191267d3be7f0f56cd0d0e82481dcf1c0aeb874"
-    },
-    {
-      "path": "docs/research/phase-4-overall-design.md",
-      "sha256": "b01e33b7047d88583fabd27faa7d2b7809bedb9a1e61d4b75fb142175832bd99"
-    },
-    {
-      "path": "docs/plans/phase-4-detailed-plan.md",
-      "sha256": "4bf3da4a5c772d2ccf0e77888f5f09501f460d68b3e00d00232e481a6546753f"
-    }
+    {"path": "ROADMAP.md", "sha256": "6978fa075d4f75809405b1200dc4fd5175996cab6c996e45826406f47b7fe030"},
+    {"path": "tasks/phase4/README.md", "sha256": "c679aa2bb727f6ae0686424accab3d066c51ceeab0230edb953909a0c8da8fab"},
+    {"path": "docs/research/phase-4-overall-design.md", "sha256": "f2086c908fdb4e7850705c931d3c9c164ae68dd61fc8de690c742a8fc1605599"},
+    {"path": "docs/plans/phase-4-detailed-plan.md", "sha256": "7f0d41ea7f6b68864b28cb37164c8a7da3013bdc1f288d0831bc13ba5dec7e56"}
   ],
-  "phase3_acceptance": {
-    "path": "artifacts/phase-3/P3-R07-2c0fa97-20260810-I01/acceptance/I01/acceptance.json",
-    "release_id": "P3-R07-2c0fa97-20260810-I01",
-    "sha256": "415bfc69cc04704265e231fd7d6e36bd2daa06b970b0def30703c4a7f04570c9"
+  "requirement_ids": ["P4-R01", "P4-R02", "P4-R03", "P4-R04", "P4-R05", "P4-R06", "P4-R07", "P4-R08", "P4-R09", "P4-R10", "P4-R11", "P4-R12", "P4-R13", "P4-R14", "P4-R15", "P4-R16", "P4-R17"],
+  "required_semantics": {
+    "games": ["ssq", "dlt"],
+    "serving_model_per_game": true,
+    "serving_must_be_non_m0": true,
+    "serving_must_be_non_uniform": true,
+    "baseline_only_product_pass_allowed": false,
+    "m0_product_lock_allowed": false,
+    "final_machine_state": "READY_FOR_LOCAL_PRODUCT_ACCEPTANCE",
+    "authority_hold_released_by": "D00_TWO_CHECKERS_PASS"
   },
-  "protected_roots": [
-    "artifacts/phase-0",
-    "artifacts/phase-0-multisource",
-    "artifacts/phase-1",
-    "artifacts/phase-2",
-    "artifacts/phase-2.1",
-    "artifacts/phase-3"
-  ],
-  "namespace_contract": [
-    {
-      "id": "p4-prep-controller-issued-i01",
-      "kind": "preparation",
-      "path": "artifacts/phase-4-prep/p4-prep-controller-issued-i01"
-    },
-    {
-      "id": "p4-staging-canary-i01",
-      "kind": "staging",
-      "path": "artifacts/phase-4-staging/p4-staging-canary-i01"
-    },
-    {
-      "id": "p4-runtime-readiness-i01",
-      "kind": "runtime",
-      "path": "artifacts/phase-4-runtime/p4-runtime-readiness-i01"
-    },
-    {
-      "id": "p4-formal-namespace-i01",
-      "kind": "formal",
-      "path": "artifacts/phase-4"
-    }
-  ],
-  "provenance": {
-    "producer_actor_id": "p4-release-controller-orchestrator-i01",
-    "role": "release_controller",
-    "session_id": "/root",
-    "source_commit": "f8a7a6abb46a55f8fa17e5ae3280c5c5432c363b",
-    "task_id": "T00"
-  }
+  "protected_roots": ["artifacts/phase-0", "artifacts/phase-0-multisource", "artifacts/phase-1", "artifacts/phase-2", "artifacts/phase-2.1", "artifacts/phase-3"]
 }

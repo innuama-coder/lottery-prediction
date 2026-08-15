@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_score","game":"dlt","official_result_revision":1,"score":{"actual_joint_probability":"4.531315834702653404e-08","hit_at":{"10":false,"100":false,"1000":false,"200":false},"issue":"2026083","joint_log_loss":16.909668375399235,"top1000_rank":null},"status":"SCORED","target_issue":"2026083","unlock":"virtual_clock_after_official_result"}

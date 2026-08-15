@@ -12,6 +12,7 @@ dependencies = ["jsonschema[format]==4.26.0"]
 lottery-data = "lottery_data.cli:main"
 lottery-phase3 = "lottery_research.phase3.cli:main"
 lottery-phase4 = "lottery_system.phase4.cli_kernel:main"
+lottery-phase4-real = "lottery_system.phase4.real_cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

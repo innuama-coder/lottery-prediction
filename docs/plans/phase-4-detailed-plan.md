@@ -2,7 +2,7 @@
 
 版本：2.0（规划候选）
 
-状态：`HOLD_AUTHORITY_SYNC`。本计划只描述后续开发；当前 `ROADMAP.md` 和 `tasks/phase4/README.md` 仍有旧权威语义，必须先在后续独立任务中同步并冻结新 authority commit。本次设计任务不得修改它们，也不授权启动 D01 之后的实现。
+状态：`D00_AUTHORITY_SYNCED`。本计划与其余三份 Phase 4 authority 文档在同一 `P4_AUTHORITY_COMMIT` 冻结；只有 D00 两个 checker 均通过且 receipt 证明 clean 后才授权 D01。
 
 ## 1. 规划方法、固定边界与共同合同
 

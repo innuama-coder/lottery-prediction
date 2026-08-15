@@ -1,0 +1,1 @@
+{"cli":"python3 -m lottery_system.phase4.real_cli","contracts":["data","time","feature","training","model_release","backtest","serving","forecast","ranking","cli","acceptance"],"status":"PASS","task":"D01","unknown_fields":"fail_closed"}

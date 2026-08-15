@@ -2,7 +2,7 @@
 
 版本：2.0（设计重构候选）
 
-状态：`HOLD_AUTHORITY_SYNC`。本文和 `docs/plans/phase-4-detailed-plan.md` 定义拟同步的新合同；当前 `ROADMAP.md` 与 `tasks/phase4/README.md` 仍允许 M0、`baseline_only` 成为 Phase 4 成功终态。二者尚未在同一新 authority commit 中同步并冻结前，任何 Phase 4 产品开发、正式训练、正式 forecast 或交付验收都不得启动。本设计任务不修改这两份上位文件。
+状态：`D00_AUTHORITY_SYNCED`。本文与 `ROADMAP.md`、`tasks/phase4/README.md`、`docs/plans/phase-4-detailed-plan.md` 在同一 `P4_AUTHORITY_COMMIT` 冻结；D00 两个 checker 通过后解除 `HOLD_AUTHORITY_SYNC`，才允许启动 D01。
 
 ## 1. 结论、目标与诚实边界
 

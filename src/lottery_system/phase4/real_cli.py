@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
+import sys
 from pathlib import Path
 
 from .real_model import canonical, file_sha, load_draws, train
-from .real_ops import forecast_and_lock, research_release, schedule_release, score_release
+from .real_ops import forecast_and_lock, inspect_release, research_release, schedule_release, score_release, validate_release_bottom_up
 
 
 def load(path: Path): return json.loads(path.read_text())
@@ -25,12 +27,20 @@ def main(argv=None):
             q.add_argument("--fail-after",choices=("prepare","forecast_lock","official_result_ingest","unlock_score","research_shadow"));q.add_argument("--cycle-id",default="formal-cycle-v1")
     a=p.parse_args()
     if a.verb=="inspect":
-        serving=load(a.release/"selection/serving-selection.json")["serving_model_by_game"][a.game]
-        forecast_path=next((a.release/f"forecasts/{a.game}").glob("*/forecast.json")); result={"status":"PASS","serving":serving,"forecast":load(forecast_path)}
+        result=inspect_release(a.release,a.game)
     elif a.verb=="validate":
-        serving=load(a.release/"selection/serving-selection.json")["serving_model_by_game"]
-        result={"status":"PASS" if all(v["family"]!="M0" and v["non_m0"] for v in serving.values()) else "HOLD","serving_model_by_game":serving}
-    elif a.verb=="replay": result=load(a.release/"replay/replay-report.json")
+        result=validate_release_bottom_up(a.release,require_final=True)
+    elif a.verb=="replay":
+        repository = Path(__file__).resolve().parents[3]
+        draws = load(a.release/"data/ssq/training-input-manifest.json")["draws_path"]
+        command = subprocess.run(
+            [str(Path(sys.executable).resolve()), str(repository/"scripts/phase4_independent/replay_real_model_release.py"),
+             "--release", str(a.release), "--draws", str(draws), "--check-only"],
+            cwd=repository, env={**os.environ, "PYTHONPATH": "src"}, text=True, capture_output=True, check=False,
+        )
+        if command.returncode:
+            raise ValueError(f"HOLD_REPLAY_MISMATCH:{command.stderr.strip() or command.stdout.strip()}")
+        result=json.loads(command.stdout)
     elif a.verb=="train":
         repository = Path(__file__).resolve().parents[3]
         frozen_draws = (repository / "artifacts/phase-1/baseline-v1/draws.jsonl").resolve()

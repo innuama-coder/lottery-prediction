@@ -4,15 +4,16 @@ This is the canonical D00–D15 operating path. The older T00–T24 preparation
 tools are retained for historical diagnosis only; they are not acceptance
 commands and their unavailable prep identity must never be fabricated.
 
-Use the task-local `.venv-phase4/bin/python`. Every validation receipt records
-its resolved interpreter, Python version, `requirements/phase4.lock` hash,
+Use the interpreter path frozen into this release when the builder runs. Every
+validation receipt records its resolved interpreter, Python version,
+`requirements/phase4.lock` hash,
 exact argv, exit code, stdout, and stderr. Formal commands use the immutable
 release path and never `latest`, a glob, an inline model, or a fixture model.
 
 ## Frozen commands
 
 ```bash
-PY=.venv-phase4/bin/python
+PY=PYTHON_INTERPRETER
 DRAW=artifacts/phase-1/baseline-v1/draws.jsonl
 RID=P4E2_RELEASE_ID
 REL=artifacts/phase-4/$RID

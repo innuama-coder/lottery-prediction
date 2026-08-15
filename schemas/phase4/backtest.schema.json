@@ -9,7 +9,9 @@
     "selected_candidate_identity",
     "selection_indices",
     "report_only_indices",
-    "selection_frozen_before_report_only",
+    "model_selection_receipt_path",
+    "model_selection_receipt_sha256",
+    "selection_receipt_hash",
     "overlap_count",
     "comparator",
     "report_only_summary",
@@ -47,8 +49,14 @@
         "type": "integer"
       }
     },
-    "selection_frozen_before_report_only": {
-      "const": true
+    "model_selection_receipt_path": {
+      "pattern": "^models/(ssq|dlt)/model-selection-receipt\\.json$"
+    },
+    "model_selection_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "selection_receipt_hash": {
+      "pattern": "^[0-9a-f]{64}$"
     },
     "overlap_count": {
       "const": 0
@@ -61,7 +69,7 @@
     },
     "metrics": {
       "type": "array",
-      "minItems": 6,
+      "minItems": 7,
       "uniqueItems": true
     },
     "scientific_status": {

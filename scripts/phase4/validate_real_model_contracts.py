@@ -35,6 +35,16 @@ def reject(case: dict[str, object]) -> bool:
         or case.get("l2") not in (None, 8, 24, 72)
         or case.get("brier_formula") == "(1-p_observed)^2"
         or case.get("top_k_scope") == "partition"
+        or case.get("schedule_stage_noop")
+        or case.get("score_forecast_mismatch")
+        or case.get("result_target_mismatch")
+        or case.get("research_without_score")
+        or case.get("selection_after_report_labels")
+        or case.get("fake_ablation")
+        or case.get("fake_permutation")
+        or case.get("missing_forecast_lineage")
+        or case.get("approximate_tie")
+        or case.get("shallow_validate")
     )
 
 
@@ -42,7 +52,8 @@ def main() -> int:
     schemas = [
         "training-input-manifest.schema.json", "feature-snapshot.schema.json",
         "model-release.schema.json", "training-report.schema.json",
-        "backtest.schema.json", "serving-selection.schema.json",
+        "backtest.schema.json", "model-selection-receipt.schema.json", "formal-forecast.schema.json",
+        "formal-forecast-lock.schema.json", "serving-selection.schema.json",
     ]
     required = [
         ROOT / "config/phase4/authority-freeze.json",
@@ -74,6 +85,11 @@ def main() -> int:
         {"available_at_fabricated": True}, {"unbounded_pair_parameters": True},
         {"regularization": "unregistered"}, {"l2": 9}, {"brier_formula": "(1-p_observed)^2"},
         {"top_k_scope": "partition"},
+        {"schedule_stage_noop": True}, {"score_forecast_mismatch": True},
+        {"result_target_mismatch": True}, {"research_without_score": True},
+        {"selection_after_report_labels": True}, {"fake_ablation": True},
+        {"fake_permutation": True}, {"missing_forecast_lineage": True},
+        {"approximate_tie": True}, {"shallow_validate": True},
     ]
     if not all(reject(case) for case in negatives):
         raise SystemExit("FAIL_CONTRACT_WEAKENED")

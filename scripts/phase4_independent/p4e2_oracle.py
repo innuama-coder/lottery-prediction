@@ -330,6 +330,12 @@ def _fast_score(combo: Sequence[int], context: dict[str, object], plan: dict[str
     )
     return score
 
+
+def score_identity(score: float) -> str:
+    if not math.isfinite(score):
+        raise ValueError("non-finite score identity")
+    return f"binary64:{score.hex()}"
+
 def enumerate_zone(context: dict[str, object], coefficients: dict[str, float], keep_rows: bool = False) -> dict[str, object]:
     """Enumerate the complete space for mass; retain only the exact zone Top-1000."""
     rows, maximum, minimum, total, square_total, count = [], -math.inf, math.inf, 0.0, 0.0, 0
@@ -391,8 +397,10 @@ def _top(zone_results: Sequence[dict[str, object]], limit: int) -> list[tuple[fl
     return result
 
 
-def _evaluate(game: str, draws: Sequence[Draw], target: int, l2: float, include_top: bool) -> dict[str, object]:
-    coefficients = fit_coefficients(game, draws, target, l2)
+def evaluate_coefficients(
+    game: str, draws: Sequence[Draw], target: int,
+    coefficients: Sequence[dict[str, float]], include_top: bool,
+) -> dict[str, object]:
     contexts = [feature_context(game, draws[:target], zone) for zone in (0, 1)]
     results = [enumerate_zone(contexts[zone], coefficients[zone], include_top) for zone in (0, 1)]
     vectors = [combo_vector(_numbers(draws[target], zone), contexts[zone]) for zone in (0, 1)]
@@ -416,6 +424,10 @@ def _evaluate(game: str, draws: Sequence[Draw], target: int, l2: float, include_
             for group in sorted(set(FEATURE_GROUPS.values()))
         },
     }
+
+
+def _evaluate(game: str, draws: Sequence[Draw], target: int, l2: float, include_top: bool) -> dict[str, object]:
+    return evaluate_coefficients(game, draws, target, fit_coefficients(game, draws, target, l2), include_top)
 
 
 def _bootstrap(values: Sequence[float], seed: int, iterations: int = 512) -> dict[str, object]:
@@ -544,35 +556,41 @@ def top_tickets(model: dict[str, object], top_k: int = 1000) -> list[dict[str, o
     results = []
     for zone in model["zones"]:
         if "top_zone_rows" in zone:
-            results.append({"rows": [(float(score), tuple(combo)) for score, combo in zone["top_zone_rows"]],
+            zone_rows = [(float(score), tuple(combo)) for score, combo in zone["top_zone_rows"]]
+            zone_rows.sort(key=lambda row: row[1])
+            zone_rows.sort(key=lambda row: row[0], reverse=True)
+            results.append({"rows": zone_rows,
                             "log_normalizer": zone["log_normalizer"]})
         else:
             results.append(enumerate_zone(zone["context"], zone["coefficients"], True))
     exact = _top(results, top_k)
     log_normalizer = math.fsum(float(item["log_normalizer"]) for item in results)
     probabilities = [format(math.exp(score - log_normalizer), ".18e") for score, _, _ in exact]
-    if len(set(probabilities)) < 2:
+    identities = [score_identity(score) for score, _, _ in exact]
+    if len(set(identities)) < 2:
         raise ValueError("HOLD_DEGENERATE_MODEL: Top-1000 all equal")
-    histogram = {probability: probabilities.count(probability) for probability in set(probabilities)}
+    histogram = {identity: identities.count(identity) for identity in set(identities)}
     bounds, cursor = {}, 1
-    for probability in sorted(histogram, key=float, reverse=True):
-        bounds[probability] = (cursor, cursor + histogram[probability] - 1)
-        cursor += histogram[probability]
+    for identity in dict.fromkeys(identities):
+        bounds[identity] = (cursor, cursor + histogram[identity] - 1)
+        cursor += histogram[identity]
     rows, previous, layer = [], None, 0
-    for rank, ((score, front, back), probability) in enumerate(zip(exact, probabilities), 1):
-        if probability != previous:
-            previous, layer = probability, layer + 1
-        lower, upper = bounds[probability]
-        probability_hash = hashlib.sha256(probability.encode()).hexdigest()
+    for rank, ((score, front, back), probability, identity) in enumerate(zip(exact, probabilities, identities), 1):
+        if identity != previous:
+            previous, layer = identity, layer + 1
+        lower, upper = bounds[identity]
+        probability_hash = hashlib.sha256(identity.encode()).hexdigest()
         vectors = (combo_vector(front, model["zones"][0]["context"]), combo_vector(back, model["zones"][1]["context"]))
         contributions = {key: format(math.fsum(model["zones"][zone]["coefficients"][key] * vectors[zone][index] for zone in (0, 1)), ".17g") for index, key in enumerate(FEATURE_IDS)}
         rows.append({
             "rank": rank, "full_space_rank": rank, "front_numbers": list(front), "back_numbers": list(back),
             "joint_probability": probability, "log_joint_score": format(score, ".17g"),
-            "probability_representation": "P4-LOGSUMEXP-ENUM-1", "probability_layer": layer,
-            "tie_group_id": f"tie-{probability_hash[:24]}", "tie_group_size": histogram[probability],
+            "score_identity": identity,
+            "probability_representation": "P4-LOGSUMEXP-BINARY64-SCORE-IDENTITY-1", "probability_layer": layer,
+            "tie_group_id": f"tie-{probability_hash[:24]}", "tie_group_size": histogram[identity],
             "tie_rank_lower": lower, "tie_rank_upper": upper, "tie_midrank": format((lower + upper) / 2, ".1f"),
-            "tie_key": f"probability:{probability_hash}", "canonical_ticket_key": [list(front), list(back)],
+            "tie_key": f"score-identity:{probability_hash}", "canonical_ticket_key": [list(front), list(back)],
+            "ranking_algorithm_id": "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1",
             "lineage": {"model_release_id": model["model_release_id"], "feature_release_id": model.get("feature_release_id")},
             "explanation": {"method": "P4E2-R multi-feature conditional combination model", "probability_primary": True,
                             "feature_contributions": contributions, "feature_groups": model["feature_groups_consumed"]},

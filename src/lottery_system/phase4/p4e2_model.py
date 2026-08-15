@@ -316,13 +316,27 @@ def _fast_score(combo: Sequence[int], context: dict[str, object], plan: dict[str
     )
     return score
 
-def enumerate_zone(context: dict[str, object], coefficients: dict[str, float], keep_rows: bool = False) -> dict[str, object]:
+def score_identity(score: float) -> str:
+    """Frozen equality semantics for ranking ties: exact binary64 score bits."""
+    if not math.isfinite(score):
+        raise ValueError("HOLD_DEGENERATE_MODEL: non-finite score identity")
+    return f"binary64:{score.hex()}"
+
+
+def enumerate_zone(
+    context: dict[str, object], coefficients: dict[str, float], keep_rows: bool = False,
+    *, collect_layers: bool = False,
+) -> dict[str, object]:
     """Enumerate the complete space for mass; retain only the exact zone Top-1000."""
     rows, maximum, minimum, total, square_total, count = [], -math.inf, math.inf, 0.0, 0.0, 0
+    layer_counts: dict[str, int] | None = {} if collect_layers else None
     plan = _score_plan(context, coefficients)
     for combo in itertools.combinations(range(1, int(context["n"]) + 1), int(context["k"])):
         score = _fast_score(combo, context, plan)
         count += 1
+        if layer_counts is not None:
+            identity = score_identity(score)
+            layer_counts[identity] = layer_counts.get(identity, 0) + 1
         minimum = min(minimum, score)
         if keep_rows:
             entry = (score, tuple(-number for number in combo), combo)
@@ -340,7 +354,7 @@ def enumerate_zone(context: dict[str, object], coefficients: dict[str, float], k
         rows = [(score, combo) for score, _, combo in rows]
         rows.sort(key=lambda row: row[1])
         rows.sort(key=lambda row: row[0], reverse=True)
-    return {
+    result = {
         "rows": rows, "log_normalizer": maximum + math.log(total),
         "probability_square_sum": square_total / (total * total), "combination_count": count,
         "normalization_method": "complete_enumeration_streaming_log_sum_exp_v1", "normalization_mass": 1.0,
@@ -348,6 +362,22 @@ def enumerate_zone(context: dict[str, object], coefficients: dict[str, float], k
         "minimum_probability": math.exp(minimum - (maximum + math.log(total))),
         "maximum_probability": 1.0 / total, "probability_layer_lower_bound": 2 if minimum < maximum else 1,
     }
+    if layer_counts is not None:
+        tie_size_histogram: dict[str, int] = {}
+        for size in layer_counts.values():
+            key = str(size)
+            tie_size_histogram[key] = tie_size_histogram.get(key, 0) + 1
+        encoded_layers = sorted(layer_counts.items())
+        result["probability_layer_summary"] = {
+            "representation": "exact_binary64_score_layer_tie_size_histogram_v1",
+            "combination_count": count,
+            "distinct_score_count": len(layer_counts),
+            "maximum_tie_count": max(layer_counts.values()),
+            "tie_size_histogram": tie_size_histogram,
+            "count_preservation_check": sum(int(size) * layers for size, layers in tie_size_histogram.items()),
+            "layer_identity_count_digest": digest(encoded_layers),
+        }
+    return result
 
 
 def subset_probability(numbers: Sequence[int], zone: dict[str, object]) -> float:
@@ -377,8 +407,10 @@ def _top(zone_results: Sequence[dict[str, object]], limit: int) -> list[tuple[fl
     return result
 
 
-def _evaluate(game: str, draws: Sequence[Draw], target: int, l2: float, include_top: bool) -> dict[str, object]:
-    coefficients = fit_coefficients(game, draws, target, l2)
+def _evaluate_coefficients(
+    game: str, draws: Sequence[Draw], target: int,
+    coefficients: Sequence[dict[str, float]], include_top: bool,
+) -> dict[str, object]:
     contexts = [feature_context(game, draws[:target], zone) for zone in (0, 1)]
     results = [enumerate_zone(contexts[zone], coefficients[zone], include_top) for zone in (0, 1)]
     vectors = [combo_vector(_numbers(draws[target], zone), contexts[zone]) for zone in (0, 1)]
@@ -404,6 +436,10 @@ def _evaluate(game: str, draws: Sequence[Draw], target: int, l2: float, include_
     }
 
 
+def _evaluate(game: str, draws: Sequence[Draw], target: int, l2: float, include_top: bool) -> dict[str, object]:
+    return _evaluate_coefficients(game, draws, target, fit_coefficients(game, draws, target, l2), include_top)
+
+
 def _bootstrap(values: Sequence[float], seed: int, iterations: int = 512) -> dict[str, object]:
     generator, means = random.Random(seed), []
     for _ in range(iterations):
@@ -417,35 +453,104 @@ def _bootstrap(values: Sequence[float], seed: int, iterations: int = 512) -> dic
             "ci95": [means[int(iterations * .025)], means[int(iterations * .975)]]}
 
 
-def train(game: str, draws: Sequence[Draw], cutoff_index: int | None = None) -> dict[str, object]:
+def select_candidate(game: str, draws: Sequence[Draw], cutoff_index: int | None = None) -> dict[str, object]:
+    """Select a configuration without reading any report-only label."""
     cutoff = len(draws) if cutoff_index is None else cutoff_index
     if cutoff < 120 or cutoff > len(draws):
         raise ValueError("illegal training cutoff")
-    training = draws[:cutoff]
     selection_indices = list(range(cutoff - 5, cutoff - 3))
     report_indices = list(range(cutoff - 3, cutoff))
     selection_rows, candidate_means = [], {}
     for l2 in L2_GRID:
         losses = []
         for index in selection_indices:
-            evaluated = _evaluate(game, training, index, l2, False)
+            evaluated = _evaluate(game, draws, index, l2, False)
             losses.append(float(evaluated["joint_log_loss"]))
             selection_rows.append({
-                "fold_id": f"selection-{index:04d}", "draw_index": index, "issue": training[index].issue,
+                "fold_id": f"selection-{index:04d}", "draw_index": index, "issue": draws[index].issue,
+                "label_fact_hash": draws[index].fact_hash,
                 "candidate": {"family": "P4E2-R", "l2": l2}, "joint_log_loss": losses[-1],
                 "fold_role": "selection", "used_for_selection": True,
             })
         candidate_means[l2] = math.fsum(losses) / len(losses)
     selected_l2 = min(L2_GRID, key=lambda value: (candidate_means[value], value))
-    selected_identity = digest({"family": "P4E2-R", "l2": selected_l2, "features": FEATURE_IDS, "selection_indices": selection_indices})
+    selected_config = {"family": "P4E2-R", "l2": selected_l2, "features": list(FEATURE_IDS)}
+    selected_identity = digest({**selected_config, "selection_indices": selection_indices})
+    selection_last_position = max(selection_indices)
+    payload = {
+        "artifact_type": "phase4_model_selection_receipt", "game": game,
+        "candidate_grid": [{"family": "P4E2-R", "l2": value} for value in L2_GRID],
+        "fold_positions": {"selection": selection_indices, "report_only_reserved": report_indices},
+        "candidate_metrics": [
+            {"candidate": {"family": "P4E2-R", "l2": value}, "mean_joint_log_loss": candidate_means[value],
+             "fold_count": len(selection_indices)} for value in L2_GRID
+        ],
+        "tie_break": ["mean_joint_log_loss_asc", "l2_complexity_asc", "stable_candidate_identity_asc"],
+        "selected_config": selected_config, "selected_config_identity": selected_identity,
+        "selected_model_identity": digest({
+            "game": game, "selected_config_identity": selected_identity,
+            "selection_input_fact_hashes": [draw.fact_hash for draw in draws[:selection_last_position + 1]],
+        }),
+        "selection_input": {
+            "first_position": 0, "last_position": selection_last_position,
+            "ordered_fact_hashes_sha256": digest([draw.fact_hash for draw in draws[:selection_last_position + 1]]),
+            "last_issue": draws[selection_last_position].issue,
+        },
+        "report_only_capability_boundary": {
+            "first_position": min(report_indices), "labels_excluded_from_selection_input": True,
+        },
+        "selection_fold_metrics_sha256": digest(selection_rows),
+    }
+    return {**payload, "receipt_hash": digest(payload), "selection_metrics": selection_rows}
+
+
+def _verify_selection_receipt(receipt: dict[str, object], game: str, cutoff: int) -> None:
+    payload = {key: value for key, value in receipt.items() if key not in {"receipt_hash", "selection_metrics"}}
+    if (receipt.get("game") != game or receipt.get("receipt_hash") != digest(payload)
+            or receipt.get("fold_positions", {}).get("report_only_reserved") != list(range(cutoff - 3, cutoff))):
+        raise ValueError("FAIL_SELECTION_BIAS: invalid frozen selection receipt")
+
+
+def train(
+    game: str, draws: Sequence[Draw], cutoff_index: int | None = None,
+    *, frozen_selection: dict[str, object] | None = None, scientific_evidence: bool = True,
+) -> dict[str, object]:
+    cutoff = len(draws) if cutoff_index is None else cutoff_index
+    if cutoff < 120 or cutoff > len(draws):
+        raise ValueError("illegal training cutoff")
+    training = draws[:cutoff]
+    selection = select_candidate(game, training, cutoff) if frozen_selection is None else frozen_selection
+    _verify_selection_receipt(selection, game, cutoff)
+    selection_indices = list(selection["fold_positions"]["selection"])
+    report_indices = list(selection["fold_positions"]["report_only_reserved"])
+    selected_l2 = float(selection["selected_config"]["l2"])
+    selected_identity = str(selection["selected_config_identity"])
+    selection_rows = list(selection["selection_metrics"])
     report_rows = []
     for index in report_indices:
-        evaluated = _evaluate(game, training, index, selected_l2, True)
+        fold_coefficients = fit_coefficients(game, training, index, selected_l2)
+        evaluated = _evaluate_coefficients(game, training, index, fold_coefficients, True)
         probability, rank = float(evaluated["joint_probability"]), evaluated["outcome_rank"]
         m0_probability = math.exp(-float(evaluated["m0_log_loss"]))
+        ablations = []
+        for group in (sorted(set(FEATURE_GROUPS.values())) if scientific_evidence else ()):
+            ablated_coefficients = [
+                {key: (0.0 if FEATURE_GROUPS[key] == group else value) for key, value in zone.items()}
+                for zone in fold_coefficients
+            ]
+            ablated = _evaluate_coefficients(game, training, index, ablated_coefficients, True)
+            ablated_rank = ablated["outcome_rank"]
+            ablations.append({
+                "feature_group": group, "method": "zero_group_coefficients_complete_space_renormalization_v1",
+                "sample_position": index, "joint_log_loss": ablated["joint_log_loss"],
+                "multiclass_brier": ablated["multiclass_brier"], "full_ticket_rank": ablated_rank,
+                "top_k": {str(k): bool(ablated_rank and ablated_rank <= k) for k in (10, 100, 200, 1000)},
+                "normalization": ablated["normalization"],
+            })
         report_rows.append({
             "fold_id": f"report-{index:04d}", "draw_index": index, "issue": training[index].issue,
-            "selected_candidate_identity": selected_identity, "selected_before_report_labels": True,
+            "label_fact_hash": training[index].fact_hash,
+            "selected_candidate_identity": selected_identity, "selection_receipt_hash": selection["receipt_hash"],
             "model_joint_probability": probability, "m0_joint_probability": m0_probability,
             "model_joint_log_loss": evaluated["joint_log_loss"], "m0_joint_log_loss": evaluated["m0_log_loss"],
             "delta_joint_log_loss_vs_m0": float(evaluated["joint_log_loss"]) - float(evaluated["m0_log_loss"]),
@@ -455,10 +560,11 @@ def train(game: str, draws: Sequence[Draw], cutoff_index: int | None = None) -> 
             "feature_group_contributions": evaluated["feature_group_contributions"],
             "full_ticket_rank": rank, "top_k": {str(k): bool(rank and rank <= k) for k in (10, 100, 200, 1000)},
             "fold_role": "report_only", "used_for_selection": False, "normalization": evaluated["normalization"],
+            "ablation_metrics": ablations,
         })
     coefficients = fit_coefficients(game, training, cutoff, selected_l2)
     contexts = [feature_context(game, training, zone) for zone in (0, 1)]
-    final = [enumerate_zone(contexts[zone], coefficients[zone], True) for zone in (0, 1)]
+    final = [enumerate_zone(contexts[zone], coefficients[zone], True, collect_layers=True) for zone in (0, 1)]
     zones = [{"n": RULES[game][zone][0], "k": RULES[game][zone][1], "coefficients": coefficients[zone], "context": contexts[zone],
               "top_zone_rows": [[score, list(combo)] for score, combo in final[zone]["rows"]],
               **{key: value for key, value in final[zone].items() if key != "rows"}} for zone in (0, 1)]
@@ -466,18 +572,54 @@ def train(game: str, draws: Sequence[Draw], cutoff_index: int | None = None) -> 
     brier_deltas = [float(row["model_multiclass_brier"]) - float(row["m0_multiclass_brier"]) for row in report_rows]
     delta = math.fsum(deltas) / len(deltas)
     bootstrap = _bootstrap(deltas, 20260815 + int(game == "dlt"))
-    scientific = "worse_than_M0" if delta > 0 else ("lift_supported" if bootstrap["ci95"][1] < 0 else "no_confirmed_lift")
+    scientific = ("worse_than_M0" if bootstrap["ci95"][0] > 0 else
+                  ("lift_supported" if bootstrap["ci95"][1] < 0 else "no_confirmed_lift"))
     group_norms = {group: math.fsum(abs(coefficients[zone][key]) for zone in (0, 1) for key in FEATURE_IDS if FEATURE_GROUPS[key] == group) for group in sorted(set(FEATURE_GROUPS.values()))}
     permutation = []
-    for offset, group in enumerate(sorted(group_norms), 1):
-        original = [float(row["feature_group_contributions"][group]) for row in report_rows]
-        permuted = original[offset:] + original[:offset]
-        loss_deltas = [before - after for before, after in zip(original, permuted)]
+    for offset, group in enumerate((sorted(group_norms) if scientific_evidence else ()), 1):
+        shift = ((offset - 1) % (len(report_indices) - 1)) + 1
+        samples = []
+        for sample_index, target in enumerate(report_indices):
+            donor = report_indices[(sample_index + shift) % len(report_indices)]
+            fold_coefficients = fit_coefficients(game, training, target, selected_l2)
+            fold_contexts = [feature_context(game, training[:target], zone) for zone in (0, 1)]
+            observed_vectors = [combo_vector(_numbers(training[target], zone), fold_contexts[zone]) for zone in (0, 1)]
+            donor_vectors = [combo_vector(_numbers(training[donor], zone), fold_contexts[zone]) for zone in (0, 1)]
+            log_normalizers = [float(item["log_normalizer"]) for item in report_rows[sample_index]["normalization"]]
+            permuted_score = math.fsum(
+                fold_coefficients[zone][key] * (donor_vectors[zone][feature_index]
+                                                if FEATURE_GROUPS[key] == group else observed_vectors[zone][feature_index])
+                for zone in (0, 1) for feature_index, key in enumerate(FEATURE_IDS)
+            )
+            permuted_probability = math.exp(permuted_score - math.fsum(log_normalizers))
+            square_mass = math.prod(float(item["probability_square_sum"]) for item in report_rows[sample_index]["normalization"])
+            original_loss = float(report_rows[sample_index]["model_joint_log_loss"])
+            samples.append({
+                "target_position": target, "donor_position": donor,
+                "target_label_fact_hash": training[target].fact_hash, "donor_label_fact_hash": training[donor].fact_hash,
+                "permuted_joint_probability": permuted_probability,
+                "permuted_joint_log_loss": -math.log(permuted_probability),
+                "permuted_multiclass_brier": 1 - 2 * permuted_probability + square_mass,
+                "original_joint_log_loss": original_loss,
+            })
+        loss_deltas = [float(row["permuted_joint_log_loss"]) - float(row["original_joint_log_loss"]) for row in samples]
         permutation.append({
-            "feature_group": group, "method": "report_only_deterministic_cyclic_block_permutation_v1",
-            "block_shift": offset, "seed": 20260815,
+            "feature_group": group, "method": "held_out_feature_group_derangement_recompute_fitted_model_score_v1",
+            "derangement_shift": shift, "seed": 20260815, "sample_size": len(samples),
             "mean_permuted_minus_original_joint_log_loss": math.fsum(loss_deltas) / len(loss_deltas),
-            "absolute_mean_fold_effect": math.fsum(abs(value) for value in loss_deltas) / len(loss_deltas),
+            "samples": samples,
+        })
+    ablation_results = []
+    for group in (sorted(group_norms) if scientific_evidence else ()):
+        rows = [next(item for item in row["ablation_metrics"] if item["feature_group"] == group) for row in report_rows]
+        ablation_results.append({
+            "feature_group": group, "method": "zero_group_coefficients_complete_space_renormalization_v1",
+            "sample_size": len(rows), "coefficient_l1_before": group_norms[group], "coefficient_l1_after": 0.0,
+            "mean_delta_joint_log_loss": math.fsum(float(item["joint_log_loss"]) - float(base["model_joint_log_loss"]) for item, base in zip(rows, report_rows)) / len(rows),
+            "mean_delta_multiclass_brier": math.fsum(float(item["multiclass_brier"]) - float(base["model_multiclass_brier"]) for item, base in zip(rows, report_rows)) / len(rows),
+            "top_k_hit_delta": {str(k): sum(int(item["top_k"][str(k)]) - int(base["top_k"][str(k)]) for item, base in zip(rows, report_rows)) / len(rows) for k in (10, 100, 200, 1000)},
+            "all_complete_spaces_renormalized": all(all(zone["normalization_mass"] == 1.0 for zone in item["normalization"]) for item in rows),
+            "folds": rows,
         })
     training_dataset_id = digest({"game": game, "canonical_order_id": "phase1-baseline-v1-jsonl-per-game-order-v1",
                                   "ordered_draw_hashes": [draw.fact_hash for draw in training],
@@ -504,6 +646,7 @@ def train(game: str, draws: Sequence[Draw], cutoff_index: int | None = None) -> 
             {key: coefficients[zone][key] * selected_l2 for key in FEATURE_IDS} for zone in (0, 1)
         ], "projected_step_l2": selected_l2, "coefficient_cap": COEFFICIENT_CAP},
         "selection_indices": selection_indices, "report_only_indices": report_indices,
+        "selection_receipt_hash": selection["receipt_hash"],
         "selected_candidate_identity": selected_identity, "selection_metrics": selection_rows,
         "report_only_metrics": report_rows,
         "report_only_summary": {
@@ -514,9 +657,8 @@ def train(game: str, draws: Sequence[Draw], cutoff_index: int | None = None) -> 
             "calibration_summary": {"mean_observed_class_probability": math.fsum(float(row["model_joint_probability"]) for row in report_rows) / len(report_rows),
                                     "mean_probability_ratio_vs_m0": math.fsum(float(row["calibration"]["probability_ratio_vs_m0"]) for row in report_rows) / len(report_rows)},
             "permutation_evidence": permutation,
-            "ablation_results": [{"feature_group": group, "coefficient_l1": group_norms[group],
-                                  "all_coefficients_effectively_nonzero": group_norms[group] > 1e-12,
-                                  "ablation": "set_group_coefficients_to_zero"} for group in sorted(group_norms)],
+            "ablation_results": ablation_results,
+            "report_only_sample_size": len(report_rows),
         },
         "scientific_status": scientific, "model_release_id": f"p4e2r-{game}-{digest(basis)[:16]}",
     }
@@ -530,40 +672,81 @@ def top_tickets(model: dict[str, object], top_k: int = 1000) -> list[dict[str, o
     results = []
     for zone in model["zones"]:
         if "top_zone_rows" in zone:
-            results.append({"rows": [(float(score), tuple(combo)) for score, combo in zone["top_zone_rows"]],
+            zone_rows = [(float(score), tuple(combo)) for score, combo in zone["top_zone_rows"]]
+            zone_rows.sort(key=lambda row: row[1])
+            zone_rows.sort(key=lambda row: row[0], reverse=True)
+            results.append({"rows": zone_rows,
                             "log_normalizer": zone["log_normalizer"]})
         else:
             results.append(enumerate_zone(zone["context"], zone["coefficients"], True))
     exact = _top(results, top_k)
     log_normalizer = math.fsum(float(item["log_normalizer"]) for item in results)
     probabilities = [format(math.exp(score - log_normalizer), ".18e") for score, _, _ in exact]
-    if len(set(probabilities)) < 2:
+    identities = [score_identity(score) for score, _, _ in exact]
+    if len(set(identities)) < 2:
         raise ValueError("HOLD_DEGENERATE_MODEL: Top-1000 all equal")
-    histogram = {probability: probabilities.count(probability) for probability in set(probabilities)}
+    histogram = {identity: identities.count(identity) for identity in set(identities)}
     bounds, cursor = {}, 1
-    for probability in sorted(histogram, key=float, reverse=True):
-        bounds[probability] = (cursor, cursor + histogram[probability] - 1)
-        cursor += histogram[probability]
+    for identity in dict.fromkeys(identities):
+        bounds[identity] = (cursor, cursor + histogram[identity] - 1)
+        cursor += histogram[identity]
     rows, previous, layer = [], None, 0
-    for rank, ((score, front, back), probability) in enumerate(zip(exact, probabilities), 1):
-        if probability != previous:
-            previous, layer = probability, layer + 1
-        lower, upper = bounds[probability]
-        probability_hash = hashlib.sha256(probability.encode()).hexdigest()
+    for rank, ((score, front, back), probability, identity) in enumerate(zip(exact, probabilities, identities), 1):
+        if identity != previous:
+            previous, layer = identity, layer + 1
+        lower, upper = bounds[identity]
+        probability_hash = hashlib.sha256(identity.encode()).hexdigest()
         vectors = (combo_vector(front, model["zones"][0]["context"]), combo_vector(back, model["zones"][1]["context"]))
         contributions = {key: format(math.fsum(model["zones"][zone]["coefficients"][key] * vectors[zone][index] for zone in (0, 1)), ".17g") for index, key in enumerate(FEATURE_IDS)}
         rows.append({
             "rank": rank, "full_space_rank": rank, "front_numbers": list(front), "back_numbers": list(back),
             "joint_probability": probability, "log_joint_score": format(score, ".17g"),
-            "probability_representation": "P4-LOGSUMEXP-ENUM-1", "probability_layer": layer,
-            "tie_group_id": f"tie-{probability_hash[:24]}", "tie_group_size": histogram[probability],
+            "score_identity": identity,
+            "probability_representation": "P4-LOGSUMEXP-BINARY64-SCORE-IDENTITY-1", "probability_layer": layer,
+            "tie_group_id": f"tie-{probability_hash[:24]}", "tie_group_size": histogram[identity],
             "tie_rank_lower": lower, "tie_rank_upper": upper, "tie_midrank": format((lower + upper) / 2, ".1f"),
-            "tie_key": f"probability:{probability_hash}", "canonical_ticket_key": [list(front), list(back)],
+            "tie_key": f"score-identity:{probability_hash}", "canonical_ticket_key": [list(front), list(back)],
+            "ranking_algorithm_id": "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1",
             "lineage": {"model_release_id": model["model_release_id"], "feature_release_id": model.get("feature_release_id")},
             "explanation": {"method": "P4E2-R multi-feature conditional combination model", "probability_primary": True,
                             "feature_contributions": contributions, "feature_groups": model["feature_groups_consumed"]},
         })
     return rows
+
+
+def probability_qualification(model: dict[str, object], rows: Sequence[dict[str, object]]) -> dict[str, object]:
+    identities = [str(row["score_identity"]) for row in rows]
+    counts = {identity: identities.count(identity) for identity in set(identities)}
+    first = float(rows[0]["joint_probability"])
+    last = float(rows[-1]["joint_probability"])
+    permuted = json_clone(model)
+    for zone in permuted["zones"]:
+        zone["top_zone_rows"] = list(reversed(zone["top_zone_rows"]))
+    stable = digest(rows) == digest(top_tickets(permuted))
+    layer_summaries = [zone.get("probability_layer_summary") for zone in model["zones"]]
+    if any(not summary or summary["count_preservation_check"] != summary["combination_count"] for summary in layer_summaries):
+        raise ValueError("HOLD_DEGENERATE_MODEL: incomplete probability-layer summary")
+    return {
+        "artifact_type": "phase4_probability_qualification", "game": model["game"],
+        "probability_semantics": "binary64_log_score_identity_then_exp_for_display_v1",
+        "complete_space_zone_layer_summaries": layer_summaries,
+        "complete_space_not_single_tie": all(summary["distinct_score_count"] > 1 for summary in layer_summaries),
+        "zone_probability_dynamic_range": [zone["maximum_probability"] / zone["minimum_probability"] for zone in model["zones"]],
+        "zone_maximum_tie_ratio": [summary["maximum_tie_count"] / summary["combination_count"] for summary in layer_summaries],
+        "top1000_distinct_score_count": len(counts), "top1000_distinct_ratio": len(counts) / len(rows),
+        "top1000_maximum_tie_count": max(counts.values()), "top1000_first_last_probability_ratio": first / last,
+        "top1000_layer_count_digest": digest(sorted(counts.items())),
+        "input_permutation_stable": stable,
+        "ranking_algorithm_id": "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1",
+        "near_equal_scores_are_not_ties": score_identity(1.0) != score_identity(math.nextafter(1.0, 2.0)),
+        "status": "PASS" if stable else "HOLD_UNRELIABLE_RANKING",
+    }
+
+
+def json_clone(value: object) -> object:
+    """Canonical JSON clone keeps evidence types independent of object identity."""
+    import json
+    return json.loads(json.dumps(value, ensure_ascii=False, allow_nan=False))
 
 
 def score_ticket(model: dict[str, object], draw: Draw, top: Sequence[dict[str, object]]) -> dict[str, object]:

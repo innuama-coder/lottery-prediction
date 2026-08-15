@@ -25,6 +25,7 @@
     "zones",
     "selection_indices",
     "report_only_indices",
+    "selection_receipt_hash",
     "selected_candidate_identity",
     "selection_metrics",
     "report_only_metrics",
@@ -130,6 +131,9 @@
       "items": {
         "type": "integer"
       }
+    },
+    "selection_receipt_hash": {
+      "pattern": "^[0-9a-f]{64}$"
     },
     "selected_candidate_identity": {
       "pattern": "^[0-9a-f]{64}$"

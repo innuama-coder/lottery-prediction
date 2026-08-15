@@ -7,8 +7,9 @@ from pathlib import Path
 
 from lottery_system.phase4.real_model import (
     FEATURE_GROUPS, FEATURE_IDS, elementary, feature_snapshot_rows, load_draws,
-    subset_probability, top_tickets, train,
+    score_identity, select_candidate, subset_probability, top_tickets, train,
 )
+from lottery_system.phase4.real_model import Draw
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -33,6 +34,10 @@ class RealModelTest(unittest.TestCase):
             self.assertTrue(all(zone["minimum_probability"] > 0 and zone["normalization_mass"] == 1 for zone in model["zones"]))
             self.assertEqual(model["estimator"], "one_step_exact_uniform_gradient_l2_conditional_log_likelihood_v1")
             self.assertTrue(all(row["brier_formula"].startswith("1-2*p_observed+") for row in model["report_only_metrics"]))
+            self.assertTrue(all(row["method"] == "zero_group_coefficients_complete_space_renormalization_v1"
+                                and row["all_complete_spaces_renormalized"] for row in model["report_only_summary"]["ablation_results"]))
+            self.assertTrue(all(row["method"] == "held_out_feature_group_derangement_recompute_fitted_model_score_v1"
+                                and row["sample_size"] == 3 for row in model["report_only_summary"]["permutation_evidence"]))
 
     def test_snapshot_is_strict_prefix_and_complete(self) -> None:
         for game in ("ssq", "dlt"):
@@ -63,7 +68,20 @@ class RealModelTest(unittest.TestCase):
         self.assertTrue(all(required <= row.keys() for row in rows))
         for row in rows:
             self.assertEqual(Decimal(row["tie_midrank"]), (Decimal(row["tie_rank_lower"]) + Decimal(row["tie_rank_upper"])) / 2)
-            self.assertEqual(row["probability_representation"], "P4-LOGSUMEXP-ENUM-1")
+            self.assertEqual(row["probability_representation"], "P4-LOGSUMEXP-BINARY64-SCORE-IDENTITY-1")
+
+    def test_report_label_mutation_cannot_change_selection_receipt(self) -> None:
+        draws = list(self.draws["dlt"])
+        original = select_candidate("dlt", draws)
+        last = draws[-1]
+        draws[-1] = Draw(last.issue, tuple(reversed(last.front)), tuple(reversed(last.back)), "f" * 64)
+        mutated = select_candidate("dlt", draws)
+        self.assertEqual(original, mutated)
+        self.assertEqual(original["selected_config_identity"], mutated["selected_config_identity"])
+        self.assertLess(original["selection_input"]["last_position"], original["report_only_capability_boundary"]["first_position"])
+
+    def test_near_equal_binary64_scores_are_not_ties(self) -> None:
+        self.assertNotEqual(score_identity(1.0), score_identity(math.nextafter(1.0, 2.0)))
 
     def test_formal_rejections(self) -> None:
         model = self.models["dlt"]

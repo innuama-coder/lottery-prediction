@@ -100,15 +100,34 @@ def validate_forecast(release: Path, game: str) -> dict[str, Any]:
     if len(set(probabilities)) < 2 or any(value <= 0 for value in probabilities) or any(left < right for left, right in zip(probabilities, probabilities[1:])):
         raise ValueError(f"HOLD_PROBABILITY_ORDER:{game}")
     for index, row in enumerate(rows, 1):
-        if row["rank"] != index or row.get("full_space_rank") != index or not required_tie <= row.keys() or row.get("probability_representation") != "P4-LOGSUMEXP-ENUM-1":
+        expected_score_identity = f"binary64:{float(row['log_joint_score']).hex()}"
+        if (row["rank"] != index or row.get("full_space_rank") != index or not required_tie <= row.keys()
+                or row.get("probability_representation") != "P4-LOGSUMEXP-BINARY64-SCORE-IDENTITY-1"
+                or row.get("score_identity") != expected_score_identity
+                or row.get("ranking_algorithm_id") != "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1"):
             raise ValueError(f"HOLD_TIE_CONTRACT:{game}:{index}")
-        peers = [position for position, value in enumerate(probabilities, 1) if value == probabilities[index - 1]]
+        peers = [position for position, value in enumerate(rows, 1) if value["score_identity"] == row["score_identity"]]
         if row["tie_group_size"] != len(peers) or row["tie_rank_lower"] != min(peers) or row["tie_rank_upper"] != max(peers) or Decimal(row["tie_midrank"]) != (Decimal(min(peers)) + Decimal(max(peers))) / 2:
             raise ValueError(f"HOLD_TIE_BOUNDS:{game}:{index}")
     serving = load(release / "selection/serving-selection.json")["serving_model_by_game"][game]
     if serving["family"] != "P4E2-R" or not serving["non_m0"] or len(serving.get("feature_ids", [])) != 14 or len(serving.get("feature_groups_consumed", [])) != 3:
         raise ValueError(f"HOLD_M0_SERVING:{game}")
-    return {"forecast_sha256": sha(forecast_path), "top1000_sha256": sha(rows_path), "distinct_probability_count": len(set(probabilities)), "model_release_id": serving["model_release_id"]}
+    lock = load(forecast_path.with_name("lock.json"))
+    model_path = release / serving["model_path"]
+    feature_manifest = release / f"features/{game}/{serving['feature_release_id']}/manifest.json"
+    data_manifest = release / f"data/{game}/training-input-manifest.json"
+    required_lineage = (forecast.get("model_sha256") == sha(model_path) and forecast.get("feature_manifest_sha256") == sha(feature_manifest)
+                        and forecast.get("data_manifest_sha256") == sha(data_manifest) and bool(forecast.get("config_id"))
+                        and bool(forecast.get("code_commit")) and bool(forecast.get("dependency_identity"))
+                        and bool(forecast.get("prediction_locked_at_utc")) and forecast.get("lock_id") == lock.get("lock_id")
+                        and forecast.get("ranking_algorithm_id") == "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1"
+                        and lock.get("create_once") and lock.get("content_sha256") == sha(forecast_path)
+                        and lock.get("top1000_sha256") == sha(rows_path))
+    if not required_lineage:
+        raise ValueError(f"HOLD_FORECAST_LINEAGE:{game}")
+    return {"forecast_sha256": sha(forecast_path), "top1000_sha256": sha(rows_path),
+            "distinct_probability_count": len({row["score_identity"] for row in rows}),
+            "model_release_id": serving["model_release_id"], "lock_id": lock["lock_id"], "lineage_complete": True}
 
 
 def validate_model_evidence(release: Path, game: str) -> dict[str, Any]:
@@ -145,18 +164,37 @@ def validate_model_evidence(release: Path, game: str) -> dict[str, Any]:
         raise ValueError(f"HOLD_DEGENERATE_MODEL:{game}:normalization")
     if set(model["selection_indices"]) & set(model["report_only_indices"]) or max(model["selection_indices"]) >= min(model["report_only_indices"]):
         raise ValueError(f"FAIL_SELECTION_BIAS:{game}")
+    selection_path = release / f"models/{game}/model-selection-receipt.json"
+    selection = load(selection_path)
+    selection_payload = {key: value for key, value in selection.items() if key not in {"receipt_hash", "selection_metrics"}}
+    if (selection.get("receipt_hash") != hashlib.sha256(canon(selection_payload)).hexdigest()
+            or selection.get("receipt_hash") != model.get("selection_receipt_hash")
+            or selection["selection_input"]["last_position"] >= selection["report_only_capability_boundary"]["first_position"]):
+        raise ValueError(f"FAIL_SELECTION_BIAS:{game}:receipt")
     if any(row.get("brier_formula") != "1-2*p_observed+sum_over_complete_legal_space(p_class^2)" or
            row.get("fold_role") != "report_only" or row.get("used_for_selection") for row in model["report_only_metrics"]):
         raise ValueError(f"HOLD_BACKTEST_INCOMPLETE:{game}")
     summary = model["report_only_summary"]
     if (not summary.get("full_ticket_metrics") or summary.get("top_k_values") != [10, 100, 200, 1000] or
-            len(summary.get("permutation_evidence", [])) != 3 or
+            len(summary.get("permutation_evidence", [])) != 3 or len(summary.get("ablation_results", [])) != 3 or
             summary.get("joint_log_loss_block_bootstrap", {}).get("method") != "moving_block_bootstrap_v1"):
         raise ValueError(f"HOLD_BACKTEST_INCOMPLETE:{game}")
+    if (any(row.get("method") != "zero_group_coefficients_complete_space_renormalization_v1" or not row.get("all_complete_spaces_renormalized")
+            or row.get("sample_size") != len(model["report_only_indices"]) for row in summary["ablation_results"])
+            or any(row.get("method") != "held_out_feature_group_derangement_recompute_fitted_model_score_v1"
+                   or row.get("sample_size") != len(model["report_only_indices"]) or not row.get("samples")
+                   or any(sample["target_position"] == sample["donor_position"] for sample in row["samples"])
+                   for row in summary["permutation_evidence"])):
+        raise ValueError(f"HOLD_FAKE_SCIENTIFIC_EVIDENCE:{game}")
+    ci = summary["joint_log_loss_block_bootstrap"]["ci95"]
+    expected_scientific = "worse_than_M0" if ci[0] > 0 else ("lift_supported" if ci[1] < 0 else "no_confirmed_lift")
+    if model["scientific_status"] != expected_scientific:
+        raise ValueError(f"FAIL_FALSE_CLAIM:{game}")
     return {"model_sha256": sha(model_path), "feature_snapshot_sha256": sha(feature_dir / "feature-snapshot.jsonl"),
             "training_dataset_id": model["training_dataset_id"], "training_config_id": model["training_config_id"],
             "selection_fold_count": len(model["selection_indices"]), "report_only_fold_count": len(model["report_only_indices"]),
-            "true_multiclass_brier": True, "feature_groups_effective": sorted(expected_groups)}
+            "model_selection_receipt_sha256": sha(selection_path), "true_multiclass_brier": True,
+            "ablation_recomputed": True, "permutation_recomputed": True, "feature_groups_effective": sorted(expected_groups)}
 
 
 def main() -> int:
@@ -186,6 +224,11 @@ def main() -> int:
     current_protected = protected_inventory()
     if recorded_before != recorded_after or recorded_after != current_protected:
         raise ValueError("FAIL_PROTECTED_ARTIFACT_CHANGED")
+    sys.path.insert(0, str(ROOT / "src"))
+    from lottery_system.phase4.real_ops import validate_release_bottom_up
+    bottom_up = validate_release_bottom_up(release, require_final=False)
+    if bottom_up.get("status") != "PASS" or not bottom_up.get("recomputed_from_bottom_up"):
+        raise ValueError("HOLD_D15_BOTTOM_UP_VALIDATION")
     receipt(release, "D12", [replay_path], [replay_path], {"match_rate_100pct": True, "mutation_detection_100pct": True, "independent_imports_zero": True}, started)
 
     checklist = (f"# Phase 4 P4E2 local product acceptance candidate\n\nStatus: `CANDIDATE_NOT_RELEASED`\n\n"
@@ -231,7 +274,14 @@ def main() -> int:
         if sha(release / relative) != expected:
             raise ValueError(f"HOLD_PRE_ACCEPTANCE_CHANGED:{relative}")
     scientific = {game: load(next((release / f"backtests/{game}").glob("*/summary.json")))["scientific_status"] for game in ("ssq", "dlt")}
-    acceptance = {"artifact_type": "phase4_machine_acceptance", "release_id": release.name, "recomputed_from_bottom_up": True, "task_receipt_hashes": task_hashes, "forecast_evidence": forecast_evidence, "model_evidence": model_evidence, "scientific_status_by_game": scientific, "replay_match_rate": replay["match_rate"], "mutation_detection_rate": replay["mutation_detection_rate"], "protected_inventory": current_protected, "protected_roots_unchanged": True, "manifest_sha256": sha(manifest_path), "manifest_coverage": 1.0, "pre_acceptance_hashes": pre_hashes, "pre_acceptance_unchanged": True, "blocking_findings": [], "machine_state": "READY_FOR_LOCAL_PRODUCT_ACCEPTANCE", "status": "PASS"}
+    acceptance = {"artifact_type": "phase4_machine_acceptance", "release_id": release.name, "recomputed_from_bottom_up": True,
+                  "bottom_up_lifecycle": bottom_up["lifecycle"], "bottom_up_schedule_recovery": bottom_up["schedule_recovery"],
+                  "task_receipt_hashes": task_hashes, "forecast_evidence": forecast_evidence, "model_evidence": model_evidence,
+                  "scientific_status_by_game": scientific, "replay_match_rate": replay["match_rate"],
+                  "mutation_detection_rate": replay["mutation_detection_rate"], "protected_inventory": current_protected,
+                  "protected_roots_unchanged": True, "manifest_sha256": sha(manifest_path), "manifest_coverage": 1.0,
+                  "pre_acceptance_hashes": pre_hashes, "pre_acceptance_unchanged": True, "blocking_findings": [],
+                  "machine_state": "READY_FOR_LOCAL_PRODUCT_ACCEPTANCE", "status": "PASS"}
     acceptance_path = release / "acceptance/machine-acceptance.json"
     once(acceptance_path, acceptance)
     release_receipt = {"artifact_type": "phase4_checklist_release_receipt", "checklist_sha256": sha(checklist_path), "manifest_sha256": sha(manifest_path), "machine_acceptance_sha256": sha(acceptance_path), "released_after_machine_pass": True, "status": "PASS"}

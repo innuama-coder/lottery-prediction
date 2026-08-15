@@ -24,7 +24,7 @@ class ReleaseAcceptanceTests(unittest.TestCase):
         self.assertEqual(command.returncode, 0, command.stderr + command.stdout)
         result = json.loads(command.stdout)
         self.assertEqual(result["status"], "PASS")
-        self.assertEqual(result["negative_case_count"], 21)
+        self.assertEqual(result["negative_case_count"], 31)
 
     def test_from_scratch_dual_game_release_and_independent_replay(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "artifacts") as raw:
@@ -46,6 +46,10 @@ class ReleaseAcceptanceTests(unittest.TestCase):
             self.assertEqual(report["match_rate"], 1.0)
             self.assertEqual(report["mutation_detection_rate"], 1.0)
             self.assertEqual(report["product_core_import_count"], 0)
+            runbook = (release / "runbook/release-runbook.md").read_text()
+            self.assertIn(f"PY={Path(sys.executable).resolve()}", runbook)
+            self.assertNotIn("PYTHON_INTERPRETER", runbook)
+            self.assertNotIn("PY=.venv-phase4/bin/python", runbook)
             for game in ("ssq", "dlt"):
                 forecast = next((release / "forecasts" / game).glob("*/forecast.json"))
                 value = json.loads(forecast.read_text())
@@ -54,9 +58,17 @@ class ReleaseAcceptanceTests(unittest.TestCase):
                 backtest = json.loads(next((release / "backtests" / game).glob("*/summary.json")).read_text())
                 folds = [json.loads(line) for line in next((release / "backtests" / game).glob("*/report-only-fold-metrics.jsonl")).read_text().splitlines()]
                 self.assertEqual(len(folds), 3)
-                self.assertEqual(backtest["metrics"], ["joint_log_loss", "true_multiclass_brier", "calibration", "full_ticket_top_10_100_200_1000_recall", "permutation", "block_bootstrap"])
+                self.assertEqual(backtest["metrics"], ["joint_log_loss", "true_multiclass_brier", "calibration", "full_ticket_top_10_100_200_1000_recall", "group_ablation", "permutation", "block_bootstrap"])
                 self.assertTrue(all(row["fold_role"] == "report_only" and not row["used_for_selection"] for row in folds))
                 self.assertTrue(all(row["brier_formula"] == "1-2*p_observed+sum_over_complete_legal_space(p_class^2)" for row in folds))
+                selection_receipt = json.loads((release / f"models/{game}/model-selection-receipt.json").read_text())
+                self.assertLess(selection_receipt["selection_input"]["last_position"], selection_receipt["report_only_capability_boundary"]["first_position"])
+                lifecycle = release / f"runtime/lifecycle/{game}/historical-cycle-v1"
+                score_value = json.loads((lifecycle / "score.json").read_text())
+                historical_forecast = json.loads((lifecycle / "forecast.json").read_text())
+                result_revision = json.loads((lifecycle / "result-revision.json").read_text())
+                self.assertEqual(score_value["forecast_id"], historical_forecast["forecast_id"])
+                self.assertEqual(score_value["result_revision_id"], result_revision["result_revision_id"])
 
             model = json.loads(next((release / "models/ssq").glob("*/model.json")).read_text())
             forecast = self.run_command(

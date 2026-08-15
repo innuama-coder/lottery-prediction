@@ -14,10 +14,9 @@ import jsonschema
 
 from lottery_system.phase4.real_model import (
     FEATURE_GROUPS, FEATURE_IDS, canonical, digest, feature_snapshot_rows,
-    file_sha, load_draws, score_ticket, top_tickets, train, write_jsonl_once, write_once,
+    file_sha, load_draws, probability_qualification, select_candidate, top_tickets, train, write_jsonl_once, write_once,
 )
-from lottery_system.phase4.p4e2_model import enumerate_zone
-from lottery_system.phase4.real_ops import ProductLedger, schedule_release
+from lottery_system.phase4.real_ops import ProductLedger, exercise_schedule_recovery
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -97,7 +96,11 @@ def main() -> int:
     forecasts = {}
     for game in ("ssq", "dlt"):
         draws = load_draws(args.phase1_draws, game)
-        model = train(game, draws)
+        selection_receipt = select_candidate(game, draws)
+        selection_receipt_path = out / f"models/{game}/model-selection-receipt.json"
+        validate_schema("model-selection-receipt.schema.json", selection_receipt)
+        write_once(selection_receipt_path, selection_receipt)
+        model = train(game, draws, frozen_selection=selection_receipt)
         model_id = model["model_release_id"]
         feature_rows = feature_snapshot_rows(game, draws, len(draws))
         feature_basis = {
@@ -180,7 +183,7 @@ def main() -> int:
         })
         write_once(model_dir / "normalization-proof.json", {
             "artifact_type": "phase4_p4e2_normalization_proof", "game": game,
-            "zones": [{key: zone[key] for key in ("combination_count", "log_normalizer", "normalization_mass", "normalization_method", "probability_square_sum", "minimum_probability", "maximum_probability", "probability_layer_lower_bound")} for zone in model["zones"]],
+            "zones": [{key: zone[key] for key in ("combination_count", "log_normalizer", "normalization_mass", "normalization_method", "probability_square_sum", "minimum_probability", "maximum_probability", "probability_layer_lower_bound", "probability_layer_summary")} for zone in model["zones"]],
             "joint_probability_mass": 1.0, "strictly_positive": True, "status": "PASS",
         })
         backtest_id = f"bt-p4e2-{game}-{digest(model['report_only_metrics'])[:16]}"
@@ -191,9 +194,11 @@ def main() -> int:
             "artifact_type": "phase4_backtest_summary", "game": game,
             "selected_candidate_identity": model["selected_candidate_identity"],
             "selection_indices": model["selection_indices"], "report_only_indices": model["report_only_indices"],
-            "selection_frozen_before_report_only": True, "overlap_count": 0, "comparator": "M0",
+            "model_selection_receipt_path": f"models/{game}/model-selection-receipt.json",
+            "model_selection_receipt_sha256": file_sha(selection_receipt_path),
+            "selection_receipt_hash": model["selection_receipt_hash"], "overlap_count": 0, "comparator": "M0",
             "report_only_summary": model["report_only_summary"],
-            "metrics": ["joint_log_loss", "true_multiclass_brier", "calibration", "full_ticket_top_10_100_200_1000_recall", "permutation", "block_bootstrap"],
+            "metrics": ["joint_log_loss", "true_multiclass_brier", "calibration", "full_ticket_top_10_100_200_1000_recall", "group_ablation", "permutation", "block_bootstrap"],
             "scientific_status": model["scientific_status"], "unfavorable_results_retained": True, "status": "PASS",
         }
         validate_schema("backtest.schema.json", backtest_summary)
@@ -204,93 +209,83 @@ def main() -> int:
             "non_m0": True, "model_path": f"models/{game}/{model_id}/model.json",
         }
         top = top_tickets(model)
+        probability_evidence = probability_qualification(model, top)
+        write_once(model_dir / "probability-qualification.json", probability_evidence)
         target = f"after-{model['training_cutoff_issue']}"
         forecast_id = f"forecast-{game}-{digest({'model': model_id, 'target': target, 'top': top})[:16]}"
         forecast_dir = out / f"forecasts/{game}/{target}"
         write_jsonl_once(forecast_dir / "top1000.jsonl", top)
         write_jsonl_once(forecast_dir / "explanations.jsonl", ({"rank": row["rank"], **row["explanation"]} for row in top))
+        locked_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        lock_id = f"lock-{forecast_id}"
         forecast = {
             "artifact_type": "phase4_formal_forecast", "forecast_id": forecast_id, "game": game,
             "target_issue": target, "target_position": model["forecast_target_position"],
-            "model_release_id": model_id, "model_path": serving[game]["model_path"],
-            "feature_release_id": feature_id, "training_cutoff_issue": model["training_cutoff_issue"],
+            "model_release_id": model_id, "model_path": serving[game]["model_path"], "model_sha256": file_sha(model_dir / "model.json"),
+            "feature_release_id": feature_id, "feature_manifest_sha256": file_sha(feature_dir / "manifest.json"),
+            "data_release_id": model["training_dataset_id"], "data_manifest_sha256": file_sha(data_path),
+            "config_id": model["training_config_id"], "code_commit": args.source_commit,
+            "dependency_identity": model["dependency_identity"], "training_cutoff_issue": model["training_cutoff_issue"],
             "training_cutoff_position": model["training_cutoff_position"], "ticket_count": 1000,
-            "distinct_probability_count": len({row["joint_probability"] for row in top}),
+            "prediction_locked_at_utc": locked_at, "lock_id": lock_id,
+            "distinct_probability_count": probability_evidence["top1000_distinct_score_count"],
             "first_probability": top[0]["joint_probability"], "last_probability": top[-1]["joint_probability"],
-            "probability_representation": "P4-LOGSUMEXP-ENUM-1",
+            "probability_representation": "P4-LOGSUMEXP-BINARY64-SCORE-IDENTITY-1",
             "normalization_method": "complete_enumeration_streaming_log_sum_exp_v1",
+            "normalization_proof_path": f"models/{game}/{model_id}/normalization-proof.json",
+            "normalization_proof_sha256": file_sha(model_dir / "normalization-proof.json"),
+            "probability_qualification_path": f"models/{game}/{model_id}/probability-qualification.json",
+            "probability_qualification_sha256": file_sha(model_dir / "probability-qualification.json"),
             "joint_probability_mass": 1.0, "strictly_positive_complete_space": True,
             "top_prefixes": {"10": digest(top[:10]), "100": digest(top[:100]), "200": digest(top[:200]), "1000": digest(top)},
             "tie_fields": ["tie_group_id", "tie_group_size", "tie_rank_lower", "tie_rank_upper", "tie_midrank", "tie_key"],
-            "ranking_key": ["joint_probability_desc", "canonical_ticket_asc_within_probability_tie"],
+            "ranking_algorithm_id": probability_evidence["ranking_algorithm_id"],
+            "ranking_key": ["exact_binary64_joint_score_desc", "canonical_ticket_asc_within_exact_score_tie"],
             "provider_access": [serving[game]["model_path"]], "status": "locked_unscored",
         }
+        validate_schema("formal-forecast.schema.json", forecast)
         write_once(forecast_dir / "forecast.json", forecast)
-        write_once(forecast_dir / "lock.json", {"artifact_type": "phase4_forecast_lock", "forecast_id": forecast_id, "content_sha256": file_sha(forecast_dir / "forecast.json"), "top1000_sha256": file_sha(forecast_dir / "top1000.jsonl"), "create_once": True, "status": "LOCKED"})
+        lock_record = {"artifact_type": "phase4_forecast_lock", "lock_id": lock_id,
+                       "forecast_id": forecast_id, "game": game, "target_issue": target, "model_release_id": model_id,
+                       "locked_at_utc": locked_at, "content_sha256": file_sha(forecast_dir / "forecast.json"),
+                       "top1000_sha256": file_sha(forecast_dir / "top1000.jsonl"), "create_once": True,
+                       "create_once_linkage": digest({"lock_id": lock_id, "forecast_id": forecast_id,
+                                                      "forecast_sha256": file_sha(forecast_dir / "forecast.json"),
+                                                      "top1000_sha256": file_sha(forecast_dir / "top1000.jsonl")}),
+                       "status": "LOCKED"}
+        validate_schema("formal-forecast-lock.schema.json", lock_record)
+        write_once(forecast_dir / "lock.json", lock_record)
         ProductLedger(out).append("forecast_locked", forecast_id, {"game": game, "forecast_sha256": file_sha(forecast_dir / "forecast.json"), "top1000_sha256": file_sha(forecast_dir / "top1000.jsonl")}, actor="build-real-model-release")
-        # Historical delayed-unlock scoring path; target label is excluded from its training prefix.
-        historical_model = train(game, draws, len(draws) - 1)
-        historical_top = top_tickets(historical_model)
-        write_once(out / f"scores/{game}/historical-delayed-score.json", {"artifact_type": "phase4_historical_delayed_score", "game": game, "target_issue": draws[-1].issue, "training_cutoff_issue": draws[-2].issue, "virtual_clock_order": ["forecast", "lock", "verify_result", "unlock", "score"], "score": score_ticket(historical_model, draws[-1], historical_top), "status": "PASS"})
-        child = json.loads(json.dumps(model))
-        proposal = {"type": "bounded_regularization_scale", "coefficient_multiplier": 0.75}
-        for zone in child["zones"]:
-            zone["coefficients"] = {key: float(value) * proposal["coefficient_multiplier"] for key, value in zone["coefficients"].items()}
-            recomputed = enumerate_zone(zone["context"], zone["coefficients"], True)
-            zone["top_zone_rows"] = [[score, list(combo)] for score, combo in recomputed["rows"]]
-            for key in ("log_normalizer", "probability_square_sum", "combination_count", "normalization_method", "normalization_mass", "minimum_score", "maximum_score", "minimum_probability", "maximum_probability", "probability_layer_lower_bound"):
-                zone[key] = recomputed[key]
-        child_id = f"p4e2r-{game}-child-{digest({'parent': model_id, 'proposal': proposal, 'coefficients': [z['coefficients'] for z in child['zones']]})[:12]}"
-        child["model_release_id"] = child_id
-        child["parent_model_release_id"] = model_id
-        child["research_proposal"] = proposal
-        shadow_top = top_tickets(child)
-        research = out / f"research/{game}"
-        write_once(research / "diff.json", {
-            "artifact_type": "phase4_research_diff", "game": game,
-            "parent_model_release_id": model_id, "child_model_release_id": child_id,
-            "change": proposal, "bounded_preregistered": True, "non_noop": True,
-            "future_data_used": False, "direct_promotion": False,
-        })
-        write_once(research / "candidate.json", {
-            "artifact_type": "phase4_research_candidate", "game": game,
-            "parent_model_release_id": model_id, "child_model_release_id": child_id,
-            "status": "shadow_candidate", "serving_changed": False,
-        })
-        write_once(research / "decision.json", {
-            "artifact_type": "phase4_research_decision", "game": game, "decision": "shadow_only",
-            "probability_changed": shadow_top[0]["joint_probability"] != top[0]["joint_probability"],
-            "top1000_changed": digest(shadow_top) != digest(top), "serving_changed": False,
-            "serving_selection_sha256": None, "scientific_claim": "no_promotion_or_lift_claim", "status": "PASS",
-        })
-        write_once(research / "child-model.json", child)
-        write_once(research / "child-model-manifest.json", {
-            "artifact_type": "phase4_research_child_model_manifest", "game": game,
-            "parent_model_release_id": model_id, "child_model_release_id": child_id,
-            "feature_release_id": feature_id, "child_model_sha256": file_sha(research / "child-model.json"),
-            "proposal_sha256": digest(proposal), "role": "shadow_only", "status": "PASS",
-        })
-        write_jsonl_once(research / "shadow-top1000.jsonl", shadow_top)
         forecasts[game] = forecast
     serving_path = out / "selection/serving-selection.json"
     serving_selection = {"artifact_type": "phase4_serving_selection", "serving_model_by_game": serving, "m0_product_pass_allowed": False, "status": "PASS"}
     validate_schema("serving-selection.schema.json", serving_selection)
     write_once(serving_path, serving_selection)
-    for game in ("ssq", "dlt"):
-        write_once(out / f"research/{game}/serving-immutability.json", {
-            "artifact_type": "phase4_research_serving_immutability", "game": game,
-            "serving_selection_sha256_before": file_sha(serving_path),
-            "serving_selection_sha256_after": file_sha(serving_path), "serving_changed": False, "status": "PASS",
-        })
-    write_once(out / "e2e/formal-dual-game-e2e.json", {"artifact_type": "phase4_formal_dual_game_e2e", "games": forecasts, "real_phase1_history": True, "serving_non_m0": True, "ticket_count_by_game": {g: 1000 for g in forecasts}, "shadow_changed_by_game": {g: True for g in forecasts}, "blocking_findings": [], "status": "PASS"})
+    exercise_schedule_recovery(out)
+    lifecycle = {
+        game: {name: file_sha(out / f"runtime/lifecycle/{game}/historical-cycle-v1/{name}")
+               for name in ("parent-model.json", "forecast.json", "lock.json", "result-revision.json", "score.json", "research-receipt.json")}
+        for game in ("ssq", "dlt")
+    }
+    write_once(out / "e2e/formal-dual-game-e2e.json", {
+        "artifact_type": "phase4_formal_dual_game_e2e", "games": forecasts,
+        "historical_virtual_clock_lifecycle_hashes": lifecycle,
+        "schedule_recovery_sha256": file_sha(out / "runtime/schedule/recovery-ssq-dlt.json"),
+        "real_phase1_history": True, "serving_non_m0": True,
+        "future_forecast_state_by_game": {game: "locked_unscored" for game in forecasts},
+        "historical_exact_forecast_scored_by_game": {game: True for game in forecasts},
+        "ticket_count_by_game": {game: 1000 for game in forecasts},
+        "shadow_changed_by_game": {game: True for game in forecasts}, "blocking_findings": [], "status": "PASS",
+    })
     protected_after = protected_inventory()
     if protected_after != protected_before:
         raise ValueError("FAIL_PROTECTED_ARTIFACT_CHANGED")
     write_once(out / "e2e/protected-inventory-after.json", protected_after)
     write_once(out / "readiness/workload.json", {"artifact_type": "phase4_workload_readiness", "wall_seconds": time.monotonic() - started, "timeout_seconds": 28800, "disk_budget_bytes": 8 * 1024**3, "root_required": False, "status": "PASS"})
-    schedule_release(out, None)
     runbook = ((ROOT / "docs/runbooks/phase-4-mvp-runtime.md").read_text(encoding="utf-8")
-               .replace("IMPLEMENTATION_COMMIT", args.source_commit).replace("P4E2_RELEASE_ID", args.release))
+               .replace("IMPLEMENTATION_COMMIT", args.source_commit)
+               .replace("P4E2_RELEASE_ID", args.release)
+               .replace("PYTHON_INTERPRETER", str(Path(sys.executable).resolve())))
     runbook_path = out / "runbook/release-runbook.md"
     runbook_path.parent.mkdir(parents=True, exist_ok=True)
     runbook_path.write_text(runbook, encoding="utf-8")
@@ -303,10 +298,12 @@ def main() -> int:
         "D03": [next((out / "models/ssq").glob("*/training-report.json"))],
         "D04": [next((out / "models/dlt").glob("*/training-report.json"))],
         "D05": ([next((out / f"backtests/{g}").glob("*/summary.json")) for g in ("ssq","dlt")] +
+                [out / f"models/{g}/model-selection-receipt.json" for g in ("ssq","dlt")] +
                 [out / "selection/serving-selection.json"]),
         "D06": ([next((out / f"models/{g}").glob("*/normalization-proof.json")) for g in ("ssq","dlt")] +
+                [next((out / f"models/{g}").glob("*/probability-qualification.json")) for g in ("ssq","dlt")] +
                 [next((out / f"forecasts/{g}").glob("*/top1000.jsonl")) for g in ("ssq","dlt")]),
-        "D07": [sorted((out / "runtime/ledger/events").glob("*.json"))[-1]],
+        "D07": [out / f"runtime/lifecycle/{g}/historical-cycle-v1/score.json" for g in ("ssq","dlt")] + [sorted((out / "runtime/ledger/events").glob("*.json"))[-1]],
         "D08": [next((out / f"forecasts/{g}").glob("*/lock.json")) for g in ("ssq","dlt")],
         "D09": [out / f"research/{g}/decision.json" for g in ("ssq","dlt")],
         "D10": [out / "runtime/schedule/recovery-ssq-dlt.json", out / "readiness/workload.json", runbook_path],

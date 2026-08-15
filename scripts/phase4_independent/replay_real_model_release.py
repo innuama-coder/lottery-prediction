@@ -4,6 +4,7 @@ import argparse
 import copy
 import hashlib
 import json
+import math
 import shutil
 import tempfile
 from pathlib import Path
@@ -90,9 +91,28 @@ def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]
         raise ValueError("FAIL_LEAKAGE:cutoff")
 
     expected = oracle.train(game, draws, cutoff)
-    for key, value in expected.items():
-        if model.get(key) != value:
+    core_keys = ("family", "game", "rule_id", "training_cutoff_issue", "training_cutoff_position",
+                 "forecast_target_position", "training_count", "canonical_order_id", "canonical_comparator_id",
+                 "training_dataset_id", "training_config_id", "knowledge_contract", "available_at_fabricated",
+                 "feature_ids", "feature_groups_consumed", "regularization", "estimator", "objective_trace",
+                 "selection_indices", "report_only_indices", "selected_candidate_identity", "selection_metrics",
+                 "model_release_id")
+    for key in core_keys:
+        if model.get(key) != expected.get(key):
             raise ValueError(f"HOLD_REPLAY_MISMATCH:model:{key}")
+    for observed_zone, expected_zone in zip(model["zones"], expected["zones"]):
+        for key in ("n", "k", "coefficients", "context", "top_zone_rows", "log_normalizer", "probability_square_sum",
+                    "combination_count", "normalization_method", "normalization_mass", "minimum_score", "maximum_score",
+                    "minimum_probability", "maximum_probability", "probability_layer_lower_bound"):
+            if observed_zone.get(key) != expected_zone.get(key):
+                raise ValueError(f"HOLD_REPLAY_MISMATCH:model_zone:{key}")
+    selection_receipt = load(release / f"models/{game}/model-selection-receipt.json")
+    selection_payload = {key: value for key, value in selection_receipt.items() if key not in {"receipt_hash", "selection_metrics"}}
+    if (selection_receipt.get("receipt_hash") != oracle.digest(selection_payload)
+            or model.get("selection_receipt_hash") != selection_receipt.get("receipt_hash")
+            or selection_receipt.get("selection_metrics") != expected["selection_metrics"]
+            or selection_receipt.get("selected_config_identity") != expected["selected_candidate_identity"]):
+        raise ValueError("HOLD_REPLAY_MISMATCH:model_selection_receipt")
     feature_dir = release / f"features/{game}/{serving['feature_release_id']}"
     snapshot_path = feature_dir / "feature-snapshot.jsonl"
     feature_manifest = load(feature_dir / "manifest.json")
@@ -106,9 +126,16 @@ def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]
     formal = _single(release / f"forecasts/{game}", "*/top1000.jsonl")
     forecast_path, lock_path = formal.parent / "forecast.json", formal.parent / "lock.json"
     forecast, lock = load(forecast_path), load(lock_path)
-    if forecast["provider_access"] != [serving["model_path"]] or forecast["model_release_id"] != model["model_release_id"]:
+    if (forecast["provider_access"] != [serving["model_path"]] or forecast["model_release_id"] != model["model_release_id"]
+            or forecast.get("model_sha256") != sha(model_path) or forecast.get("feature_release_id") != model["feature_release_id"]
+            or forecast.get("data_release_id") != model["training_dataset_id"] or forecast.get("config_id") != model["training_config_id"]
+            or forecast.get("code_commit") != model["source_commit"] or forecast.get("dependency_identity") != model["dependency_identity"]
+            or forecast.get("ranking_algorithm_id") != "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1"
+            or not forecast.get("prediction_locked_at_utc")):
         raise ValueError("FAIL_UNFROZEN_MODEL_PATH")
-    if lock["content_sha256"] != sha(forecast_path) or lock["top1000_sha256"] != sha(formal) or lock["status"] != "LOCKED":
+    if (lock["content_sha256"] != sha(forecast_path) or lock["top1000_sha256"] != sha(formal) or lock["status"] != "LOCKED"
+            or not lock.get("create_once") or lock.get("lock_id") != forecast.get("lock_id")
+            or lock.get("game") != game or lock.get("target_issue") != forecast.get("target_issue")):
         raise ValueError("FAIL_TAMPERED:lock")
     expected_model = dict(expected)
     expected_model.update(feature_release_id=model["feature_release_id"])
@@ -117,33 +144,108 @@ def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]
     if formal.read_bytes() != expected_top_bytes:
         raise ValueError("HOLD_REPLAY_MISMATCH:top1000")
     probabilities = [float(row["joint_probability"]) for row in expected_top]
-    if len(expected_top) != 1000 or len(set(probabilities)) < 2 or not all(left >= right > 0 for left, right in zip(probabilities, probabilities[1:])):
+    identities = [row["score_identity"] for row in expected_top]
+    if (len(expected_top) != 1000 or len(set(identities)) < 2
+            or not all(left >= right > 0 for left, right in zip(probabilities, probabilities[1:]))
+            or any(row["tie_group_size"] != identities.count(row["score_identity"]) for row in expected_top)
+            or oracle.score_identity(1.0) == oracle.score_identity(math.nextafter(1.0, 2.0))):
         raise ValueError("HOLD_UNRELIABLE_RANKING")
     if any(expected_top[:size] != expected_top[0:size] for size in (10, 100, 200, 1000)):
         raise ValueError("HOLD_TOP_PREFIX")
 
+    # Recompute report-only metrics, true group ablations, and raw-feature
+    # derangements from the held-out labels instead of trusting report fields.
+    selected_l2 = float(model["regularization"]["selected"])
+    for sample_index, target in enumerate(model["report_only_indices"]):
+        fold_coefficients = oracle.fit_coefficients(game, draws, target, selected_l2)
+        base = oracle.evaluate_coefficients(game, draws, target, fold_coefficients, True)
+        recorded = model["report_only_metrics"][sample_index]
+        for key, expected_value in (("model_joint_log_loss", base["joint_log_loss"]),
+                                    ("model_multiclass_brier", base["multiclass_brier"]),
+                                    ("full_ticket_rank", base["outcome_rank"])):
+            if recorded.get(key) != expected_value:
+                raise ValueError(f"HOLD_REPLAY_MISMATCH:report_metric:{key}")
+        for group in sorted(set(oracle.FEATURE_GROUPS.values())):
+            ablated_coefficients = [
+                {key: (0.0 if oracle.FEATURE_GROUPS[key] == group else value) for key, value in zone.items()}
+                for zone in fold_coefficients
+            ]
+            ablated = oracle.evaluate_coefficients(game, draws, target, ablated_coefficients, True)
+            evidence = next(row for row in recorded["ablation_metrics"] if row["feature_group"] == group)
+            if (evidence["joint_log_loss"] != ablated["joint_log_loss"]
+                    or evidence["multiclass_brier"] != ablated["multiclass_brier"]
+                    or evidence["full_ticket_rank"] != ablated["outcome_rank"]
+                    or any(zone["normalization_mass"] != 1.0 for zone in evidence["normalization"])):
+                raise ValueError("HOLD_REPLAY_MISMATCH:ablation")
+    for offset, group in enumerate(sorted(set(oracle.FEATURE_GROUPS.values())), 1):
+        evidence = next(row for row in model["report_only_summary"]["permutation_evidence"] if row["feature_group"] == group)
+        if evidence.get("method") != "held_out_feature_group_derangement_recompute_fitted_model_score_v1" or evidence.get("sample_size") != len(model["report_only_indices"]):
+            raise ValueError("HOLD_REPLAY_MISMATCH:permutation_method")
+        shift = ((offset - 1) % (len(model["report_only_indices"]) - 1)) + 1
+        for sample_index, target in enumerate(model["report_only_indices"]):
+            donor = model["report_only_indices"][(sample_index + shift) % len(model["report_only_indices"])]
+            fold_coefficients = oracle.fit_coefficients(game, draws, target, selected_l2)
+            contexts = [oracle.feature_context(game, draws[:target], zone) for zone in (0, 1)]
+            observed = [oracle.combo_vector(oracle._numbers(draws[target], zone), contexts[zone]) for zone in (0, 1)]
+            donated = [oracle.combo_vector(oracle._numbers(draws[donor], zone), contexts[zone]) for zone in (0, 1)]
+            score_value = math.fsum(fold_coefficients[zone][key] * (donated[zone][feature_index] if oracle.FEATURE_GROUPS[key] == group else observed[zone][feature_index])
+                                    for zone in (0, 1) for feature_index, key in enumerate(oracle.FEATURE_IDS))
+            normalizers = [float(row["log_normalizer"]) for row in model["report_only_metrics"][sample_index]["normalization"]]
+            probability = math.exp(score_value - math.fsum(normalizers))
+            sample = evidence["samples"][sample_index]
+            if sample["donor_position"] != donor or sample["permuted_joint_probability"] != probability or sample["permuted_joint_log_loss"] != -math.log(probability):
+                raise ValueError("HOLD_REPLAY_MISMATCH:permutation_score")
+
+    lifecycle = release / f"runtime/lifecycle/{game}/historical-cycle-v1"
+    cycle, parent, historical_forecast, historical_lock, result, score = (load(lifecycle / name) for name in ("cycle.json", "parent-model.json", "forecast.json", "lock.json", "result-revision.json", "score.json"))
+    expected_parent = oracle.train(game, draws, len(draws) - 1)
+    if (parent["model_release_id"] != expected_parent["model_release_id"]
+            or [zone["coefficients"] for zone in parent["zones"]] != [zone["coefficients"] for zone in expected_parent["zones"]]
+            or cycle["target_issue"] != draws[-1].issue or parent["training_cutoff_issue"] != draws[-2].issue):
+        raise ValueError("HOLD_REPLAY_MISMATCH:historical_parent")
+    historical_top_path = lifecycle / "top1000.jsonl"
+    expected_historical_top = oracle.top_tickets({**expected_parent, "feature_release_id": parent["feature_release_id"]})
+    if (historical_top_path.read_bytes() != b"".join(canon(row) for row in expected_historical_top)
+            or historical_lock["forecast_sha256"] != sha(lifecycle / "forecast.json")
+            or historical_lock["top1000_sha256"] != sha(historical_top_path)
+            or historical_forecast["model_sha256"] != sha(lifecycle / "parent-model.json")
+            or result["game"] != game or result["target_issue"] != historical_forecast["target_issue"]):
+        raise ValueError("HOLD_REPLAY_MISMATCH:historical_lock_result")
+    expected_score = oracle.score_ticket(parent, draws[-1], expected_historical_top)
+    if (score["metrics"] != expected_score or score["forecast_id"] != historical_forecast["forecast_id"]
+            or score["result_revision_id"] != result["result_revision_id"] or score["model_release_id"] != parent["model_release_id"]):
+        raise ValueError("HOLD_REPLAY_MISMATCH:exact_score")
+
     research = release / f"research/{game}"
     diff, candidate, decision = (load(research / name) for name in ("diff.json", "candidate.json", "decision.json"))
-    proposal = {"type": "bounded_regularization_scale", "coefficient_multiplier": 0.75}
-    if diff.get("change") != proposal or not diff.get("non_noop") or diff.get("future_data_used") or diff.get("direct_promotion"):
+    proposal = diff.get("change", {})
+    if (proposal.get("type") != "score_driven_bounded_l2_refit" or diff.get("score_id") != score["score_id"]
+            or diff.get("result_revision_id") != result["result_revision_id"] or not diff.get("non_noop")
+            or diff.get("future_data_used") or diff.get("direct_promotion")):
         raise ValueError("HOLD_REPLAY_MISMATCH:research_diff")
-    child = copy.deepcopy(model)
-    for zone in child["zones"]:
-        zone["coefficients"] = {key: float(value) * 0.75 for key, value in zone["coefficients"].items()}
-        recomputed = oracle.enumerate_zone(zone["context"], zone["coefficients"], True)
-        zone["top_zone_rows"] = [[score, list(combo)] for score, combo in recomputed["rows"]]
-        for key in ("log_normalizer", "probability_square_sum", "combination_count", "normalization_method", "normalization_mass", "minimum_score", "maximum_score", "minimum_probability", "maximum_probability", "probability_layer_lower_bound"):
-            zone[key] = recomputed[key]
-    child_id = f"p4e2r-{game}-child-{oracle.digest({'parent': model['model_release_id'], 'proposal': proposal, 'coefficients': [zone['coefficients'] for zone in child['zones']]})[:12]}"
-    child.update(model_release_id=child_id, parent_model_release_id=model["model_release_id"], research_proposal=proposal)
-    if load(research / "child-model.json") != child or candidate.get("child_model_release_id") != child_id or decision.get("child_model_release_id") != child_id:
+    coefficients = oracle.fit_coefficients(game, draws, len(draws), float(proposal["child_l2"]))
+    child = load(research / "child-model.json")
+    if ([zone["coefficients"] for zone in child["zones"]] != coefficients
+            or child["parent_model_release_id"] != parent["model_release_id"]
+            or child["research_score_id"] != score["score_id"] or child["research_result_revision_id"] != result["result_revision_id"]
+            or candidate.get("child_model_release_id") != child["model_release_id"]
+            or decision.get("child_model_release_id") != child["model_release_id"]):
         raise ValueError("HOLD_REPLAY_MISMATCH:research_child")
     child_manifest = load(research / "child-model-manifest.json")
-    if child_manifest.get("child_model_sha256") != sha(research / "child-model.json") or child_manifest.get("role") != "shadow_only":
+    child_feature_manifest = load(research / "child-feature-manifest.json")
+    if (child_manifest.get("child_model_sha256") != sha(research / "child-model.json")
+            or child_manifest.get("shadow_top1000_sha256") != sha(research / "shadow-top1000.jsonl")
+            or child_manifest.get("child_feature_snapshot_sha256") != sha(research / "child-feature-snapshot.jsonl")
+            or child_feature_manifest.get("snapshot_sha256") != sha(research / "child-feature-snapshot.jsonl")
+            or child_feature_manifest.get("feature_release_id") != child.get("feature_release_id")
+            or child_manifest.get("score_sha256") != sha(lifecycle / "score.json")
+            or child_manifest.get("result_revision_sha256") != sha(lifecycle / "result-revision.json")
+            or child_manifest.get("role") != "shadow_only"):
         raise ValueError("HOLD_REPLAY_MISMATCH:research_child_manifest")
     shadow_path = research / "shadow-top1000.jsonl"
     expected_shadow = b"".join(canon(row) for row in oracle.top_tickets(child))
-    if shadow_path.read_bytes() != expected_shadow or not decision.get("probability_changed") or not decision.get("top1000_changed") or decision.get("serving_changed"):
+    if (shadow_path.read_bytes() != expected_shadow or not decision.get("probability_changed") or not decision.get("top1000_changed")
+            or decision.get("serving_changed") or not decision.get("direct_promotion_attempt_rejected")):
         raise ValueError("HOLD_REPLAY_MISMATCH:research_shadow")
     immutability = load(research / "serving-immutability.json")
     serving_sha = sha(release / "selection/serving-selection.json")
@@ -154,7 +256,8 @@ def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]
         "normalization_match": True, "top1000_match": True, "ticket_count": 1000,
         "model_sha256": sha(model_path), "feature_snapshot_sha256": sha(snapshot_path),
         "top1000_sha256": sha(formal), "complete_space_probability_mass": 1.0,
-        "research_child_match": True, "shadow_top1000_match": True, "serving_unchanged": True,
+        "selection_receipt_match": True, "ablation_match": True, "permutation_match": True,
+        "historical_exact_score_match": True, "research_child_match": True, "shadow_top1000_match": True, "serving_unchanged": True,
     }
 
 
@@ -177,13 +280,45 @@ def quick_guard(release: Path, draws_path: Path) -> None:
     formal = _single(release / "forecasts/ssq", "*/top1000.jsonl")
     forecast_path, lock_path = formal.parent / "forecast.json", formal.parent / "lock.json"
     forecast, lock = load(forecast_path), load(lock_path)
-    if forecast.get("provider_access") != [serving["model_path"]] or sha(forecast_path) != lock["content_sha256"]:
+    if (forecast.get("provider_access") != [serving["model_path"]] or sha(forecast_path) != lock["content_sha256"]
+            or forecast.get("model_sha256") != sha(model_path) or not forecast.get("feature_manifest_sha256")
+            or not forecast.get("data_manifest_sha256") or not forecast.get("code_commit")
+            or not forecast.get("dependency_identity") or not forecast.get("ranking_algorithm_id")
+            or forecast.get("lock_id") != lock.get("lock_id")):
         raise ValueError("provider")
     if sha(formal) != lock["top1000_sha256"]:
         raise ValueError("top")
     model = load(model_path)
     if set(model["selection_indices"]) & set(model["report_only_indices"]):
         raise ValueError("fold")
+    selection_receipt = load(release / "models/ssq/model-selection-receipt.json")
+    payload = {key: value for key, value in selection_receipt.items() if key not in {"receipt_hash", "selection_metrics"}}
+    if (selection_receipt["receipt_hash"] != oracle.digest(payload)
+            or selection_receipt["selection_input"]["last_position"] >= selection_receipt["report_only_capability_boundary"]["first_position"]
+            or model["selection_receipt_hash"] != selection_receipt["receipt_hash"]):
+        raise ValueError("selection")
+    rows = [json.loads(line) for line in formal.read_text(encoding="utf-8").splitlines()]
+    for row in rows:
+        if row.get("score_identity") != oracle.score_identity(float(row["log_joint_score"])):
+            raise ValueError("tie")
+    summary = model["report_only_summary"]
+    if (any(row.get("method") != "zero_group_coefficients_complete_space_renormalization_v1" or not row.get("all_complete_spaces_renormalized") for row in summary["ablation_results"])
+            or any(row.get("method") != "held_out_feature_group_derangement_recompute_fitted_model_score_v1" or not row.get("samples") for row in summary["permutation_evidence"])):
+        raise ValueError("science")
+    lifecycle = release / "runtime/lifecycle/ssq/historical-cycle-v1"
+    historical_forecast, result, score = (load(lifecycle / name) for name in ("forecast.json", "result-revision.json", "score.json"))
+    if (score.get("forecast_id") != historical_forecast.get("forecast_id") or score.get("result_revision_id") != result.get("result_revision_id")
+            or result.get("target_issue") != historical_forecast.get("target_issue")):
+        raise ValueError("score")
+    decision = load(release / "research/ssq/diff.json")
+    if decision.get("score_id") != score.get("score_id") or decision.get("result_revision_id") != result.get("result_revision_id"):
+        raise ValueError("research")
+    recovery = load(release / "runtime/schedule/recovery-ssq-dlt.json")
+    if not recovery.get("same_output_identities") or recovery.get("duplicate_side_effects") != 0:
+        raise ValueError("schedule")
+    for baseline in recovery["baseline_runs"].values():
+        if set(baseline["stage_operation_ids"]) != {"prepare", "forecast_lock", "official_result_ingest", "unlock_score", "research_shadow"}:
+            raise ValueError("schedule")
 
 
 def mutation_checks(release: Path, draws_path: Path) -> dict[str, str]:
@@ -191,6 +326,10 @@ def mutation_checks(release: Path, draws_path: Path) -> dict[str, str]:
         "early_draw", "cutoff", "rolling", "ewma", "gap", "pair", "structure",
         "coefficient", "model_id", "probability", "top1000_order", "lock",
         "provider_reference", "m0_serving", "selection_report_overlap",
+        "schedule_stage_noop", "score_forecast_mismatch", "result_target_mismatch",
+        "research_without_score", "selection_after_report_labels", "fake_ablation",
+        "fake_permutation", "missing_lineage", "approximate_tie", "shallow_cli_validate",
+        "protected_root_change",
     )
     detected = {}
     for case in cases:
@@ -207,7 +346,7 @@ def mutation_checks(release: Path, draws_path: Path) -> dict[str, str]:
             feature = copy / f"features/ssq/{serving['feature_release_id']}/feature-snapshot.jsonl"
             formal = _single(copy / "forecasts/ssq", "*/top1000.jsonl")
             forecast_path, lock_path = formal.parent / "forecast.json", formal.parent / "lock.json"
-            if case == "early_draw":
+            if case in {"early_draw", "protected_root_change"}:
                 rows = draw_copy.read_text().splitlines()
                 value = json.loads(next(row for row in rows if json.loads(row)["game"] == "ssq"))
                 position = next(index for index, row in enumerate(rows) if json.loads(row).get("core_fact_sha256") == value["core_fact_sha256"])
@@ -245,9 +384,39 @@ def mutation_checks(release: Path, draws_path: Path) -> dict[str, str]:
                 forecast = load(forecast_path); forecast["provider_access"] = ["fixture"]; forecast_path.write_bytes(canon(forecast))
             elif case == "m0_serving":
                 serving["family"], serving["non_m0"] = "M0", False; selection_path.write_bytes(canon(selection))
+            elif case == "schedule_stage_noop":
+                recovery = copy / "runtime/schedule/recovery-ssq-dlt.json"
+                value = load(recovery); value["same_output_identities"] = False; recovery.write_bytes(canon(value))
+            elif case in {"score_forecast_mismatch", "shallow_cli_validate"}:
+                score_path = copy / "runtime/lifecycle/ssq/historical-cycle-v1/score.json"
+                if case == "score_forecast_mismatch":
+                    value = load(score_path); value["forecast_id"] += "-wrong"; score_path.write_bytes(canon(value))
+                else:
+                    score_path.unlink()
+            elif case == "result_target_mismatch":
+                result_path = copy / "runtime/lifecycle/ssq/historical-cycle-v1/result-revision.json"
+                value = load(result_path); value["target_issue"] += "-wrong"; result_path.write_bytes(canon(value))
+            elif case == "research_without_score":
+                diff_path = copy / "research/ssq/diff.json"
+                value = load(diff_path); value["score_id"] += "-missing"; diff_path.write_bytes(canon(value))
+            elif case == "selection_after_report_labels":
+                receipt_path = copy / "models/ssq/model-selection-receipt.json"
+                value = load(receipt_path); value["selection_input"]["last_position"] = value["report_only_capability_boundary"]["first_position"]
+                payload = {key: item for key, item in value.items() if key not in {"receipt_hash", "selection_metrics"}}
+                value["receipt_hash"] = oracle.digest(payload); receipt_path.write_bytes(canon(value))
+            elif case in {"fake_ablation", "fake_permutation"}:
+                if case == "fake_ablation": model["report_only_summary"]["ablation_results"][0]["method"] = "asserted_zero_without_recompute"
+                else: model["report_only_summary"]["permutation_evidence"][0]["method"] = "rotated_contributions"
+                model_path.write_bytes(canon(model))
+            elif case == "missing_lineage":
+                forecast = load(forecast_path); del forecast["model_sha256"]; forecast_path.write_bytes(canon(forecast))
+            elif case == "approximate_tie":
+                rows = formal.read_text().splitlines(); first, second = json.loads(rows[0]), json.loads(rows[1])
+                second["score_identity"] = first["score_identity"]; second["tie_group_id"] = first["tie_group_id"]
+                rows[1] = json.dumps(second, sort_keys=True, separators=(",", ":")); formal.write_text("\n".join(rows) + "\n")
             try:
                 quick_guard(copy, draw_copy)
-            except (ValueError, KeyError, IndexError, StopIteration, json.JSONDecodeError):
+            except (ValueError, KeyError, IndexError, StopIteration, json.JSONDecodeError, OSError):
                 detected[case] = "DETECTED"
             else:
                 raise ValueError(f"mutation escaped independent replay: {case}")

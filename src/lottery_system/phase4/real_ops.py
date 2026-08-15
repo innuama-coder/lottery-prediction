@@ -150,10 +150,9 @@ def forecast_and_lock(model_path: Path, target_issue: str, top_k: int = 1000) ->
     forecast_id = f"forecast-{game}-{digest({'model': model['model_release_id'], 'target': target_issue, 'rows': rows})[:20]}"
     target = release / f"runtime/forecasts/{game}/{target_issue}"
     write_jsonl_once(target / "top1000.jsonl", rows)
-    locked_at = _utc_now()
     probability = probability_qualification(model, rows)
     lock_id = f"lock-{forecast_id}"
-    forecast = {
+    forecast_identity = {
         "artifact_type": "phase4_formal_forecast", "forecast_id": forecast_id, "game": game,
         "target_issue": target_issue, "target_position": model["forecast_target_position"],
         "model_release_id": model["model_release_id"], "model_sha256": sha(model_path),
@@ -161,20 +160,44 @@ def forecast_and_lock(model_path: Path, target_issue: str, top_k: int = 1000) ->
         "training_dataset_id": model["training_dataset_id"], "training_config_id": model["training_config_id"],
         "source_commit": model["source_commit"], "dependency_identity": model["dependency_identity"],
         "training_cutoff_issue": model["training_cutoff_issue"], "training_cutoff_position": model["training_cutoff_position"],
-        "prediction_locked_at_utc": locked_at, "lock_id": lock_id,
+        "lock_id": lock_id,
         "ranking_algorithm_id": probability["ranking_algorithm_id"], "ticket_count": len(rows),
         "top1000_sha256": sha(target / "top1000.jsonl"), "status": "locked_unscored",
     }
-    write_once(target / "forecast.json", forecast)
+    forecast_path = target / "forecast.json"
+    lock_path = target / "lock.json"
+    if forecast_path.exists() or lock_path.exists():
+        if not forecast_path.is_file() or not lock_path.is_file():
+            raise ValueError("HOLD_INCOMPLETE_FORECAST_LOCK")
+        forecast = load(forecast_path)
+        lock = load(lock_path)
+        if any(forecast.get(key) != value for key, value in forecast_identity.items()):
+            raise ValueError("HOLD_IDEMPOTENCY_IDENTITY_COLLISION:forecast")
+        if (lock.get("artifact_type") != "phase4_forecast_lock" or lock.get("lock_id") != lock_id
+                or lock.get("forecast_id") != forecast_id or lock.get("game") != game
+                or lock.get("target_issue") != target_issue or lock.get("model_release_id") != model["model_release_id"]
+                or lock.get("locked_at_utc") != forecast.get("prediction_locked_at_utc")
+                or lock.get("forecast_sha256") != sha(forecast_path)
+                or lock.get("top1000_sha256") != forecast_identity["top1000_sha256"]
+                or lock.get("create_once") is not True or lock.get("status") != "LOCKED"
+                or lock.get("create_once_linkage") != digest({"lock_id": lock_id, "forecast_id": forecast_id,
+                                                               "forecast_sha256": sha(forecast_path)})):
+            raise ValueError("HOLD_IDEMPOTENCY_IDENTITY_COLLISION:lock")
+        event, appended = ProductLedger(release).append("forecast_locked", forecast_id, lock)
+        return {**forecast, "status": "LOCKED", "lock_path": str(lock_path),
+                "ledger_event_id": event["event_id"], "idempotent_replay": not appended}
+    locked_at = _utc_now()
+    forecast = {**forecast_identity, "prediction_locked_at_utc": locked_at}
+    write_once(forecast_path, forecast)
     lock = {"artifact_type": "phase4_forecast_lock", "lock_id": lock_id, "forecast_id": forecast_id,
             "game": game, "target_issue": target_issue, "model_release_id": model["model_release_id"],
-            "locked_at_utc": locked_at, "forecast_sha256": sha(target / "forecast.json"),
+            "locked_at_utc": locked_at, "forecast_sha256": sha(forecast_path),
             "top1000_sha256": forecast["top1000_sha256"], "create_once": True,
-            "create_once_linkage": digest({"lock_id": lock_id, "forecast_id": forecast_id, "forecast_sha256": sha(target / "forecast.json")}),
+            "create_once_linkage": digest({"lock_id": lock_id, "forecast_id": forecast_id, "forecast_sha256": sha(forecast_path)}),
             "status": "LOCKED"}
-    write_once(target / "lock.json", lock)
+    write_once(lock_path, lock)
     event, appended = ProductLedger(release).append("forecast_locked", forecast_id, lock)
-    return {**forecast, "status": "LOCKED", "lock_path": str(target / "lock.json"), "ledger_event_id": event["event_id"], "idempotent_replay": not appended}
+    return {**forecast, "status": "LOCKED", "lock_path": str(lock_path), "ledger_event_id": event["event_id"], "idempotent_replay": not appended}
 
 
 def _cycle_root(release: Path, game: str) -> Path:

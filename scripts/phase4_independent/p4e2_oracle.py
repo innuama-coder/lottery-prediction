@@ -458,6 +458,7 @@ def train(game: str, draws: Sequence[Draw], cutoff_index: int | None = None) -> 
             losses.append(float(evaluated["joint_log_loss"]))
             selection_rows.append({
                 "fold_id": f"selection-{index:04d}", "draw_index": index, "issue": training[index].issue,
+                "label_fact_hash": training[index].fact_hash,
                 "candidate": {"family": "P4E2-R", "l2": l2}, "joint_log_loss": losses[-1],
                 "fold_role": "selection", "used_for_selection": True,
             })

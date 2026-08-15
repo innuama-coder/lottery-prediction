@@ -8,7 +8,7 @@ import random
 from functools import lru_cache
 from typing import Sequence
 
-from .real_model import Draw, RULES, digest
+from .real_common import Draw, RULES, digest
 
 
 RULE_IDS = {"ssq": "ssq-ns-33c6-16c1-v1", "dlt": "dlt-ns-35c5-12c2-v1"}

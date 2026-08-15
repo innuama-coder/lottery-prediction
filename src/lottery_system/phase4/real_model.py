@@ -5,21 +5,12 @@ import itertools
 import json
 import math
 from decimal import Decimal, localcontext
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Sequence
 
+from .real_common import Draw, RULES, canonical, digest
 
-RULES = {"ssq": ((33, 6), (16, 1)), "dlt": ((35, 5), (12, 2))}
 THETA_GRID = (-2.0, -1.0, -0.5, 0.5, 1.0, 2.0)
-
-
-def canonical(value: object) -> bytes:
-    return (json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode()
-
-
-def digest(value: object) -> str:
-    return hashlib.sha256(canonical(value)).hexdigest()
 
 
 def file_sha(path: Path) -> str:
@@ -43,14 +34,6 @@ def write_jsonl_once(path: Path, rows: Iterable[object]) -> None:
             raise FileExistsError(f"immutable identity collision: {path}")
         return
     path.write_bytes(encoded)
-
-
-@dataclass(frozen=True)
-class Draw:
-    issue: str
-    front: tuple[int, ...]
-    back: tuple[int, ...]
-    fact_hash: str
 
 
 def load_draws(path: Path, game: str) -> list[Draw]:

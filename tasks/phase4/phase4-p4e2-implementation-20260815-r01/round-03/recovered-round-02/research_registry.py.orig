@@ -43,7 +43,7 @@ def validate_frozen_registries(model_registry: Mapping[str, Any], feature_regist
     if feature_registry.get("unknown_features_allowed") is not False or feature_registry.get("one_family_per_experiment") is not True:
         raise ResearchRegistryViolation("feature registry does not close the experiment surface")
     feature_ids = {row.get("feature_id") for row in feature_registry.get("features", []) if isinstance(row, Mapping)}
-    if feature_ids != {f"F{index:02d}" for index in range(1, 15)}:
+    if feature_ids != {"F01", "F02"}:
         raise ResearchRegistryViolation("feature registry is incomplete")
 
 

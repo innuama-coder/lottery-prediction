@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 from pathlib import Path
 
-from .real_model import load_draws, train
+from .real_model import canonical, file_sha, load_draws, train
 from .real_ops import forecast_and_lock, research_release, schedule_release, score_release
 
 
@@ -31,8 +32,18 @@ def main(argv=None):
         result={"status":"PASS" if all(v["family"]!="M0" and v["non_m0"] for v in serving.values()) else "HOLD","serving_model_by_game":serving}
     elif a.verb=="replay": result=load(a.release/"replay/replay-report.json")
     elif a.verb=="train":
+        repository = Path(__file__).resolve().parents[3]
+        frozen_draws = (repository / "artifacts/phase-1/baseline-v1/draws.jsonl").resolve()
+        if a.phase1_draws.resolve() != frozen_draws:
+            raise ValueError("HOLD_FEATURE_INPUT: formal train rejects fixture or alternate history")
         draws=load_draws(a.phase1_draws,a.game); cutoff=len(draws) if not a.cutoff else next(i for i,d in enumerate(draws) if d.issue==a.cutoff)+1
-        result=train(a.game,draws,cutoff);a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(result,sort_keys=True,separators=(",",":"))+"\n")
+        result=train(a.game,draws,cutoff)
+        result["source_commit"] = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repository, text=True).strip()
+        result["dependency_identity"] = f"requirements/phase4.lock:{file_sha(repository / 'requirements/phase4.lock')}"
+        if a.output.exists():
+            if a.output.read_bytes() != canonical(result): raise FileExistsError(a.output)
+        else:
+            a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_bytes(canonical(result))
     elif a.verb=="forecast": result=forecast_and_lock(a.model_release,a.target_issue,a.top_k)
     elif a.verb=="score":
         if not a.game: raise ValueError("score requires --game")

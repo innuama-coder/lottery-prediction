@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "artifact_type": "phase4_model_registry",
   "probability_family": {
     "model_family": "P4E1",
@@ -7,18 +7,101 @@
     "decimal_precision": 80,
     "normalized_tick_min": -4096,
     "normalized_tick_max": 4096,
-    "anchor_number": 1
+    "anchor_number": 1,
+    "legacy_capability_only": true
+  },
+  "serving_probability_family": {
+    "model_family": "P4E2-R",
+    "score_formula": "sum_number_feature_contributions_plus_combination_feature_contributions",
+    "normalization": "complete_enumeration_streaming_log_sum_exp_v1",
+    "strictly_positive": true,
+    "complete_space_mass": 1
   },
   "models": [
-    {"model_id": "M0", "role": "permanent_champion", "ticks": "all_zero"},
-    {"model_id": "P4E1", "role": "registered_candidate_family", "ticks": "quantized_additive_fixed_cardinality"},
-    {"model_id": "P4E1-full-rule-known-answer-v1", "role": "result_blind_capability_fixture", "ticks": "full_rule_spec_v1"}
+    {
+      "model_id": "M0",
+      "role": "diagnostic_comparator_only",
+      "formal_serving_allowed": false,
+      "ticks": "all_zero"
+    },
+    {
+      "model_id": "P4E1",
+      "role": "legacy_registered_candidate_family",
+      "formal_serving_allowed": false,
+      "ticks": "quantized_additive_fixed_cardinality"
+    },
+    {
+      "model_id": "P4E1-full-rule-known-answer-v1",
+      "role": "result_blind_capability_fixture",
+      "formal_serving_allowed": false,
+      "ticks": "full_rule_spec_v1"
+    },
+    {
+      "model_id": "P4E2-R",
+      "role": "formal_serving_family",
+      "formal_serving_allowed": true,
+      "features": "F01-F14"
+    }
   ],
   "parameter_families": {
-    "P01": {"shrinkage": [1, 5, 20, 100]},
-    "P02": {"training_window": [50, 100, 150, "expanding"]},
-    "P03": {"recency_half_life": [26, 52, 104, "none"]},
-    "P04": {"single_registered_tick_group_only": true, "integer_offsets": true}
+    "P01": {
+      "shrinkage": [
+        1,
+        5,
+        20,
+        100
+      ]
+    },
+    "P02": {
+      "training_window": [
+        50,
+        100,
+        150,
+        "expanding"
+      ]
+    },
+    "P03": {
+      "recency_half_life": [
+        26,
+        52,
+        104,
+        "none"
+      ]
+    },
+    "P04": {
+      "single_registered_tick_group_only": true,
+      "integer_offsets": true
+    },
+    "P4E2_L2": {
+      "regularization_type": "L2",
+      "grid": [
+        8,
+        24,
+        72
+      ],
+      "coefficient_cap": "0.35"
+    },
+    "P4E2_PAIR": {
+      "window": 60,
+      "shrinkage": 20,
+      "unbounded_pair_coefficients_allowed": false
+    },
+    "P4E2_EWMA": {
+      "half_life_grid": [
+        10,
+        30
+      ],
+      "inline_half_life_allowed": false
+    }
   },
+  "formal_candidate_grid_finite": true,
+  "formal_inline_parameters_allowed": false,
+  "formal_fixture_allowed": false,
+  "formal_worktree_defaults_allowed": false,
+  "serving_must_consume_groups": [
+    "historical_change",
+    "number_relationship",
+    "combination_structure"
+  ],
   "champion_promotion_surface": false
 }

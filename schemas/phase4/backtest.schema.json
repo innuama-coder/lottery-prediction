@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/backtest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "game",
+    "selected_candidate_identity",
+    "selection_indices",
+    "report_only_indices",
+    "selection_frozen_before_report_only",
+    "overlap_count",
+    "comparator",
+    "report_only_summary",
+    "metrics",
+    "scientific_status",
+    "unfavorable_results_retained",
+    "status"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "phase4_backtest_summary"
+    },
+    "game": {
+      "enum": [
+        "ssq",
+        "dlt"
+      ]
+    },
+    "selected_candidate_identity": {
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "selection_indices": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "integer"
+      }
+    },
+    "report_only_indices": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "integer"
+      }
+    },
+    "selection_frozen_before_report_only": {
+      "const": true
+    },
+    "overlap_count": {
+      "const": 0
+    },
+    "comparator": {
+      "const": "M0"
+    },
+    "report_only_summary": {
+      "type": "object"
+    },
+    "metrics": {
+      "type": "array",
+      "minItems": 6,
+      "uniqueItems": true
+    },
+    "scientific_status": {
+      "enum": [
+        "lift_supported",
+        "no_confirmed_lift",
+        "worse_than_M0",
+        "insufficient_evidence"
+      ]
+    },
+    "unfavorable_results_retained": {
+      "const": true
+    },
+    "status": {
+      "const": "PASS"
+    }
+  }
+}

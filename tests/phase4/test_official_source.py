@@ -37,6 +37,7 @@ PROVENANCE = {
     "path": "artifacts/phase-4-prep/unit", "role": "implementation_author",
 }
 VALID_CLOCK = "2026-08-11T12:00:00Z"
+LEGACY_PREP_INSTALLED = (ROOT / "artifacts/phase-4-prep/p4-prep-controller-issued-i01/work-items/T03/data-custodian-source-review-I01/source-review.json").is_file()
 RAW = {
     ("ssq", "swlc"): (FIXTURES / "swlc-ssq.html").read_bytes(),
     ("ssq", "ydniu"): (FIXTURES / "ydniu-ssq.html").read_bytes(),
@@ -80,6 +81,7 @@ def _observation(game: str, source_id: str, raw: bytes) -> dict:
 
 
 class OfficialSourceTests(unittest.TestCase):
+    @unittest.skipUnless(LEGACY_PREP_INSTALLED, "superseded T00-T24 source-review evidence is not installed")
     def test_frozen_policy_yields_exact_four_source_plan(self) -> None:
         self.assertEqual(sha256_file(POLICY), "ab70c9abc440ad8180db70321578e4a569fbfda802b0e698597fd5ae3df7417f")
         self.assertEqual(sha256_file(ROOT / "config/phase4/calendar-policy.json"), "79ae43a35b5f83d1c424994c9b7ac34b812faa6d619d34ac9e3000afb44c8bbf")

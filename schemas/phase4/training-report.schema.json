@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/training-report.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "game",
+    "model_release_id",
+    "family",
+    "objective_derived",
+    "objective",
+    "fixture_input",
+    "inline_parameters",
+    "worktree_default",
+    "feature_ids",
+    "feature_groups_consumed",
+    "regularization",
+    "coefficients",
+    "objective_trace",
+    "ablation_results",
+    "non_m0",
+    "non_uniform",
+    "status"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "phase4_training_report"
+    },
+    "game": {
+      "enum": [
+        "ssq",
+        "dlt"
+      ]
+    },
+    "model_release_id": {
+      "type": "string"
+    },
+    "family": {
+      "const": "P4E2-R"
+    },
+    "objective_derived": {
+      "const": true
+    },
+    "objective": {
+      "const": "L2_regularized_conditional_joint_log_likelihood"
+    },
+    "fixture_input": {
+      "const": false
+    },
+    "inline_parameters": {
+      "const": false
+    },
+    "worktree_default": {
+      "const": false
+    },
+    "feature_ids": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "uniqueItems": true
+    },
+    "feature_groups_consumed": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true
+    },
+    "regularization": {
+      "type": "object"
+    },
+    "coefficients": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "objective_trace": {
+      "type": "object",
+      "minProperties": 4
+    },
+    "ablation_results": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "non_m0": {
+      "const": true
+    },
+    "non_uniform": {
+      "const": true
+    },
+    "status": {
+      "const": "PASS"
+    }
+  }
+}

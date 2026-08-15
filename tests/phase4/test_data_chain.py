@@ -28,6 +28,7 @@ from lottery_system.phase4.serialization import load_json
 ROOT = Path(__file__).resolve().parents[2]
 GENESIS = ROOT / "config/phase4/genesis.json"
 ACTOR_ASSIGNMENTS = "artifacts/phase-4-prep/p4-prep-controller-issued-i01/control/actor-assignments-preparation.json"
+LEGACY_PREP_INSTALLED = (ROOT / ACTOR_ASSIGNMENTS).is_file()
 PROVENANCE = {
     "producer_actor_id": "p4-implementation-author-i01", "task_id": "T02",
     "session_id": "/root/implementation_author", "source_commit": "f8a7a6abb46a55f8fa17e5ae3280c5c5432c363b",
@@ -165,6 +166,7 @@ class DataChainTests(unittest.TestCase):
             ])
         self.assertEqual(code, 20)
 
+    @unittest.skipUnless(LEGACY_PREP_INSTALLED, "superseded T00-T24 actor-assignment evidence is not installed")
     def test_invocation_provenance_is_complete_and_matches_actual_actor(self) -> None:
         with mock.patch.dict(os.environ, {}, clear=True):
             with self.assertRaises(ContractEvidenceMismatch):

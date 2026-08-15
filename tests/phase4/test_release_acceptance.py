@@ -24,15 +24,16 @@ class ReleaseAcceptanceTests(unittest.TestCase):
         self.assertEqual(command.returncode, 0, command.stderr + command.stdout)
         result = json.loads(command.stdout)
         self.assertEqual(result["status"], "PASS")
-        self.assertEqual(result["negative_case_count"], 8)
+        self.assertEqual(result["negative_case_count"], 21)
 
     def test_from_scratch_dual_game_release_and_independent_replay(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "artifacts") as raw:
             release = Path(raw) / "P4-UNIT-D11"
+            source_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
             built = self.run_command(
                 "scripts/phase4/build_real_model_release.py", "--release", release.name,
                 "--phase1-draws", str(DRAW), "--output", str(release),
-                "--source-commit", "0" * 40,
+                "--source-commit", source_commit,
             )
             self.assertEqual(built.returncode, 0, built.stderr + built.stdout)
             replay = self.run_command(
@@ -52,9 +53,10 @@ class ReleaseAcceptanceTests(unittest.TestCase):
                 self.assertGreater(value["distinct_probability_count"], 1)
                 backtest = json.loads(next((release / "backtests" / game).glob("*/summary.json")).read_text())
                 folds = [json.loads(line) for line in next((release / "backtests" / game).glob("*/report-only-fold-metrics.jsonl")).read_text().splitlines()]
-                self.assertEqual(len(folds), 80)
-                self.assertEqual(backtest["metrics"], ["log_loss", "brier", "calibration", "top_k"])
+                self.assertEqual(len(folds), 3)
+                self.assertEqual(backtest["metrics"], ["joint_log_loss", "true_multiclass_brier", "calibration", "full_ticket_top_10_100_200_1000_recall", "permutation", "block_bootstrap"])
                 self.assertTrue(all(row["fold_role"] == "report_only" and not row["used_for_selection"] for row in folds))
+                self.assertTrue(all(row["brier_formula"] == "1-2*p_observed+sum_over_complete_legal_space(p_class^2)" for row in folds))
 
             model = json.loads(next((release / "models/ssq").glob("*/model.json")).read_text())
             forecast = self.run_command(

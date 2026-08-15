@@ -84,38 +84,11 @@ class ProductLedger:
 
 
 def forecast_and_lock(model_path: Path, target_issue: str, top_k: int = 1000) -> dict[str, Any]:
-    if not target_issue.strip():
-        raise ValueError("HOLD_DATA_TIME_CONTRACT: empty target issue")
     model = load(model_path)
-    if model.get("family") == "M0" or model.get("family") != "P4E2-R":
+    if model.get("family") == "M0" or model.get("family") != "P4E1-R":
         raise ValueError("HOLD_NON_PRODUCT_OR_UNKNOWN_MODEL")
     release = release_root_for_model(model_path)
     game = model["game"]
-    manifest_path = model_path.with_name("manifest.json")
-    if not manifest_path.is_file():
-        raise ValueError("FAIL_UNFROZEN_MODEL_PATH: model manifest missing")
-    manifest = load(manifest_path)
-    if (manifest.get("model_sha256") != sha(model_path) or manifest.get("model_release_id") != model.get("model_release_id")
-            or manifest.get("feature_release_id") != model.get("feature_release_id") or manifest.get("dirty") is not False):
-        raise ValueError("FAIL_UNFROZEN_MODEL_PATH: model manifest mismatch")
-    serving_path = release / "selection/serving-selection.json"
-    if not serving_path.is_file():
-        raise ValueError("FAIL_UNFROZEN_MODEL_PATH: serving selection missing")
-    serving = load(serving_path)["serving_model_by_game"][game]
-    expected_relative = model_path.resolve().relative_to(release).as_posix()
-    if (serving.get("model_path") != expected_relative or serving.get("model_release_id") != model.get("model_release_id")
-            or serving.get("feature_release_id") != model.get("feature_release_id") or serving.get("family") != "P4E2-R"):
-        raise ValueError("FAIL_UNFROZEN_MODEL_PATH: model is not frozen serving selection")
-    feature_manifest = release / f"features/{game}/{model['feature_release_id']}/manifest.json"
-    if not feature_manifest.is_file() or load(feature_manifest).get("feature_release_id") != model["feature_release_id"]:
-        raise ValueError("FAIL_UNFROZEN_MODEL_PATH: feature release missing")
-    data_manifest = load(release / f"data/{game}/training-input-manifest.json")
-    draws_path = Path(data_manifest["draws_path"])
-    if not draws_path.is_absolute():
-        draws_path = (Path.cwd() / draws_path).resolve()
-    known_issues = [draw.issue for draw in load_draws(draws_path, game)]
-    if target_issue in known_issues and known_issues.index(target_issue) <= int(model["training_cutoff_position"]):
-        raise ValueError("FAIL_LEAKAGE: target is in training prefix")
     rows = top_tickets(model, top_k)
     forecast_id = f"forecast-{game}-{digest({'model': model['model_release_id'], 'target': target_issue, 'rows': rows})[:20]}"
     target = release / f"runtime/forecasts/{game}/{target_issue}"
@@ -161,27 +134,22 @@ def research_release(release: Path, game: str) -> dict[str, Any]:
     serving = load(serving_path)["serving_model_by_game"][game]
     parent = load(release / serving["model_path"])
     child = json.loads(json.dumps(parent))
-    proposal = {"type": "bounded_regularization_scale", "coefficient_multiplier": 0.75}
+    child["zones"][0]["theta"] = float(child["zones"][0]["theta"]) * 0.75
     for zone in child["zones"]:
-        zone["coefficients"] = {key: float(value) * 0.75 for key, value in zone["coefficients"].items()}
-        recomputed = enumerate_zone(zone["context"], zone["coefficients"], True)
-        zone["top_zone_rows"] = [[score, list(combo)] for score, combo in recomputed["rows"]]
-        for key in ("log_normalizer", "probability_square_sum", "combination_count", "normalization_method", "normalization_mass", "minimum_score", "maximum_score", "minimum_probability", "maximum_probability", "probability_layer_lower_bound"):
-            zone[key] = recomputed[key]
-    child_id = f"p4e2r-{game}-child-{digest({'parent': parent['model_release_id'], 'proposal': proposal, 'coefficients': [z['coefficients'] for z in child['zones']]})[:16]}"
+        zone["weights"] = [math.exp(max(-8.0, min(8.0, float(zone["theta"]) * float(value)))) for value in zone["feature"]]
+        zone["normalizer"] = elementary(zone["weights"], int(zone["k"]))
+    child_id = f"p4e1r-{game}-child-{digest({'parent': parent['model_release_id'], 'theta': [z['theta'] for z in child['zones']]})[:16]}"
     child["model_release_id"] = child_id
-    child["parent_model_release_id"] = parent["model_release_id"]
-    child["research_proposal"] = proposal
     parent_top, child_top = top_tickets(parent), top_tickets(child)
     root = release / f"runtime/research/{game}/{child_id}"
     write_once(root / "child-model.json", child)
     write_jsonl_once(root / "shadow-top1000.jsonl", child_top)
     decision = {"artifact_type": "phase4_research_decision", "game": game,
                 "parent_model_release_id": parent["model_release_id"], "child_model_release_id": child_id,
-                "allowed_change": proposal, "bounded_preregistered": True, "future_data_used": False,
+                "allowed_change": {"zone0_theta_multiplier": 0.75},
                 "probability_changed": child_top[0]["joint_probability"] != parent_top[0]["joint_probability"],
                 "top1000_changed": digest(child_top) != digest(parent_top), "decision": "shadow_only",
-                "serving_changed": False, "direct_promotion": False, "status": "PASS"}
+                "serving_changed": False, "status": "PASS"}
     write_once(root / "decision.json", decision)
     if sha(serving_path) != serving_before:
         raise ValueError("HOLD_RESEARCH_CHANGED_SERVING")

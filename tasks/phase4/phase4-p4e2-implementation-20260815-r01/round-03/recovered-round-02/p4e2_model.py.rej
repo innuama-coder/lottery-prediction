@@ -1,0 +1,10 @@
+--- src/lottery_system/phase4/p4e2_model.py
++++ src/lottery_system/phase4/p4e2_model.py
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
+ 
++import copy
+ import hashlib
+ 
+ 
+ 

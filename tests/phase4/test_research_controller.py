@@ -43,6 +43,8 @@ from lottery_system.phase4.research.sequential import SequentialViolation, reduc
 from lottery_system.phase4.serialization import canonical_json_bytes, load_json
 from lottery_system.phase4.storage import write_once_json
 
+LEGACY_PREP_INSTALLED = (Path(__file__).resolve().parents[2] / "artifacts/phase-4-prep/p4-prep-controller-issued-i01/work-items/T10/feasibility/certificate.json").is_file()
+
 
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = ROOT / "tests/phase4/fixtures/research/parameter-positive.json"
@@ -294,6 +296,7 @@ class ResearchControllerTests(unittest.TestCase):
             with self.assertRaises(ResearchControllerViolation):
                 remediate_correction(runtime, path, clock="2026-01-03T00:00:00Z", provenance=provenance(), decision_id="remediation-a")
 
+    @unittest.skipUnless(LEGACY_PREP_INSTALLED, "superseded T00-T24 research evidence is not installed")
     def test_registered_small_development_fixture_runs_full_menu_without_qualification_seeds(self):
         fixture = load_json(DEVELOPMENT_FIXTURE, reject_floats=True)
         certificate = load_json(FEASIBILITY, reject_floats=True)
@@ -361,6 +364,7 @@ class ResearchControllerTests(unittest.TestCase):
         with self.assertRaises(ResearchControllerViolation):
             derive_qualification_seed(qualification_design(1536)["design_id"], "fixture-development", "ssq", "uniform", 1)
 
+    @unittest.skipUnless(LEGACY_PREP_INSTALLED, "superseded T00-T24 research evidence is not installed")
     def test_selection_rejects_incomplete_menu_and_implementation_mismatch(self):
         fixture = load_json(DEVELOPMENT_FIXTURE, reject_floats=True)
         certificate = load_json(FEASIBILITY, reject_floats=True)
@@ -377,6 +381,7 @@ class ResearchControllerTests(unittest.TestCase):
                     designs=[qualification_design(q) for q in (1536, 2048)],
                 )
 
+    @unittest.skipUnless(LEGACY_PREP_INSTALLED, "superseded T00-T24 research evidence is not installed")
     def test_selection_is_unchanged_by_descriptive_event_counts(self):
         fixture = load_json(DEVELOPMENT_FIXTURE, reject_floats=True)
         certificate = load_json(FEASIBILITY, reject_floats=True)
@@ -389,6 +394,7 @@ class ResearchControllerTests(unittest.TestCase):
             selected_mutated, _ = select_development_design(manifest=mutated, certificate=certificate, designs=designs)
             self.assertEqual(selected_mutated["design_id"], selected["design_id"])
 
+    @unittest.skipUnless(LEGACY_PREP_INSTALLED, "superseded T00-T24 research evidence is not installed")
     def test_scientific_controller_identity_changes_design_and_binds_command_and_code(self):
         identity = scientific_controller_identity()
         self.assertEqual(identity["argv"], ["python3", "-m", "lottery_system.phase4.research.worker"])

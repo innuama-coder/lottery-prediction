@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/feature-snapshot.schema.json",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "game",
+    "zone",
+    "row_type",
+    "target_position",
+    "cutoff_position",
+    "max_source_position",
+    "input_prefix_sha256",
+    "canonical_order_id",
+    "canonical_comparator_id",
+    "knowledge_contract",
+    "available_at",
+    "feature_group",
+    "feature_values",
+    "window",
+    "normalization"
+  ],
+  "properties": {
+    "game": {
+      "enum": [
+        "ssq",
+        "dlt"
+      ]
+    },
+    "zone": {
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "row_type": {
+      "enum": [
+        "number",
+        "pair",
+        "combination_generator"
+      ]
+    },
+    "target_position": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "cutoff_position": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "max_source_position": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "cutoff_issue": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input_prefix_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "canonical_order_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "canonical_comparator_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "knowledge_contract": {
+      "const": "retrospective_sequence_safe"
+    },
+    "available_at": {
+      "type": "null"
+    },
+    "feature_group": {
+      "enum": [
+        "historical_change",
+        "number_relationship",
+        "number_relationship+combination_structure"
+      ]
+    },
+    "feature_values": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "window": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "normalization": {
+      "type": "object",
+      "minProperties": 1
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/training-input-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "game",
+    "knowledge_contract",
+    "phase1_release",
+    "draws_path",
+    "draws_sha256",
+    "phase1_manifest_sha256",
+    "canonical_order_id",
+    "canonical_comparator_id",
+    "training_dataset_id",
+    "training_cutoff_issue",
+    "training_cutoff_position",
+    "forecast_target_position",
+    "training_count",
+    "available_at_fabricated",
+    "fixture_input",
+    "status"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "phase4_training_input_manifest"
+    },
+    "game": {
+      "enum": [
+        "ssq",
+        "dlt"
+      ]
+    },
+    "knowledge_contract": {
+      "const": "retrospective_sequence_safe"
+    },
+    "phase1_release": {
+      "const": "baseline-v1"
+    },
+    "draws_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "draws_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "phase1_manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "canonical_order_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "canonical_comparator_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "training_dataset_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "training_cutoff_issue": {
+      "type": "string",
+      "minLength": 1
+    },
+    "training_cutoff_position": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "forecast_target_position": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "training_count": {
+      "type": "integer",
+      "minimum": 120
+    },
+    "available_at_fabricated": {
+      "const": false
+    },
+    "fixture_input": {
+      "const": false
+    },
+    "status": {
+      "const": "PASS"
+    }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "forecast_target_position": {
+          "minimum": 1
+        }
+      }
+    }
+  ]
+}

@@ -14,7 +14,7 @@ release path and never `latest`, a glob, an inline model, or a fixture model.
 ```bash
 PY=.venv-phase4/bin/python
 DRAW=artifacts/phase-1/baseline-v1/draws.jsonl
-RID=P4-RMVP-20260815-r08
+RID=P4E2_RELEASE_ID
 REL=artifacts/phase-4/$RID
 IMPL=IMPLEMENTATION_COMMIT
 
@@ -57,8 +57,11 @@ receipt in the pre-acceptance manifest, then only appends the three D15 files.
 The terminal state is `READY_FOR_LOCAL_PRODUCT_ACCEPTANCE` only when every
 recorded command passes and the independent replay detects all mutations.
 
-The serving model for each game is P4E1-R trained from the frozen Phase 1
-canonical history. M0 is diagnostic-only and cannot lock a product forecast.
+The serving model for each game is P4E2-R trained from the frozen Phase 1
+canonical history and consumes F01-F14 across all three required feature groups.
+It uses complete-enumeration streaming log-sum-exp normalization and full-ticket
+Top-K evaluation. M0 and historical P4E1-R are diagnostic/legacy-only and cannot
+lock a new product forecast.
 Scientific status (`no_confirmed_lift`, `worse_than_M0`, or
 `insufficient_evidence`) is reported independently of engineering readiness and
 is never a claim of predictability, winnings, or profit.

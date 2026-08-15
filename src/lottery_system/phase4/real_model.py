@@ -61,7 +61,7 @@ def load_draws(path: Path, game: str) -> list[Draw]:
         raw = json.loads(line)
         if raw["game"] != game:
             continue
-        if raw.get("available_at_utc") is not None:
+        if any(raw.get(key) is not None for key in raw if key.startswith("available_at")):
             raise ValueError("Phase 1 retrospective history must not claim fabricated available_at")
         rows.append(Draw(raw["issue_id"], tuple(raw["front_numbers"]), tuple(raw["back_numbers"]), raw["core_fact_sha256"]))
     if len(rows) < 120 or len({row.issue for row in rows}) != len(rows):
@@ -266,3 +266,19 @@ def score_ticket(model: dict[str, object], draw: Draw, top: Sequence[dict[str, o
     lookup = {(tuple(row["front_numbers"]), tuple(row["back_numbers"])): row["rank"] for row in top}
     rank = lookup.get((draw.front, draw.back))
     return {"issue": draw.issue, "joint_log_loss": -math.log(probability), "actual_joint_probability": f"{probability:.18e}", "hit_at": {str(k): bool(rank and rank <= k) for k in (10, 100, 200, 1000)}, "top1000_rank": rank}
+
+
+# The immutable P4E1 implementation above remains available to historical
+# releases.  Formal builds resolve these names to the separately testable
+# P4E2-R implementation.
+from .p4e2_model import (  # noqa: E402
+    FEATURE_GROUPS,
+    FEATURE_IDS,
+    feature_context,
+    feature_snapshot_rows,
+    fit_coefficients,
+    score_ticket,
+    subset_probability,
+    top_tickets,
+    train,
+)

@@ -6,3 +6,4 @@
 {"event":"stale_round_02_process_terminated","reason":"concurrent writes to shared worktree","recovered_attempt_files_preserved":true,"status":"PASS"}
 {"event":"focused_p4e2_tests","tests":5,"elapsed_seconds":369.093,"peak_rss_kib":26264,"status":"PASS"}
 {"event":"phase4_non_p4e2_regression","tests":130,"skipped_superseded_prep":20,"status":"PASS"}
+{"event":"formal_release_attempt","release_id":"P4-P4E2-20260815-r01","elapsed_seconds":710.71,"exit_code":1,"reason":"over-escaped serving model_path schema pattern","status":"HOLD_CONTRACT_INCOMPLETE","preserved":true}

@@ -6,7 +6,7 @@ Status: `RUNNING`
 - D01 contract validator: initial recovered implementation PASS
 - protected roots: baseline inventories captured; final exact comparison pending
 - implementation audit: recovered code corrected; focused and non-P4E2 regression tests pass
-- formal release: pending unique release allocation
+- formal release: r01 failed attempt preserved; r02 retry pending after Schema correction
 - independent replay and D15: pending
 
 Observed recoverable issues:

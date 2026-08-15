@@ -75,7 +75,7 @@
         },
         "model_path": {
           "type": "string",
-          "pattern": "^models/(ssq|dlt)/[^/]+/model\\\\.json$"
+          "pattern": "^models/(ssq|dlt)/[^/]+/model\\.json$"
         }
       }
     }

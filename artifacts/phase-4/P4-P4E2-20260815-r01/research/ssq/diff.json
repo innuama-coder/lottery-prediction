@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_research_diff","bounded_preregistered":true,"change":{"coefficient_multiplier":0.75,"type":"bounded_regularization_scale"},"child_model_release_id":"p4e2r-ssq-child-70fb17d76af1","direct_promotion":false,"future_data_used":false,"game":"ssq","non_noop":true,"parent_model_release_id":"p4e2r-ssq-3de6ddb6b45811b9"}

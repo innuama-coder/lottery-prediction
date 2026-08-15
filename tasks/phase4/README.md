@@ -1,6 +1,6 @@
 # Phase 4：真实模型预测与 AutoResearch 闭环 MVP 定义
 
-版本：2.0
+版本：3.0
 
 状态：`D00_AUTHORITY_SYNCED`。本文件与 `ROADMAP.md`、`docs/research/phase-4-overall-design.md`、`docs/plans/phase-4-detailed-plan.md` 在同一 `P4_AUTHORITY_COMMIT` 冻结；只有 D00 两个 checker 均通过且 receipt 证明 clean 后才解除 `HOLD_AUTHORITY_SYNC` 并启动 D01。
 
@@ -15,7 +15,7 @@ Phase 4 固定读取 Phase 1 canonical 冻结历史和 Phase 3 正式验收先�
 Phase 4 必须同时交付：
 
 1. SSQ 与 DLT 各自从真实 Phase 1 canonical 历史构造 `retrospective_sequence_safe` 特征；不得为历史开奖补造 `available_at`。
-2. 两个 game 各自训练、冻结和实际加载一个可追踪、非退化、非均匀的 P4E1-R 或总体设计允许的等价低容量真实模型。
+2. 两个 game 各自训练、冻结和实际加载一个可追踪、非退化、非均匀的 P4E2-R 或总体设计允许的等价低容量多特征真实模型；历史 P4E1-R 单一特征版本只作为不可变历史交付。
 3. `serving_model_by_game.ssq != M0` 且 `serving_model_by_game.dlt != M0`。M0 只能作为 comparator、diagnostic 或显式 fallback；diagnostic 输出必须带 `NON_PRODUCT_BASELINE` 水印且不能正式 lock。
 4. 每个明确目标期由对应冻结 serving release 的联合概率降序生成恰好 1,000 注合法、唯一、严格正概率的完整组合；完整空间和 Top-1000 都至少有两个规范概率层。
 5. forecast 可 create-once 锁定、inspect、评分、修订传播和重放；AutoResearch 产生非空真实 diff、新 child ID 和可观察变化的下一期 challenger/shadow，且不得改写 serving。
@@ -32,17 +32,17 @@ Phase 4 必须同时交付：
 
 历史内生特征类型固定为 `retrospective_sequence_safe`。每个 target 的特征、训练标签和统计量只读取 canonical order 中 target 之前的前缀；target 不得在训练前缀中。Phase 1 历史没有也不需要 `available_at`。可选外部时变特征单独使用 `external_point_in_time`，必须具有真实 `available_at` 与 provenance 且早于 lock；缺证据即排除。
 
-最小特征为 F01 Beta-Binomial shrinkage inclusion rate；F02 recency-weighted inclusion 可作为预注册候选或 AutoResearch 调整项。SSQ 使用 `33选6 + 16选1`，DLT 使用 `35选5 + 12选2`，两者的快照、参数、release ID、cutoff、回测和 forecast 必须隔离。
+P4E2-R 的正式特征必须覆盖三类：历史水平与变化（F01 expanding rate、F02 rolling 10/30/60、F03 EWMA、F04 recency gap、F05 short/long trend）、号码关系（F06 收缩 pair residual/lift、F07 上期开奖重叠）和组合结构（F08 和值、F09 跨度、F10 奇偶、F11 分桶、F12 连号、F13 尾数、F14 间隔）。F01 单独存在或只增加 F02 不合格；正式 serving 必须实际消费三类中的至少一个特征。pair 只允许低维聚合和强收缩，不得拟合无界号码对参数。SSQ 使用 `33选6 + 16选1`，DLT 使用 `35选5 + 12选2`，两者的快照、参数、release ID、cutoff、回测和 forecast 必须隔离。
 
 ### 3.2 训练与回测
 
-模型必须实际消费 F01，参数由真实历史目标函数导出并存在至少一个非零有效系数和非恒定权重。data/feature/config/code/dependency/model-card 身份全部冻结；fixture、合成正控、预写 ticks、内联参数或工作树默认值不得进入正式 fit/serving。
+模型必须实际消费 F01–F14 中覆盖三类的多特征集合，参数由真实历史目标函数导出并存在非零有效系数和非恒定权重；组合项必须通过精确枚举或流式 log-sum-exp 归一。data/feature/config/code/dependency/model-card 身份全部冻结；fixture、合成正控、预写 ticks、内联参数或工作树默认值不得进入正式 fit/serving。
 
-候选选择只读取 `selection folds`。候选身份冻结后，才允许一次性读取互不重叠的 `report-only evaluation folds`；报告相对 M0 的 log loss、Brier/校准、Top-K 指标和不确定性，不利结果不得隐藏或反馈重选。无法形成独立 report-only 窗口时为 `HOLD_BACKTEST_INCOMPLETE`。
+候选选择只读取 `selection folds`。候选身份冻结后，才允许一次性读取互不重叠的 `report-only evaluation folds`；报告完整注 joint log loss、真正的多分类 Brier（不能只计算观测组合项）、校准、完整组合 Top-10/100/200/1000 指标和不确定性，不利结果不得隐藏或反馈重选。无法形成独立 report-only 窗口时为 `HOLD_BACKTEST_INCOMPLETE`。
 
 ## 4. 概率、Top-1000 与锁定
 
-P4E1-R 每个号码分区的权重为 `exp(clip(theta*x,-B,B))`，固定大小子集概率按权重乘积除以对应基本对称多项式；完整 ticket 概率为各分区概率乘积。所有合法组合概率严格正且总和为 1。
+P4E2-R 每个号码分区的组合分数为 `score(C)=sum(beta*x_i)+gamma*g(C)`，固定大小子集概率为 `exp(score(C))` 在完整合法分区空间上的归一化；完整 ticket 概率为各分区概率乘积。所有合法组合概率严格正且总和为 1。P4E1-R 仅保留用于历史回放，不得作为新的 serving。
 
 正式顺序键为 `(joint_probability desc, canonical_ticket asc)`；第二键只在真实局部等概率组内 tie-break。Top-10/100/200 必须是同一 Top-1000 的严格前缀。每行必须包含概率层、tie bounds、full-space rank、lineage 和解释字段。
 
@@ -91,8 +91,8 @@ D00 checker 通过前不得启动 D01。D11 之后的正式 release 输入只读
 | ID | 必须证明 | 拒绝条件 |
 | --- | --- | --- |
 | P4-R01 | 四份 authority 同一 clean commit 且两个 checker 通过 | 旧 M0/`baseline_only` 产品 PASS 语义仍存在 |
-| P4-R02 | SSQ 真实 sequence-safe F01 snapshot | fixture、恒定、错误 comparator、target 入前缀或补造 `available_at` |
-| P4-R03 | DLT 真实 sequence-safe F01 snapshot | fixture、恒定、错误 comparator、target 入前缀或补造 `available_at` |
+| P4-R02 | SSQ 真实 sequence-safe F01–F14 snapshot，覆盖三类特征 | fixture、恒定、错误 comparator、target 入前缀、无界 pair 或补造 `available_at` |
+| P4-R03 | DLT 真实 sequence-safe F01–F14 snapshot，覆盖三类特征 | fixture、恒定、错误 comparator、target 入前缀、无界 pair 或补造 `available_at` |
 | P4-R04 | SSQ 非 M0 model release | M0、手写 theta、缺 model card/lineage |
 | P4-R05 | DLT 非 M0 model release | M0、复制 SSQ、缺 model card/lineage |
 | P4-R06 | selection/report-only 隔离且科学报告完整 | fold 重叠、读取后重选、隐藏不利结果 |

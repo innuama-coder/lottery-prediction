@@ -145,7 +145,7 @@ Phase 4 必须按以下顺序推进，后续步骤不能替代前置步骤：
 
 - 建立 Phase 4 自有数据层，以 MVP 定义冻结的 Phase 1 `baseline-v1` 四项身份作为唯一 genesis；后继 release 保持连续链，只写 Phase 4 staging/runtime，并递归保护整个 Phase 1 权威树。
 - 建立 SSQ/DLT 目标期日历、规则映射、增量官方结果采集、核验、去重和修订传播；修订必须形成 corrected score/aggregate、remediation decision 和候选重新资格，不退款或重复 alpha spending。
-- 为 SSQ/DLT 分别实现真实 P4E1-R 或允许的等价低容量模型；冻结 data/feature/config/code/dependency/model-card 身份，M0 仅作 comparator 或带 `NON_PRODUCT_BASELINE` 水印的显式 diagnostic fallback。
+- 为 SSQ/DLT 分别实现真实 P4E2-R 多特征模型（或通过同等验收的低容量多特征模型）；正式 serving 必须覆盖历史变化、号码关系和组合结构三类特征，冻结 data/feature/config/code/dependency/model-card 身份。历史 P4E1-R 单特征版本只能保留为不可变回放，M0 仅作 comparator 或带 `NON_PRODUCT_BASELINE` 水印的显式 diagnostic fallback。
 - 实现严格为正且归一的完整空间联合概率、概率主排序 Top-1000、局部 tie、锁定截止和不可变 forecast ledger；完整空间单一 tie 或 Top-1000 全等概率必须拒绝。
 - 实现 guarded label unlock，并分离开奖前 forecast 诊断、绑定结果版本的逐预测 score 和带最小样本量状态的窗口指标。
 - 实现候选模型/特征 registry、参数和特征配置 diff、隔离实验、逐彩种/假设族 alpha wealth、预算、checkpoint、失败终态和 shadow 接入；历史或合成证据不得修改 Champion。

@@ -1,12 +1,12 @@
 # Phase 4 真实模型预测与 AutoResearch 闭环 MVP 总体设计
 
-版本：2.0（设计重构候选）
+版本：3.0（多特征模型设计）
 
 状态：`D00_AUTHORITY_SYNCED`。本文与 `ROADMAP.md`、`tasks/phase4/README.md`、`docs/plans/phase-4-detailed-plan.md` 在同一 `P4_AUTHORITY_COMMIT` 冻结；D00 两个 checker 通过后解除 `HOLD_AUTHORITY_SYNC`，才允许启动 D01。
 
 ## 1. 结论、目标与诚实边界
 
-Phase 4 的产品目标是：对 SSQ 和 DLT，各自从 Phase 1 冻结历史序列构造 `retrospective_sequence_safe` 历史特征，训练并冻结一个非 M0、非均匀的 `serving_model_by_game` release；对明确目标期，用该 release 的联合概率降序生成、锁定并可重放各 1,000 注正式预测；在开奖后可评分，并让 AutoResearch 的参数或特征调整进入下一期 challenger/shadow。
+Phase 4 的产品目标是：对 SSQ 和 DLT，各自从 Phase 1 冻结历史序列构造 `retrospective_sequence_safe` 多特征快照，训练并冻结一个非 M0、非均匀的 `P4E2-R`（或经过同等验收的低容量多特征模型）`serving_model_by_game` release；对明确目标期，用该 release 的联合概率降序生成、锁定并可重放各 1,000 注正式预测；在开奖后可评分，并让 AutoResearch 的参数或特征调整进入下一期 challenger/shadow。现有 `P4E1-R` 单一长期频率模型保留为不可变历史版本，不构成本设计的特征工程交付。
 
 工程成功必须同时满足：
 
@@ -73,23 +73,35 @@ Phase 1 内生历史采用 `retrospective_sequence_safe`：目标期 `q` 在逐 
 SSQ 分为红球 `33选6` 和蓝球 `16选1`；DLT 分为前区 `35选5` 和后区 `12选2`。两者使用相同定义、不同数据和参数：
 
 - `F01_prior_inclusion_rate`：对每个号码，在目标期之前 expanding prefix 中的出现次数，以 Beta-Binomial shrinkage 形成平滑包含率；分区内只使用此前开奖记录。
-- `F02_recency_weighted_inclusion`：对此前记录用冻结半衰期加权的号码出现率，再做分区内中心化和尺度裁剪；半衰期来自预注册有限网格，只能在训练 fold 内选择。
+- `F02_rolling_inclusion`：最近 10/30/60 期出现率；窗口只能读取目标期之前的前缀，窗口不足时按预注册最小暴露规则处理。
+- `F03_ewma_inclusion`：半衰期 10/30 的指数衰减出现率，半衰期只可在训练 fold 内的有限网格中选择。
+- `F04_recency_gap`：距上次出现期数的 `log1p` 变换并截断；从未出现使用预注册的右端点，不得使用未来记录填充。
+- `F05_short_long_trend`：短期窗口与 expanding 长期率的差值。
+- `F06_pair_cooccurrence`：带 Beta/Dirichlet 收缩的 pair residual/lift，按候选组合聚合；禁止为 528/595 个号码对拟合无约束独立参数。
+- `F07_previous_draw_overlap`：候选组合与上一期开奖结果的重叠数量。
+- `F08_sum_quantile`、`F09_span`、`F10_parity_count`、`F11_bucket_counts`、`F12_adjacency`、`F13_tail_diversity`、`F14_gap_statistics`：候选组合的和值/跨度/奇偶/分桶/连号/尾数/间隔结构，均以低维、预注册的数值或分箱统计表达。
 
-最小 serving 模型必须实际消费 `F01`；`F02` 可作为预注册的第二候选或 AutoResearch 调整项。feature snapshot 按 `(game,target_issue,training_dataset_id,feature_config_id)` 记录每个号码的原始计数、平滑值、变换值、最大源 issue 和输入 hashes。至少一个训练值变化的真实历史特征必须对冻结参数和 forecast 概率产生可追踪影响；全常数、全零、fixture 或预写 ticks 不合格。
+正式 serving 必须实际消费至少一个历史变化特征、一个号码关系特征和一个组合结构特征；F01 单独存在或只增加 F02 均不合格。若正则化后某一特征类全部归零，该候选只能标为 `rejected_feature_insufficient`，不能晋升 serving。feature snapshot 按 `(game,target_issue,training_dataset_id,feature_config_id)` 记录每个号码/组合的原始统计、变换值、最大源 position 和 input hashes；全常数、全零、fixture 或预写 ticks 不合格。
 
-## 5. 最小真实模型路线 P4E1-R
+## 5. 多特征真实模型路线 P4E2-R
 
-P4E1-R 是低容量、可精确归一和可解释的固定基数加权子集模型。对 game 的每个号码分区 `p`，号码 `i` 的权重为：
+P4E2-R 是低容量、可精确归一和可解释的固定基数加权子集模型。对 game 的每个号码分区 `p` 和合法候选子集 `C`，定义：
+
+`score_p(C) = sum_i_in_C(beta_p · x_p,i) + gamma_p · g_p(C)`
+
+其中 `x` 为 F01–F05 号码级特征，`g` 为 F06–F14 的低维组合特征。号码主效应可以保留以下正权表示：
 
 `w[p,i] = exp(clip(theta[p] · x[p,i], -B, B)) > 0`
 
-其中 `x` 至少包含 F01 的分区内中心化值，`theta` 是该 game/分区从历史训练得到的参数，`B` 固定以避免溢出。对合法的固定大小子集 `S`：
+其中 `B` 固定以避免溢出。对合法的固定大小子集 `S`：
 
-`P_p(S) = product(w[p,i], i in S) / e_k(w[p,1],...,w[p,n])`
+`P_p(S) = exp(score_p(S)) / sum_{C in Omega_p} exp(score_p(C))`
 
-`e_k` 为 k 阶基本对称多项式，可用动态规划精确/高精度计算。完整一注的联合概率为各分区概率乘积：SSQ 是红区乘蓝区，DLT 是前区乘后区；因此所有合法组合严格正且总和为 1。参数非零且特征在至少一个分区有变化时产生非均匀概率。
+正式规则下的分区组合空间可完整枚举（SSQ 红区 1,107,568 个，DLT 前区 324,632 个），因此必须使用流式 log-sum-exp、精确枚举或有数学证明的等价算法；未归一的启发式分数不能冒充概率。完整一注的联合概率为各分区概率乘积，所有合法组合严格正且总和为 1。
 
-训练使用按 canonical order 划分且互不重叠的 rolling-origin `selection folds` 与更晚的 `report-only evaluation folds`。仅 selection folds 可用于有限 `theta`/半衰期/正则网格和候选选择；候选集合、配置、tie-break 与 model-selection receipt 必须在任何 report-only label 可读前冻结。report-only folds 只评估一次已选配置，不反馈选择、特征或阈值。最终模型可在 `training_cutoff_issue` 之前的完整前缀重拟合，但其科学效果只能引用 report-only 结果。SSQ 与 DLT 独立选择、拟合和发布。网格、fold 边界、最小前缀、Decimal 精度和依赖版本在训练前冻结；随机步骤如存在必须有固定 seed，首选无随机优化。历史不足以同时提供最小 selection 和 report-only 窗口时必须 `HOLD_BACKTEST_INCOMPLETE`。测试 fixture 不得进入正式 fit。
+训练使用带 L2 或 group-lasso 的条件对数似然，正则、标准化和有限候选网格只能在 selection folds 内确定。200 期历史不允许高容量神经网络、无界 pair 参数或随机特征搜索。每个 serving release 必须输出系数、正则、特征组、消融结果和训练目标轨迹。
+
+训练使用按 canonical order 划分且互不重叠的 rolling-origin `selection folds` 与更晚的 `report-only evaluation folds`。仅 selection folds 可用于有限特征窗口、半衰期、正则和组合分数网格及候选选择；候选集合、配置、特征标准化、tie-break 与 model-selection receipt 必须在任何 report-only label 可读前冻结。report-only folds 只评估一次已选配置，不反馈选择、特征或阈值。最终模型可在 `training_cutoff_issue` 之前的完整前缀重拟合，但其科学效果只能引用 report-only 结果。SSQ 与 DLT 独立选择、拟合和发布。网格、fold 边界、最小前缀、Decimal 精度和依赖版本在训练前冻结；随机步骤如存在必须有固定 seed，首选无随机优化。历史不足以同时提供最小 selection 和 report-only 窗口时必须 `HOLD_BACKTEST_INCOMPLETE`。测试 fixture 不得进入正式 fit。
 
 训练输出必须证明：特征读取边界、fold-local transform、目标 label 只在该 fold 评分时读取、最终参数由真实历史目标函数导出。相同代码/依赖、输入 hashes 和配置必须字节级或规范语义级重放相同参数、归一常数、model release ID 和 Top-1000。
 
@@ -100,7 +112,7 @@ P4E1-R 是低容量、可精确归一和可解释的固定基数加权子集模�
 每个 game 的 serving release 必须通过以下全部条件：
 
 1. 输入是已验证的真实 Phase 1 冻结前缀；逐 game canonical comparator 证明 `training_cutoff_position < target_position` 且 target 不在前缀中，无同/未来位置读取。
-2. feature snapshot 完整，F01 被 fit 和 inference 实际消费；参数不是常量、fixture 或手写值。
+2. feature snapshot 完整，F01–F14 的注册定义、截止位置和输入哈希完整；正式 serving 实际消费历史变化、号码关系和组合结构三类特征，参数不是常量、fixture 或手写值。
 3. 模型不是 M0，至少一个分区存在非零有效系数和非恒定权重；完整空间至少两个可达规范概率层级。
 4. 正概率、归一化、排序、Top-K 与独立实现/枚举在批准误差合同内一致；同输入 replay 稳定。
 5. 回测报告分别标识 selection folds 与 report-only evaluation folds，证明选择 receipt 早于 report-only label capability，并覆盖 M0 comparator、逐 fold 指标、聚合方法、置信/不确定性以及所有不利结果。
@@ -136,7 +148,7 @@ acceptance/{machine-acceptance.json,checklist-release-receipt.json,final-closure
 
 所有对象以内容哈希、parent IDs 和规范序列化形成不可变身份。model manifest 必须绑定训练数据截止、feature release、训练配置、代码 commit、dirty=false、依赖 lock、数值精度、训练命令和输出 hashes。锁定采用 create-once/compare-and-swap；锁后任何影响号码、概率、排序、身份或解释的变化产生新 forecast，不覆盖旧对象。
 
-开奖后评分通过 guarded label unlock 读取已核验结果，计算联合 log loss、Brier/校准摘要和 Top-10/100/200/1000 覆盖；结果修订以追加 correction closure 传播，不退款、不删除旧实验。Phase 4 完成不等待这些新 forecast 的未来标签：历史 backtest 已验证评分路径，正式未来 forecast 可合法处于 `locked_unscored`。
+开奖后评分通过 guarded label unlock 读取已核验结果，计算完整组合空间上的 joint log loss、真正的多分类 Brier（包含观测组合项和所有未观测组合项）、校准摘要和完整注的 Top-10/100/200/1000 覆盖；不得只用 `(1-p_observed)^2` 作为 Brier。结果修订以追加 correction closure 传播，不退款、不删除旧实验。Phase 4 完成不等待这些新 forecast 的未来标签：历史 backtest 已验证评分路径，正式未来 forecast 可合法处于 `locked_unscored`。
 
 独立 replay 从 Phase 1 输入和冻结代码/配置重建特征、模型、概率及 Top-1000，不信任顶层 PASS。随后先从正式 E2E/replay 的冻结 IDs 机器生成不可变 checklist candidate，再生成覆盖它及全部 pre-acceptance 文件的 delivery manifest；manifest 不 hash 自身。最终验收不得修改 checklist 或 manifest，只追加 machine acceptance、checklist release receipt 与 final closure。receipt 绑定 checklist hash 和 manifest hash；closure 绑定 pre-acceptance manifest hash 及前两个新文件的 hash，但不 hash 自身，从而无自引用。manifest/checklist checker 还要保护 Phase 0–3 roots 前后不变。恢复使用幂等 work ID 和 checkpoint；失败 attempt 永久保留，不能择优删除。
 
@@ -188,7 +200,7 @@ lottery phase4 replay --release <id> --independent
 
 ## 13. 交付硬门
 
-最终机器验收必须从底层制品重算并拒绝：任一 `serving_model_by_game=M0`；`baseline_only` 被当作 PASS；缺 feature snapshot/model release/model card/backtest；canonical order/comparator 身份缺失、target 位于训练前缀、训练截止不合法或 fold 泄漏；selection 与 report-only 未隔离或读取后选择；仅有 fixture/合成证据；完整空间单一 tie；Top-1000 全等概率；字典序决定跨概率层选择；正式 CLI 未使用冻结模型；SSQ/DLT 任一缺 1,000 注、锁或 replay；manifest 未覆盖不可变 checklist candidate；终验改写 pre-acceptance 文件或 closure 自引用；科学措辞未报告 comparator、selection/report-only 窗口、指标和不确定性。
+最终机器验收必须从底层制品重算并拒绝：任一 `serving_model_by_game=M0`；`baseline_only` 被当作 PASS；缺 feature snapshot/model release/model card/backtest；F01-only 或缺历史变化/号码关系/组合结构任一特征类；canonical order/comparator 身份缺失、target 位于训练前缀、训练截止不合法或 fold 泄漏；selection 与 report-only 未隔离或读取后选择；仅有 fixture/合成证据；完整空间单一 tie；Top-1000 全等概率；字典序决定跨概率层选择；正式 CLI 未使用冻结模型；SSQ/DLT 任一缺 1,000 注、锁或 replay；manifest 未覆盖不可变 checklist candidate；终验改写 pre-acceptance 文件或 closure 自引用；科学措辞未报告 comparator、selection/report-only 窗口、指标和不确定性。
 
 允许正式未来 forecast 尚未开奖，允许 backtest 未证明 lift；不允许以 M0 fallback维持 PASS。所有门通过后机器状态只能是 `READY_FOR_LOCAL_PRODUCT_ACCEPTANCE`，随后才交给本地用户按清单验收。
 

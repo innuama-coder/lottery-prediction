@@ -59,46 +59,46 @@ D13 -> D15 final machine acceptance and handoff
 - **目标：** 冻结 Phase 1 `retrospective_sequence_safe` 输入、可选 `external_point_in_time` 特征、训练、model release、serving、forecast、CLI 和科学措辞的机器合同。
 - **固定输入：** D00 authority freeze；Phase 1 draw/dataset Schemas和正式 release identity；总体设计第 3–13 节。
 - **允许/禁止修改：** 允许 `config/phase4/`、`schemas/phase4/`、Phase 4 合同测试和对应文档；禁止训练实现、真实结果读取、旧制品重写。
-- **交付物/Schema：** `training-input-manifest.schema.json`、`feature-snapshot.schema.json`、`model-release.schema.json`、`training-report.schema.json`、`backtest.schema.json`、`serving-selection.schema.json`、修订后的 forecast/ranking/CLI/acceptance contracts；字段必须覆盖 game、canonical order/comparator ID、target position、cutoff position、所有 release IDs、代码/依赖身份、selection/report-only 窗口、概率层、tie、解释和 lock，并禁止 Phase 1 draw 出现补造的 `available_at`。
+- **交付物/Schema：** `training-input-manifest.schema.json`、扩展后的 `feature-registry.json`（F01–F14）、`feature-snapshot.schema.json`、`model-release.schema.json`、`training-report.schema.json`、`backtest.schema.json`、`serving-selection.schema.json`、修订后的 forecast/ranking/CLI/acceptance contracts；字段必须覆盖 game、canonical order/comparator ID、target position、cutoff position、所有 release IDs、代码/依赖身份、特征组/标准化/消融、selection/report-only 窗口、概率层、tie、解释和 lock，并禁止 Phase 1 draw 出现补造的 `available_at`。
 - **实现方法：** 以 unknown-field fail closed 的 JSON Schema 和状态机冻结逐 game canonical comparator、`retrospective_sequence_safe` prefix、target 不在训练前缀、selection/report-only label capability、M0/diagnostic隔离、科学状态正交性及命令显式模型参数；不得用 issue 字符串字典序或未定义数值 `<`。仅 `external_point_in_time` 特征应用 `available_at < prediction_locked_at`。
-- **验收方法：** 运行合同 validator；逐 Schema 构造最小双 game 正例，并构造未来期、缺模型、M0 serving、fixture serving、单一 tie、全等 Top-1000、未知字段负例。
+- **验收方法：** 运行合同 validator；逐 Schema 构造最小双 game 正例，并构造 F01-only、缺特征组、未来期、缺模型、M0 serving、fixture serving、单一 tie、全等 Top-1000、未知字段负例。
 - **通过判据：** 所有正例通过、负例被精确 reason code 拒绝；CLI 无隐式“latest M0”；正式状态不能表达 `baseline_only PASS`。
 - **失败/HOLD：** `HOLD_CONTRACT_INCOMPLETE|FAIL_CONTRACT_WEAKENED`。
 - **依赖/下游：** D00；为 D02–D10 提供稳定接口。
 
-### D02：真实序列安全历史特征引擎
+### D02：真实序列安全多特征引擎
 
-- **目标：** 从 Phase 1 冻结序列为 SSQ/DLT 生成 `retrospective_sequence_safe` F01，并支持预注册 F02；证明每行只读 canonical target 位置之前的数据。
+- **目标：** 从 Phase 1 冻结序列为 SSQ/DLT 生成 `retrospective_sequence_safe` 的 F01–F14 多特征快照；证明号码级历史变化、号码关系和组合结构均只读取 canonical target 位置之前的数据。
 - **固定输入：** D01 Schema/时间合同；显式 Phase 1 release、game、cutoff/target、规则身份。
 - **允许/禁止修改：** 允许 Phase 4 `features` 模块、CLI、单元/属性测试；禁止外部无 `external_point_in_time` 证据的数据、训练/排序、修改 Phase 1，以及为 Phase 1 draw 添加 `available_at`。
-- **交付物/Schema：** `features/<game>/<feature-release-id>/feature-snapshot.jsonl` 与 manifest；逐号码包含 raw count、exposure、F01/F02值、canonical_order_id、target/max-source position、input hashes和配置。
-- **实现方法：** 用 Phase 1 冻结的逐 game canonical order/comparator 定位 target，按其严格前缀计算 Beta-Binomial shrinkage F01 和冻结半衰期 F02；fold 内独立变换、规范序列化和内容寻址。issue 字符串仅作身份，不承担顺序比较。
-- **验收方法：** 对手算微型序列和真实 Phase 1 前缀以独立 canonical-order oracle 重算；做 prefix-invariance、target 混入训练前缀、未知 target、字符串字典序陷阱、乱序、跨 game、常量特征、重复 issue、给 Phase 1 补 `available_at` 及外部伪造时间证据负测。
-- **通过判据：** 两 game 真实 snapshot存在且F01非恒定；order/comparator ID 正确、max source position 严格早于 target 且 target 不在训练前缀；重复运行 hash 一致；同/未来位置和不合格 `external_point_in_time` 输入被拒绝。
+- **交付物/Schema：** `features/<game>/<feature-release-id>/feature-snapshot.jsonl` 与 manifest；逐号码/组合包含 F01–F14 值、窗口/半衰期、raw counts、exposure、canonical_order_id、target/max-source position、input hashes、标准化版本和特征组。
+- **实现方法：** 用 Phase 1 冻结的逐 game canonical order/comparator 定位 target，按严格前缀计算 rolling/EWMA/gap/trend、收缩 pair residual、上一期开奖重叠和低维组合结构；所有窗口和标准化均 fold-local，规范序列化和内容寻址。issue 字符串仅作身份，不承担顺序比较。
+- **验收方法：** 对手算微型序列和真实 Phase 1 前缀以独立 canonical-order oracle 重算；做 prefix-invariance、target 混入训练前缀、窗口不足、未来 gap 填充、pair 无约束膨胀、字符串字典序陷阱、乱序、跨 game、常量特征、重复 issue、给 Phase 1 补 `available_at` 及外部伪造时间证据负测。
+- **通过判据：** 两 game 真实 snapshot 存在且至少三类特征非恒定；F01–F14 registry/manifest 闭合；order/comparator ID 正确、max source position 严格早于 target 且 target 不在训练前缀；重复运行 hash 一致；同/未来位置和不合格 `external_point_in_time` 输入被拒绝。
 - **失败/HOLD：** `HOLD_FEATURE_INPUT|HOLD_FEATURE_CONSTANT|FAIL_LEAKAGE`。
 - **依赖/下游：** D01；D03、D04消费。
 
-### D03：SSQ 训练与模型 release
+### D03：SSQ 多特征训练与模型 release
 
-- **目标：** 用 SSQ 真实历史前缀训练 P4E1-R，并冻结 SSQ 非均匀 model release。
+- **目标：** 用 SSQ 真实历史前缀训练 P4E2-R，并冻结 SSQ 非均匀多特征 model release。
 - **固定输入：** D02 SSQ feature releases；D01训练网格/folds/精度；SSQ规则 `33选6 + 16选1`。
 - **允许/禁止修改：** 允许模型训练公共模块、SSQ配置和测试；只写 `models/ssq`/训练临时根；禁止 DLT参数、fixture当正式输入、手写theta。
 - **交付物/Schema：** `models/ssq/<id>/{model.json,training-report.json,model-card.md,manifest.json}`，含真实目标函数轨迹、参数、归一常数验证、cutoff和依赖身份。
-- **实现方法：** rolling-origin内选择有界theta/正则配置，最终对SSQ完整截止前缀重拟合；用 elementary-symmetric DP 归一。
-- **验收方法：** 正式 train CLI；独立用输入 snapshot 重算目标函数和参数选择；clean replay；改变一条早期真实 draw 应改变 feature/model ID。
-- **通过判据：** model != M0；F01 consumption可追踪；至少一分区非零有效系数/非恒定权重；所有概率正且分区归一；cutoff合法；replay一致。
+- **实现方法：** rolling-origin 内选择有界特征/正则配置，使用带 L2 或 group-lasso 的条件对数似然，最终对 SSQ 完整截止前缀重拟合；组合分数用流式 log-sum-exp 或精确枚举归一。
+- **验收方法：** 正式 train CLI；独立用输入 snapshot 重算目标函数、系数和特征组消融；clean replay；改变一条早期真实 draw 应改变 feature/model ID 和至少一项候选概率。
+- **通过判据：** model != M0；历史变化、号码关系、组合结构三类特征均被消费且至少一项系数非零；所有概率正且分区归一；cutoff 合法；replay 一致；F01-only 候选被拒绝。
 - **失败/HOLD：** `HOLD_BASELINE_ONLY|HOLD_DEGENERATE_MODEL|HOLD_MODEL_RELEASE|FAIL_LEAKAGE`。
 - **依赖/下游：** D02；D05、D06消费。
 
-### D04：DLT 训练与模型 release
+### D04：DLT 多特征训练与模型 release
 
-- **目标：** 用 DLT 真实历史前缀训练 P4E1-R，并冻结 DLT 非均匀 model release。
+- **目标：** 用 DLT 真实历史前缀训练 P4E2-R，并冻结 DLT 非均匀多特征 model release。
 - **固定输入：** D02 DLT feature releases；D01训练合同；DLT规则 `35选5 + 12选2`。
 - **允许/禁止修改：** 允许模型训练公共模块、DLT配置和测试；只写 `models/dlt`/训练临时根；禁止 SSQ参数和任何正式 fixture代替物。
 - **交付物/Schema：** `models/dlt/<id>/{model.json,training-report.json,model-card.md,manifest.json}`，字段与D03同构但身份独立。
-- **实现方法：** DLT独立 rolling-origin选择和最终重拟合；固定基数DP归一，禁止复制SSQ参数。
-- **验收方法：** 正式 DLT train CLI、独立目标函数/参数重算、clean replay、早期 draw mutation敏感性。
-- **通过判据：** model != M0；真实F01被消费；非零有效系数和非恒定权重；严格正/归一；合法cutoff；与SSQ model/data/feature IDs不同且无跨game读取。
+- **实现方法：** DLT 独立 rolling-origin 选择和最终重拟合；固定基数组合分数精确归一，禁止复制 SSQ 参数。
+- **验收方法：** 正式 DLT train CLI、独立目标函数/系数/消融重算、clean replay、早期 draw mutation 敏感性。
+- **通过判据：** model != M0；三类特征均被消费且至少一项系数非零；严格正/归一；合法 cutoff；与 SSQ model/data/feature IDs 不同且无跨 game 读取；F01-only 候选被拒绝。
 - **失败/HOLD：** `HOLD_BASELINE_ONLY|HOLD_DEGENERATE_MODEL|HOLD_MODEL_RELEASE|FAIL_GAME_ISOLATION|FAIL_LEAKAGE`。
 - **依赖/下游：** D02；D05、D06消费。
 
@@ -108,9 +108,9 @@ D13 -> D15 final machine acceptance and handoff
 - **固定输入：** D03/D04 releases；D01 预注册候选、指标、互不重叠的 selection/report-only 窗口、最小样本和选择 tie-break。
 - **允许/禁止修改：** 允许 backtest/evaluation/selection模块、配置和测试；禁止改训练结果、只报有利fold、以显著性作为是否存在真实模型的替代门。
 - **交付物/Schema：** `backtests/<game>/<id>/{selection-fold-metrics.jsonl,report-only-fold-metrics.jsonl,summary.json}`、不可变 `models/<game>/model-selection-receipt.json`；`models/serving-selection.json` 映射两 game release IDs并记录 M0 comparator。
-- **实现方法：** 每 fold 重新 fit 且只用 canonical 前缀；仅用 selection folds 选配置并先内容寻址冻结 receipt，之后才授予 report-only label capability。report-only folds 对选定配置只评估一次，报告联合 log loss、Brier/校准摘要、Top-K 覆盖、相对 M0 差、区间/blocked bootstrap和样本量；最终模型可在合法截止前全部数据重拟合，但不得把 refit 结果倒灌效果报告。
-- **验收方法：** 独立从 fold forecast/labels 重算指标和区间；断言窗口按 canonical order 不重叠、receipt hash/时间先于 report-only label access、report-only 结果不改变候选或 tie-break；注入读取后重选、窗口重叠、无 lift/负 lift和历史不足案例。
-- **通过判据：** SSQ/DLT 均有非 M0 serving release；选择证据与 report-only 效果报告隔离且无遗漏，结论允许 `worse_than_M0|no_confirmed_lift|insufficient_evidence` 并与区间一致；退化候选被剔除。无合格候选不得产生选择文件，独立窗口不足不得产出 serving PASS。
+- **实现方法：** 每 fold 重新 fit 且只用 canonical 前缀；仅用 selection folds 选配置并先内容寻址冻结 receipt，之后才授予 report-only label capability。report-only folds 对选定配置只评估一次，报告完整注 joint log loss、真正的多分类 Brier/校准摘要、完整注 Top-K 覆盖、相对 M0 差、区间/blocked bootstrap 和样本量；最终模型可在合法截止前全部数据重拟合，但不得把 refit 结果倒灌效果报告。
+- **验收方法：** 独立从完整注 fold forecast/labels 重算指标和区间；断言窗口按 canonical order 不重叠、receipt hash/时间先于 report-only label access、report-only 结果不改变候选或 tie-break；注入读取后重选、窗口重叠、F01-only、无 lift/负 lift和历史不足案例。
+- **通过判据：** SSQ/DLT 均有非 M0、多特征 P4E2-R serving release；选择证据与 report-only 效果报告隔离且无遗漏，结论允许 `worse_than_M0|no_confirmed_lift|insufficient_evidence` 并与区间一致；退化和 F01-only 候选被剔除。无合格候选不得产生选择文件，独立窗口不足不得产出 serving PASS。
 - **失败/HOLD：** `HOLD_BASELINE_ONLY|HOLD_BACKTEST_INCOMPLETE|FAIL_SELECTION_BIAS|FAIL_FALSE_CLAIM`。
 - **依赖/下游：** D03,D04；D06,D08,D09消费。
 
@@ -120,8 +120,8 @@ D13 -> D15 final machine acceptance and handoff
 - **固定输入：** D01概率/rank合同；D03/D04模型；D05 serving selection；独立小空间 known answers。
 - **允许/禁止修改：** 允许 probability/ranking模块、测试和独立oracle；禁止训练/selection、float近似tie、字典序跨概率层主选。
 - **交付物/Schema：** normalization proof、probability-layer histogram、rank/tie API、`top1000.jsonl`生成器和独立oracle报告。
-- **实现方法：** 分区 elementary-symmetric normalization；组合联合概率乘积；exact k-best/可证明等价枚举按概率降序，canonical ticket仅局部tie-break。
-- **验收方法：** 小空间全枚举；真实规则用第二种DP/分区枚举核对总质量、边界概率、Top-1000 hash；输入排列/mutation、NaN/零/溢出负测和字典序主导检测。
+- **实现方法：** 对 P4E2-R 组合分数使用流式 log-sum-exp 或精确枚举归一；组合联合概率乘积；exact k-best/可证明等价枚举按概率降序，canonical ticket 仅局部 tie-break。
+- **验收方法：** 小空间全枚举；真实规则用独立组合分数实现核对总质量、边界概率、Top-1000 hash；逐项突变 F01/F02/F04、pair、结构特征、输入排列、NaN/零/溢出负测和字典序主导检测。
 - **通过判据：** 概率全正且归一；完整空间至少两个层级且非单一tie；Top-1000恰1000合法唯一、至少两个概率值、前缀嵌套；跨层顺序100%由概率决定。
 - **失败/HOLD：** `HOLD_DEGENERATE_MODEL|HOLD_UNRELIABLE_RANKING|FAIL_PROBABILITY_ORACLE`。
 - **依赖/下游：** D01,D03,D04,D05；D08消费。
@@ -192,8 +192,8 @@ D13 -> D15 final machine acceptance and handoff
 - **固定输入：** D11 frozen release及代码/依赖/输入manifest；独立replay实现。
 - **允许/禁止修改：** 只允许 `replay/`和独立测试；禁止导入产品核心概率/训练函数、修改任何被重放文件。
 - **交付物/Schema：** `replay/replay-report.json`、逐事实comparison、import audit和mutation findings。
-- **实现方法：** 独立解析Phase1、重算F01、训练目标/选择、DP归一和Top-1000；重算所有hash/parent关系。
-- **验收方法：** clean隔离目录replay；分别突变一条早期draw、cutoff、feature值、theta、model ID、概率、Top-1000顺序、lock和CLI provider引用。
+- **实现方法：** 独立解析 Phase 1、重算 F01–F14、训练目标/选择、组合分数归一和 Top-1000；重算所有 hash/parent 关系，不导入产品核心特征或概率实现。
+- **验收方法：** clean 隔离目录 replay；分别突变一条早期 draw、cutoff、rolling/EWMA/gap、pair/结构 feature、系数、model ID、概率、Top-1000 顺序、lock 和 CLI provider 引用。
 - **通过判据：** 原release逐事实100% match；每类mutation命中预期guard；产品核心import=0；两game均覆盖。
 - **失败/HOLD：** `HOLD_REPLAY_MISMATCH|HOLD_REPLAY_INDEPENDENCE|FAIL_TAMPERED`。
 - **依赖/下游：** D11；D14消费。
@@ -239,8 +239,8 @@ D13 -> D15 final machine acceptance and handoff
 | ID | 必须从底层证明 | 拒绝条件 | 主要任务/证据 |
 | --- | --- | --- | --- |
 | P4-R01 | authority新语义已同步 | 旧authority仍允许M0 PASS | D00 freeze |
-| P4-R02 | SSQ真实 `retrospective_sequence_safe` F01 snapshot | fixture、恒定、错误 comparator、target 入前缀、补造 `available_at` | D01,D02,D03,D15 |
-| P4-R03 | DLT真实 `retrospective_sequence_safe` F01 snapshot | fixture、恒定、错误 comparator、target 入前缀、补造 `available_at` | D01,D02,D04,D15 |
+| P4-R02 | SSQ真实 `retrospective_sequence_safe` F01–F14 snapshot，覆盖三类特征 | fixture、恒定、错误 comparator、target 入前缀、无界 pair、补造 `available_at` | D01,D02,D03,D15 |
+| P4-R03 | DLT真实 `retrospective_sequence_safe` F01–F14 snapshot，覆盖三类特征 | fixture、恒定、错误 comparator、target 入前缀、无界 pair、补造 `available_at` | D01,D02,D04,D15 |
 | P4-R04 | SSQ非M0 model release | M0、手写theta、缺card | D03,D05 |
 | P4-R05 | DLT非M0 model release | M0、复制SSQ、缺card | D04,D05 |
 | P4-R06 | 时间切分回测诚实完整 | selection/report-only 重叠、读取后重选、无M0、独立窗口不足却PASS | D05,D15 |
@@ -307,7 +307,7 @@ D15必须显式拒绝：任一 game serving=M0、任一正式forecast完整空�
 
 ## 6. 可完成性、预算与完整性审查
 
-计划不等待未来开奖：训练和回测使用 Phase 1 已冻结历史；正式未来forecast允许`locked_unscored`；评分E2E用结果已知但在虚拟时钟中严格延后unlock的历史目标期。Phase 1 F01/F02 只按 canonical 历史前缀生成且不补造 `available_at`；无真实证据的 `external_point_in_time` 特征直接排除。没有开发子任务依赖人工确认、签字或豁免；D14仅机器生成候选材料，D15通过全部远程机器门后才把材料交给人类。
+计划不等待未来开奖：训练和回测使用 Phase 1 已冻结历史；正式未来forecast允许`locked_unscored`；评分E2E用结果已知但在虚拟时钟中严格延后unlock的历史目标期。Phase 1 F01–F14 只按 canonical 历史前缀生成且不补造 `available_at`；无真实证据的 `external_point_in_time` 特征直接排除。没有开发子任务依赖人工确认、签字或豁免；D14仅机器生成候选材料，D15通过全部远程机器门后才把材料交给人类。
 
 统计模拟不是产品成功代理。小空间全枚举用于证明概率/rank正确；最小确定性正负fixture用于控制器和泄漏guard；若区间或恢复率需要Monte Carlo，执行任务必须先写明估计量、seed、区间宽度/功效目标和停止上限，再用D10 benchmark裁决。不得沿用与真实模型交付无关的数千序列或角色排列硬门。
 

@@ -9,11 +9,17 @@ validation receipt records its resolved interpreter, Python version,
 `requirements/phase4.lock` hash,
 exact argv, exit code, stdout, and stderr. Formal commands use the immutable
 release path and never `latest`, a glob, an inline model, or a fixture model.
+The historical Phase 2/2.1 regression interpreter is frozen separately because
+those suites require their own locked NumPy environment. Its invocation path is
+preserved (a virtual-environment symlink must not be replaced by its base
+interpreter), while its base interpreter realpath is recorded alongside it.
 
 ## Frozen commands
 
 ```bash
 PY=PYTHON_INTERPRETER
+HISTORICAL_PY=HISTORICAL_INTERPRETER_INVOCATION
+HISTORICAL_PY_REALPATH=HISTORICAL_INTERPRETER_REALPATH
 DRAW=artifacts/phase-1/baseline-v1/draws.jsonl
 RID=P4E2_RELEASE_ID
 REL=artifacts/phase-4/$RID
@@ -21,7 +27,7 @@ IMPL=IMPLEMENTATION_COMMIT
 
 $PY scripts/phase4/freeze_authority.py --check --require-serving-model-per-game --reject-baseline-only-pass
 $PY scripts/phase4/validate_real_model_contracts.py
-PYTHONPATH=src $PY scripts/phase4/build_real_model_release.py --release "$RID" --phase1-draws "$DRAW" --output "$REL" --source-commit "$IMPL"
+PYTHONPATH=src $PY scripts/phase4/build_real_model_release.py --release "$RID" --phase1-draws "$DRAW" --output "$REL" --source-commit "$IMPL" --historical-interpreter "$HISTORICAL_PY"
 PYTHONPATH=src $PY scripts/phase4_independent/replay_real_model_release.py --release "$REL" --draws "$DRAW" --output "$REL/replay/replay-report.json"
 PYTHONPATH=src $PY -m lottery_system.phase4.real_cli inspect --release "$REL" --game ssq
 PYTHONPATH=src $PY -m lottery_system.phase4.real_cli inspect --release "$REL" --game dlt
@@ -43,8 +49,8 @@ $PY scripts/phase4/run_acceptance_command.py --release "$REL" --attempt-id A01-c
 $PY scripts/phase4/run_acceptance_command.py --release "$REL" --attempt-id A02-phase4 -- $PY -m unittest discover -s tests/phase4 -p 'test_*.py' -v
 $PY scripts/phase4/run_acceptance_command.py --release "$REL" --attempt-id A03-phase4-oracle -- $PY -m unittest discover -s tests/phase4_oracle -p 'test_*.py' -v
 $PY scripts/phase4/run_acceptance_command.py --release "$REL" --attempt-id A04-phase3 -- $PY -m unittest discover -s tests/phase3 -p 'test_*.py' -v
-$PY scripts/phase4/run_acceptance_command.py --release "$REL" --attempt-id A05-phase2-1 -- $PY -m unittest discover -s tests/phase2_1 -p 'test_*.py' -v
-$PY scripts/phase4/run_acceptance_command.py --release "$REL" --attempt-id A06-phase2 -- $PY -m unittest discover -s tests/phase2 -p 'test_*.py' -v
+$PY scripts/phase4/run_acceptance_command.py --release "$REL" --attempt-id A05-phase2-1 -- $HISTORICAL_PY -m unittest discover -s tests/phase2_1 -p 'test_*.py' -v
+$PY scripts/phase4/run_acceptance_command.py --release "$REL" --attempt-id A06-phase2 -- $HISTORICAL_PY -m unittest discover -s tests/phase2 -p 'test_*.py' -v
 $PY scripts/phase4/run_acceptance_command.py --release "$REL" --attempt-id A07-authority -- $PY scripts/phase4/freeze_authority.py --check --require-serving-model-per-game --reject-baseline-only-pass
 $PY scripts/phase4/run_acceptance_command.py --release "$REL" --attempt-id A08-contract -- $PY scripts/phase4/validate_real_model_contracts.py
 $PY scripts/phase4/run_acceptance_command.py --release "$REL" --attempt-id A09-bottom-up -- $PY scripts/phase4_independent/replay_real_model_release.py --release "$REL" --draws "$DRAW" --check-only

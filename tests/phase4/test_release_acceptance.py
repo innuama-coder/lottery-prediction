@@ -48,7 +48,11 @@ class ReleaseAcceptanceTests(unittest.TestCase):
             self.assertEqual(report["product_core_import_count"], 0)
             runbook = (release / "runbook/release-runbook.md").read_text()
             self.assertIn(f"PY={Path(sys.executable).resolve()}", runbook)
+            self.assertIn(f"HISTORICAL_PY={Path(sys.executable).absolute()}", runbook)
+            self.assertIn(f"HISTORICAL_PY_REALPATH={Path(sys.executable).resolve()}", runbook)
             self.assertNotIn("PYTHON_INTERPRETER", runbook)
+            self.assertNotIn("HISTORICAL_INTERPRETER_INVOCATION", runbook)
+            self.assertNotIn("HISTORICAL_INTERPRETER_REALPATH", runbook)
             self.assertNotIn("PY=.venv-phase4/bin/python", runbook)
             for game in ("ssq", "dlt"):
                 forecast = next((release / "forecasts" / game).glob("*/forecast.json"))

@@ -68,6 +68,7 @@ def main() -> int:
     parser.add_argument("--phase1-draws", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--source-commit", required=True)
+    parser.add_argument("--historical-interpreter", type=Path, default=Path(sys.executable))
     args = parser.parse_args()
     started = time.monotonic()
     started_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
@@ -88,6 +89,10 @@ def main() -> int:
         raise ValueError("release/output identity mismatch")
     if out.exists():
         raise FileExistsError("release identity already exists; formal releases are create-once")
+    historical_interpreter = args.historical_interpreter.absolute()
+    if not historical_interpreter.is_file() or not os.access(historical_interpreter, os.X_OK):
+        raise ValueError(f"HOLD_INVALID_HISTORICAL_INTERPRETER:{historical_interpreter}")
+    historical_realpath = historical_interpreter.resolve()
     protected_before = protected_inventory()
     write_once(out / "e2e/protected-inventory-before.json", protected_before)
     authority_freeze = json.loads((ROOT / "config/phase4/authority-freeze.json").read_text(encoding="utf-8"))
@@ -285,11 +290,15 @@ def main() -> int:
     runbook = ((ROOT / "docs/runbooks/phase-4-mvp-runtime.md").read_text(encoding="utf-8")
                .replace("IMPLEMENTATION_COMMIT", args.source_commit)
                .replace("P4E2_RELEASE_ID", args.release)
+               .replace("HISTORICAL_INTERPRETER_INVOCATION", str(historical_interpreter))
+               .replace("HISTORICAL_INTERPRETER_REALPATH", str(historical_realpath))
                .replace("PYTHON_INTERPRETER", str(Path(sys.executable).resolve())))
     runbook_path = out / "runbook/release-runbook.md"
     runbook_path.parent.mkdir(parents=True, exist_ok=True)
     runbook_path.write_text(runbook, encoding="utf-8")
-    command = [sys.executable, "scripts/phase4/build_real_model_release.py", "--release", args.release, "--phase1-draws", str(args.phase1_draws), "--output", str(args.output), "--source-commit", args.source_commit]
+    command = [sys.executable, "scripts/phase4/build_real_model_release.py", "--release", args.release,
+               "--phase1-draws", str(args.phase1_draws), "--output", str(args.output),
+               "--source-commit", args.source_commit, "--historical-interpreter", str(historical_interpreter)]
     authority = [ROOT / "ROADMAP.md", ROOT / "tasks/phase4/README.md", ROOT / "docs/research/phase-4-overall-design.md", ROOT / "docs/plans/phase-4-detailed-plan.md"]
     stage_receipt(out, "D01", authority, [out / "authority/authority-freeze.json", out / "selection/serving-selection.json"], {"authority_documents": len(authority), "unknown_fields_fail_closed": True, "launch_worktree_clean": launch_clean}, started_at, command, launch_clean)
     task_outputs = {

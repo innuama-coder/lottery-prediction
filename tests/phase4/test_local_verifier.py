@@ -29,6 +29,26 @@ class LocalVerifierNumericContractTests(unittest.TestCase):
             self.assertTrue(result["passed"])
             self.assertEqual(result["ulp_distance"], 4)
 
+    def test_all_32_feature_snapshot_cross_runtime_vectors_pass_derived_profile(self) -> None:
+        fixture_path = ROOT / self.contract["numeric_profile_evidence"]["derived_feature_snapshot_v1"]["fixture_path"]
+        fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        self.assertEqual(fixture["difference_count"], 32)
+        self.assertEqual(len(fixture["differences"]), 32)
+        self.assertEqual(sum(row["game"] == "ssq" for row in fixture["differences"]), 6)
+        self.assertEqual(sum(row["game"] == "dlt" for row in fixture["differences"]), 26)
+        for row in fixture["differences"]:
+            result = verifier.numeric_comparison(
+                row["release_value"], row["macos_value"], contract=self.contract,
+                profile_id="derived_feature_snapshot_v1",
+            )
+            self.assertTrue(result["passed"], row["path"])
+            self.assertEqual(result["ulp_distance"], row["ulp_distance"])
+            verifier.compare_value(row["release_value"], row["macos_value"], row["path"], contract=self.contract)
+        worst = max(fixture["differences"], key=lambda row: row["ulp_distance"])
+        self.assertEqual(worst["ulp_distance"], 151)
+        self.assertEqual(worst["release_value"], "0.0099312201839453045")
+        self.assertEqual(worst["macos_value"], "0.0099312201839450425")
+
     def test_exact_eight_ulp_boundary_passes_and_nine_ulp_fails(self) -> None:
         base = 1.0
         eight, nine = base, base
@@ -41,10 +61,45 @@ class LocalVerifierNumericContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "HOLD_REPLAY_NUMERIC_BOUND"):
             verifier.compare_value(base, nine, "model.zones.0.coefficients.F04", contract=self.contract)
 
+    def test_derived_feature_boundary_immediately_above_each_maximum_fails(self) -> None:
+        profile = "derived_feature_snapshot_v1"
+        path = "feature_snapshot.0.feature_values.F04"
+
+        absolute_base, absolute_outside = 1.0, 1.0
+        while abs(absolute_outside - absolute_base) <= 3e-16:
+            absolute_outside = math.nextafter(absolute_outside, math.inf)
+        absolute = verifier.numeric_comparison(absolute_base, absolute_outside, contract=self.contract, profile_id=profile)
+        self.assertGreater(absolute["absolute_error"], 3e-16)
+        self.assertFalse(absolute["passed"])
+
+        relative_base, relative_outside, relative_steps = 0.0078125, 0.0078125, 0
+        while abs(relative_outside - relative_base) / relative_outside <= 3e-14:
+            relative_outside = math.nextafter(relative_outside, math.inf)
+            relative_steps += 1
+        relative = verifier.numeric_comparison(relative_base, relative_outside, contract=self.contract, profile_id=profile)
+        self.assertEqual(relative_steps, 136)
+        self.assertLessEqual(relative["absolute_error"], 3e-16)
+        self.assertLessEqual(relative["ulp_distance"], 151)
+        self.assertGreater(relative["relative_error"], 3e-14)
+        self.assertFalse(relative["passed"])
+
+        ulp_base, ulp_outside = 0.0099312201839453045, 0.0099312201839453045
+        for _ in range(152):
+            ulp_outside = math.nextafter(ulp_outside, -math.inf)
+        ulp = verifier.numeric_comparison(ulp_base, ulp_outside, contract=self.contract, profile_id=profile)
+        self.assertEqual(ulp["ulp_distance"], 152)
+        self.assertLessEqual(ulp["absolute_error"], 3e-16)
+        self.assertLessEqual(ulp["relative_error"], 3e-14)
+        self.assertFalse(ulp["passed"])
+        with self.assertRaisesRegex(ValueError, "HOLD_REPLAY_NUMERIC_BOUND"):
+            verifier.compare_value(ulp_base, ulp_outside, path, contract=self.contract)
+
     def test_non_finite_and_unlisted_paths_fail_closed(self) -> None:
         for value in (math.nan, math.inf, -math.inf):
             with self.assertRaisesRegex(ValueError, "FAIL_NON_FINITE"):
                 verifier.numeric_comparison(value, 1.0, contract=self.contract)
+        with self.assertRaisesRegex(ValueError, "HOLD_SEMANTIC_NUMERIC_TYPE"):
+            verifier.numeric_comparison(True, 1.0, contract=self.contract)
         with self.assertRaisesRegex(ValueError, "HOLD_REPLAY_MISMATCH"):
             verifier.compare_value(1.0, math.nextafter(1.0, 2.0), "model.training_count", contract=self.contract)
 
@@ -57,9 +112,63 @@ class LocalVerifierNumericContractTests(unittest.TestCase):
             self.assertNotEqual(pretty.read_bytes(), compact.read_bytes())
             self.assertTrue(verifier.same_json_document(pretty, compact))
             changed = copy.deepcopy(self.contract)
-            changed["numeric_bounds"]["max_ulps"] += 1
+            changed["numeric_profiles"]["tight_recomputed_v1"]["max_ulps"] += 1
             compact.write_bytes(verifier.canon(changed))
             self.assertFalse(verifier.same_json_document(pretty, compact))
+
+
+class LocalVerifierFeatureSnapshotContractTests(unittest.TestCase):
+    snapshot = next((ROOT / "artifacts/phase-4/P4-P4E2-20260815-r08/features/dlt").glob("*/feature-snapshot.jsonl"))
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.rows = verifier.load_jsonl(cls.snapshot)
+
+    def assert_snapshot_mutation_fails(self, rows: list[object], reason: str = "HOLD_REPLAY") -> None:
+        with self.assertRaisesRegex(ValueError, reason):
+            verifier.compare_feature_snapshot(rows, self.rows)
+
+    def test_structure_identity_order_and_cardinality_are_exact(self) -> None:
+        verifier.compare_feature_snapshot(copy.deepcopy(self.rows), self.rows)
+
+        non_numeric = copy.deepcopy(self.rows)
+        non_numeric[0]["game"] = "ssq"
+        self.assert_snapshot_mutation_fails(non_numeric, "HOLD_REPLAY_MISMATCH")
+
+        feature_id = copy.deepcopy(self.rows)
+        feature_id[0]["feature_values"]["F99"] = feature_id[0]["feature_values"].pop("F04")
+        self.assert_snapshot_mutation_fails(feature_id, "HOLD_REPLAY_MISMATCH")
+
+        cutoff = copy.deepcopy(self.rows)
+        cutoff[0]["cutoff_position"] += 1
+        self.assert_snapshot_mutation_fails(cutoff, "HOLD_REPLAY_MISMATCH")
+
+        fact_hash = copy.deepcopy(self.rows)
+        fact_hash[0]["input_prefix_sha256"] = "0" * 64
+        self.assert_snapshot_mutation_fails(fact_hash, "HOLD_REPLAY_MISMATCH")
+
+        reordered = copy.deepcopy(self.rows)
+        reordered[0], reordered[1] = reordered[1], reordered[0]
+        self.assert_snapshot_mutation_fails(reordered, "HOLD_REPLAY_MISMATCH")
+        self.assert_snapshot_mutation_fails(copy.deepcopy(self.rows[:-1]), "length")
+        self.assert_snapshot_mutation_fails(copy.deepcopy(self.rows + [self.rows[-1]]), "length")
+
+    def test_numeric_type_nonfinite_and_just_outside_profile_fail(self) -> None:
+        non_numeric = copy.deepcopy(self.rows)
+        non_numeric[0]["feature_values"]["F04"] = "not-a-number"
+        self.assert_snapshot_mutation_fails(non_numeric, "HOLD_SEMANTIC_NUMERIC_TYPE")
+
+        for value in (math.nan, math.inf, -math.inf):
+            non_finite = copy.deepcopy(self.rows)
+            non_finite[0]["feature_values"]["F04"] = value
+            self.assert_snapshot_mutation_fails(non_finite, "FAIL_NON_FINITE")
+
+        outside = copy.deepcopy(self.rows)
+        value = 0.0099312201839453045
+        for _ in range(152):
+            value = math.nextafter(value, -math.inf)
+        outside[638]["feature_values"]["F04"] = format(value, ".17g")
+        self.assert_snapshot_mutation_fails(outside, "HOLD_REPLAY_NUMERIC_BOUND")
 
 
 class LocalVerifierIntegrityTests(unittest.TestCase):

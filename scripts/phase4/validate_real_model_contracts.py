@@ -78,10 +78,29 @@ def main() -> int:
         raise SystemExit("HOLD_CONTRACT_INCOMPLETE:FEATURE_GROUPS")
     if model_registry["serving_probability_family"]["model_family"] != "P4E2-R":
         raise SystemExit("HOLD_CONTRACT_INCOMPLETE:P4E2")
-    if (local_contract["numeric_bounds"] != {"finite_required": True, "require_all_bounds": True,
-                                              "max_absolute": 1e-12, "max_relative": 1e-12, "max_ulps": 8}
+    expected_profiles = {
+        "tight_recomputed_v1": {"finite_required": True, "require_all_bounds": True,
+                                "max_absolute": 1e-12, "max_relative": 1e-12, "max_ulps": 8},
+        "derived_feature_snapshot_v1": {"finite_required": True, "require_all_bounds": True,
+                                        "max_absolute": 3e-16, "max_relative": 3e-14, "max_ulps": 151},
+    }
+    numeric_paths = [path for row in local_contract["path_numeric_profiles"] for path in row["paths"]]
+    profile_ids = [row["profile_id"] for row in local_contract["path_numeric_profiles"]]
+    paths_by_profile = {row["profile_id"]: set(row["paths"]) for row in local_contract["path_numeric_profiles"]}
+    expected_derived_feature_paths = {
+        f"feature_snapshot.*.feature_values.{feature_id}" for feature_id in sorted(FEATURE_IDS)
+    } | {
+        f"feature_snapshot.*.normalization.{feature_id}.{statistic}"
+        for feature_id in sorted(FEATURE_IDS) for statistic in ("mean", "scale")
+    }
+    if (local_contract.get("contract_id") != "P4-LOCAL-SEMANTIC-BINARY64-1"
+            or local_contract.get("default_numeric_profile") != "tight_recomputed_v1"
+            or local_contract.get("numeric_profiles") != expected_profiles
+            or set(profile_ids) != set(expected_profiles) or len(profile_ids) != len(set(profile_ids))
+            or paths_by_profile.get("derived_feature_snapshot_v1") != expected_derived_feature_paths
+            or len(numeric_paths) != len(set(numeric_paths)) or any("**" in path for path in numeric_paths)
             or local_contract["historical_formal_evidence"]["local_reexecution_required"] is not False
-            or any("/home/" in path or "/usr/bin/" in path for path in local_contract["semantic_numeric_paths"])):
+            or any("/home/" in path or "/usr/bin/" in path for path in numeric_paths)):
         raise SystemExit("FAIL_CONTRACT_WEAKENED:LOCAL_VERIFIER")
     negatives = [
         {"unknown_field": True}, {"feature_ids": ["F01"]},

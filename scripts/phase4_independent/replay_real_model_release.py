@@ -42,9 +42,17 @@ def ulp_distance(left: float, right: float) -> int:
     return abs(_ordered_bits(left) - _ordered_bits(right))
 
 
-def numeric_comparison(left: object, right: object, *, contract: dict[str, object] | None = None) -> dict[str, object]:
-    """Apply the frozen conjunctive finite/absolute/relative/ULP contract."""
-    policy = (contract or local_contract())["numeric_bounds"]
+def numeric_comparison(left: object, right: object, *, contract: dict[str, object] | None = None,
+                       profile_id: str | None = None) -> dict[str, object]:
+    """Apply one frozen conjunctive finite/absolute/relative/ULP profile."""
+    frozen = contract or local_contract()
+    selected_profile = profile_id or frozen["default_numeric_profile"]
+    if isinstance(left, bool) or isinstance(right, bool):
+        raise ValueError("HOLD_SEMANTIC_NUMERIC_TYPE")
+    try:
+        policy = frozen["numeric_profiles"][selected_profile]
+    except KeyError as exc:
+        raise ValueError(f"HOLD_LOCAL_VERIFIER_PROFILE:{selected_profile}") from exc
     try:
         observed, expected = float(left), float(right)
     except (TypeError, ValueError) as exc:
@@ -55,15 +63,28 @@ def numeric_comparison(left: object, right: object, *, contract: dict[str, objec
     relative = absolute / max(abs(observed), abs(expected)) if max(abs(observed), abs(expected)) else 0.0
     ulps = ulp_distance(observed, expected)
     passed = absolute <= policy["max_absolute"] and relative <= policy["max_relative"] and ulps <= policy["max_ulps"]
-    return {"passed": passed, "absolute_error": absolute, "relative_error": relative, "ulp_distance": ulps}
+    return {"passed": passed, "profile_id": selected_profile, "absolute_error": absolute,
+            "relative_error": relative, "ulp_distance": ulps}
+
+
+def _path_matches(path: str, pattern: str) -> bool:
+    parts = path.split(".")
+    pattern_parts = pattern.split(".")
+    return (len(pattern_parts) == len(parts)
+            and all(expected == "*" or expected == observed
+                    for expected, observed in zip(pattern_parts, parts)))
+
+
+def _path_profile(path: str, contract: dict[str, object]) -> str | None:
+    matches = [row["profile_id"] for row in contract["path_numeric_profiles"]
+               if any(_path_matches(path, pattern) for pattern in row["paths"])]
+    if len(matches) > 1:
+        raise ValueError(f"HOLD_LOCAL_VERIFIER_PROFILE_OVERLAP:{path}")
+    return matches[0] if matches else None
 
 
 def _path_allowed(path: str, contract: dict[str, object]) -> bool:
-    parts = path.split(".")
-    return any(len(pattern.split(".")) == len(parts)
-               and all(expected == "*" or expected == observed
-                       for expected, observed in zip(pattern.split("."), parts))
-               for pattern in contract["semantic_numeric_paths"])
+    return _path_profile(path, contract) is not None
 
 
 def compare_value(observed: object, expected: object, path: str, *, contract: dict[str, object] | None = None) -> dict[str, int]:
@@ -85,10 +106,11 @@ def compare_value(observed: object, expected: object, path: str, *, contract: di
             result = compare_value(left, right, f"{path}.{index}", contract=policy)
             total = {name: total[name] + result[name] for name in total}
         return total
-    if _path_allowed(path, policy):
-        result = numeric_comparison(observed, expected, contract=policy)
+    profile_id = _path_profile(path, policy)
+    if profile_id is not None:
+        result = numeric_comparison(observed, expected, contract=policy, profile_id=profile_id)
         if not result["passed"]:
-            raise ValueError(f"HOLD_REPLAY_NUMERIC_BOUND:{path}:abs={result['absolute_error']}:rel={result['relative_error']}:ulp={result['ulp_distance']}")
+            raise ValueError(f"HOLD_REPLAY_NUMERIC_BOUND:{path}:profile={profile_id}:abs={result['absolute_error']}:rel={result['relative_error']}:ulp={result['ulp_distance']}")
         return {"exact": 0, "semantic": 1}
     if observed != expected:
         raise ValueError(f"HOLD_REPLAY_MISMATCH:{path}")
@@ -97,6 +119,34 @@ def compare_value(observed: object, expected: object, path: str, *, contract: di
 
 def load(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_jsonl(path: Path) -> list[object]:
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if not lines or any(not line for line in lines):
+        raise ValueError(f"HOLD_REPLAY_MISMATCH:{path.name}:jsonl_shape")
+    return [json.loads(line) for line in lines]
+
+
+def compare_feature_snapshot(observed_rows: list[object], expected_rows: list[object],
+                             *, contract: dict[str, object] | None = None) -> dict[str, int]:
+    """Keep snapshot structure/order exact and tolerate only named derived leaves."""
+    if len(observed_rows) != len(expected_rows):
+        raise ValueError("HOLD_REPLAY_MISMATCH:feature_snapshot:length")
+    row_identity_fields = (
+        "game", "zone", "row_type", "number", "numbers", "reference_combination",
+        "target_position", "cutoff_position", "cutoff_issue", "max_source_position",
+        "input_prefix_sha256", "canonical_order_id", "canonical_comparator_id",
+        "knowledge_contract", "available_at", "feature_group", "generator",
+        "bounded_pair_parameter_count",
+    )
+    for index, (observed, expected) in enumerate(zip(observed_rows, expected_rows)):
+        if not isinstance(observed, dict) or not isinstance(expected, dict):
+            raise ValueError(f"HOLD_REPLAY_MISMATCH:feature_snapshot.{index}:row_type")
+        for field in row_identity_fields:
+            if observed.get(field) != expected.get(field):
+                raise ValueError(f"HOLD_REPLAY_MISMATCH:feature_snapshot.{index}.{field}")
+    return compare_value(observed_rows, expected_rows, "feature_snapshot", contract=contract)
 
 
 def sha(path: Path) -> str:
@@ -270,11 +320,30 @@ def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]
     feature_dir = release / f"features/{game}/{serving['feature_release_id']}"
     snapshot_path = feature_dir / "feature-snapshot.jsonl"
     feature_manifest = load(feature_dir / "manifest.json")
+    if sha(snapshot_path) != feature_manifest.get("snapshot_sha256"):
+        raise ValueError("FAIL_TAMPERED:feature_snapshot_hash")
     expected_rows = oracle.feature_snapshot_rows(game, draws[:cutoff], cutoff)
-    expected_snapshot = b"".join(canon(row) for row in expected_rows)
-    if snapshot_path.read_bytes() != expected_snapshot or sha(snapshot_path) != feature_manifest["snapshot_sha256"]:
-        raise ValueError("HOLD_REPLAY_MISMATCH:feature_snapshot")
-    if feature_manifest["pair_parameter_count"] != 0 or set(feature_manifest["feature_ids"]) != set(oracle.FEATURE_IDS):
+    observed_rows = load_jsonl(snapshot_path)
+    feature_comparisons = compare_feature_snapshot(observed_rows, expected_rows)
+    expected_manifest_identity = {
+        "artifact_type": "phase4_feature_manifest",
+        "feature_release_id": serving["feature_release_id"],
+        "game": game,
+        "feature_ids": list(oracle.FEATURE_IDS),
+        "feature_groups": sorted(set(oracle.FEATURE_GROUPS.values())),
+        "feature_config_id": model["training_config_id"],
+        "serving_consumed_feature_ids": list(oracle.FEATURE_IDS),
+        "target_position": cutoff,
+        "cutoff_position": cutoff - 1,
+        "input_prefix_sha256": expected_rows[0]["input_prefix_sha256"],
+        "rows": len(expected_rows),
+        "training_input_sha256": sha(release / f"data/{game}/training-input-manifest.json"),
+        "pair_parameter_count": 0,
+        "pair_shrinkage": 20.0,
+        "status": "PASS",
+    }
+    if ({key: feature_manifest.get(key) for key in expected_manifest_identity} != expected_manifest_identity
+            or set(feature_manifest) != set(expected_manifest_identity) | {"snapshot_sha256"}):
         raise ValueError("HOLD_REPLAY_MISMATCH:feature_contract")
 
     formal = _single(release / f"forecasts/{game}", "*/top1000.jsonl")
@@ -421,7 +490,7 @@ def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]
         "selection_receipt_match": True, "ablation_match": True, "permutation_match": True,
         "historical_exact_score_match": True, "research_child_match": True, "shadow_top1000_match": True, "serving_unchanged": True,
         "numeric_contract_id": local_contract()["contract_id"],
-        "semantic_numeric_comparisons": comparisons["semantic"] + top_comparisons["semantic"] + historical_comparisons["semantic"] + shadow_comparisons["semantic"],
+        "semantic_numeric_comparisons": comparisons["semantic"] + feature_comparisons["semantic"] + top_comparisons["semantic"] + historical_comparisons["semantic"] + shadow_comparisons["semantic"],
     }
 
 

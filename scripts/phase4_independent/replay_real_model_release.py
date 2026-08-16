@@ -107,6 +107,11 @@ def canon(value: object) -> bytes:
     return (json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False) + "\n").encode()
 
 
+def same_json_document(left: Path, right: Path) -> bool:
+    """Compare JSON contracts by their canonical document, not presentation whitespace."""
+    return canon(load(left)) == canon(load(right))
+
+
 def protected_inventory() -> dict[str, object]:
     roots = []
     for relative in PROTECTED_ROOTS:
@@ -644,7 +649,7 @@ def _validate_authority_and_receipts(release: Path) -> dict[str, object]:
         if value.get("status") != "PASS" or value.get("exit_code") != 0:
             raise ValueError(f"HOLD_FORMAL_RECEIPT:{attempt_id}")
     contract_path = release / "contracts/local-verifier-contract.json"
-    if contract_path.read_bytes() != LOCAL_CONTRACT_PATH.read_bytes():
+    if not same_json_document(contract_path, LOCAL_CONTRACT_PATH):
         raise ValueError("HOLD_LOCAL_VERIFIER_CONTRACT:release_copy")
     return {"authority_commit": authority["authority_commit"], "formal_receipts": len(required_attempts),
             "historical_receipts_verified": ["A05-phase2-1", "A06-phase2"]}

@@ -48,6 +48,19 @@ class LocalVerifierNumericContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "HOLD_REPLAY_MISMATCH"):
             verifier.compare_value(1.0, math.nextafter(1.0, 2.0), "model.training_count", contract=self.contract)
 
+    def test_contract_release_copy_uses_canonical_json_not_whitespace(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            pretty = Path(raw) / "pretty.json"
+            compact = Path(raw) / "compact.json"
+            pretty.write_text(json.dumps(self.contract, indent=2) + "\n", encoding="utf-8")
+            compact.write_bytes(verifier.canon(self.contract))
+            self.assertNotEqual(pretty.read_bytes(), compact.read_bytes())
+            self.assertTrue(verifier.same_json_document(pretty, compact))
+            changed = copy.deepcopy(self.contract)
+            changed["numeric_bounds"]["max_ulps"] += 1
+            compact.write_bytes(verifier.canon(changed))
+            self.assertFalse(verifier.same_json_document(pretty, compact))
+
 
 class LocalVerifierIntegrityTests(unittest.TestCase):
     release = ROOT / "artifacts/phase-4/P4-P4E2-20260815-r04"

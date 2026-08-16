@@ -1,4 +1,4 @@
-# Phase 4 real-model MVP release runbook
+# Phase 4 real-model MVP formal builder and local verifier runbook
 
 This is the canonical D00–D15 operating path. The older T00–T24 preparation
 tools are retained for historical diagnosis only; they are not acceptance
@@ -13,6 +13,29 @@ The historical Phase 2/2.1 regression interpreter is frozen separately because
 those suites require their own locked NumPy environment. Its invocation path is
 preserved (a virtual-environment symlink must not be replaced by its base
 interpreter), while its base interpreter realpath is recorded alongside it.
+These absolute paths are immutable formal provenance only. They are never a
+prerequisite for local product acceptance.
+
+## Portable local product acceptance
+
+From a clean repository checkout, use any local CPython 3.12 patch release.
+The local verifier does not rebuild the release and does not execute Phase 2 or
+2.1 historical suites; it verifies their immutable receipts and manifest hashes.
+
+```bash
+python3.12 -m venv .p4-local-venv
+.p4-local-venv/bin/python -m pip install 'jsonschema==4.26.0'
+PHASE4_PYTHON=.p4-local-venv/bin/python scripts/phase4/local-accept-release --release artifacts/phase-4/P4E2_RELEASE_ID
+```
+
+The entry point snapshots every release file before checking and fails if the
+release changes. It verifies authority, schemas, final closure, both games,
+serving lineage, create-once locks, 1,000 ordered rows per game, probability
+qualification, lifecycle score/research, scheduler recovery, protected roots,
+and independent replay. Its semantic numeric policy is frozen in
+`contracts/local-verifier-contract.json`; only enumerated recomputed float leaves
+may use the finite conjunctive absolute/relative/ULP bounds. IDs, hashes,
+issues/cutoffs, lineage, tickets, order, score/tie identities, and locks remain exact.
 
 ## Frozen commands
 

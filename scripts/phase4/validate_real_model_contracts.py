@@ -54,11 +54,13 @@ def main() -> int:
         "model-release.schema.json", "training-report.schema.json",
         "backtest.schema.json", "model-selection-receipt.schema.json", "formal-forecast.schema.json",
         "formal-forecast-lock.schema.json", "serving-selection.schema.json",
+        "local-verifier-contract.schema.json",
     ]
     required = [
         ROOT / "config/phase4/authority-freeze.json",
         ROOT / "config/phase4/feature-registry.json",
         ROOT / "config/phase4/model-registry.json",
+        ROOT / "config/phase4/local-verifier-contract.json",
         ROOT / "artifacts/phase-1/baseline-v1/draws.jsonl",
         *(ROOT / "schemas/phase4" / name for name in schemas),
     ]
@@ -68,12 +70,19 @@ def main() -> int:
         jsonschema.Draft202012Validator.check_schema(json.loads((ROOT / "schemas/phase4" / name).read_text()))
     feature_registry = json.loads((ROOT / "config/phase4/feature-registry.json").read_text())
     model_registry = json.loads((ROOT / "config/phase4/model-registry.json").read_text())
+    local_contract = json.loads((ROOT / "config/phase4/local-verifier-contract.json").read_text())
+    jsonschema.Draft202012Validator(json.loads((ROOT / "schemas/phase4/local-verifier-contract.schema.json").read_text())).validate(local_contract)
     if {row["feature_id"] for row in feature_registry["features"]} != FEATURE_IDS:
         raise SystemExit("HOLD_CONTRACT_INCOMPLETE:F01_F14")
     if set(feature_registry["required_serving_feature_groups"]) != FEATURE_GROUPS:
         raise SystemExit("HOLD_CONTRACT_INCOMPLETE:FEATURE_GROUPS")
     if model_registry["serving_probability_family"]["model_family"] != "P4E2-R":
         raise SystemExit("HOLD_CONTRACT_INCOMPLETE:P4E2")
+    if (local_contract["numeric_bounds"] != {"finite_required": True, "require_all_bounds": True,
+                                              "max_absolute": 1e-12, "max_relative": 1e-12, "max_ulps": 8}
+            or local_contract["historical_formal_evidence"]["local_reexecution_required"] is not False
+            or any("/home/" in path or "/usr/bin/" in path for path in local_contract["semantic_numeric_paths"])):
+        raise SystemExit("FAIL_CONTRACT_WEAKENED:LOCAL_VERIFIER")
     negatives = [
         {"unknown_field": True}, {"feature_ids": ["F01"]},
         {"feature_groups": ["historical_change"]}, {"serving_family": "M0"},
@@ -97,6 +106,7 @@ def main() -> int:
         "artifact_type": "phase4_d01_contract_validation", "status": "PASS",
         "schema_count": len(schemas), "feature_ids": sorted(FEATURE_IDS),
         "feature_groups": sorted(FEATURE_GROUPS), "serving_family": "P4E2-R",
+        "local_verifier_contract": local_contract["contract_id"],
         "unknown_fields": "fail_closed", "negative_case_count": len(negatives),
         "legacy_t00_t24_validator_canonical": False,
     }, sort_keys=True))

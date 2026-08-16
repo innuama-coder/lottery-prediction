@@ -97,6 +97,9 @@ def main() -> int:
     write_once(out / "e2e/protected-inventory-before.json", protected_before)
     authority_freeze = json.loads((ROOT / "config/phase4/authority-freeze.json").read_text(encoding="utf-8"))
     write_once(out / "authority/authority-freeze.json", authority_freeze)
+    local_verifier_contract = json.loads((ROOT / "config/phase4/local-verifier-contract.json").read_text(encoding="utf-8"))
+    validate_schema("local-verifier-contract.schema.json", local_verifier_contract)
+    write_once(out / "contracts/local-verifier-contract.json", local_verifier_contract)
     serving = {}
     forecasts = {}
     for game in ("ssq", "dlt"):
@@ -300,7 +303,7 @@ def main() -> int:
                "--phase1-draws", str(args.phase1_draws), "--output", str(args.output),
                "--source-commit", args.source_commit, "--historical-interpreter", str(historical_interpreter)]
     authority = [ROOT / "ROADMAP.md", ROOT / "tasks/phase4/README.md", ROOT / "docs/research/phase-4-overall-design.md", ROOT / "docs/plans/phase-4-detailed-plan.md"]
-    stage_receipt(out, "D01", authority, [out / "authority/authority-freeze.json", out / "selection/serving-selection.json"], {"authority_documents": len(authority), "unknown_fields_fail_closed": True, "launch_worktree_clean": launch_clean}, started_at, command, launch_clean)
+    stage_receipt(out, "D01", authority, [out / "authority/authority-freeze.json", out / "contracts/local-verifier-contract.json", out / "selection/serving-selection.json"], {"authority_documents": len(authority), "unknown_fields_fail_closed": True, "local_verifier_contract": local_verifier_contract["contract_id"], "launch_worktree_clean": launch_clean}, started_at, command, launch_clean)
     task_outputs = {
         "D02": ([out / f"data/{g}/training-input-manifest.json" for g in ("ssq","dlt")] +
                 [next((out / f"features/{g}").glob("*/manifest.json")) for g in ("ssq","dlt")]),

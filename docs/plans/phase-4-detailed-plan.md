@@ -192,8 +192,8 @@ D13 -> D15 final machine acceptance and handoff
 - **固定输入：** D11 frozen release及代码/依赖/输入manifest；独立replay实现。
 - **允许/禁止修改：** 只允许 `replay/`和独立测试；禁止导入产品核心概率/训练函数、修改任何被重放文件。
 - **交付物/Schema：** `replay/replay-report.json`、逐事实comparison、import audit和mutation findings。
-- **实现方法：** 独立解析 Phase 1、重算 F01–F14、训练目标/选择、组合分数归一和 Top-1000；重算所有 hash/parent 关系，不导入产品核心特征或概率实现。
-- **验收方法：** clean 隔离目录 replay；分别突变一条早期 draw、cutoff、rolling/EWMA/gap、pair/结构 feature、系数、model ID、概率、Top-1000 顺序、lock 和 CLI provider 引用。
+- **实现方法：** 独立解析 Phase 1、重算 F01–F14、训练目标/选择、组合分数归一和 Top-1000；重算所有 hash/parent 关系，不导入产品核心特征或概率实现。正式 builder provenance 继续 byte/hash exact；本地 CPython 3.12 verifier 对 `P4-LOCAL-SEMANTIC-BINARY64-1` 明确逐路径枚举的重算浮点叶要求 finite 且同时通过 absolute `1e-12`、relative `1e-12`、ULP `8` 三界，其余字段 exact。
+- **验收方法：** clean 隔离目录 replay；分别突变一条早期 draw、cutoff、rolling/EWMA/gap、pair/结构 feature、系数、model ID、概率、Top-1000 顺序、tie/score identity、model lineage、lock 和 CLI provider 引用；加入 Linux/macOS 4-ULP 正例、8-ULP 精确边界、9-ULP/非有限负例。删除/tamper final closure 必须失败。
 - **通过判据：** 原release逐事实100% match；每类mutation命中预期guard；产品核心import=0；两game均覆盖。
 - **失败/HOLD：** `HOLD_REPLAY_MISMATCH|HOLD_REPLAY_INDEPENDENCE|FAIL_TAMPERED`。
 - **依赖/下游：** D11；D14消费。
@@ -201,11 +201,11 @@ D13 -> D15 final machine acceptance and handoff
 ### D14：本地产品验收材料准备
 
 - **目标：** 从已冻结正式证据生成本地用户可执行的不可变 checklist candidate，但在 D15 PASS 前不交给人类。
-- **固定输入：** D11 的冻结 model/forecast/E2E manifests、D12 replay manifest、同一 release 的正式 CLI/runbook 和不可变 IDs；不依赖尚未生成的 D13 delivery manifest。
+- **固定输入：** D11 的冻结 model/forecast/E2E manifests、D12 replay manifest、同一 release 的本地 verifier contract/entry point 和不可变 IDs；不依赖尚未生成的 D13 delivery manifest。正式 VPS builder runbook 只作 provenance，不是本地验收入口。
 - **允许/禁止修改：** 只允许创建一次 `acceptance/local-product-checklist-candidate.md`及 candidate receipt；禁止产品修复、后续改写、人工签字占位、调用人类确认或写机器 ready 状态。
 - **交付物/Schema：** 清单列双game真实输入命令、明确target/cutoff/model IDs、预期1000行、inspect字段、hash/replay检查和证据路径。
-- **实现方法：** 从 D11/D12 底层 manifests 自动填充不可变 IDs，命令不使用`latest`、glob、fixture或M0；说明科学状态不等于lift；内容寻址后标记 `CANDIDATE_NOT_RELEASED`。
-- **验收方法：** 在干净副本机器dry-run所有只读inspect/replay命令，核对路径存在和hash；静态检查训练/forecast复现命令参数完整，且没有人工确认步骤。
+- **实现方法：** 从 D11/D12 底层 manifests 自动填充不可变 IDs，提供 CPython 3.12 本地 setup 和唯一 `scripts/phase4/local-accept-release` 命令；入口发现或接受本地解释器，无 VPS absolute path，不写 release。说明科学状态不等于lift；内容寻址后标记 `CANDIDATE_NOT_RELEASED`。
+- **验收方法：** 在干净本地 CPython 3.12 副本 dry-run read-only verifier，核对 authority/schemas/final closure、两 game lineage/locks/1,000 rows/probability、score/research/recovery/protected roots/replay；验证 Phase 2/2.1 仅消费 closed receipts；静态拒绝 checklist/entry point 中 VPS-only path。
 - **通过判据：** 清单可分别观察模型身份、feature snapshot、训练截止、概率差异、排序依据和lock；仍未交给人类，未声称机器或人工验收完成。
 - **失败/HOLD：** `HOLD_LOCAL_ACCEPTANCE_PREPARATION`；阻断D15。
 - **依赖/下游：** D12；D13消费。

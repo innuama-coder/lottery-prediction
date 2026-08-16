@@ -1,0 +1,3 @@
+{"event":"controller_acceptance","commit":"9739671a359658e867e39751e8bd43c5912b4ef9","release_id":"P4-P4E2-20260815-r04","runtime":"macOS CPython 3.12.11","reason":"HOLD_REPLAY_MISMATCH:model:objective_trace","status":"FAIL","preserved":true}
+{"event":"numeric_root_cause","field":"SSQ objective_trace F04 zones 0/1","observed_ulp_distance":4,"cause":"raw binary64 equality across supported Python patch/platform runtimes","status":"CONFIRMED"}
+{"event":"focused_local_verifier_tests","tests":6,"numeric_contract":"P4-LOCAL-SEMANTIC-BINARY64-1","status":"PASS"}

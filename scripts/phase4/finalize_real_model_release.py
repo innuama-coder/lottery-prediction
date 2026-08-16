@@ -231,23 +231,73 @@ def main() -> int:
         raise ValueError("HOLD_D15_BOTTOM_UP_VALIDATION")
     receipt(release, "D12", [replay_path], [replay_path], {"match_rate_100pct": True, "mutation_detection_100pct": True, "independent_imports_zero": True}, started)
 
-    checklist = (f"# Phase 4 P4E2 local product acceptance candidate\n\nStatus: `CANDIDATE_NOT_RELEASED`\n\n"
-                 f"Release: `{release.name}`. Run the exact commands in `runbook/release-runbook.md`. "
-                 "Inspect both SSQ and DLT frozen P4E2-R model IDs, F01-F14 feature snapshots and strict cutoffs; "
-                 "verify complete-enumeration log-sum-exp normalization, exact full-ticket Top-10/100/200/1000 "
-                 "prefixes, locks, true multiclass Brier, selection/report-only isolation, AutoResearch shadow, "
-                 "scheduler recovery, protected histories, and independent replay. This checklist makes no claim "
-                 "of lift, winnings, or profit.\n")
+    local_contract_path = release / "contracts/local-verifier-contract.json"
+    local_contract = load(local_contract_path)
+    if local_contract.get("contract_id") != "P4-LOCAL-SEMANTIC-BINARY64-1":
+        raise ValueError("HOLD_LOCAL_VERIFIER_CONTRACT")
+    checklist_rows = {}
+    for game in ("ssq", "dlt"):
+        serving = load(release / "selection/serving-selection.json")["serving_model_by_game"][game]
+        model = load(release / serving["model_path"])
+        forecast = load(next((release / f"forecasts/{game}").glob("*/forecast.json")))
+        checklist_rows[game] = {"model": serving["model_release_id"], "feature": serving["feature_release_id"],
+                                "cutoff": model["training_cutoff_issue"], "target": forecast["target_issue"],
+                                "scientific": model["scientific_status"]}
+    checklist = f"""# Phase 4 P4E2 local product acceptance candidate
+
+Status: `CANDIDATE_NOT_RELEASED`
+
+Release: `{release.name}`
+
+## Prerequisites and local setup
+
+- A clean checkout of this repository at the release source commit.
+- CPython 3.12 (any supported patch release; CPython 3.12.11 on macOS is explicitly in scope).
+- No Phase 2/2.1 historical virtual environment and no builder/VPS path is required.
+
+Copy-paste setup (run once from the repository root):
+
+```bash
+python3.12 -m venv .p4-local-venv
+.p4-local-venv/bin/python -m pip install 'jsonschema==4.26.0'
+```
+
+## One read-only acceptance command
+
+```bash
+PHASE4_PYTHON=.p4-local-venv/bin/python scripts/phase4/local-accept-release --release artifacts/phase-4/{release.name}
+```
+
+Expected first line: `LOCAL ACCEPTANCE: PASS (READY_FOR_LOCAL_PRODUCT_ACCEPTANCE)`.
+The command snapshots the release before verification and fails if any byte is changed. It verifies authority and
+schemas; the final manifest/closure; immutable formal Phase 2/2.1 receipts; serving lineage and create-once locks;
+1,000 ordered tickets for each game; probability qualification and exact score/tie identities; lifecycle score and
+AutoResearch shadow; dual-game scheduler recovery; protected roots; independent replay and negative mutations.
+Only the explicitly enumerated recomputed numeric fields in `contracts/local-verifier-contract.json` use the finite,
+conjunctive absolute/relative/ULP bounds. IDs, hashes, issues, cutoffs, lineage, tickets, rank/order, score/tie identities,
+and create-once files remain exact.
+
+## Frozen inspect expectations
+
+- SSQ: model `{checklist_rows['ssq']['model']}`; feature `{checklist_rows['ssq']['feature']}`; cutoff `{checklist_rows['ssq']['cutoff']}`; target `{checklist_rows['ssq']['target']}`; rows `1000`; scientific status `{checklist_rows['ssq']['scientific']}`.
+- DLT: model `{checklist_rows['dlt']['model']}`; feature `{checklist_rows['dlt']['feature']}`; cutoff `{checklist_rows['dlt']['cutoff']}`; target `{checklist_rows['dlt']['target']}`; rows `1000`; scientific status `{checklist_rows['dlt']['scientific']}`.
+
+Inspect the concise SSQ/DLT lines printed by the command. Evidence paths: `acceptance/final-closure.json`,
+`manifest/delivery-manifest.json`, `replay/replay-report.json`, `contracts/local-verifier-contract.json`,
+`validation/attempts/A05-phase2-1/receipt.json`, and `validation/attempts/A06-phase2/receipt.json`.
+
+Engineering readiness and model-internal ranking do not establish predictability, lift, winnings, or profit.
+"""
     checklist_path = release / "acceptance/local-product-checklist-candidate.md"
     once(checklist_path, checklist)
     candidate_receipt = release / "acceptance/checklist-candidate-receipt.json"
     once(candidate_receipt, {"artifact_type": "phase4_checklist_candidate_receipt", "release_id": release.name, "checklist_sha256": sha(checklist_path), "status": "CANDIDATE_NOT_RELEASED"})
-    receipt(release, "D14", [checklist_path], [candidate_receipt], {"content_addressed": True, "candidate_not_released": True}, started)
+    receipt(release, "D14", [local_contract_path, replay_path], [checklist_path, candidate_receipt], {"content_addressed": True, "candidate_not_released": True, "portable_python_3_12": True, "read_only_entry_point": "scripts/phase4/local-accept-release"}, started)
 
     environment_path = release / "readiness/environment.json"
     lock = ROOT / "requirements/phase4.lock"
     wheels = sorted((ROOT / "wheelhouse/phase4").glob("*")) if (ROOT / "wheelhouse/phase4").exists() else []
-    environment = {"artifact_type": "phase4_execution_environment", "interpreter_realpath": str(Path(sys.executable).resolve()), "python_version": platform.python_version(), "platform": platform.platform(), "dependency_lock_path": "requirements/phase4.lock", "dependency_lock_sha256": sha(lock), "wheelhouse": [{"path": path.relative_to(ROOT).as_posix(), "sha256": sha(path)} for path in wheels if path.is_file()], "command_receipts": [{"path": path.relative_to(release).as_posix(), "sha256": sha(path)} for path in command_receipts], "status": "PASS"}
+    environment = {"artifact_type": "phase4_execution_environment", "provenance_role": "immutable_linux_formal_builder", "interpreter_realpath": str(Path(sys.executable).resolve()), "python_version": platform.python_version(), "platform": platform.platform(), "dependency_lock_path": "requirements/phase4.lock", "dependency_lock_sha256": sha(lock), "local_verifier_contract_path": "contracts/local-verifier-contract.json", "local_verifier_contract_sha256": sha(local_contract_path), "local_verifier_runtime": "CPython 3.12 any patch on a supported local platform", "historical_suites_local_reexecution_required": False, "wheelhouse": [{"path": path.relative_to(ROOT).as_posix(), "sha256": sha(path)} for path in wheels if path.is_file()], "command_receipts": [{"path": path.relative_to(release).as_posix(), "sha256": sha(path)} for path in command_receipts], "status": "PASS"}
     once(environment_path, environment)
     forecast_evidence = {game: validate_forecast(release, game) for game in ("ssq", "dlt")}
     model_evidence = {game: validate_model_evidence(release, game) for game in ("ssq", "dlt")}

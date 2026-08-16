@@ -12,4 +12,5 @@ Status: `COMPLETE`
 - local verifier numeric boundary tests: PASS
 - local checklist and entry point contain no VPS-only paths
 - protected Phase 0-3 roots and all earlier Phase 4 releases: unchanged
-- task branch and PR #10 delivery pending final evidence commit and remote verification
+- immutable release/evidence commit: `e77d2961030810d3bc4635ef6cd8f8435865065b`
+- task branch and PR #10 delivery: recorded by the final handoff commit

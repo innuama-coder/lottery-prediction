@@ -1,6 +1,6 @@
 # Phase 4 真实模型预测 MVP 详细实施计划
 
-版本：2.0（规划候选）
+版本：2.1（portable local verifier authority）
 
 状态：`D00_AUTHORITY_SYNCED`。本计划与其余三份 Phase 4 authority 文档在同一 `P4_AUTHORITY_COMMIT` 冻结；只有 D00 两个 checker 均通过且 receipt 证明 clean 后才授权 D01。
 

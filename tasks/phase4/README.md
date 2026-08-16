@@ -1,6 +1,6 @@
 # Phase 4：真实模型预测与 AutoResearch 闭环 MVP 定义
 
-版本：3.0
+版本：3.1（portable local verifier authority）
 
 状态：`D00_AUTHORITY_SYNCED`。本文件与 `ROADMAP.md`、`docs/research/phase-4-overall-design.md`、`docs/plans/phase-4-detailed-plan.md` 在同一 `P4_AUTHORITY_COMMIT` 冻结；只有 D00 两个 checker 均通过且 receipt 证明 clean 后才解除 `HOLD_AUTHORITY_SYNC` 并启动 D01。
 
@@ -21,6 +21,7 @@ Phase 4 必须同时交付：
 5. forecast 可 create-once 锁定、inspect、评分、修订传播和重放；AutoResearch 产生非空真实 diff、新 child ID 和可观察变化的下一期 challenger/shadow，且不得改写 serving。
 6. CLI、调度、checkpoint、崩溃恢复、重复运行、跨 game 隔离、安装和命名 workload readiness 全部通过机器验证。
 7. D11–D15 在同一冻结 release 上形成正式 E2E、独立 bottom-up replay/mutation、不可变 checklist candidate、覆盖该 candidate 的 pre-acceptance manifest 和只追加的最终验收闭包。
+8. D14 提供不含 VPS absolute path 的单一只读本地入口，支持 clean CPython 3.12 patch/platform；它验证历史 Phase 2/2.1 formal receipts/hash 而不重跑其环境。仅逐路径枚举的浮点叶可按 finite + absolute/relative/ULP conjunction 比较，身份、hash、lineage、ticket/order、score/tie identity 和 create-once 文件保持 exact。
 
 不要求证明预测 lift，也不允许伪称 lift。科学状态可以如实为 `lift_supported|no_confirmed_lift|worse_than_M0|insufficient_evidence`；任一不利或证据不足结果必须保留。科学状态不能把产品功能门的 HOLD/FAIL 覆盖成 PASS。
 

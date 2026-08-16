@@ -1,6 +1,6 @@
 # Phase 4 真实模型预测与 AutoResearch 闭环 MVP 总体设计
 
-版本：3.0（多特征模型设计）
+版本：3.1（多特征模型与 portable local verifier 设计）
 
 状态：`D00_AUTHORITY_SYNCED`。本文与 `ROADMAP.md`、`tasks/phase4/README.md`、`docs/plans/phase-4-detailed-plan.md` 在同一 `P4_AUTHORITY_COMMIT` 冻结；D00 两个 checker 通过后解除 `HOLD_AUTHORITY_SYNC`，才允许启动 D01。
 

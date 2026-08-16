@@ -74,6 +74,10 @@ def validate(args: argparse.Namespace) -> dict[str, object]:
         raise ValueError("real non-uniform serving hard gates are missing")
     if semantics["final_machine_state"] != "READY_FOR_LOCAL_PRODUCT_ACCEPTANCE":
         raise ValueError("final machine state mismatch")
+    if (semantics.get("local_product_verifier") != "P4-LOCAL-SEMANTIC-BINARY64-1"
+            or semantics.get("local_supported_python") != "CPython 3.12 any patch"
+            or semantics.get("historical_phase2_suites_required_locally") is not False):
+        raise ValueError("portable local verifier semantics missing")
     head = git("rev-parse", "HEAD").stdout.decode().strip()
     if git("merge-base", "--is-ancestor", commit, head, check=False).returncode:
         raise ValueError("authority commit is not an ancestor of HEAD")

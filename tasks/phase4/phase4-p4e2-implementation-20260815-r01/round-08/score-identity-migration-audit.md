@@ -57,7 +57,7 @@ leaf validation.
 - mutation suite independently changes stable key and tie key and retains the
   approximate-tie attack; each must be detected
 - `p4e2-ranking.schema.json`, `probability-qualification.schema.json`, the model
-  layer-summary schema, formal forecast schema, frozen local contract, builder,
+  score-order-contract schema, formal forecast schema, frozen local contract, builder,
   finalizer, local replay, and CLI all bind the new identifiers
 - preserved-r10 migration replay is read-only and accepts only the exact 178-file
   inventory `e3b65e2ef7c7ab12ee7fe21c68d9847858661446f1a5242528db0dc46ba19d5c`

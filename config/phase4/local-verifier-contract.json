@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "artifact_type": "phase4_local_verifier_contract",
   "contract_id": "P4-LOCAL-SEMANTIC-BINARY64-1",
   "supported_runtime": {
@@ -23,6 +23,13 @@
       "max_absolute": 3e-16,
       "max_relative": 3e-14,
       "max_ulps": 151
+    },
+    "top1000_derived_probability_display_v1": {
+      "finite_required": true,
+      "require_all_bounds": true,
+      "max_absolute": 2.2499312661442353e-22,
+      "max_relative": 3.5383660753807325e-15,
+      "max_ulps": 17
     }
   },
   "path_numeric_profiles": [
@@ -60,13 +67,10 @@
         "score.metrics.joint_log_loss",
         "score.metrics.actual_joint_probability",
         "score.metrics.multiclass_brier",
-        "top1000.*.joint_probability",
         "top1000.*.log_joint_score",
         "top1000.*.explanation.feature_contributions.*",
-        "historical_top1000.*.joint_probability",
         "historical_top1000.*.log_joint_score",
         "historical_top1000.*.explanation.feature_contributions.*",
-        "shadow_top1000.*.joint_probability",
         "shadow_top1000.*.log_joint_score",
         "shadow_top1000.*.explanation.feature_contributions.*",
         "feature_snapshot.*.raw.ewma_rates.10",
@@ -123,6 +127,14 @@
         "feature_snapshot.*.normalization.F14.mean",
         "feature_snapshot.*.normalization.F14.scale"
       ]
+    },
+    {
+      "profile_id": "top1000_derived_probability_display_v1",
+      "paths": [
+        "top1000.*.joint_probability",
+        "historical_top1000.*.joint_probability",
+        "shadow_top1000.*.joint_probability"
+      ]
     }
   ],
   "numeric_profile_evidence": {
@@ -133,6 +145,14 @@
       "observed_max_relative": 2.64e-14,
       "observed_max_ulps": 151,
       "ceiling_rationale": "Round-06 independent macOS CPython 3.12.11 F04 fixture; absolute and relative ceilings are rounded upward while the ULP ceiling is the exact observed maximum."
+    },
+    "top1000_derived_probability_display_v1": {
+      "fixture_path": "tests/phase4/fixtures/local-verifier-top1000-probability-macos-31211.json",
+      "observed_path": "top1000.622.joint_probability",
+      "observed_max_absolute": 2.2499312661442353e-22,
+      "observed_max_relative": 3.5383660753807325e-15,
+      "observed_max_ulps": 17,
+      "ceiling_rationale": "Round-07 independent macOS CPython 3.12.11 replay fixture; all three conjunctive ceilings equal the exact controller-observed Top-1000 derived display mismatch."
     }
   },
   "exact_invariants": [

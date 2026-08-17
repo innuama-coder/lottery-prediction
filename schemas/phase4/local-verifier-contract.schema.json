@@ -5,7 +5,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "artifact_type", "contract_id", "supported_runtime", "default_numeric_profile", "numeric_profiles", "path_numeric_profiles", "numeric_profile_evidence", "exact_invariants", "historical_formal_evidence"],
   "properties": {
-    "schema_version": {"const": "1.1.0"},
+    "schema_version": {"const": "1.2.0"},
     "artifact_type": {"const": "phase4_local_verifier_contract"},
     "contract_id": {"const": "P4-LOCAL-SEMANTIC-BINARY64-1"},
     "supported_runtime": {
@@ -23,22 +23,23 @@
     "numeric_profiles": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["tight_recomputed_v1", "derived_feature_snapshot_v1"],
+      "required": ["tight_recomputed_v1", "derived_feature_snapshot_v1", "top1000_derived_probability_display_v1"],
       "properties": {
         "tight_recomputed_v1": {"$ref": "#/$defs/tightProfile"},
-        "derived_feature_snapshot_v1": {"$ref": "#/$defs/derivedFeatureProfile"}
+        "derived_feature_snapshot_v1": {"$ref": "#/$defs/derivedFeatureProfile"},
+        "top1000_derived_probability_display_v1": {"$ref": "#/$defs/top1000DerivedProbabilityDisplayProfile"}
       }
     },
     "path_numeric_profiles": {
       "type": "array",
-      "minItems": 2,
-      "maxItems": 2,
+      "minItems": 3,
+      "maxItems": 3,
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": ["profile_id", "paths"],
         "properties": {
-          "profile_id": {"enum": ["tight_recomputed_v1", "derived_feature_snapshot_v1"]},
+          "profile_id": {"enum": ["tight_recomputed_v1", "derived_feature_snapshot_v1", "top1000_derived_probability_display_v1"]},
           "paths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "not": {"pattern": "\\*\\*"}}}
         }
       }
@@ -46,7 +47,7 @@
     "numeric_profile_evidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["derived_feature_snapshot_v1"],
+      "required": ["derived_feature_snapshot_v1", "top1000_derived_probability_display_v1"],
       "properties": {
         "derived_feature_snapshot_v1": {
           "type": "object",
@@ -58,6 +59,19 @@
             "observed_max_absolute": {"const": 2.62e-16},
             "observed_max_relative": {"const": 2.64e-14},
             "observed_max_ulps": {"const": 151},
+            "ceiling_rationale": {"type": "string", "minLength": 40}
+          }
+        },
+        "top1000_derived_probability_display_v1": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["fixture_path", "observed_path", "observed_max_absolute", "observed_max_relative", "observed_max_ulps", "ceiling_rationale"],
+          "properties": {
+            "fixture_path": {"const": "tests/phase4/fixtures/local-verifier-top1000-probability-macos-31211.json"},
+            "observed_path": {"const": "top1000.622.joint_probability"},
+            "observed_max_absolute": {"const": 2.2499312661442353e-22},
+            "observed_max_relative": {"const": 3.5383660753807325e-15},
+            "observed_max_ulps": {"const": 17},
             "ceiling_rationale": {"type": "string", "minLength": 40}
           }
         }
@@ -98,6 +112,18 @@
         "max_absolute": {"const": 3e-16},
         "max_relative": {"const": 3e-14},
         "max_ulps": {"const": 151}
+      }
+    },
+    "top1000DerivedProbabilityDisplayProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finite_required", "require_all_bounds", "max_absolute", "max_relative", "max_ulps"],
+      "properties": {
+        "finite_required": {"const": true},
+        "require_all_bounds": {"const": true},
+        "max_absolute": {"const": 2.2499312661442353e-22},
+        "max_relative": {"const": 3.5383660753807325e-15},
+        "max_ulps": {"const": 17}
       }
     }
   }

@@ -87,34 +87,52 @@ def _path_allowed(path: str, contract: dict[str, object]) -> bool:
     return _path_profile(path, contract) is not None
 
 
-def compare_value(observed: object, expected: object, path: str, *, contract: dict[str, object] | None = None) -> dict[str, int]:
-    """Compare recursively, permitting approximation only on explicit leaf paths."""
-    policy = contract or local_contract()
+def _compare_structure_and_exact(observed: object, expected: object, path: str,
+                                 contract: dict[str, object]) -> int:
+    """Validate the complete shape and every exact leaf before numeric replay."""
     if isinstance(observed, dict) and isinstance(expected, dict):
         if set(observed) != set(expected):
             raise ValueError(f"HOLD_REPLAY_MISMATCH:{path}:keys")
-        total = {"exact": 0, "semantic": 0}
-        for key in sorted(observed):
-            result = compare_value(observed[key], expected[key], f"{path}.{key}", contract=policy)
-            total = {name: total[name] + result[name] for name in total}
-        return total
+        return sum(_compare_structure_and_exact(observed[key], expected[key], f"{path}.{key}", contract)
+                   for key in sorted(observed))
     if isinstance(observed, list) and isinstance(expected, list):
         if len(observed) != len(expected):
             raise ValueError(f"HOLD_REPLAY_MISMATCH:{path}:length")
-        total = {"exact": 0, "semantic": 0}
-        for index, (left, right) in enumerate(zip(observed, expected)):
-            result = compare_value(left, right, f"{path}.{index}", contract=policy)
-            total = {name: total[name] + result[name] for name in total}
-        return total
-    profile_id = _path_profile(path, policy)
-    if profile_id is not None:
-        result = numeric_comparison(observed, expected, contract=policy, profile_id=profile_id)
-        if not result["passed"]:
-            raise ValueError(f"HOLD_REPLAY_NUMERIC_BOUND:{path}:profile={profile_id}:abs={result['absolute_error']}:rel={result['relative_error']}:ulp={result['ulp_distance']}")
-        return {"exact": 0, "semantic": 1}
+        return sum(_compare_structure_and_exact(left, right, f"{path}.{index}", contract)
+                   for index, (left, right) in enumerate(zip(observed, expected)))
+    if isinstance(observed, (dict, list)) or isinstance(expected, (dict, list)):
+        raise ValueError(f"HOLD_REPLAY_MISMATCH:{path}:type")
+    if _path_allowed(path, contract):
+        return 0
     if observed != expected:
         raise ValueError(f"HOLD_REPLAY_MISMATCH:{path}")
-    return {"exact": 1, "semantic": 0}
+    return 1
+
+
+def _compare_numeric_leaves(observed: object, expected: object, path: str,
+                            contract: dict[str, object]) -> int:
+    """Compare only enumerated numeric leaves after the exact pass succeeds."""
+    if isinstance(observed, dict) and isinstance(expected, dict):
+        return sum(_compare_numeric_leaves(observed[key], expected[key], f"{path}.{key}", contract)
+                   for key in sorted(observed))
+    if isinstance(observed, list) and isinstance(expected, list):
+        return sum(_compare_numeric_leaves(left, right, f"{path}.{index}", contract)
+                   for index, (left, right) in enumerate(zip(observed, expected)))
+    profile_id = _path_profile(path, contract)
+    if profile_id is not None:
+        result = numeric_comparison(observed, expected, contract=contract, profile_id=profile_id)
+        if not result["passed"]:
+            raise ValueError(f"HOLD_REPLAY_NUMERIC_BOUND:{path}:profile={profile_id}:abs={result['absolute_error']}:rel={result['relative_error']}:ulp={result['ulp_distance']}")
+        return 1
+    return 0
+
+
+def compare_value(observed: object, expected: object, path: str, *, contract: dict[str, object] | None = None) -> dict[str, int]:
+    """Compare exact structure/identity first, then explicitly enumerated numeric leaves."""
+    policy = contract or local_contract()
+    exact = _compare_structure_and_exact(observed, expected, path, policy)
+    semantic = _compare_numeric_leaves(observed, expected, path, policy)
+    return {"exact": exact, "semantic": semantic}
 
 
 def load(path: Path):
@@ -238,31 +256,8 @@ def _validate_frozen_top(rows: list[dict[str, object]], scope: str) -> None:
 
 def _compare_top(observed: list[dict[str, object]], expected: list[dict[str, object]], scope: str) -> dict[str, int]:
     _validate_frozen_top(observed, scope)
-    if len(expected) != 1000:
-        raise ValueError(f"HOLD_REPLAY_MISMATCH:{scope}:expected_count")
-    totals = {"exact": 0, "semantic": 0}
-    exact_paths = (
-        "rank", "full_space_rank", "front_numbers", "back_numbers", "canonical_ticket_key",
-        "probability_representation", "ranking_algorithm_id", "lineage",
-        "explanation.method", "explanation.probability_primary", "explanation.feature_groups",
-    )
-    for index, (left, right) in enumerate(zip(observed, expected)):
-        for key in exact_paths:
-            left_value, right_value = left, right
-            for segment in key.split("."):
-                left_value, right_value = left_value[segment], right_value[segment]
-            if left_value != right_value:
-                raise ValueError(f"HOLD_REPLAY_MISMATCH:{scope}.{index}.{key}")
-            totals["exact"] += 1
-        for key in ("joint_probability", "log_joint_score"):
-            result = compare_value(left[key], right[key], f"{scope}.{index}.{key}")
-            totals = {name: totals[name] + result[name] for name in totals}
-        for feature in oracle.FEATURE_IDS:
-            result = compare_value(left["explanation"]["feature_contributions"][feature],
-                                   right["explanation"]["feature_contributions"][feature],
-                                   f"{scope}.{index}.explanation.feature_contributions.{feature}")
-            totals = {name: totals[name] + result[name] for name in totals}
-    return totals
+    _validate_frozen_top(expected, f"{scope}:independent")
+    return compare_value(observed, expected, scope)
 
 
 def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]:

@@ -83,6 +83,11 @@ def main() -> int:
                                 "max_absolute": 1e-12, "max_relative": 1e-12, "max_ulps": 8},
         "derived_feature_snapshot_v1": {"finite_required": True, "require_all_bounds": True,
                                         "max_absolute": 3e-16, "max_relative": 3e-14, "max_ulps": 151},
+        "top1000_derived_probability_display_v1": {
+            "finite_required": True, "require_all_bounds": True,
+            "max_absolute": 2.2499312661442353e-22,
+            "max_relative": 3.5383660753807325e-15, "max_ulps": 17,
+        },
     }
     numeric_paths = [path for row in local_contract["path_numeric_profiles"] for path in row["paths"]]
     profile_ids = [row["profile_id"] for row in local_contract["path_numeric_profiles"]]
@@ -93,11 +98,63 @@ def main() -> int:
         f"feature_snapshot.*.normalization.{feature_id}.{statistic}"
         for feature_id in sorted(FEATURE_IDS) for statistic in ("mean", "scale")
     }
+    expected_tight_paths = {
+        "model.objective_trace.gradient_at_zero_by_zone.*.*",
+        "model.selection_metrics.*.joint_log_loss",
+        "selection_receipt.selection_metrics.*.joint_log_loss",
+        "model.zones.*.coefficients.*",
+        "model.zones.*.context.ewma_raw.*.*",
+        "model.zones.*.context.normalization.*.mean",
+        "model.zones.*.context.normalization.*.scale",
+        "model.zones.*.context.number_features.*.*",
+        "model.zones.*.context.pair_matrix.*.*",
+        "model.zones.*.context.pair_values.*",
+        "model.zones.*.context.recency_gap_raw.*",
+        "model.zones.*.context.rolling_raw.*.*",
+        "model.zones.*.top_zone_rows.*.0",
+        "model.zones.*.log_normalizer",
+        "model.zones.*.probability_square_sum",
+        "model.zones.*.normalization_mass",
+        "model.zones.*.minimum_score",
+        "model.zones.*.maximum_score",
+        "model.zones.*.minimum_probability",
+        "model.zones.*.maximum_probability",
+        "model.report_only_metrics.*.model_joint_log_loss",
+        "model.report_only_metrics.*.model_multiclass_brier",
+        "model.report_only_metrics.*.ablation_metrics.*.joint_log_loss",
+        "model.report_only_metrics.*.ablation_metrics.*.multiclass_brier",
+        "model.report_only_summary.permutation_evidence.*.samples.*.permuted_joint_probability",
+        "model.report_only_summary.permutation_evidence.*.samples.*.permuted_joint_log_loss",
+        "historical_parent.zones.*.*",
+        "research_child.zones.*.*",
+        "score.metrics.joint_log_loss",
+        "score.metrics.actual_joint_probability",
+        "score.metrics.multiclass_brier",
+        "top1000.*.log_joint_score",
+        "top1000.*.explanation.feature_contributions.*",
+        "historical_top1000.*.log_joint_score",
+        "historical_top1000.*.explanation.feature_contributions.*",
+        "shadow_top1000.*.log_joint_score",
+        "shadow_top1000.*.explanation.feature_contributions.*",
+        "feature_snapshot.*.raw.ewma_rates.10",
+        "feature_snapshot.*.raw.ewma_rates.30",
+        "feature_snapshot.*.raw.recency_gap",
+        "feature_snapshot.*.raw.rolling_rates.10",
+        "feature_snapshot.*.raw.rolling_rates.30",
+        "feature_snapshot.*.raw.rolling_rates.60",
+    }
+    expected_top_probability_paths = {
+        "top1000.*.joint_probability",
+        "historical_top1000.*.joint_probability",
+        "shadow_top1000.*.joint_probability",
+    }
     if (local_contract.get("contract_id") != "P4-LOCAL-SEMANTIC-BINARY64-1"
             or local_contract.get("default_numeric_profile") != "tight_recomputed_v1"
             or local_contract.get("numeric_profiles") != expected_profiles
             or set(profile_ids) != set(expected_profiles) or len(profile_ids) != len(set(profile_ids))
+            or paths_by_profile.get("tight_recomputed_v1") != expected_tight_paths
             or paths_by_profile.get("derived_feature_snapshot_v1") != expected_derived_feature_paths
+            or paths_by_profile.get("top1000_derived_probability_display_v1") != expected_top_probability_paths
             or len(numeric_paths) != len(set(numeric_paths)) or any("**" in path for path in numeric_paths)
             or local_contract["historical_formal_evidence"]["local_reexecution_required"] is not False
             or any("/home/" in path or "/usr/bin/" in path for path in numeric_paths)):

@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -60,6 +61,68 @@ class LocalVerifierNumericContractTests(unittest.TestCase):
         self.assertFalse(verifier.numeric_comparison(base, nine, contract=self.contract)["passed"])
         with self.assertRaisesRegex(ValueError, "HOLD_REPLAY_NUMERIC_BOUND"):
             verifier.compare_value(base, nine, "model.zones.0.coefficients.F04", contract=self.contract)
+
+    def test_observed_top1000_macos_17_ulp_fixture_passes_and_is_narrowly_routed(self) -> None:
+        evidence = self.contract["numeric_profile_evidence"]["top1000_derived_probability_display_v1"]
+        fixture = json.loads((ROOT / evidence["fixture_path"]).read_text(encoding="utf-8"))
+        released_rows = verifier.load_jsonl(next((ROOT / f"artifacts/phase-4/{fixture['release_id']}/forecasts/{fixture['game']}").glob("*/top1000.jsonl")))
+        released = released_rows[fixture["rank"] - 1]
+        self.assertEqual(released["rank"], fixture["rank"])
+        self.assertEqual(released["canonical_ticket_key"], fixture["canonical_ticket_key"])
+        self.assertEqual(released["joint_probability"], fixture["release_value"])
+
+        result = verifier.numeric_comparison(
+            fixture["release_value"], fixture["macos_value"], contract=self.contract,
+            profile_id=fixture["profile_id"],
+        )
+        self.assertTrue(result["passed"])
+        self.assertEqual(result["absolute_error"], fixture["absolute_error"])
+        self.assertEqual(result["relative_error"], fixture["relative_error"])
+        self.assertEqual(result["ulp_distance"], 17)
+        verifier.compare_value(fixture["release_value"], fixture["macos_value"], fixture["path"], contract=self.contract)
+
+        for scope in ("top1000", "historical_top1000", "shadow_top1000"):
+            self.assertEqual(
+                verifier._path_profile(f"{scope}.622.joint_probability", self.contract),
+                "top1000_derived_probability_display_v1",
+            )
+            self.assertEqual(verifier._path_profile(f"{scope}.622.log_joint_score", self.contract), "tight_recomputed_v1")
+            self.assertIsNone(verifier._path_profile(f"{scope}.622.rank", self.contract))
+
+    def test_top1000_probability_18_ulp_and_just_outside_bounds_fail(self) -> None:
+        profile = "top1000_derived_probability_display_v1"
+        base = float("6.358672953029994052e-08")
+        eighteen = base
+        for _ in range(18):
+            eighteen = math.nextafter(eighteen, -math.inf)
+        ulp = verifier.numeric_comparison(base, eighteen, contract=self.contract, profile_id=profile)
+        self.assertEqual(ulp["ulp_distance"], 18)
+        self.assertFalse(ulp["passed"])
+
+        absolute_base = 1.0
+        absolute_outside = math.nextafter(absolute_base, math.inf)
+        absolute = verifier.numeric_comparison(absolute_base, absolute_outside, contract=self.contract, profile_id=profile)
+        self.assertGreater(absolute["absolute_error"], 2.2499312661442353e-22)
+        self.assertLessEqual(absolute["relative_error"], 3.5383660753807325e-15)
+        self.assertEqual(absolute["ulp_distance"], 1)
+        self.assertFalse(absolute["passed"])
+
+        relative_base = 2.0 ** -24
+        relative_outside = relative_base
+        for _ in range(16):
+            relative_outside = math.nextafter(relative_outside, math.inf)
+        relative = verifier.numeric_comparison(relative_base, relative_outside, contract=self.contract, profile_id=profile)
+        self.assertLessEqual(relative["absolute_error"], 2.2499312661442353e-22)
+        self.assertGreater(relative["relative_error"], 3.5383660753807325e-15)
+        self.assertEqual(relative["ulp_distance"], 16)
+        self.assertFalse(relative["passed"])
+
+        for value in (math.nan, math.inf, -math.inf):
+            with self.assertRaisesRegex(ValueError, "FAIL_NON_FINITE"):
+                verifier.numeric_comparison(base, value, contract=self.contract, profile_id=profile)
+
+        with self.assertRaisesRegex(ValueError, "HOLD_REPLAY_NUMERIC_BOUND"):
+            verifier.compare_value(base, eighteen, "top1000.622.joint_probability", contract=self.contract)
 
     def test_derived_feature_boundary_immediately_above_each_maximum_fails(self) -> None:
         profile = "derived_feature_snapshot_v1"
@@ -207,6 +270,37 @@ class LocalVerifierIntegrityTests(unittest.TestCase):
         changed_lineage[0]["lineage"]["model_release_id"] += "-mutated"
         with self.assertRaisesRegex(ValueError, "lineage"):
             verifier._compare_top(changed_lineage, rows, "top1000")
+
+    def test_top1000_exact_invariants_fail_before_tolerated_probability_is_compared(self) -> None:
+        top_path = next((self.release / "forecasts/ssq").glob("*/top1000.jsonl"))
+        expected = verifier.load_jsonl(top_path)
+        observed = copy.deepcopy(expected)
+        value = float(observed[622]["joint_probability"])
+        for _ in range(17):
+            value = math.nextafter(value, -math.inf)
+        observed[622]["joint_probability"] = format(value, ".18g")
+        verifier._compare_top(observed, expected, "top1000")
+
+        mutations = {}
+        mutations["ticket"] = copy.deepcopy(observed)
+        mutations["ticket"][622]["front_numbers"][0] += 1
+        mutations["order"] = copy.deepcopy(observed)
+        mutations["order"][0], mutations["order"][1] = mutations["order"][1], mutations["order"][0]
+        mutations["rank"] = copy.deepcopy(observed)
+        mutations["rank"][622]["rank"] += 1
+        mutations["tie_key"] = copy.deepcopy(observed)
+        mutations["tie_key"][622]["tie_key"] = "score-identity:" + "0" * 64
+        mutations["score_identity"] = copy.deepcopy(observed)
+        mutations["score_identity"][622]["score_identity"] = observed[621]["score_identity"]
+        mutations["lineage"] = copy.deepcopy(observed)
+        mutations["lineage"][622]["lineage"]["model_release_id"] += "-mutated"
+
+        for name, changed in mutations.items():
+            with self.subTest(name=name), mock.patch.object(
+                verifier, "numeric_comparison", side_effect=AssertionError("numeric comparison ran before exact rejection")
+            ):
+                with self.assertRaises((ValueError, KeyError)):
+                    verifier._compare_top(changed, expected, "top1000")
 
     def test_local_entry_point_contains_no_vps_only_path(self) -> None:
         for relative in ("scripts/phase4/local-accept-release", "scripts/phase4/local_accept_release.py"):

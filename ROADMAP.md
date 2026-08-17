@@ -132,7 +132,7 @@ Phase 3 正式验收身份是 `P3-R07-2c0fa97-20260810-I01`，权威制品为 `a
 
 Phase 4 不要求证明 lift；`no_confirmed_lift|worse_than_M0|insufficient_evidence` 可与工程 PASS 并存。但任一 game 使用 M0、fixture、内联参数、工作树默认模型或全等概率输出时，必须 HOLD/FAIL，不能形成产品 PASS。完整合同由同一 `P4_AUTHORITY_COMMIT` 的其余三份 authority 文档定义。
 
-本地产品验收不得绑定正式 builder 的 VPS 绝对路径。正式 provenance 继续精确冻结 Linux interpreter/平台/依赖/命令；本地只读 verifier 支持 CPython 3.12 patch/platform 迁移，以 manifest closure 验证历史 Phase 2/2.1 receipts 而不重跑其 VPS 环境。只有合同逐路径枚举的重算浮点叶可使用 finite 且 absolute/relative/ULP 三界同时满足的语义比较；ID、hash、issue/cutoff/lineage、Top-1000 membership/order、canonical ticket、score/tie identity 和 create-once 文件始终 exact。
+本地产品验收不得绑定正式 builder 的 VPS 绝对路径。正式 provenance 继续精确冻结 Linux interpreter/平台/依赖/命令；本地只读 verifier 支持 CPython 3.12 patch/platform 迁移，以 manifest closure 验证历史 Phase 2/2.1 receipts 而不重跑其 VPS 环境。只有合同逐路径枚举的重算浮点叶可使用 finite 且 absolute/relative/ULP 三界同时满足的语义比较；ID、hash、issue/cutoff/lineage、Top-1000 membership/order、canonical ticket、create-once 文件，以及由 `P4S10HE1`（`1e-10` decimal quantum、round-half-even）稳定数学顺序键派生的 score/tie identity 与 tie bounds 始终 exact。排名先按该稳定键降序，再按 canonical ticket 升序处理同键 tie；raw binary64 bits 不得作为身份或排名 ID。
 
 ### 7.2 工作方法
 

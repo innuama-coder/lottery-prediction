@@ -68,7 +68,8 @@ class RealModelTest(unittest.TestCase):
         self.assertTrue(all(required <= row.keys() for row in rows))
         for row in rows:
             self.assertEqual(Decimal(row["tie_midrank"]), (Decimal(row["tie_rank_lower"]) + Decimal(row["tie_rank_upper"])) / 2)
-            self.assertEqual(row["probability_representation"], "P4-LOGSUMEXP-BINARY64-SCORE-IDENTITY-1")
+            self.assertEqual(row["probability_representation"], "P4-LOGSUMEXP-STABLE-SCORE-KEY-1")
+            self.assertTrue(row["score_identity"].endswith(row["score_order_key"]))
 
     def test_report_label_mutation_cannot_change_selection_receipt(self) -> None:
         draws = list(self.draws["dlt"])
@@ -80,8 +81,9 @@ class RealModelTest(unittest.TestCase):
         self.assertEqual(original["selected_config_identity"], mutated["selected_config_identity"])
         self.assertLess(original["selection_input"]["last_position"], original["report_only_capability_boundary"]["first_position"])
 
-    def test_near_equal_binary64_scores_are_not_ties(self) -> None:
-        self.assertNotEqual(score_identity(1.0), score_identity(math.nextafter(1.0, 2.0)))
+    def test_one_ulp_score_drift_preserves_stable_identity(self) -> None:
+        self.assertEqual(score_identity(1.0), score_identity(math.nextafter(1.0, 2.0)))
+        self.assertEqual(score_identity(1.0), score_identity(math.nextafter(1.0, 0.0)))
 
     def test_formal_rejections(self) -> None:
         model = self.models["dlt"]

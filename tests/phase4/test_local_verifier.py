@@ -237,6 +237,34 @@ class LocalVerifierFeatureSnapshotContractTests(unittest.TestCase):
 class LocalVerifierIntegrityTests(unittest.TestCase):
     release = ROOT / "artifacts/phase-4/P4-P4E2-20260815-r04"
 
+    @staticmethod
+    def stable_rows(rows: list[dict[str, object]]) -> list[dict[str, object]]:
+        migrated = copy.deepcopy(rows)
+        identities = [verifier.oracle.score_identity(float(row["log_joint_score"])) for row in migrated]
+        positions = {identity: [index for index, value in enumerate(identities, 1) if value == identity]
+                     for identity in set(identities)}
+        layer, previous = 0, None
+        for row, identity in zip(migrated, identities):
+            score = float(row["log_joint_score"])
+            if identity != previous:
+                layer += 1
+                previous = identity
+            peers = positions[identity]
+            row.update(
+                score_order_key=verifier.oracle.score_order_key(score),
+                score_identity=identity,
+                probability_representation=verifier.oracle.PROBABILITY_REPRESENTATION_ID,
+                probability_layer=layer,
+                tie_group_id=verifier.oracle.tie_group_id_for_score(score),
+                tie_group_size=len(peers),
+                tie_rank_lower=min(peers),
+                tie_rank_upper=max(peers),
+                tie_midrank=format((min(peers) + max(peers)) / 2, ".1f"),
+                tie_key=verifier.oracle.tie_key_for_score(score),
+                ranking_algorithm_id=verifier.oracle.RANKING_ALGORITHM_ID,
+            )
+        return migrated
+
     def test_missing_and_tampered_final_closure_fail(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             copied = Path(raw) / self.release.name
@@ -256,7 +284,7 @@ class LocalVerifierIntegrityTests(unittest.TestCase):
 
     def test_top1000_order_tie_identity_and_lineage_are_exact(self) -> None:
         top_path = next((self.release / "forecasts/ssq").glob("*/top1000.jsonl"))
-        rows = [json.loads(line) for line in top_path.read_text().splitlines()]
+        rows = self.stable_rows([json.loads(line) for line in top_path.read_text().splitlines()])
         verifier._compare_top(rows, copy.deepcopy(rows), "top1000")
         reordered = copy.deepcopy(rows)
         reordered[0], reordered[1] = reordered[1], reordered[0]
@@ -273,7 +301,7 @@ class LocalVerifierIntegrityTests(unittest.TestCase):
 
     def test_top1000_exact_invariants_fail_before_tolerated_probability_is_compared(self) -> None:
         top_path = next((self.release / "forecasts/ssq").glob("*/top1000.jsonl"))
-        expected = verifier.load_jsonl(top_path)
+        expected = self.stable_rows(verifier.load_jsonl(top_path))
         observed = copy.deepcopy(expected)
         value = float(observed[622]["joint_probability"])
         for _ in range(17):
@@ -289,7 +317,9 @@ class LocalVerifierIntegrityTests(unittest.TestCase):
         mutations["rank"] = copy.deepcopy(observed)
         mutations["rank"][622]["rank"] += 1
         mutations["tie_key"] = copy.deepcopy(observed)
-        mutations["tie_key"][622]["tie_key"] = "score-identity:" + "0" * 64
+        mutations["tie_key"][622]["tie_key"] = "tie-score-order-key-v1:P4S10HE1:0"
+        mutations["score_order_key"] = copy.deepcopy(observed)
+        mutations["score_order_key"][622]["score_order_key"] = "P4S10HE1:0"
         mutations["score_identity"] = copy.deepcopy(observed)
         mutations["score_identity"][622]["score_identity"] = observed[621]["score_identity"]
         mutations["lineage"] = copy.deepcopy(observed)

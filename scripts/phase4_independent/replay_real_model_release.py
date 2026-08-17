@@ -26,7 +26,7 @@ LOCAL_CONTRACT_PATH = ROOT / "config/phase4/local-verifier-contract.json"
 
 def local_contract() -> dict[str, object]:
     value = load(LOCAL_CONTRACT_PATH)
-    if value.get("contract_id") != "P4-LOCAL-SEMANTIC-BINARY64-1":
+    if value.get("contract_id") != "P4-LOCAL-STABLE-SCORE-KEY-2":
         raise ValueError("HOLD_LOCAL_VERIFIER_CONTRACT")
     return value
 
@@ -219,7 +219,7 @@ def _validate_frozen_top(rows: list[dict[str, object]], scope: str) -> None:
         raise ValueError(f"HOLD_ILLEGAL_TOP1000:{scope}")
     identities = [row.get("score_identity") for row in rows]
     positions: dict[object, list[int]] = {}
-    previous_score: float | None = None
+    previous_tick: int | None = None
     previous_ticket: tuple[tuple[int, ...], tuple[int, ...]] | None = None
     for rank, row in enumerate(rows, 1):
         ticket = (tuple(row["front_numbers"]), tuple(row["back_numbers"]))
@@ -227,17 +227,20 @@ def _validate_frozen_top(rows: list[dict[str, object]], scope: str) -> None:
         if not math.isfinite(score) or not math.isfinite(float(row["joint_probability"])):
             raise ValueError("FAIL_NON_FINITE_NUMERIC_REPLAY")
         identity = oracle.score_identity(score)
-        probability_hash = hashlib.sha256(identity.encode()).hexdigest()
+        order_key = oracle.score_order_key(score)
+        tick = oracle.score_order_tick(score)
         if (row.get("rank") != rank or row.get("full_space_rank") != rank
                 or row.get("canonical_ticket_key") != [list(ticket[0]), list(ticket[1])]
+                or row.get("score_order_key") != order_key
                 or row.get("score_identity") != identity
-                or row.get("tie_group_id") != f"tie-{probability_hash[:24]}"
-                or row.get("tie_key") != f"score-identity:{probability_hash}"
-                or row.get("ranking_algorithm_id") != "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1"):
+                or row.get("tie_group_id") != oracle.tie_group_id_for_score(score)
+                or row.get("tie_key") != oracle.tie_key_for_score(score)
+                or row.get("probability_representation") != oracle.PROBABILITY_REPRESENTATION_ID
+                or row.get("ranking_algorithm_id") != oracle.RANKING_ALGORITHM_ID):
             raise ValueError(f"HOLD_TIE_IDENTITY:{scope}:{rank}")
-        if previous_score is not None and (score > previous_score or (score == previous_score and ticket < previous_ticket)):
+        if previous_tick is not None and (tick > previous_tick or (tick == previous_tick and ticket < previous_ticket)):
             raise ValueError(f"HOLD_TOP1000_ORDER:{scope}:{rank}")
-        previous_score, previous_ticket = score, ticket
+        previous_tick, previous_ticket = tick, ticket
         positions.setdefault(identity, []).append(rank)
     if len({(tuple(row["front_numbers"]), tuple(row["back_numbers"])) for row in rows}) != 1000:
         raise ValueError(f"HOLD_ILLEGAL_TOP1000:{scope}:duplicate")
@@ -302,7 +305,7 @@ def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]
     for zone_index, (observed_zone, expected_zone) in enumerate(zip(model["zones"], expected["zones"])):
         for key in ("n", "k", "coefficients", "context", "top_zone_rows", "log_normalizer", "probability_square_sum",
                     "combination_count", "normalization_method", "normalization_mass", "minimum_score", "maximum_score",
-                    "minimum_probability", "maximum_probability", "probability_layer_lower_bound"):
+                    "minimum_probability", "maximum_probability", "probability_layer_lower_bound", "score_order_contract"):
             result = compare_value(observed_zone.get(key), expected_zone.get(key), f"model.zones.{zone_index}.{key}")
             comparisons = {name: comparisons[name] + result[name] for name in comparisons}
     selection_receipt = load(release / f"models/{game}/model-selection-receipt.json")
@@ -348,7 +351,9 @@ def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]
             or forecast.get("model_sha256") != sha(model_path) or forecast.get("feature_release_id") != model["feature_release_id"]
             or forecast.get("data_release_id") != model["training_dataset_id"] or forecast.get("config_id") != model["training_config_id"]
             or forecast.get("code_commit") != model["source_commit"] or forecast.get("dependency_identity") != model["dependency_identity"]
-            or forecast.get("ranking_algorithm_id") != "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1"
+            or forecast.get("ranking_algorithm_id") != oracle.RANKING_ALGORITHM_ID
+            or forecast.get("probability_representation") != oracle.PROBABILITY_REPRESENTATION_ID
+            or forecast.get("ranking_key") != ["stable_score_order_key_desc_P4S10HE1", "canonical_ticket_asc_within_stable_score_key_tie"]
             or not forecast.get("prediction_locked_at_utc")):
         raise ValueError("FAIL_UNFROZEN_MODEL_PATH")
     if (lock["content_sha256"] != sha(forecast_path) or lock["top1000_sha256"] != sha(formal) or lock["status"] != "LOCKED"
@@ -363,8 +368,22 @@ def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]
     probabilities = [float(row["joint_probability"]) for row in observed_top]
     identities = [row["score_identity"] for row in observed_top]
     if (len(set(identities)) < 2 or not all(left >= right > 0 for left, right in zip(probabilities, probabilities[1:]))
-            or oracle.score_identity(1.0) == oracle.score_identity(math.nextafter(1.0, 2.0))):
+            or not (oracle.score_identity(1.0) == oracle.score_identity(math.nextafter(1.0, -math.inf))
+                    == oracle.score_identity(math.nextafter(1.0, math.inf)))):
         raise ValueError("HOLD_UNRELIABLE_RANKING")
+    qualification = load(model_path.with_name("probability-qualification.json"))
+    identity_counts = {identity: identities.count(identity) for identity in set(identities)}
+    if (qualification.get("probability_semantics") != "stable_decimal_score_order_key_then_exp_for_display_v1"
+            or qualification.get("score_order_key_id") != oracle.SCORE_ORDER_KEY_ID
+            or qualification.get("score_order_quantum") != format(oracle.SCORE_ORDER_QUANTUM, "f")
+            or qualification.get("score_order_rounding") != "ROUND_HALF_EVEN"
+            or qualification.get("ranking_algorithm_id") != oracle.RANKING_ALGORITHM_ID
+            or qualification.get("one_ulp_score_drift_preserves_identity") is not True
+            or qualification.get("complete_space_zone_score_order_contracts") != [zone["score_order_contract"] for zone in model["zones"]]
+            or qualification.get("top1000_distinct_score_count") != len(identity_counts)
+            or qualification.get("top1000_maximum_tie_count") != max(identity_counts.values())
+            or qualification.get("top1000_layer_count_digest") != oracle.digest(sorted(identity_counts.items()))):
+        raise ValueError("HOLD_REPLAY_MISMATCH:probability_qualification")
     if any(observed_top[:size] != observed_top[0:size] for size in (10, 100, 200, 1000)):
         raise ValueError("HOLD_TOP_PREFIX")
 
@@ -420,8 +439,11 @@ def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]
     expected_parent = oracle.train(game, draws, len(draws) - 1)
     if (cycle["target_issue"] != draws[-1].issue or parent["training_cutoff_issue"] != draws[-2].issue):
         raise ValueError("HOLD_REPLAY_MISMATCH:historical_parent")
-    compare_value([zone["coefficients"] for zone in parent["zones"]],
-                  [zone["coefficients"] for zone in expected_parent["zones"]], "historical_parent.zones")
+    for zone_index, (observed_zone, expected_zone) in enumerate(zip(parent["zones"], expected_parent["zones"])):
+        for key in ("n", "k", "coefficients", "context", "top_zone_rows", "log_normalizer", "probability_square_sum",
+                    "combination_count", "normalization_method", "normalization_mass", "minimum_score", "maximum_score",
+                    "minimum_probability", "maximum_probability", "probability_layer_lower_bound", "score_order_contract"):
+            compare_value(observed_zone.get(key), expected_zone.get(key), f"model.zones.{zone_index}.{key}")
     expected_parent_id = f"p4e2r-{game}-{oracle.digest({'family': parent['family'], 'game': game, 'cutoff': parent['training_cutoff_issue'], 'l2': parent['regularization']['selected'], 'coefficients': [zone['coefficients'] for zone in parent['zones']], 'training_dataset_id': parent['training_dataset_id'], 'training_config_id': parent['training_config_id'], 'selection': parent['selected_candidate_identity']})[:16]}"
     if parent["model_release_id"] != expected_parent_id:
         raise ValueError("HOLD_REPLAY_MISMATCH:historical_parent:model_release_id")
@@ -450,7 +472,25 @@ def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]
         raise ValueError("HOLD_REPLAY_MISMATCH:research_diff")
     coefficients = oracle.fit_coefficients(game, draws, len(draws), float(proposal["child_l2"]))
     child = load(research / "child-model.json")
-    compare_value([zone["coefficients"] for zone in child["zones"]], coefficients, "research_child.zones")
+    child_contexts = [oracle.feature_context(game, draws, zone) for zone in (0, 1)]
+    child_enumerations = [
+        oracle.enumerate_zone(child_contexts[zone], coefficients[zone], True, collect_layers=True)
+        for zone in (0, 1)
+    ]
+    expected_child_zones = [
+        {
+            "n": oracle.RULES[game][zone][0], "k": oracle.RULES[game][zone][1],
+            "coefficients": coefficients[zone], "context": child_contexts[zone],
+            "top_zone_rows": [[score_value, list(combo)] for score_value, combo in child_enumerations[zone]["rows"]],
+            **{key: value for key, value in child_enumerations[zone].items() if key != "rows"},
+        }
+        for zone in (0, 1)
+    ]
+    for zone_index, (observed_zone, expected_zone) in enumerate(zip(child["zones"], expected_child_zones)):
+        for key in ("n", "k", "coefficients", "context", "top_zone_rows", "log_normalizer", "probability_square_sum",
+                    "combination_count", "normalization_method", "normalization_mass", "minimum_score", "maximum_score",
+                    "minimum_probability", "maximum_probability", "probability_layer_lower_bound", "score_order_contract"):
+            compare_value(observed_zone.get(key), expected_zone.get(key), f"model.zones.{zone_index}.{key}")
     if (child["parent_model_release_id"] != parent["model_release_id"]
             or child["research_score_id"] != score["score_id"] or child["research_result_revision_id"] != result["result_revision_id"]
             or candidate.get("child_model_release_id") != child["model_release_id"]
@@ -469,7 +509,8 @@ def replay_game(release: Path, draws_path: Path, game: str) -> dict[str, object]
         raise ValueError("HOLD_REPLAY_MISMATCH:research_child_manifest")
     shadow_path = research / "shadow-top1000.jsonl"
     observed_shadow = [json.loads(line) for line in shadow_path.read_text(encoding="utf-8").splitlines()]
-    shadow_comparisons = _compare_top(observed_shadow, oracle.top_tickets(child), "shadow_top1000")
+    expected_child = {**child, "zones": expected_child_zones}
+    shadow_comparisons = _compare_top(observed_shadow, oracle.top_tickets(expected_child), "shadow_top1000")
     if (not decision.get("probability_changed") or not decision.get("top1000_changed")
             or decision.get("serving_changed") or not decision.get("direct_promotion_attempt_rejected")):
         raise ValueError("HOLD_REPLAY_MISMATCH:research_shadow")
@@ -527,7 +568,11 @@ def quick_guard(release: Path, draws_path: Path) -> None:
         raise ValueError("selection")
     rows = [json.loads(line) for line in formal.read_text(encoding="utf-8").splitlines()]
     for row in rows:
-        if row.get("score_identity") != oracle.score_identity(float(row["log_joint_score"])):
+        score = float(row["log_joint_score"])
+        if (row.get("score_order_key") != oracle.score_order_key(score)
+                or row.get("score_identity") != oracle.score_identity(score)
+                or row.get("tie_key") != oracle.tie_key_for_score(score)
+                or row.get("tie_group_id") != oracle.tie_group_id_for_score(score)):
             raise ValueError("tie")
     summary = model["report_only_summary"]
     if (any(row.get("method") != "zero_group_coefficients_complete_space_renormalization_v1" or not row.get("all_complete_spaces_renormalized") for row in summary["ablation_results"])
@@ -553,7 +598,7 @@ def mutation_checks(release: Path, draws_path: Path) -> dict[str, str]:
     cases = (
         "early_draw", "cutoff", "rolling", "ewma", "gap", "pair", "structure",
         "coefficient", "model_id", "probability", "top1000_order", "lock",
-        "provider_reference", "m0_serving", "selection_report_overlap",
+        "provider_reference", "m0_serving", "selection_report_overlap", "score_order_key", "tie_key",
         "schedule_stage_noop", "score_forecast_mismatch", "result_target_mismatch",
         "research_without_score", "selection_after_report_labels", "fake_ablation",
         "fake_permutation", "missing_lineage", "approximate_tie", "shallow_cli_validate",
@@ -638,9 +683,14 @@ def mutation_checks(release: Path, draws_path: Path) -> dict[str, str]:
                 model_path.write_bytes(canon(model))
             elif case == "missing_lineage":
                 forecast = load(forecast_path); del forecast["model_sha256"]; forecast_path.write_bytes(canon(forecast))
+            elif case in {"score_order_key", "tie_key"}:
+                rows = formal.read_text().splitlines(); value = json.loads(rows[0])
+                value[case] = ("P4S10HE1:0" if case == "score_order_key" else "tie-score-order-key-v1:P4S10HE1:0")
+                rows[0] = json.dumps(value, sort_keys=True, separators=(",", ":")); formal.write_text("\n".join(rows) + "\n")
             elif case == "approximate_tie":
                 rows = formal.read_text().splitlines(); first, second = json.loads(rows[0]), json.loads(rows[1])
-                second["score_identity"] = first["score_identity"]; second["tie_group_id"] = first["tie_group_id"]
+                second["score_order_key"] = first["score_order_key"]; second["score_identity"] = first["score_identity"]
+                second["tie_key"] = first["tie_key"]; second["tie_group_id"] = first["tie_group_id"]
                 rows[1] = json.dumps(second, sort_keys=True, separators=(",", ":")); formal.write_text("\n".join(rows) + "\n")
             try:
                 quick_guard(copy, draw_copy)
@@ -728,6 +778,9 @@ def _validate_release_schemas(release: Path) -> int:
         ("local-verifier-contract.schema.json", release / "contracts/local-verifier-contract.json"),
         ("serving-selection.schema.json", release / "selection/serving-selection.json"),
     ]
+    ranking_schema = load(ROOT / "schemas/phase4/p4e2-ranking.schema.json")
+    ranking_validator = jsonschema.Draft202012Validator(ranking_schema)
+    ranking_row_count = 0
     for game in ("ssq", "dlt"):
         serving = load(release / "selection/serving-selection.json")["serving_model_by_game"][game]
         model_path = release / serving["model_path"]
@@ -740,16 +793,26 @@ def _validate_release_schemas(release: Path) -> int:
             ("backtest.schema.json", _single(release / f"backtests/{game}", "*/summary.json")),
             ("formal-forecast.schema.json", _single(release / f"forecasts/{game}", "*/forecast.json")),
             ("formal-forecast-lock.schema.json", _single(release / f"forecasts/{game}", "*/lock.json")),
+            ("probability-qualification.schema.json", model_path.with_name("probability-qualification.json")),
         ])
         feature_schema = load(ROOT / "schemas/phase4/feature-snapshot.schema.json")
         validator = jsonschema.Draft202012Validator(feature_schema)
         for line in (feature_dir / "feature-snapshot.jsonl").read_text(encoding="utf-8").splitlines():
             validator.validate(json.loads(line))
+        ranking_paths = [
+            _single(release / f"forecasts/{game}", "*/top1000.jsonl"),
+            release / f"runtime/lifecycle/{game}/historical-cycle-v1/top1000.jsonl",
+            release / f"research/{game}/shadow-top1000.jsonl",
+        ]
+        for ranking_path in ranking_paths:
+            for row in load_jsonl(ranking_path):
+                ranking_validator.validate(row)
+                ranking_row_count += 1
     for schema_name, value_path in pairs:
         schema = load(ROOT / f"schemas/phase4/{schema_name}")
         jsonschema.Draft202012Validator.check_schema(schema)
         jsonschema.Draft202012Validator(schema).validate(load(value_path))
-    return len(pairs) + 2
+    return len(pairs) + 3 + ranking_row_count
 
 
 def _validate_scheduler(release: Path) -> dict[str, object]:

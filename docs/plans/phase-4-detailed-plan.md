@@ -192,8 +192,8 @@ D13 -> D15 final machine acceptance and handoff
 - **固定输入：** D11 frozen release及代码/依赖/输入manifest；独立replay实现。
 - **允许/禁止修改：** 只允许 `replay/`和独立测试；禁止导入产品核心概率/训练函数、修改任何被重放文件。
 - **交付物/Schema：** `replay/replay-report.json`、逐事实comparison、import audit和mutation findings。
-- **实现方法：** 独立解析 Phase 1、重算 F01–F14、训练目标/选择、组合分数归一和 Top-1000；重算所有 hash/parent 关系，不导入产品核心特征或概率实现。正式 builder provenance 继续 byte/hash exact；本地 CPython 3.12 verifier 对 `P4-LOCAL-SEMANTIC-BINARY64-1` 明确逐路径枚举的重算浮点叶要求 finite 且同时通过 absolute `1e-12`、relative `1e-12`、ULP `8` 三界，其余字段 exact。
-- **验收方法：** clean 隔离目录 replay；分别突变一条早期 draw、cutoff、rolling/EWMA/gap、pair/结构 feature、系数、model ID、概率、Top-1000 顺序、tie/score identity、model lineage、lock 和 CLI provider 引用；加入 Linux/macOS 4-ULP 正例、8-ULP 精确边界、9-ULP/非有限负例。删除/tamper final closure 必须失败。
+- **实现方法：** 独立解析 Phase 1、重算 F01–F14、训练目标/选择、组合分数归一和 Top-1000；重算所有 hash/parent 关系，不导入产品核心特征或概率实现。正式 builder provenance 继续 byte/hash exact；本地 CPython 3.12 verifier 使用 `P4-LOCAL-STABLE-SCORE-KEY-2`。既有 8/151/17-ULP numeric profiles 保持逐路径、finite、conjunctive 且不扩宽；score/tie identity 则由 `P4S10HE1`（exact-decimal rational、`1e-10`、half-even）唯一派生并 exact 比较，排名使用 stable key desc 后接 canonical ticket asc。
+- **验收方法：** clean 隔离目录 replay；分别突变一条早期 draw、cutoff、rolling/EWMA/gap、pair/结构 feature、系数、model ID、概率、Top-1000 顺序、stable score key、tie/score identity、model lineage、lock 和 CLI provider 引用；加入六个 controller 一-ULP score fixtures、完整 r10 六 scope/6,000 行稳定键检查、first-boundary/非有限负例，同时保留 8/151/17-ULP profile 边界测试。删除/tamper final closure 必须失败。
 - **通过判据：** 原release逐事实100% match；每类mutation命中预期guard；产品核心import=0；两game均覆盖。
 - **失败/HOLD：** `HOLD_REPLAY_MISMATCH|HOLD_REPLAY_INDEPENDENCE|FAIL_TAMPERED`。
 - **依赖/下游：** D11；D14消费。

@@ -13,6 +13,15 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "src"))
+from lottery_system.phase4.p4e2_model import (  # noqa: E402
+    PROBABILITY_REPRESENTATION_ID,
+    RANKING_ALGORITHM_ID,
+    score_identity,
+    score_order_key,
+    tie_group_id_for_score,
+    tie_key_for_score,
+)
 FINAL = {"acceptance/machine-acceptance.json", "acceptance/checklist-release-receipt.json", "acceptance/final-closure.json"}
 PROTECTED_ROOTS = (
     "artifacts/phase-0", "artifacts/phase-0-multisource", "artifacts/phase-1",
@@ -99,12 +108,25 @@ def validate_forecast(release: Path, game: str) -> dict[str, Any]:
     probabilities = [Decimal(row["joint_probability"]) for row in rows]
     if len(set(probabilities)) < 2 or any(value <= 0 for value in probabilities) or any(left < right for left, right in zip(probabilities, probabilities[1:])):
         raise ValueError(f"HOLD_PROBABILITY_ORDER:{game}")
+    expected_order = sorted(
+        rows,
+        key=lambda row: (
+            -int(str(row["score_order_key"]).split(":", 1)[1]),
+            tuple(row["front_numbers"]),
+            tuple(row["back_numbers"]),
+        ),
+    )
+    if rows != expected_order:
+        raise ValueError(f"HOLD_STABLE_SCORE_ORDER:{game}")
     for index, row in enumerate(rows, 1):
-        expected_score_identity = f"binary64:{float(row['log_joint_score']).hex()}"
+        score = float(row["log_joint_score"])
         if (row["rank"] != index or row.get("full_space_rank") != index or not required_tie <= row.keys()
-                or row.get("probability_representation") != "P4-LOGSUMEXP-BINARY64-SCORE-IDENTITY-1"
-                or row.get("score_identity") != expected_score_identity
-                or row.get("ranking_algorithm_id") != "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1"):
+                or row.get("probability_representation") != PROBABILITY_REPRESENTATION_ID
+                or row.get("score_order_key") != score_order_key(score)
+                or row.get("score_identity") != score_identity(score)
+                or row.get("tie_key") != tie_key_for_score(score)
+                or row.get("tie_group_id") != tie_group_id_for_score(score)
+                or row.get("ranking_algorithm_id") != RANKING_ALGORITHM_ID):
             raise ValueError(f"HOLD_TIE_CONTRACT:{game}:{index}")
         peers = [position for position, value in enumerate(rows, 1) if value["score_identity"] == row["score_identity"]]
         if row["tie_group_size"] != len(peers) or row["tie_rank_lower"] != min(peers) or row["tie_rank_upper"] != max(peers) or Decimal(row["tie_midrank"]) != (Decimal(min(peers)) + Decimal(max(peers))) / 2:
@@ -114,13 +136,27 @@ def validate_forecast(release: Path, game: str) -> dict[str, Any]:
         raise ValueError(f"HOLD_M0_SERVING:{game}")
     lock = load(forecast_path.with_name("lock.json"))
     model_path = release / serving["model_path"]
+    model = load(model_path)
+    qualification_path = model_path.with_name("probability-qualification.json")
+    qualification = load(qualification_path)
+    if (qualification.get("probability_semantics") != "stable_decimal_score_order_key_then_exp_for_display_v1"
+            or qualification.get("score_order_key_id") != "P4S10HE1"
+            or qualification.get("score_order_quantum") != "0.0000000001"
+            or qualification.get("score_order_rounding") != "ROUND_HALF_EVEN"
+            or qualification.get("ranking_algorithm_id") != RANKING_ALGORITHM_ID
+            or qualification.get("one_ulp_score_drift_preserves_identity") is not True
+            or qualification.get("complete_space_zone_score_order_contracts") != [zone["score_order_contract"] for zone in model["zones"]]):
+        raise ValueError(f"HOLD_PROBABILITY_QUALIFICATION:{game}")
     feature_manifest = release / f"features/{game}/{serving['feature_release_id']}/manifest.json"
     data_manifest = release / f"data/{game}/training-input-manifest.json"
     required_lineage = (forecast.get("model_sha256") == sha(model_path) and forecast.get("feature_manifest_sha256") == sha(feature_manifest)
                         and forecast.get("data_manifest_sha256") == sha(data_manifest) and bool(forecast.get("config_id"))
                         and bool(forecast.get("code_commit")) and bool(forecast.get("dependency_identity"))
                         and bool(forecast.get("prediction_locked_at_utc")) and forecast.get("lock_id") == lock.get("lock_id")
-                        and forecast.get("ranking_algorithm_id") == "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1"
+                        and forecast.get("ranking_algorithm_id") == RANKING_ALGORITHM_ID
+                        and forecast.get("probability_representation") == PROBABILITY_REPRESENTATION_ID
+                        and forecast.get("ranking_key") == ["stable_score_order_key_desc_P4S10HE1", "canonical_ticket_asc_within_stable_score_key_tie"]
+                        and forecast.get("probability_qualification_sha256") == sha(qualification_path)
                         and lock.get("create_once") and lock.get("content_sha256") == sha(forecast_path)
                         and lock.get("top1000_sha256") == sha(rows_path))
     if not required_lineage:
@@ -233,7 +269,7 @@ def main() -> int:
 
     local_contract_path = release / "contracts/local-verifier-contract.json"
     local_contract = load(local_contract_path)
-    if local_contract.get("contract_id") != "P4-LOCAL-SEMANTIC-BINARY64-1":
+    if local_contract.get("contract_id") != "P4-LOCAL-STABLE-SCORE-KEY-2":
         raise ValueError("HOLD_LOCAL_VERIFIER_CONTRACT")
     checklist_rows = {}
     for game in ("ssq", "dlt"):
@@ -271,11 +307,12 @@ PHASE4_PYTHON=.p4-local-venv/bin/python scripts/phase4/local-accept-release --re
 Expected first line: `LOCAL ACCEPTANCE: PASS (READY_FOR_LOCAL_PRODUCT_ACCEPTANCE)`.
 The command snapshots the release before verification and fails if any byte is changed. It verifies authority and
 schemas; the final manifest/closure; immutable formal Phase 2/2.1 receipts; serving lineage and create-once locks;
-1,000 ordered tickets for each game; probability qualification and exact score/tie identities; lifecycle score and
+1,000 ordered tickets for each game; probability qualification and exact stable-key-derived score/tie identities; lifecycle score and
 AutoResearch shadow; dual-game scheduler recovery; protected roots; independent replay and negative mutations.
 Only the explicitly enumerated recomputed numeric fields in `contracts/local-verifier-contract.json` use the finite,
-conjunctive absolute/relative/ULP bounds. IDs, hashes, issues, cutoffs, lineage, tickets, rank/order, score/tie identities,
-and create-once files remain exact.
+conjunctive absolute/relative/ULP bounds. Ranking uses `P4S10HE1` (`1e-10`, round-half-even) then canonical ticket order.
+IDs, hashes, issues, cutoffs, lineage, tickets, rank/order, score order keys, score/tie identities, tie bounds,
+and create-once files remain exact; raw binary64 score bits are not identities.
 
 ## Frozen inspect expectations
 

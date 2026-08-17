@@ -13,7 +13,8 @@ from pathlib import Path
 import jsonschema
 
 from lottery_system.phase4.real_model import (
-    FEATURE_GROUPS, FEATURE_IDS, canonical, digest, feature_snapshot_rows,
+    FEATURE_GROUPS, FEATURE_IDS, PROBABILITY_REPRESENTATION_ID,
+    SCORE_ORDER_KEY_ID, SCORE_ORDER_QUANTUM, canonical, digest, feature_snapshot_rows,
     file_sha, load_draws, probability_qualification, select_candidate, top_tickets, train, write_jsonl_once, write_once,
 )
 from lottery_system.phase4.real_ops import ProductLedger, exercise_schedule_recovery
@@ -172,7 +173,9 @@ def main() -> int:
             f"the frozen Phase 1 strict prefix through {model['training_cutoff_issue']}. It consumes F01-F14 "
             f"across historical-change, number-relationship, and combination-structure groups, selected L2="
             f"{model['regularization']['selected']} from a preregistered finite grid, and normalizes every legal "
-            f"combination by complete enumeration with streaming log-sum-exp. Scientific status: "
+            f"combination by complete enumeration with streaming log-sum-exp. Ranking uses the versioned "
+            f"`{SCORE_ORDER_KEY_ID}` decimal score key at quantum `{format(SCORE_ORDER_QUANTUM, 'f')}` with "
+            f"round-half-even, followed by canonical ticket order within a stable-key tie. Scientific status: "
             f"`{model['scientific_status']}`. This is not evidence of predictability, winnings, or profit.\n"
         )
         model_dir.mkdir(parents=True, exist_ok=True)
@@ -186,12 +189,13 @@ def main() -> int:
             "training_dataset_id": model["training_dataset_id"], "training_config_id": model["training_config_id"],
             "training_input_manifest_sha256": file_sha(data_path), "model_sha256": file_sha(model_dir / "model.json"),
             "training_report_sha256": file_sha(model_dir / "training-report.json"), "source_commit": args.source_commit,
-            "dependency_identity": model["dependency_identity"], "numeric_precision": "python-binary64-logsumexp",
+            "dependency_identity": model["dependency_identity"],
+            "numeric_precision": "python-binary64-logsumexp-with-stable-decimal-score-order-key-v1",
             "dirty": False, "status": "PASS",
         })
         write_once(model_dir / "normalization-proof.json", {
             "artifact_type": "phase4_p4e2_normalization_proof", "game": game,
-            "zones": [{key: zone[key] for key in ("combination_count", "log_normalizer", "normalization_mass", "normalization_method", "probability_square_sum", "minimum_probability", "maximum_probability", "probability_layer_lower_bound", "probability_layer_summary")} for zone in model["zones"]],
+            "zones": [{key: zone[key] for key in ("combination_count", "log_normalizer", "normalization_mass", "normalization_method", "probability_square_sum", "minimum_probability", "maximum_probability", "probability_layer_lower_bound", "score_order_contract")} for zone in model["zones"]],
             "joint_probability_mass": 1.0, "strictly_positive": True, "status": "PASS",
         })
         backtest_id = f"bt-p4e2-{game}-{digest(model['report_only_metrics'])[:16]}"
@@ -217,7 +221,10 @@ def main() -> int:
             "non_m0": True, "model_path": f"models/{game}/{model_id}/model.json",
         }
         top = top_tickets(model)
+        for row in top:
+            validate_schema("p4e2-ranking.schema.json", row)
         probability_evidence = probability_qualification(model, top)
+        validate_schema("probability-qualification.schema.json", probability_evidence)
         write_once(model_dir / "probability-qualification.json", probability_evidence)
         target = f"after-{model['training_cutoff_issue']}"
         forecast_id = f"forecast-{game}-{digest({'model': model_id, 'target': target, 'top': top})[:16]}"
@@ -238,7 +245,7 @@ def main() -> int:
             "prediction_locked_at_utc": locked_at, "lock_id": lock_id,
             "distinct_probability_count": probability_evidence["top1000_distinct_score_count"],
             "first_probability": top[0]["joint_probability"], "last_probability": top[-1]["joint_probability"],
-            "probability_representation": "P4-LOGSUMEXP-BINARY64-SCORE-IDENTITY-1",
+            "probability_representation": PROBABILITY_REPRESENTATION_ID,
             "normalization_method": "complete_enumeration_streaming_log_sum_exp_v1",
             "normalization_proof_path": f"models/{game}/{model_id}/normalization-proof.json",
             "normalization_proof_sha256": file_sha(model_dir / "normalization-proof.json"),
@@ -248,7 +255,7 @@ def main() -> int:
             "top_prefixes": {"10": digest(top[:10]), "100": digest(top[:100]), "200": digest(top[:200]), "1000": digest(top)},
             "tie_fields": ["tie_group_id", "tie_group_size", "tie_rank_lower", "tie_rank_upper", "tie_midrank", "tie_key"],
             "ranking_algorithm_id": probability_evidence["ranking_algorithm_id"],
-            "ranking_key": ["exact_binary64_joint_score_desc", "canonical_ticket_asc_within_exact_score_tie"],
+            "ranking_key": [f"stable_score_order_key_desc_{SCORE_ORDER_KEY_ID}", "canonical_ticket_asc_within_stable_score_key_tie"],
             "provider_access": [serving[game]["model_path"]], "status": "locked_unscored",
         }
         validate_schema("formal-forecast.schema.json", forecast)
@@ -303,7 +310,7 @@ def main() -> int:
                "--phase1-draws", str(args.phase1_draws), "--output", str(args.output),
                "--source-commit", args.source_commit, "--historical-interpreter", str(historical_interpreter)]
     authority = [ROOT / "ROADMAP.md", ROOT / "tasks/phase4/README.md", ROOT / "docs/research/phase-4-overall-design.md", ROOT / "docs/plans/phase-4-detailed-plan.md"]
-    stage_receipt(out, "D01", authority, [out / "authority/authority-freeze.json", out / "contracts/local-verifier-contract.json", out / "selection/serving-selection.json"], {"authority_documents": len(authority), "unknown_fields_fail_closed": True, "local_verifier_contract_frozen": local_verifier_contract["contract_id"] == "P4-LOCAL-SEMANTIC-BINARY64-1", "launch_worktree_clean": launch_clean}, started_at, command, launch_clean)
+    stage_receipt(out, "D01", authority, [out / "authority/authority-freeze.json", out / "contracts/local-verifier-contract.json", out / "selection/serving-selection.json"], {"authority_documents": len(authority), "unknown_fields_fail_closed": True, "local_verifier_contract_frozen": local_verifier_contract["contract_id"] == "P4-LOCAL-STABLE-SCORE-KEY-2", "launch_worktree_clean": launch_clean}, started_at, command, launch_clean)
     task_outputs = {
         "D02": ([out / f"data/{g}/training-input-manifest.json" for g in ("ssq","dlt")] +
                 [next((out / f"features/{g}").glob("*/manifest.json")) for g in ("ssq","dlt")]),

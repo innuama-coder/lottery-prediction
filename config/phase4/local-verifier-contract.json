@@ -1,12 +1,23 @@
 {
-  "schema_version": "1.2.0",
+  "schema_version": "1.3.0",
   "artifact_type": "phase4_local_verifier_contract",
-  "contract_id": "P4-LOCAL-SEMANTIC-BINARY64-1",
+  "contract_id": "P4-LOCAL-STABLE-SCORE-KEY-2",
   "supported_runtime": {
     "implementation": "CPython",
     "python_major_minor": "3.12",
     "patch_release_portable": true,
     "platform_portable": true
+  },
+  "score_order_contract": {
+    "score_order_key_id": "P4S10HE1",
+    "canonical_source": "exact finite binary64 value converted to an exact decimal rational",
+    "quantum": "0.0000000001",
+    "rounding": "ROUND_HALF_EVEN",
+    "ranking": ["stable_score_order_key_desc", "canonical_ticket_asc_within_stable_score_key_tie"],
+    "identity_fields_exact": ["score_order_key", "score_identity", "tie_key", "tie_group_id", "probability_layer", "tie_group_size", "tie_rank_lower", "tie_rank_upper", "tie_midrank"],
+    "observed_cross_runtime_score_drift": "2.8e-17",
+    "preserved_r10_minimum_adjacent_distinct_gap": "4.326295779955025012e-10",
+    "resolution_rationale": "The 1e-10 quantum is over 3.5 million times the observed score drift and is 4.326 times smaller than the minimum adjacent distinct score across all six preserved r10 Top-1000 scopes. Exhaustive fixtures prove one-ULP invariance, distinctness, and unchanged membership/order/rank for all 6,000 rows."
   },
   "default_numeric_profile": "tight_recomputed_v1",
   "numeric_profiles": {
@@ -62,8 +73,6 @@
         "model.report_only_metrics.*.ablation_metrics.*.multiclass_brier",
         "model.report_only_summary.permutation_evidence.*.samples.*.permuted_joint_probability",
         "model.report_only_summary.permutation_evidence.*.samples.*.permuted_joint_log_loss",
-        "historical_parent.zones.*.*",
-        "research_child.zones.*.*",
         "score.metrics.joint_log_loss",
         "score.metrics.actual_joint_probability",
         "score.metrics.multiclass_brier",
@@ -162,7 +171,7 @@
     "game, issue, cutoff, target, and serving lineage",
     "canonical ticket keys and ticket membership",
     "Top-1000 rank and order",
-    "frozen score identities, tie identities, and tie bounds",
+    "stable score order keys, score identities, tie identities, probability layers, and tie bounds",
     "create-once forecast and lifecycle locks",
     "selection/report-only indices and scientific status",
     "schema field sets and enumerations",

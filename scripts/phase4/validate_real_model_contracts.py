@@ -53,7 +53,8 @@ def main() -> int:
         "training-input-manifest.schema.json", "feature-snapshot.schema.json",
         "model-release.schema.json", "training-report.schema.json",
         "backtest.schema.json", "model-selection-receipt.schema.json", "formal-forecast.schema.json",
-        "formal-forecast-lock.schema.json", "serving-selection.schema.json",
+        "formal-forecast-lock.schema.json", "serving-selection.schema.json", "p4e2-ranking.schema.json",
+        "probability-qualification.schema.json",
         "local-verifier-contract.schema.json",
     ]
     required = [
@@ -125,8 +126,6 @@ def main() -> int:
         "model.report_only_metrics.*.ablation_metrics.*.multiclass_brier",
         "model.report_only_summary.permutation_evidence.*.samples.*.permuted_joint_probability",
         "model.report_only_summary.permutation_evidence.*.samples.*.permuted_joint_log_loss",
-        "historical_parent.zones.*.*",
-        "research_child.zones.*.*",
         "score.metrics.joint_log_loss",
         "score.metrics.actual_joint_probability",
         "score.metrics.multiclass_brier",
@@ -148,7 +147,21 @@ def main() -> int:
         "historical_top1000.*.joint_probability",
         "shadow_top1000.*.joint_probability",
     }
-    if (local_contract.get("contract_id") != "P4-LOCAL-SEMANTIC-BINARY64-1"
+    expected_score_order_contract = {
+        "score_order_key_id": "P4S10HE1",
+        "canonical_source": "exact finite binary64 value converted to an exact decimal rational",
+        "quantum": "0.0000000001",
+        "rounding": "ROUND_HALF_EVEN",
+        "ranking": ["stable_score_order_key_desc", "canonical_ticket_asc_within_stable_score_key_tie"],
+        "identity_fields_exact": ["score_order_key", "score_identity", "tie_key", "tie_group_id", "probability_layer", "tie_group_size", "tie_rank_lower", "tie_rank_upper", "tie_midrank"],
+        "observed_cross_runtime_score_drift": "2.8e-17",
+        "preserved_r10_minimum_adjacent_distinct_gap": "4.326295779955025012e-10",
+    }
+    actual_score_order_contract = dict(local_contract.get("score_order_contract", {}))
+    actual_score_order_contract.pop("resolution_rationale", None)
+    if (local_contract.get("contract_id") != "P4-LOCAL-STABLE-SCORE-KEY-2"
+            or local_contract.get("schema_version") != "1.3.0"
+            or actual_score_order_contract != expected_score_order_contract
             or local_contract.get("default_numeric_profile") != "tight_recomputed_v1"
             or local_contract.get("numeric_profiles") != expected_profiles
             or set(profile_ids) != set(expected_profiles) or len(profile_ids) != len(set(profile_ids))

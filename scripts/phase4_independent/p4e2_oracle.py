@@ -6,6 +6,7 @@ import itertools
 import json
 import math
 import random
+from decimal import Decimal
 from functools import lru_cache
 from dataclasses import dataclass
 from typing import Sequence
@@ -47,6 +48,14 @@ PAIR_WINDOW = 60
 PAIR_SHRINKAGE = 20.0
 COEFFICIENT_CAP = 0.35
 MIN_HISTORY = 60
+SCORE_ORDER_KEY_ID = "P4S10HE1"
+SCORE_ORDER_QUANTUM = Decimal("0.0000000001")
+SCORE_ORDER_SCALE = 10_000_000_000
+SCORE_IDENTITY_PREFIX = "score-order-key-v1:"
+TIE_KEY_PREFIX = "tie-score-order-key-v1:"
+TIE_GROUP_PREFIX = "tie-group-score-order-key-v1:"
+PROBABILITY_REPRESENTATION_ID = "P4-LOGSUMEXP-STABLE-SCORE-KEY-1"
+RANKING_ALGORITHM_ID = "joint_stable_score_key_desc_tie_canonical_ticket_asc_v1"
 
 
 def _numbers(draw: Draw, zone: int) -> tuple[int, ...]:
@@ -331,12 +340,35 @@ def _fast_score(combo: Sequence[int], context: dict[str, object], plan: dict[str
     return score
 
 
-def score_identity(score: float) -> str:
-    if not math.isfinite(score):
-        raise ValueError("non-finite score identity")
-    return f"binary64:{score.hex()}"
+def score_order_tick(score: float) -> int:
+    if isinstance(score, bool) or not isinstance(score, (int, float)) or not math.isfinite(float(score)):
+        raise ValueError("non-finite score order key")
+    numerator, denominator = float(score).as_integer_ratio()
+    magnitude, remainder = divmod(abs(numerator) * SCORE_ORDER_SCALE, denominator)
+    comparison = remainder * 2 - denominator
+    magnitude += int(comparison > 0 or (comparison == 0 and magnitude & 1))
+    return -magnitude if numerator < 0 else magnitude
 
-def enumerate_zone(context: dict[str, object], coefficients: dict[str, float], keep_rows: bool = False) -> dict[str, object]:
+
+def score_order_key(score: float) -> str:
+    return f"{SCORE_ORDER_KEY_ID}:{score_order_tick(score)}"
+
+
+def score_identity(score: float) -> str:
+    return f"{SCORE_IDENTITY_PREFIX}{score_order_key(score)}"
+
+
+def tie_key_for_score(score: float) -> str:
+    return f"{TIE_KEY_PREFIX}{score_order_key(score)}"
+
+
+def tie_group_id_for_score(score: float) -> str:
+    return f"{TIE_GROUP_PREFIX}{score_order_key(score)}"
+
+def enumerate_zone(
+    context: dict[str, object], coefficients: dict[str, float], keep_rows: bool = False,
+    *, collect_layers: bool = False,
+) -> dict[str, object]:
     """Enumerate the complete space for mass; retain only the exact zone Top-1000."""
     rows, maximum, minimum, total, square_total, count = [], -math.inf, math.inf, 0.0, 0.0, 0
     plan = _score_plan(context, coefficients)
@@ -345,7 +377,7 @@ def enumerate_zone(context: dict[str, object], coefficients: dict[str, float], k
         count += 1
         minimum = min(minimum, score)
         if keep_rows:
-            entry = (score, tuple(-number for number in combo), combo)
+            entry = (score_order_tick(score), tuple(-number for number in combo), score, combo)
             if len(rows) < 1000:
                 heapq.heappush(rows, entry)
             elif entry[:2] > rows[0][:2]:
@@ -357,10 +389,10 @@ def enumerate_zone(context: dict[str, object], coefficients: dict[str, float], k
             factor = 0.0 if maximum == -math.inf else math.exp(maximum - score)
             total, square_total, maximum = total * factor + 1.0, square_total * factor * factor + 1.0, score
     if keep_rows:
-        rows = [(score, combo) for score, _, combo in rows]
+        rows = [(score, combo) for _, _, score, combo in rows]
         rows.sort(key=lambda row: row[1])
-        rows.sort(key=lambda row: row[0], reverse=True)
-    return {
+        rows.sort(key=lambda row: score_order_tick(row[0]), reverse=True)
+    result = {
         "rows": rows, "log_normalizer": maximum + math.log(total),
         "probability_square_sum": square_total / (total * total), "combination_count": count,
         "normalization_method": "complete_enumeration_streaming_log_sum_exp_v1", "normalization_mass": 1.0,
@@ -368,6 +400,18 @@ def enumerate_zone(context: dict[str, object], coefficients: dict[str, float], k
         "minimum_probability": math.exp(minimum - (maximum + math.log(total))),
         "maximum_probability": 1.0 / total, "probability_layer_lower_bound": 2 if minimum < maximum else 1,
     }
+    if collect_layers:
+        result["score_order_contract"] = {
+            "representation": "stable_decimal_score_order_contract_v1",
+            "score_order_key_id": SCORE_ORDER_KEY_ID,
+            "score_order_quantum": format(SCORE_ORDER_QUANTUM, "f"),
+            "rounding_mode": "ROUND_HALF_EVEN",
+            "combination_count": count,
+            "distinct_score_lower_bound": result["probability_layer_lower_bound"],
+            "complete_space_layer_identities_not_serialized": True,
+            "top1000_layer_identities_exact": True,
+        }
+    return result
 
 
 def subset_probability(numbers: Sequence[int], zone: dict[str, object]) -> float:
@@ -381,20 +425,14 @@ def subset_probability(numbers: Sequence[int], zone: dict[str, object]) -> float
 
 def _top(zone_results: Sequence[dict[str, object]], limit: int) -> list[tuple[float, tuple[int, ...], tuple[int, ...]]]:
     front, back = zone_results[0]["rows"], zone_results[1]["rows"]
-    heap = []
-    for front_index in range(min(limit, len(front))):
-        front_score, front_numbers = front[front_index]
-        back_score, back_numbers = back[0]
-        heapq.heappush(heap, (-(front_score + back_score), front_numbers, back_numbers, front_index, 0))
-    result = []
-    while heap and len(result) < limit:
-        negative, front_numbers, back_numbers, front_index, back_index = heapq.heappop(heap)
-        result.append((-negative, front_numbers, back_numbers))
-        if back_index + 1 < len(back):
-            front_score, front_numbers = front[front_index]
-            back_score, back_numbers = back[back_index + 1]
-            heapq.heappush(heap, (-(front_score + back_score), front_numbers, back_numbers, front_index, back_index + 1))
-    return result
+    candidates = [
+        (front_score + back_score, front_numbers, back_numbers)
+        for front_score, front_numbers in front[:limit]
+        for back_score, back_numbers in back[:limit]
+    ]
+    candidates.sort(key=lambda row: (row[1], row[2]))
+    candidates.sort(key=lambda row: score_order_tick(row[0]), reverse=True)
+    return candidates[:limit]
 
 
 def evaluate_coefficients(
@@ -485,7 +523,7 @@ def train(game: str, draws: Sequence[Draw], cutoff_index: int | None = None) -> 
         })
     coefficients = fit_coefficients(game, training, cutoff, selected_l2)
     contexts = [feature_context(game, training, zone) for zone in (0, 1)]
-    final = [enumerate_zone(contexts[zone], coefficients[zone], True) for zone in (0, 1)]
+    final = [enumerate_zone(contexts[zone], coefficients[zone], True, collect_layers=True) for zone in (0, 1)]
     zones = [{"n": RULES[game][zone][0], "k": RULES[game][zone][1], "coefficients": coefficients[zone], "context": contexts[zone],
               "top_zone_rows": [[score, list(combo)] for score, combo in final[zone]["rows"]],
               **{key: value for key, value in final[zone].items() if key != "rows"}} for zone in (0, 1)]
@@ -559,7 +597,7 @@ def top_tickets(model: dict[str, object], top_k: int = 1000) -> list[dict[str, o
         if "top_zone_rows" in zone:
             zone_rows = [(float(score), tuple(combo)) for score, combo in zone["top_zone_rows"]]
             zone_rows.sort(key=lambda row: row[1])
-            zone_rows.sort(key=lambda row: row[0], reverse=True)
+            zone_rows.sort(key=lambda row: score_order_tick(row[0]), reverse=True)
             results.append({"rows": zone_rows,
                             "log_normalizer": zone["log_normalizer"]})
         else:
@@ -567,6 +605,7 @@ def top_tickets(model: dict[str, object], top_k: int = 1000) -> list[dict[str, o
     exact = _top(results, top_k)
     log_normalizer = math.fsum(float(item["log_normalizer"]) for item in results)
     probabilities = [format(math.exp(score - log_normalizer), ".18e") for score, _, _ in exact]
+    order_keys = [score_order_key(score) for score, _, _ in exact]
     identities = [score_identity(score) for score, _, _ in exact]
     if len(set(identities)) < 2:
         raise ValueError("HOLD_DEGENERATE_MODEL: Top-1000 all equal")
@@ -576,22 +615,21 @@ def top_tickets(model: dict[str, object], top_k: int = 1000) -> list[dict[str, o
         bounds[identity] = (cursor, cursor + histogram[identity] - 1)
         cursor += histogram[identity]
     rows, previous, layer = [], None, 0
-    for rank, ((score, front, back), probability, identity) in enumerate(zip(exact, probabilities, identities), 1):
+    for rank, ((score, front, back), probability, order_key, identity) in enumerate(zip(exact, probabilities, order_keys, identities), 1):
         if identity != previous:
             previous, layer = identity, layer + 1
         lower, upper = bounds[identity]
-        probability_hash = hashlib.sha256(identity.encode()).hexdigest()
         vectors = (combo_vector(front, model["zones"][0]["context"]), combo_vector(back, model["zones"][1]["context"]))
         contributions = {key: format(math.fsum(model["zones"][zone]["coefficients"][key] * vectors[zone][index] for zone in (0, 1)), ".17g") for index, key in enumerate(FEATURE_IDS)}
         rows.append({
             "rank": rank, "full_space_rank": rank, "front_numbers": list(front), "back_numbers": list(back),
             "joint_probability": probability, "log_joint_score": format(score, ".17g"),
-            "score_identity": identity,
-            "probability_representation": "P4-LOGSUMEXP-BINARY64-SCORE-IDENTITY-1", "probability_layer": layer,
-            "tie_group_id": f"tie-{probability_hash[:24]}", "tie_group_size": histogram[identity],
+            "score_order_key": order_key, "score_identity": identity,
+            "probability_representation": PROBABILITY_REPRESENTATION_ID, "probability_layer": layer,
+            "tie_group_id": tie_group_id_for_score(score), "tie_group_size": histogram[identity],
             "tie_rank_lower": lower, "tie_rank_upper": upper, "tie_midrank": format((lower + upper) / 2, ".1f"),
-            "tie_key": f"score-identity:{probability_hash}", "canonical_ticket_key": [list(front), list(back)],
-            "ranking_algorithm_id": "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1",
+            "tie_key": tie_key_for_score(score), "canonical_ticket_key": [list(front), list(back)],
+            "ranking_algorithm_id": RANKING_ALGORITHM_ID,
             "lineage": {"model_release_id": model["model_release_id"], "feature_release_id": model.get("feature_release_id")},
             "explanation": {"method": "P4E2-R multi-feature conditional combination model", "probability_primary": True,
                             "feature_contributions": contributions, "feature_groups": model["feature_groups_consumed"]},

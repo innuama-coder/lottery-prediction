@@ -34,8 +34,11 @@ serving lineage, create-once locks, 1,000 ordered rows per game, probability
 qualification, lifecycle score/research, scheduler recovery, protected roots,
 and independent replay. Its semantic numeric policy is frozen in
 `contracts/local-verifier-contract.json`; only enumerated recomputed float leaves
-may use the finite conjunctive absolute/relative/ULP bounds. IDs, hashes,
-issues/cutoffs, lineage, tickets, order, score/tie identities, and locks remain exact.
+may use the finite conjunctive absolute/relative/ULP bounds. Ranking uses the
+versioned `P4S10HE1` stable decimal score key (`1e-10`, round-half-even), then
+canonical ticket order for ties. That key and every derived score/tie identity,
+probability layer, and tie bound remain exact, as do IDs, hashes, issues/cutoffs,
+lineage, ticket membership/order, and locks. Raw binary64 score bits are not an identity.
 
 ## Frozen commands
 

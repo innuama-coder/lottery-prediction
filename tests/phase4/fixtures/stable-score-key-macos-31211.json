@@ -1,0 +1,16 @@
+{
+  "artifact_type": "phase4_stable_score_key_cross_runtime_fixture",
+  "runtime": "macOS CPython 3.12.11",
+  "source": "round-08 controller report",
+  "score_order_key_id": "P4S10HE1",
+  "quantum": "0.0000000001",
+  "rounding": "ROUND_HALF_EVEN",
+  "examples": [
+    {"game": "ssq", "rank_index": 0, "release_score": "0.13767089985115685", "controller_score": "0.13767089985115682", "release_hex": "0x1.19f33363c5db7p-3", "controller_hex": "0x1.19f33363c5db6p-3"},
+    {"game": "ssq", "rank_index": 1, "release_score": "0.13732778676308754", "controller_score": "0.13732778676308752", "release_hex": "0x1.193f4f87d6100p-3", "controller_hex": "0x1.193f4f87d60ffp-3"},
+    {"game": "ssq", "rank_index": 2, "release_score": "0.13556914518830282", "controller_score": "0.13556914518830279", "release_hex": "0x1.15a546a77188ap-3", "controller_hex": "0x1.15a546a771889p-3"},
+    {"game": "dlt", "rank_index": 0, "release_score": "0.089744814380195284", "controller_score": "0.08974481438019527", "release_hex": "0x1.6f98422bf9f9dp-4", "controller_hex": "0x1.6f98422bf9f9cp-4"},
+    {"game": "dlt", "rank_index": 1, "release_score": "0.088831667810029782", "controller_score": "0.088831667810029769", "release_hex": "0x1.6bdac1417dcddp-4", "controller_hex": "0x1.6bdac1417dcdcp-4"},
+    {"game": "dlt", "rank_index": 2, "release_score": "0.088482992845562644", "controller_score": "0.08848299284556263", "release_hex": "0x1.6a6d248861de3p-4", "controller_hex": "0x1.6a6d248861de2p-4"}
+  ]
+}

@@ -8,7 +8,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .p4e2_model import enumerate_zone, fit_coefficients, feature_context, probability_qualification, select_candidate
+from .p4e2_model import (
+    RANKING_ALGORITHM_ID,
+    enumerate_zone,
+    fit_coefficients,
+    feature_context,
+    probability_qualification,
+    select_candidate,
+)
 from .real_model import RULES, canonical, digest, feature_snapshot_rows, load_draws, score_ticket, top_tickets, train, write_jsonl_once, write_once
 
 
@@ -274,7 +281,7 @@ def forecast_historical_target(release: Path, game: str) -> dict[str, Any]:
         "feature_release_id": model["feature_release_id"], "training_dataset_id": model["training_dataset_id"],
         "training_config_id": model["training_config_id"], "source_commit": model["source_commit"],
         "dependency_identity": model["dependency_identity"], "prediction_locked_at_utc": locked_at,
-        "ranking_algorithm_id": "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1",
+        "ranking_algorithm_id": RANKING_ALGORITHM_ID,
         "normalization_proof": [{"combination_count": zone["combination_count"], "log_normalizer": zone["log_normalizer"], "mass": zone["normalization_mass"]} for zone in model["zones"]],
         "top1000_sha256": sha(top_path), "ticket_count": len(rows), "status": "locked_unscored",
     }
@@ -565,7 +572,7 @@ def inspect_release(release: Path, game: str) -> dict[str, Any]:
                               "dynamic_ratio": probability["top1000_first_last_probability_ratio"]},
         "tie_evidence": {"distinct_score_count": probability["top1000_distinct_score_count"],
                          "maximum_tie_count": probability["top1000_maximum_tie_count"],
-                         "near_equal_scores_are_not_ties": probability["near_equal_scores_are_not_ties"]},
+                         "one_ulp_score_drift_preserves_identity": probability["one_ulp_score_drift_preserves_identity"]},
         "rank_basis": forecast["ranking_algorithm_id"],
         "lock": {"lock_id": lock["lock_id"], "locked_at_utc": lock["locked_at_utc"], "create_once": lock["create_once"],
                  "status": lock["status"], "top1000_sha256": lock["top1000_sha256"]},

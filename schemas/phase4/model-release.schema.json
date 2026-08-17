@@ -116,7 +116,8 @@
     "zones": {
       "type": "array",
       "minItems": 2,
-      "maxItems": 2
+      "maxItems": 2,
+      "items": {"$ref": "#/$defs/zone"}
     },
     "selection_indices": {
       "type": "array",
@@ -168,6 +169,28 @@
     },
     "dependency_identity": {
       "type": "string"
+    }
+  },
+  "$defs": {
+    "zone": {
+      "type": "object",
+      "required": ["n", "k", "coefficients", "context", "top_zone_rows", "log_normalizer", "probability_square_sum", "combination_count", "normalization_method", "normalization_mass", "minimum_score", "maximum_score", "minimum_probability", "maximum_probability", "probability_layer_lower_bound", "score_order_contract"],
+      "properties": {"score_order_contract": {"$ref": "#/$defs/scoreOrderContract"}}
+    },
+    "scoreOrderContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["representation", "score_order_key_id", "score_order_quantum", "rounding_mode", "combination_count", "distinct_score_lower_bound", "complete_space_layer_identities_not_serialized", "top1000_layer_identities_exact"],
+      "properties": {
+        "representation": {"const": "stable_decimal_score_order_contract_v1"},
+        "score_order_key_id": {"const": "P4S10HE1"},
+        "score_order_quantum": {"const": "0.0000000001"},
+        "rounding_mode": {"const": "ROUND_HALF_EVEN"},
+        "combination_count": {"type": "integer", "minimum": 1},
+        "distinct_score_lower_bound": {"type": "integer", "minimum": 2},
+        "complete_space_layer_identities_not_serialized": {"const": true},
+        "top1000_layer_identities_exact": {"const": true}
+      }
     }
   }
 }

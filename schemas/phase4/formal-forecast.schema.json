@@ -25,14 +25,14 @@
     "training_cutoff_position": {"type": "integer", "minimum": 0}, "ticket_count": {"const": 1000},
     "prediction_locked_at_utc": {"type": "string", "format": "date-time"}, "lock_id": {"type": "string"},
     "distinct_probability_count": {"type": "integer", "minimum": 2}, "first_probability": {"type": "string"},
-    "last_probability": {"type": "string"}, "probability_representation": {"const": "P4-LOGSUMEXP-BINARY64-SCORE-IDENTITY-1"},
+    "last_probability": {"type": "string"}, "probability_representation": {"const": "P4-LOGSUMEXP-STABLE-SCORE-KEY-1"},
     "normalization_method": {"const": "complete_enumeration_streaming_log_sum_exp_v1"},
     "normalization_proof_path": {"type": "string"}, "normalization_proof_sha256": {"pattern": "^[0-9a-f]{64}$"},
     "probability_qualification_path": {"type": "string"}, "probability_qualification_sha256": {"pattern": "^[0-9a-f]{64}$"},
     "joint_probability_mass": {"const": 1.0}, "strictly_positive_complete_space": {"const": true},
     "top_prefixes": {"type": "object"}, "tie_fields": {"type": "array", "minItems": 6},
-    "ranking_algorithm_id": {"const": "joint_binary64_score_desc_exact_tie_canonical_ticket_asc_v1"},
-    "ranking_key": {"type": "array", "minItems": 2, "maxItems": 2}, "provider_access": {"type": "array", "minItems": 1},
+    "ranking_algorithm_id": {"const": "joint_stable_score_key_desc_tie_canonical_ticket_asc_v1"},
+    "ranking_key": {"const": ["stable_score_order_key_desc_P4S10HE1", "canonical_ticket_asc_within_stable_score_key_tie"]}, "provider_access": {"type": "array", "minItems": 1},
     "status": {"const": "locked_unscored"}
   }
 }

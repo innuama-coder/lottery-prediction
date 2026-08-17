@@ -1,0 +1,10 @@
+LOCAL ACCEPTANCE: PASS (READY_FOR_LOCAL_PRODUCT_ACCEPTANCE)
+release: P4-P4E2-20260815-r11
+runtime: CPython 3.12.3 on Linux-6.8.0-136-generic-x86_64-with-glibc2.39
+numeric contract: P4-LOCAL-STABLE-SCORE-KEY-2; replay=100%; mutations=100%
+SSQ: model=p4e2r-ssq-3de6ddb6b45811b9 feature=f01-f14-ssq-df19ed4902d5d51b cutoff=2026085 target=after-2026085 rows=1000
+SSQ probability: first=6.473028509932664304e-08 last=6.342430839746211564e-08 scientific=no_confirmed_lift
+DLT: model=p4e2r-dlt-b4904bd351714af7 feature=f01-f14-dlt-fccb1329026cc439 cutoff=2026083 target=after-2026083 rows=1000
+DLT probability: first=5.103441262304447242e-08 last=5.007061100460908733e-08 scientific=no_confirmed_lift
+evidence: acceptance/final-closure.json, manifest/delivery-manifest.json, replay/replay-report.json
+release unchanged: yes

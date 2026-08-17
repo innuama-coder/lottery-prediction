@@ -4,6 +4,8 @@
 
 状态：`D00_AUTHORITY_SYNCED`。本文件与 `ROADMAP.md`、`docs/research/phase-4-overall-design.md`、`docs/plans/phase-4-detailed-plan.md` 在同一 `P4_AUTHORITY_COMMIT` 冻结；只有 D00 两个 checker 均通过且 receipt 证明 clean 后才解除 `HOLD_AUTHORITY_SYNC` 并启动 D01。
 
+本轮 authority 冻结 `P4S10HE1` score order contract：有限 binary64 输入以其精确有理数值按 `1e-10` decimal quantum、`ROUND_HALF_EVEN` 生成稳定整数 tick；Top-1000 排名按 tick 降序、canonical ticket 升序，score/tie identity 与 tie bounds 从该 tick 精确派生。raw binary64 bits 不再承担身份或排名语义。
+
 ## 1. 权威范围
 
 本文件定义 Phase 4 产品成功语义；总体设计定义模型、数据、概率、时间与治理合同；详细计划定义 D00–D15 DAG、允许写路径和验收顺序；路线图定义跨阶段边界。四份文档必须作为同一 authority 集合解释，任何冲突都 fail closed。

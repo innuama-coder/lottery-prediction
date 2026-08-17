@@ -134,6 +134,8 @@ Phase 4 不要求证明 lift；`no_confirmed_lift|worse_than_M0|insufficient_evi
 
 本地产品验收不得绑定正式 builder 的 VPS 绝对路径。正式 provenance 继续精确冻结 Linux interpreter/平台/依赖/命令；本地只读 verifier 支持 CPython 3.12 patch/platform 迁移，以 manifest closure 验证历史 Phase 2/2.1 receipts 而不重跑其 VPS 环境。只有合同逐路径枚举的重算浮点叶可使用 finite 且 absolute/relative/ULP 三界同时满足的语义比较；ID、hash、issue/cutoff/lineage、Top-1000 membership/order、canonical ticket、create-once 文件，以及由 `P4S10HE1`（`1e-10` decimal quantum、round-half-even）稳定数学顺序键派生的 score/tie identity 与 tie bounds 始终 exact。排名先按该稳定键降序，再按 canonical ticket 升序处理同键 tie；raw binary64 bits 不得作为身份或排名 ID。
 
+`P4S10HE1` 是 D00 authority 的冻结组成部分；任何 key ID、量化精度、舍入模式、派生 identity namespace 或排名组合键的变化都必须作为新的显式版本重新冻结四份 authority 文档，不能在既有 release 内静默替换。
+
 ### 7.2 工作方法
 
 Phase 4 必须按以下顺序推进，后续步骤不能替代前置步骤：

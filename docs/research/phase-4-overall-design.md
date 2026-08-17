@@ -51,6 +51,8 @@ M0 对完整合法空间赋同一概率，所有组合处于一个覆盖全空�
 
 跨 CPython 3.12 patch 或平台重算的 numeric contract 采用 `P4-LOCAL-STABLE-SCORE-KEY-2`：只有合同逐路径枚举的浮点叶可语义比较；既有 `8`-ULP tight profile、`151`-ULP feature profile 与 `17`-ULP Top-1000 display-probability profile 保持窄路径和 conjunction 不变。score ranking/identity 不使用容差，也不再冻结 raw binary64 bits；它把有限 binary64 值按 exact decimal rational 转换，以 `1e-10` quantum 和 `ROUND_HALF_EVEN` 映射到 `P4S10HE1`。该 resolution 是已观测 `2.8e-17` 跨平台 drift 的 350 万倍，同时比六个 r10 formal/historical/shadow Top-1000 scope 的最小相邻差 `4.326295779955025012e-10` 小 4.326 倍；6,000 行逐行证明一 ULP 双向稳定、相邻 distinct 不合并、membership/order/rank 不变。排名按 stable key 降序，再按 canonical ticket 升序；score identity、tie key/group/layer/bounds 从 stable key 唯一派生并保持 exact。release/object IDs、SHA-256、issue/cutoff/lineage、ticket membership、Top-1000 order、schema enums 和 create-once files同样永远 exact。非有限值、未枚举路径差异和任一界外值 fail closed。
 
+该 key contract 属于 D00 冻结 authority，而不是实现细节：key ID、quantum、rounding、identity namespace 和复合排名键任一变更都必须升级显式版本并重新经过 authority freeze。
+
 ## 3. 状态、角色与选择语义
 
 | 对象 | 作用 | 能否驱动 Phase 4 正式 forecast |

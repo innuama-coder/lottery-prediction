@@ -1,6 +1,6 @@
 # 彩票预测与 AutoResearch 系统路线图
 
-版本：2.6
+版本：2.7
 
 状态：Phase 4 真实模型 MVP authority；以 D00 `P4_AUTHORITY_COMMIT` 中四份 authority 文档的内容哈希共同生效
 
@@ -135,6 +135,8 @@ Phase 4 不要求证明 lift；`no_confirmed_lift|worse_than_M0|insufficient_evi
 本地产品验收不得绑定正式 builder 的 VPS 绝对路径。正式 provenance 继续精确冻结 Linux interpreter/平台/依赖/命令；本地只读 verifier 支持 CPython 3.12 patch/platform 迁移，以 manifest closure 验证历史 Phase 2/2.1 receipts 而不重跑其 VPS 环境。只有合同逐路径枚举的重算浮点叶可使用 finite 且 absolute/relative/ULP 三界同时满足的语义比较；ID、hash、issue/cutoff/lineage、Top-1000 membership/order、canonical ticket、create-once 文件，以及由 `P4S10HE1`（`1e-10` decimal quantum、round-half-even）稳定数学顺序键派生的 score/tie identity 与 tie bounds 始终 exact。排名先按该稳定键降序，再按 canonical ticket 升序处理同键 tie；raw binary64 bits 不得作为身份或排名 ID。
 
 `P4-LOCAL-PATH-CLASSIFIED-BINARY64-4` 按数值来源而非旧容器分类：snapshot 及 model context 的派生 feature leaves 使用同一 feature-derived profile；fitted coefficient 与其 objective-gradient leaves 使用独立 coefficient profile；formal/historical/shadow Top-1000 的三个 display `joint_probability` 路径使用独立 probability-display profile；其余逐路径叶保留 tight profile。每个 profile 都必须 finite 且同时满足 absolute/relative/ULP 三界，并由完整 macOS CPython 3.12.11 replay 的逐 pattern maxima、明确计算来源及 just-outside negatives 约束。`18b25e21`/`eb9c124d` 的 17-ULP 假设是不可改写的失败证据，不构成 release authority。score/order/tie、ticket、lineage、hash、ID 与 create-once 文件不进入任何容差。
+
+controller 已报告的 coefficient 证据为 15-ULP example，而不是逐 pattern maximum 的声明；因此 16-ULP coefficient envelope 只有在全量 collector 覆盖全部 coefficient/objective-gradient comparisons 且 macOS preflight 为零新 bound failures 后才可解除 pre-allocation HOLD。
 
 `P4S10HE1` 是 D00 authority 的冻结组成部分；任何 key ID、量化精度、舍入模式、派生 identity namespace 或排名组合键的变化都必须作为新的显式版本重新冻结四份 authority 文档，不能在既有 release 内静默替换。
 

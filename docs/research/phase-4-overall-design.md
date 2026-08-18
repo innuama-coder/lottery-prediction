@@ -1,6 +1,6 @@
 # Phase 4 真实模型预测与 AutoResearch 闭环 MVP 总体设计
 
-版本：3.3（多特征模型与 path-classified portable verifier 设计）
+版本：3.4（多特征模型与 path-classified portable verifier preflight 设计）
 
 状态：`D00_AUTHORITY_SYNCED`。本文与 `ROADMAP.md`、`tasks/phase4/README.md`、`docs/plans/phase-4-detailed-plan.md` 在同一 `P4_AUTHORITY_COMMIT` 冻结；D00 两个 checker 通过后解除 `HOLD_AUTHORITY_SYNC`，才允许启动 D01。
 
@@ -51,7 +51,7 @@ M0 对完整合法空间赋同一概率，所有组合处于一个覆盖全空�
 
 跨 CPython 3.12 patch 或平台重算的 numeric contract 采用 `P4-LOCAL-PATH-CLASSIFIED-BINARY64-4`。完整 r11 macOS CPython 3.12.11 replay（124,880 numeric comparisons）推翻单个首错驱动的 17-ULP 假设：163 个旧 bound failures 包含 31-ULP shadow display probability、151-ULP nested model-context F04 与 15-ULP coefficient。`18b25e21`/`eb9c124d` 保留为该不完整假设的失败证据。
 
-新合同按计算来源分四类，且每类仍为 finite + absolute/relative/ULP conjunction：`derived_feature_context_v2` 覆盖 feature snapshot 的 42 个既有 pattern，并加入 model context 的 `number_features` 与 normalization mean/scale，使用 `3 * 2^-53`、`3e-14`、151 ULP；`derived_coefficient_v1` 只覆盖 fitted coefficients 与 objective gradients，保留原 absolute/relative `1e-12` 并以 16 ULP 限制传播；`top1000_derived_probability_display_v3` 仍只覆盖三个 display `joint_probability` pattern，使用 `2^-71`、`17 / 2^52`、32 ULP；其余 36 个 tight patterns 保持 `1e-12/1e-12/8 ULP`。32、16 是完整 observed ULP maxima 31、15 的最小二次幂 envelope；`2^-71` 是 observed probability absolute maximum 之上的最小 binary power；feature absolute ceiling 是 observed maximum 的精确 binary expression。controller preflight 必须输出每个 concrete pattern 的 comparison/difference/failure count 与三轴 maxima，并在任一新 bound failure 时非零退出。
+新合同按计算来源分四类，且每类仍为 finite + absolute/relative/ULP conjunction：`derived_feature_context_v2` 覆盖 feature snapshot 的 42 个既有 pattern，并加入 model context 的 `number_features` 与 normalization mean/scale，使用 `3 * 2^-53`、`3e-14`、151 ULP；`derived_coefficient_v1` 只覆盖 fitted coefficients 与 objective gradients，保留原 absolute/relative `1e-12` 并以 16 ULP 限制传播；`top1000_derived_probability_display_v3` 仍只覆盖三个 display `joint_probability` pattern，使用 `2^-71`、`17 / 2^52`、32 ULP；其余 36 个 tight patterns 保持 `1e-12/1e-12/8 ULP`。32 是完整 observed probability ULP maximum 31 的最小二次幂 envelope；16 是 reported coefficient example 15 之上的候选 envelope，而不是未经 preflight 的 maximum 声明。`2^-71` 是 observed probability absolute maximum 之上的最小 binary power；feature absolute ceiling 是 observed maximum 的精确 binary expression。controller preflight 必须输出每个 concrete pattern 的 comparison/difference/failure count 与三轴 maxima，并在任一新 bound failure 时非零退出。
 
 score ranking/identity 不使用容差，也不再冻结 raw binary64 bits；它把有限 binary64 值按 exact decimal rational 转换，以 `1e-10` quantum 和 `ROUND_HALF_EVEN` 映射到 `P4S10HE1`。该 resolution 是已观测 `2.8e-17` 跨平台 drift 的 350 万倍，同时比六个 r10 formal/historical/shadow Top-1000 scope 的最小相邻差 `4.326295779955025012e-10` 小 4.326 倍；6,000 行逐行证明一 ULP 双向稳定、相邻 distinct 不合并、membership/order/rank 不变。排名按 stable key 降序，再按 canonical ticket 升序；score identity、tie key/group/layer/bounds 从 stable key 唯一派生并保持 exact。release/object IDs、SHA-256、issue/cutoff/lineage、ticket membership、Top-1000 order、schema enums 和 create-once files同样永远 exact。非有限值、未枚举路径差异和任一界外值 fail closed。
 

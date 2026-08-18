@@ -1,6 +1,6 @@
 # Phase 4 真实模型预测 MVP 详细实施计划
 
-版本：2.1（portable local verifier authority）
+版本：2.2（portable probability-display verifier authority）
 
 状态：`D00_AUTHORITY_SYNCED`。本计划与其余三份 Phase 4 authority 文档在同一 `P4_AUTHORITY_COMMIT` 冻结；只有 D00 两个 checker 均通过且 receipt 证明 clean 后才授权 D01。
 
@@ -192,9 +192,9 @@ D13 -> D15 final machine acceptance and handoff
 - **固定输入：** D11 frozen release及代码/依赖/输入manifest；独立replay实现。
 - **允许/禁止修改：** 只允许 `replay/`和独立测试；禁止导入产品核心概率/训练函数、修改任何被重放文件。
 - **交付物/Schema：** `replay/replay-report.json`、逐事实comparison、import audit和mutation findings。
-- **实现方法：** 独立解析 Phase 1、重算 F01–F14、训练目标/选择、组合分数归一和 Top-1000；重算所有 hash/parent 关系，不导入产品核心特征或概率实现。正式 builder provenance 继续 byte/hash exact；本地 CPython 3.12 verifier 使用 `P4-LOCAL-STABLE-SCORE-KEY-2`。既有 8/151/17-ULP numeric profiles 保持逐路径、finite、conjunctive 且不扩宽；score/tie identity 则由 `P4S10HE1`（exact-decimal rational、`1e-10`、half-even）唯一派生并 exact 比较，排名使用 stable key desc 后接 canonical ticket asc。
+- **实现方法：** 独立解析 Phase 1、重算 F01–F14、训练目标/选择、组合分数归一和 Top-1000；重算所有 hash/parent 关系，不导入产品核心特征或概率实现。正式 builder provenance 继续 byte/hash exact；本地 CPython 3.12 verifier 使用 `P4-LOCAL-STABLE-SCORE-KEY-3`。8-ULP tight 与 151-ULP feature profiles 不变；`top1000_derived_probability_display_v2` 仍仅含三个 display-probability 路径，保持 finite、absolute `2.2499312661442353e-22`、ULP `17` 与三界 conjunction，其 relative ceiling 由正 normal binary64 的 `17 / 2^52 = 3.774758283725532e-15` 上界导出。score/tie identity 则由 `P4S10HE1`（exact-decimal rational、`1e-10`、half-even）唯一派生并 exact 比较，排名使用 stable key desc 后接 canonical ticket asc。
 - **Authority gate：** `P4S10HE1` 的 key ID、quantum、rounding、identity namespace 与复合排名键作为 D00 四文档 authority 一起冻结；任何语义变化必须新版本、新 authority commit 和双 checker PASS。
-- **验收方法：** clean 隔离目录 replay；分别突变一条早期 draw、cutoff、rolling/EWMA/gap、pair/结构 feature、系数、model ID、概率、Top-1000 顺序、stable score key、tie/score identity、model lineage、lock 和 CLI provider 引用；加入六个 controller 一-ULP score fixtures、完整 r10 六 scope/6,000 行稳定键检查、first-boundary/非有限负例，同时保留 8/151/17-ULP profile 边界测试。删除/tamper final closure 必须失败。
+- **验收方法：** clean 隔离目录 replay；分别突变一条早期 draw、cutoff、rolling/EWMA/gap、pair/结构 feature、系数、model ID、概率、Top-1000 顺序、stable score key、tie/score identity、model lineage、lock 和 CLI provider 引用；加入六个 controller 一-ULP score fixtures、完整 r10 六 scope/6,000 行稳定键检查，以及完整 r11 六 scope/6,000 行 probability-display 双向 0..17 ULP envelope、全部 profile/path routing、first-boundary/非有限与 18-ULP 负例。删除/tamper final closure 必须失败。
 - **通过判据：** 原release逐事实100% match；每类mutation命中预期guard；产品核心import=0；两game均覆盖。
 - **失败/HOLD：** `HOLD_REPLAY_MISMATCH|HOLD_REPLAY_INDEPENDENCE|FAIL_TAMPERED`。
 - **依赖/下游：** D11；D14消费。

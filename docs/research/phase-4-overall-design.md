@@ -1,6 +1,6 @@
 # Phase 4 真实模型预测与 AutoResearch 闭环 MVP 总体设计
 
-版本：3.1（多特征模型与 portable local verifier 设计）
+版本：3.2（多特征模型与 portable probability-display verifier 设计）
 
 状态：`D00_AUTHORITY_SYNCED`。本文与 `ROADMAP.md`、`tasks/phase4/README.md`、`docs/plans/phase-4-detailed-plan.md` 在同一 `P4_AUTHORITY_COMMIT` 冻结；D00 两个 checker 通过后解除 `HOLD_AUTHORITY_SYNC`，才允许启动 D01。
 
@@ -49,7 +49,9 @@ M0 对完整合法空间赋同一概率，所有组合处于一个覆盖全空�
 
 正式 release provenance 不可变地记录 Linux builder 的精确解释器 realpath、Python patch、平台、依赖锁、命令和哈希；这些字段证明发布者实际使用了什么，不是本地用户必须复现的绝对路径。本地产品验收是另一个只读合同：支持 clean CPython 3.12 环境的 patch/platform 迁移，不要求历史 Phase 2/2.1 VPS virtualenv，也不重新运行这些历史 regression suites。它从 final manifest closure 验证 A05/A06 的不可变 receipt、命令、退出码和 hash。
 
-跨 CPython 3.12 patch 或平台重算的 numeric contract 采用 `P4-LOCAL-STABLE-SCORE-KEY-2`：只有合同逐路径枚举的浮点叶可语义比较；既有 `8`-ULP tight profile、`151`-ULP feature profile 与 `17`-ULP Top-1000 display-probability profile 保持窄路径和 conjunction 不变。score ranking/identity 不使用容差，也不再冻结 raw binary64 bits；它把有限 binary64 值按 exact decimal rational 转换，以 `1e-10` quantum 和 `ROUND_HALF_EVEN` 映射到 `P4S10HE1`。该 resolution 是已观测 `2.8e-17` 跨平台 drift 的 350 万倍，同时比六个 r10 formal/historical/shadow Top-1000 scope 的最小相邻差 `4.326295779955025012e-10` 小 4.326 倍；6,000 行逐行证明一 ULP 双向稳定、相邻 distinct 不合并、membership/order/rank 不变。排名按 stable key 降序，再按 canonical ticket 升序；score identity、tie key/group/layer/bounds 从 stable key 唯一派生并保持 exact。release/object IDs、SHA-256、issue/cutoff/lineage、ticket membership、Top-1000 order、schema enums 和 create-once files同样永远 exact。非有限值、未枚举路径差异和任一界外值 fail closed。
+跨 CPython 3.12 patch 或平台重算的 numeric contract 采用 `P4-LOCAL-STABLE-SCORE-KEY-3`：只有合同逐路径枚举的浮点叶可语义比较。`8`-ULP tight profile 与 `151`-ULP feature profile 原样不变；`top1000_derived_probability_display_v2` 仍只有 formal/historical/shadow Top-1000 的三个 `joint_probability` 路径，仍为 finite 且 absolute/relative/ULP 三界 conjunction。其 absolute `2.2499312661442353e-22` 和 ULP `17` 不变；relative ceiling 从依赖一个观测值的比例改为同一 `17` ULP 语义对正 normal binary64 的跨运行时上界 `17 / 2^52 = 3.774758283725532e-15`。该上界覆盖 r11 六个 scope、6,000 行逐值向上/向下最多 17 ULP 的完整 envelope，且不扩展路径或 ULP/absolute 语义。
+
+score ranking/identity 不使用容差，也不再冻结 raw binary64 bits；它把有限 binary64 值按 exact decimal rational 转换，以 `1e-10` quantum 和 `ROUND_HALF_EVEN` 映射到 `P4S10HE1`。该 resolution 是已观测 `2.8e-17` 跨平台 drift 的 350 万倍，同时比六个 r10 formal/historical/shadow Top-1000 scope 的最小相邻差 `4.326295779955025012e-10` 小 4.326 倍；6,000 行逐行证明一 ULP 双向稳定、相邻 distinct 不合并、membership/order/rank 不变。排名按 stable key 降序，再按 canonical ticket 升序；score identity、tie key/group/layer/bounds 从 stable key 唯一派生并保持 exact。release/object IDs、SHA-256、issue/cutoff/lineage、ticket membership、Top-1000 order、schema enums 和 create-once files同样永远 exact。非有限值、未枚举路径差异和任一界外值 fail closed。
 
 该 key contract 属于 D00 冻结 authority，而不是实现细节：key ID、quantum、rounding、identity namespace 和复合排名键任一变更都必须升级显式版本并重新经过 authority freeze。
 

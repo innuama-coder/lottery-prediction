@@ -1,6 +1,6 @@
 # 彩票预测与 AutoResearch 系统路线图
 
-版本：2.4
+版本：2.5
 
 状态：Phase 4 真实模型 MVP authority；以 D00 `P4_AUTHORITY_COMMIT` 中四份 authority 文档的内容哈希共同生效
 
@@ -133,6 +133,8 @@ Phase 3 正式验收身份是 `P3-R07-2c0fa97-20260810-I01`，权威制品为 `a
 Phase 4 不要求证明 lift；`no_confirmed_lift|worse_than_M0|insufficient_evidence` 可与工程 PASS 并存。但任一 game 使用 M0、fixture、内联参数、工作树默认模型或全等概率输出时，必须 HOLD/FAIL，不能形成产品 PASS。完整合同由同一 `P4_AUTHORITY_COMMIT` 的其余三份 authority 文档定义。
 
 本地产品验收不得绑定正式 builder 的 VPS 绝对路径。正式 provenance 继续精确冻结 Linux interpreter/平台/依赖/命令；本地只读 verifier 支持 CPython 3.12 patch/platform 迁移，以 manifest closure 验证历史 Phase 2/2.1 receipts 而不重跑其 VPS 环境。只有合同逐路径枚举的重算浮点叶可使用 finite 且 absolute/relative/ULP 三界同时满足的语义比较；ID、hash、issue/cutoff/lineage、Top-1000 membership/order、canonical ticket、create-once 文件，以及由 `P4S10HE1`（`1e-10` decimal quantum、round-half-even）稳定数学顺序键派生的 score/tie identity 与 tie bounds 始终 exact。排名先按该稳定键降序，再按 canonical ticket 升序处理同键 tie；raw binary64 bits 不得作为身份或排名 ID。
+
+`P4-LOCAL-STABLE-SCORE-KEY-3` 只修订 `top1000_derived_probability_display_v2` 的 relative ceiling：在既有 `17` ULP 上限下，用正 normal binary64 同一 binade 的运行时无关上界 `17 / 2^52 = 3.774758283725532e-15`，替代依赖单一观测概率分母的旧 ceiling。该 profile 仍只路由 formal/historical/shadow Top-1000 的 `joint_probability` 三条逐路径模式，仍要求 finite，并同时满足原 absolute `2.2499312661442353e-22`、新 relative ceiling 与原 `17` ULP 三界。`tight_recomputed_v1` 与 `derived_feature_snapshot_v1` 不变；score/order/tie、ticket、lineage、hash、ID 与 create-once 文件不进入容差。
 
 `P4S10HE1` 是 D00 authority 的冻结组成部分；任何 key ID、量化精度、舍入模式、派生 identity namespace 或排名组合键的变化都必须作为新的显式版本重新冻结四份 authority 文档，不能在既有 release 内静默替换。
 

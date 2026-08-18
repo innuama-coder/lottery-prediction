@@ -9,7 +9,9 @@ import shutil
 import struct
 import sys
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path
+from typing import Callable, Iterator
 
 import p4e2_oracle as oracle
 
@@ -22,11 +24,14 @@ PROTECTED_ROOTS = (
     "artifacts/phase-4/P4-RMVP-20260815-r08",
 )
 LOCAL_CONTRACT_PATH = ROOT / "config/phase4/local-verifier-contract.json"
+NumericAuditObserver = Callable[[str, object, object, dict[str, object]], None]
+_NUMERIC_AUDIT_OBSERVER: NumericAuditObserver | None = None
+_NUMERIC_AUDIT_SUPPRESS_BOUNDS = False
 
 
 def local_contract() -> dict[str, object]:
     value = load(LOCAL_CONTRACT_PATH)
-    if value.get("contract_id") != "P4-LOCAL-STABLE-SCORE-KEY-3":
+    if value.get("contract_id") != "P4-LOCAL-PATH-CLASSIFIED-BINARY64-4":
         raise ValueError("HOLD_LOCAL_VERIFIER_CONTRACT")
     return value
 
@@ -65,6 +70,21 @@ def numeric_comparison(left: object, right: object, *, contract: dict[str, objec
     passed = absolute <= policy["max_absolute"] and relative <= policy["max_relative"] and ulps <= policy["max_ulps"]
     return {"passed": passed, "profile_id": selected_profile, "absolute_error": absolute,
             "relative_error": relative, "ulp_distance": ulps}
+
+
+@contextmanager
+def collect_numeric_comparisons(observer: NumericAuditObserver, *, suppress_bounds: bool) -> Iterator[None]:
+    """Collect a full replay matrix without weakening normal fail-fast behavior."""
+    global _NUMERIC_AUDIT_OBSERVER, _NUMERIC_AUDIT_SUPPRESS_BOUNDS
+    if _NUMERIC_AUDIT_OBSERVER is not None:
+        raise RuntimeError("numeric comparison audit is already active")
+    _NUMERIC_AUDIT_OBSERVER = observer
+    _NUMERIC_AUDIT_SUPPRESS_BOUNDS = suppress_bounds
+    try:
+        yield
+    finally:
+        _NUMERIC_AUDIT_OBSERVER = None
+        _NUMERIC_AUDIT_SUPPRESS_BOUNDS = False
 
 
 def _path_matches(path: str, pattern: str) -> bool:
@@ -121,7 +141,9 @@ def _compare_numeric_leaves(observed: object, expected: object, path: str,
     profile_id = _path_profile(path, contract)
     if profile_id is not None:
         result = numeric_comparison(observed, expected, contract=contract, profile_id=profile_id)
-        if not result["passed"]:
+        if _NUMERIC_AUDIT_OBSERVER is not None:
+            _NUMERIC_AUDIT_OBSERVER(path, observed, expected, result)
+        if not result["passed"] and not _NUMERIC_AUDIT_SUPPRESS_BOUNDS:
             raise ValueError(f"HOLD_REPLAY_NUMERIC_BOUND:{path}:profile={profile_id}:abs={result['absolute_error']}:rel={result['relative_error']}:ulp={result['ulp_distance']}")
         return 1
     return 0

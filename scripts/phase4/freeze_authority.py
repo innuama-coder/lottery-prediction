@@ -21,8 +21,10 @@ REQUIRED_MARKERS = (
     "M0",
     "retrospective_sequence_safe",
     "READY_FOR_LOCAL_PRODUCT_ACCEPTANCE",
-    "P4-LOCAL-STABLE-SCORE-KEY-3",
-    "17 / 2^52 = 3.774758283725532e-15",
+    "P4-LOCAL-PATH-CLASSIFIED-BINARY64-4",
+    "derived_feature_context_v2",
+    "derived_coefficient_v1",
+    "top1000_derived_probability_display_v3",
 )
 
 
@@ -76,7 +78,7 @@ def validate(args: argparse.Namespace) -> dict[str, object]:
         raise ValueError("real non-uniform serving hard gates are missing")
     if semantics["final_machine_state"] != "READY_FOR_LOCAL_PRODUCT_ACCEPTANCE":
         raise ValueError("final machine state mismatch")
-    if (semantics.get("local_product_verifier") != "P4-LOCAL-STABLE-SCORE-KEY-3"
+    if (semantics.get("local_product_verifier") != "P4-LOCAL-PATH-CLASSIFIED-BINARY64-4"
             or semantics.get("local_supported_python") != "CPython 3.12 any patch"
             or semantics.get("historical_phase2_suites_required_locally") is not False):
         raise ValueError("portable local verifier semantics missing")

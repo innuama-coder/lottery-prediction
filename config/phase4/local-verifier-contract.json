@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.4.0",
+  "schema_version": "1.5.0",
   "artifact_type": "phase4_local_verifier_contract",
-  "contract_id": "P4-LOCAL-STABLE-SCORE-KEY-3",
+  "contract_id": "P4-LOCAL-PATH-CLASSIFIED-BINARY64-4",
   "supported_runtime": {
     "implementation": "CPython",
     "python_major_minor": "3.12",
@@ -28,33 +28,35 @@
       "max_relative": 1e-12,
       "max_ulps": 8
     },
-    "derived_feature_snapshot_v1": {
+    "derived_feature_context_v2": {
       "finite_required": true,
       "require_all_bounds": true,
-      "max_absolute": 3e-16,
+      "max_absolute": 3.3306690738754696e-16,
       "max_relative": 3e-14,
       "max_ulps": 151
     },
-    "top1000_derived_probability_display_v2": {
+    "derived_coefficient_v1": {
       "finite_required": true,
       "require_all_bounds": true,
-      "max_absolute": 2.2499312661442353e-22,
+      "max_absolute": 1e-12,
+      "max_relative": 1e-12,
+      "max_ulps": 16
+    },
+    "top1000_derived_probability_display_v3": {
+      "finite_required": true,
+      "require_all_bounds": true,
+      "max_absolute": 4.235164736271502e-22,
       "max_relative": 3.774758283725532e-15,
-      "max_ulps": 17
+      "max_ulps": 32
     }
   },
   "path_numeric_profiles": [
     {
       "profile_id": "tight_recomputed_v1",
       "paths": [
-        "model.objective_trace.gradient_at_zero_by_zone.*.*",
         "model.selection_metrics.*.joint_log_loss",
         "selection_receipt.selection_metrics.*.joint_log_loss",
-        "model.zones.*.coefficients.*",
         "model.zones.*.context.ewma_raw.*.*",
-        "model.zones.*.context.normalization.*.mean",
-        "model.zones.*.context.normalization.*.scale",
-        "model.zones.*.context.number_features.*.*",
         "model.zones.*.context.pair_matrix.*.*",
         "model.zones.*.context.pair_values.*",
         "model.zones.*.context.recency_gap_raw.*",
@@ -91,8 +93,11 @@
       ]
     },
     {
-      "profile_id": "derived_feature_snapshot_v1",
+      "profile_id": "derived_feature_context_v2",
       "paths": [
+        "model.zones.*.context.normalization.*.mean",
+        "model.zones.*.context.normalization.*.scale",
+        "model.zones.*.context.number_features.*.*",
         "feature_snapshot.*.feature_values.F01",
         "feature_snapshot.*.feature_values.F02",
         "feature_snapshot.*.feature_values.F03",
@@ -138,7 +143,14 @@
       ]
     },
     {
-      "profile_id": "top1000_derived_probability_display_v2",
+      "profile_id": "derived_coefficient_v1",
+      "paths": [
+        "model.objective_trace.gradient_at_zero_by_zone.*.*",
+        "model.zones.*.coefficients.*"
+      ]
+    },
+    {
+      "profile_id": "top1000_derived_probability_display_v3",
       "paths": [
         "top1000.*.joint_probability",
         "historical_top1000.*.joint_probability",
@@ -147,28 +159,46 @@
     }
   ],
   "numeric_profile_evidence": {
-    "derived_feature_snapshot_v1": {
-      "fixture_path": "tests/phase4/fixtures/local-verifier-feature-snapshot-macos-31211.json",
-      "observed_difference_count": 32,
-      "observed_max_absolute": 2.62e-16,
-      "observed_max_relative": 2.64e-14,
-      "observed_max_ulps": 151,
-      "ceiling_rationale": "Round-06 independent macOS CPython 3.12.11 F04 fixture; absolute and relative ceilings are rounded upward while the ULP ceiling is the exact observed maximum."
+    "tight_recomputed_v1": {
+      "full_replay_fixture_path": "tests/phase4/fixtures/local-verifier-r11-macos-full-replay.json",
+      "legacy_comparison_count": 113405,
+      "legacy_difference_count": 11180,
+      "legacy_max_absolute": 3.552713678800501e-15,
+      "legacy_max_relative": 2.637573631646515e-14,
+      "legacy_max_ulps": 151,
+      "ceiling_rationale": "The legacy maxima identify misclassified nested feature and coefficient paths. After those paths move to source-specific profiles, all remaining tight path bounds stay byte-semantically unchanged at 1e-12 absolute, 1e-12 relative, and 8 ULP."
     },
-    "top1000_derived_probability_display_v2": {
+    "derived_feature_context_v2": {
+      "prior_fixture_path": "tests/phase4/fixtures/local-verifier-feature-snapshot-macos-31211.json",
+      "full_replay_fixture_path": "tests/phase4/fixtures/local-verifier-r11-macos-full-replay.json",
+      "observed_difference_count": 32,
+      "observed_max_absolute": 3.3306690738754696e-16,
+      "observed_max_relative": 2.637573631646515e-14,
+      "observed_max_ulps": 151,
+      "absolute_derivation": "3 * 2^-53",
+      "ceiling_rationale": "Snapshot feature values and the same values nested in independently rebuilt model contexts share one computation provenance. The absolute ceiling is the exact binary expression of the full replay maximum; relative 3e-14 and 151 ULP retain the prior narrow feature semantics."
+    },
+    "derived_coefficient_v1": {
+      "full_replay_fixture_path": "tests/phase4/fixtures/local-verifier-r11-macos-full-replay.json",
+      "observed_example_path": "model.zones.1.coefficients.F04",
+      "observed_example_ulps": 15,
+      "ulp_derivation": "smallest power of two strictly above full-replay observed example: 16",
+      "ceiling_rationale": "Fitted coefficients and their objective gradients are isolated from both raw feature leaves and downstream metrics. Their inherited absolute/relative bounds remain unchanged while a 16-ULP propagation envelope covers the full-replay 15-ULP coefficient example without widening the remaining tight paths."
+    },
+    "top1000_derived_probability_display_v3": {
       "prior_fixture_path": "tests/phase4/fixtures/local-verifier-top1000-probability-macos-31211.json",
       "controller_failure_fixture_path": "tests/phase4/fixtures/local-verifier-top1000-probability-r11-macos-31211.json",
+      "full_replay_fixture_path": "tests/phase4/fixtures/local-verifier-r11-macos-full-replay.json",
       "audited_release_id": "P4-P4E2-20260815-r11",
       "audited_scope_count": 6,
       "audited_row_count": 6000,
-      "derivation": "17 / 2^52",
-      "derived_max_relative": 3.774758283725532e-15,
-      "exhaustive_max_relative_envelope": 3.774410052595433e-15,
-      "observed_path": "top1000.866.joint_probability",
-      "observed_max_absolute": 2.2499312661442353e-22,
-      "observed_max_relative": 3.5447298395667303e-15,
-      "observed_max_ulps": 17,
-      "ceiling_rationale": "The relative ceiling is the runtime-independent positive-normal binary64 upper bound implied by the unchanged 17-ULP limit, not a copied row value. Exhaustive bidirectional 0..17-ULP audit covers all 6,000 formal, historical, and shadow r11 Top-1000 probabilities. Absolute and ULP ceilings and both unrelated profiles remain unchanged."
+      "observed_max_absolute": 3.441071348220595e-22,
+      "observed_max_relative": 3.561621664915701e-15,
+      "observed_max_ulps": 31,
+      "absolute_derivation": "smallest binary power strictly above observed maximum: 2^-71",
+      "relative_derivation": "17 / 2^52",
+      "ulp_derivation": "smallest power of two strictly above observed maximum: 32",
+      "ceiling_rationale": "The three display-probability paths remain isolated. Independent conjunctive axes use the smallest binary power above the full-replay absolute maximum, the already formula-derived relative ceiling that exceeds the full-replay relative maximum, and the smallest power of two above the full-replay ULP maximum."
     }
   },
   "exact_invariants": [

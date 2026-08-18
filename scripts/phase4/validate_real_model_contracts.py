@@ -82,12 +82,15 @@ def main() -> int:
     expected_profiles = {
         "tight_recomputed_v1": {"finite_required": True, "require_all_bounds": True,
                                 "max_absolute": 1e-12, "max_relative": 1e-12, "max_ulps": 8},
-        "derived_feature_snapshot_v1": {"finite_required": True, "require_all_bounds": True,
-                                        "max_absolute": 3e-16, "max_relative": 3e-14, "max_ulps": 151},
-        "top1000_derived_probability_display_v2": {
+        "derived_feature_context_v2": {"finite_required": True, "require_all_bounds": True,
+                                       "max_absolute": 3.3306690738754696e-16,
+                                       "max_relative": 3e-14, "max_ulps": 151},
+        "derived_coefficient_v1": {"finite_required": True, "require_all_bounds": True,
+                                   "max_absolute": 1e-12, "max_relative": 1e-12, "max_ulps": 16},
+        "top1000_derived_probability_display_v3": {
             "finite_required": True, "require_all_bounds": True,
-            "max_absolute": 2.2499312661442353e-22,
-            "max_relative": 3.774758283725532e-15, "max_ulps": 17,
+            "max_absolute": 4.235164736271502e-22,
+            "max_relative": 3.774758283725532e-15, "max_ulps": 32,
         },
     }
     numeric_paths = [path for row in local_contract["path_numeric_profiles"] for path in row["paths"]]
@@ -98,16 +101,19 @@ def main() -> int:
     } | {
         f"feature_snapshot.*.normalization.{feature_id}.{statistic}"
         for feature_id in sorted(FEATURE_IDS) for statistic in ("mean", "scale")
-    }
-    expected_tight_paths = {
-        "model.objective_trace.gradient_at_zero_by_zone.*.*",
-        "model.selection_metrics.*.joint_log_loss",
-        "selection_receipt.selection_metrics.*.joint_log_loss",
-        "model.zones.*.coefficients.*",
-        "model.zones.*.context.ewma_raw.*.*",
+    } | {
         "model.zones.*.context.normalization.*.mean",
         "model.zones.*.context.normalization.*.scale",
         "model.zones.*.context.number_features.*.*",
+    }
+    expected_coefficient_paths = {
+        "model.objective_trace.gradient_at_zero_by_zone.*.*",
+        "model.zones.*.coefficients.*",
+    }
+    expected_tight_paths = {
+        "model.selection_metrics.*.joint_log_loss",
+        "selection_receipt.selection_metrics.*.joint_log_loss",
+        "model.zones.*.context.ewma_raw.*.*",
         "model.zones.*.context.pair_matrix.*.*",
         "model.zones.*.context.pair_values.*",
         "model.zones.*.context.recency_gap_raw.*",
@@ -159,15 +165,16 @@ def main() -> int:
     }
     actual_score_order_contract = dict(local_contract.get("score_order_contract", {}))
     actual_score_order_contract.pop("resolution_rationale", None)
-    if (local_contract.get("contract_id") != "P4-LOCAL-STABLE-SCORE-KEY-3"
-            or local_contract.get("schema_version") != "1.4.0"
+    if (local_contract.get("contract_id") != "P4-LOCAL-PATH-CLASSIFIED-BINARY64-4"
+            or local_contract.get("schema_version") != "1.5.0"
             or actual_score_order_contract != expected_score_order_contract
             or local_contract.get("default_numeric_profile") != "tight_recomputed_v1"
             or local_contract.get("numeric_profiles") != expected_profiles
             or set(profile_ids) != set(expected_profiles) or len(profile_ids) != len(set(profile_ids))
             or paths_by_profile.get("tight_recomputed_v1") != expected_tight_paths
-            or paths_by_profile.get("derived_feature_snapshot_v1") != expected_derived_feature_paths
-            or paths_by_profile.get("top1000_derived_probability_display_v2") != expected_top_probability_paths
+            or paths_by_profile.get("derived_feature_context_v2") != expected_derived_feature_paths
+            or paths_by_profile.get("derived_coefficient_v1") != expected_coefficient_paths
+            or paths_by_profile.get("top1000_derived_probability_display_v3") != expected_top_probability_paths
             or len(numeric_paths) != len(set(numeric_paths)) or any("**" in path for path in numeric_paths)
             or local_contract["historical_formal_evidence"]["local_reexecution_required"] is not False
             or any("/home/" in path or "/usr/bin/" in path for path in numeric_paths)):

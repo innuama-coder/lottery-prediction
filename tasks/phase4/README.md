@@ -1,12 +1,14 @@
 # Phase 4：真实模型预测与 AutoResearch 闭环 MVP 定义
 
-版本：3.2（portable probability-display verifier authority）
+版本：3.3（path-classified portable verifier authority）
 
 状态：`D00_AUTHORITY_SYNCED`。本文件与 `ROADMAP.md`、`docs/research/phase-4-overall-design.md`、`docs/plans/phase-4-detailed-plan.md` 在同一 `P4_AUTHORITY_COMMIT` 冻结；只有 D00 两个 checker 均通过且 receipt 证明 clean 后才解除 `HOLD_AUTHORITY_SYNC` 并启动 D01。
 
 本轮 authority 冻结 `P4S10HE1` score order contract：有限 binary64 输入以其精确有理数值按 `1e-10` decimal quantum、`ROUND_HALF_EVEN` 生成稳定整数 tick；Top-1000 排名按 tick 降序、canonical ticket 升序，score/tie identity 与 tie bounds 从该 tick 精确派生。raw binary64 bits 不再承担身份或排名语义。
 
-本轮同时冻结 `P4-LOCAL-STABLE-SCORE-KEY-3`：只把 Top-1000 derived display probability profile 升级为 `top1000_derived_probability_display_v2`。其 relative ceiling 由既有 `17` ULP 语义的正 normal binary64 上界 `17 / 2^52 = 3.774758283725532e-15` 导出；absolute `2.2499312661442353e-22`、ULP `17`、finite 与三界 conjunction 均不变。该 profile 仍仅覆盖 formal、historical、shadow Top-1000 的三个 `joint_probability` 叶；8-ULP tight 与 151-ULP feature profiles 不变，所有身份与完整性字段继续 exact。
+完整 macOS replay 证明 `18b25e21`/`eb9c124d` 的 17-ULP 假设不完整：旧 profile 下共有 163 failures，Top-1000 shadow display probability 达 31 ULP，model context 内派生 F04 达 151 ULP，coefficient 至少达 15 ULP。它们必须保留为失败证据，不得形成 release。
+
+修订 authority 冻结 `P4-LOCAL-PATH-CLASSIFIED-BINARY64-4`。派生 feature snapshot 与 model context feature/normalization 路径统一进入 `derived_feature_context_v2`（absolute `3 * 2^-53`、relative `3e-14`、151 ULP）；coefficient 与 objective gradient 独立进入 `derived_coefficient_v1`（absolute/relative 仍为 `1e-12`、16 ULP）；三个 Top-1000 display-probability 路径进入 `top1000_derived_probability_display_v3`（absolute `2^-71`、relative `17 / 2^52`、32 ULP）；其余 tight 路径保持原 `1e-12/1e-12/8 ULP`。所有 profile 继续 finite 且三界 conjunction；任何 exact identity/integrity surface 均不路由到数值 profile。
 
 ## 1. 权威范围
 

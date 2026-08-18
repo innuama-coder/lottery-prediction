@@ -1,6 +1,6 @@
 # 彩票预测与 AutoResearch 系统路线图
 
-版本：2.5
+版本：2.6
 
 状态：Phase 4 真实模型 MVP authority；以 D00 `P4_AUTHORITY_COMMIT` 中四份 authority 文档的内容哈希共同生效
 
@@ -134,7 +134,7 @@ Phase 4 不要求证明 lift；`no_confirmed_lift|worse_than_M0|insufficient_evi
 
 本地产品验收不得绑定正式 builder 的 VPS 绝对路径。正式 provenance 继续精确冻结 Linux interpreter/平台/依赖/命令；本地只读 verifier 支持 CPython 3.12 patch/platform 迁移，以 manifest closure 验证历史 Phase 2/2.1 receipts 而不重跑其 VPS 环境。只有合同逐路径枚举的重算浮点叶可使用 finite 且 absolute/relative/ULP 三界同时满足的语义比较；ID、hash、issue/cutoff/lineage、Top-1000 membership/order、canonical ticket、create-once 文件，以及由 `P4S10HE1`（`1e-10` decimal quantum、round-half-even）稳定数学顺序键派生的 score/tie identity 与 tie bounds 始终 exact。排名先按该稳定键降序，再按 canonical ticket 升序处理同键 tie；raw binary64 bits 不得作为身份或排名 ID。
 
-`P4-LOCAL-STABLE-SCORE-KEY-3` 只修订 `top1000_derived_probability_display_v2` 的 relative ceiling：在既有 `17` ULP 上限下，用正 normal binary64 同一 binade 的运行时无关上界 `17 / 2^52 = 3.774758283725532e-15`，替代依赖单一观测概率分母的旧 ceiling。该 profile 仍只路由 formal/historical/shadow Top-1000 的 `joint_probability` 三条逐路径模式，仍要求 finite，并同时满足原 absolute `2.2499312661442353e-22`、新 relative ceiling 与原 `17` ULP 三界。`tight_recomputed_v1` 与 `derived_feature_snapshot_v1` 不变；score/order/tie、ticket、lineage、hash、ID 与 create-once 文件不进入容差。
+`P4-LOCAL-PATH-CLASSIFIED-BINARY64-4` 按数值来源而非旧容器分类：snapshot 及 model context 的派生 feature leaves 使用同一 feature-derived profile；fitted coefficient 与其 objective-gradient leaves 使用独立 coefficient profile；formal/historical/shadow Top-1000 的三个 display `joint_probability` 路径使用独立 probability-display profile；其余逐路径叶保留 tight profile。每个 profile 都必须 finite 且同时满足 absolute/relative/ULP 三界，并由完整 macOS CPython 3.12.11 replay 的逐 pattern maxima、明确计算来源及 just-outside negatives 约束。`18b25e21`/`eb9c124d` 的 17-ULP 假设是不可改写的失败证据，不构成 release authority。score/order/tie、ticket、lineage、hash、ID 与 create-once 文件不进入任何容差。
 
 `P4S10HE1` 是 D00 authority 的冻结组成部分；任何 key ID、量化精度、舍入模式、派生 identity namespace 或排名组合键的变化都必须作为新的显式版本重新冻结四份 authority 文档，不能在既有 release 内静默替换。
 

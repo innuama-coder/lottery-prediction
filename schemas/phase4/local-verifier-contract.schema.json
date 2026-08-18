@@ -5,9 +5,9 @@
   "additionalProperties": false,
   "required": ["schema_version", "artifact_type", "contract_id", "supported_runtime", "score_order_contract", "default_numeric_profile", "numeric_profiles", "path_numeric_profiles", "numeric_profile_evidence", "exact_invariants", "historical_formal_evidence"],
   "properties": {
-    "schema_version": {"const": "1.5.0"},
+    "schema_version": {"const": "1.6.0"},
     "artifact_type": {"const": "phase4_local_verifier_contract"},
-    "contract_id": {"const": "P4-LOCAL-PATH-CLASSIFIED-BINARY64-4"},
+    "contract_id": {"const": "P4-LOCAL-PATH-CLASSIFIED-BINARY64-5"},
     "supported_runtime": {
       "type": "object",
       "additionalProperties": false,
@@ -39,24 +39,26 @@
     "numeric_profiles": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["tight_recomputed_v1", "derived_feature_context_v2", "derived_coefficient_v1", "top1000_derived_probability_display_v3"],
+      "required": ["tight_recomputed_v1", "derived_feature_context_v2", "derived_number_feature_context_v1", "derived_coefficient_v1", "propagated_zone_score_v1", "top1000_derived_probability_display_v3"],
       "properties": {
         "tight_recomputed_v1": {"$ref": "#/$defs/tightProfile"},
         "derived_feature_context_v2": {"$ref": "#/$defs/derivedFeatureProfile"},
+        "derived_number_feature_context_v1": {"$ref": "#/$defs/derivedNumberFeatureProfile"},
         "derived_coefficient_v1": {"$ref": "#/$defs/derivedCoefficientProfile"},
+        "propagated_zone_score_v1": {"$ref": "#/$defs/propagatedZoneScoreProfile"},
         "top1000_derived_probability_display_v3": {"$ref": "#/$defs/top1000DerivedProbabilityDisplayProfile"}
       }
     },
     "path_numeric_profiles": {
       "type": "array",
-      "minItems": 4,
-      "maxItems": 4,
+      "minItems": 6,
+      "maxItems": 6,
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": ["profile_id", "paths"],
         "properties": {
-          "profile_id": {"enum": ["tight_recomputed_v1", "derived_feature_context_v2", "derived_coefficient_v1", "top1000_derived_probability_display_v3"]},
+          "profile_id": {"enum": ["tight_recomputed_v1", "derived_feature_context_v2", "derived_number_feature_context_v1", "derived_coefficient_v1", "propagated_zone_score_v1", "top1000_derived_probability_display_v3"]},
           "paths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "not": {"pattern": "\\*\\*"}}}
         }
       }
@@ -64,7 +66,7 @@
     "numeric_profile_evidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["tight_recomputed_v1", "derived_feature_context_v2", "derived_coefficient_v1", "top1000_derived_probability_display_v3"],
+      "required": ["tight_recomputed_v1", "derived_feature_context_v2", "derived_number_feature_context_v1", "derived_coefficient_v1", "propagated_zone_score_v1", "top1000_derived_probability_display_v3"],
       "properties": {
         "tight_recomputed_v1": {
           "type": "object",
@@ -95,6 +97,23 @@
             "ceiling_rationale": {"type": "string", "minLength": 80}
           }
         },
+        "derived_number_feature_context_v1": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["controller_preflight_fixture_path", "observed_pattern", "observed_comparison_count", "observed_difference_count", "observed_failure_count", "observed_max_absolute", "observed_max_relative", "observed_max_ulps", "absolute_derivation", "ceiling_rationale"],
+          "properties": {
+            "controller_preflight_fixture_path": {"const": "tests/phase4/fixtures/local-verifier-r11-macos-path-pattern-replay.json"},
+            "observed_pattern": {"const": "model.zones.*.context.number_features.F04.*"},
+            "observed_comparison_count": {"const": 288},
+            "observed_difference_count": {"const": 70},
+            "observed_failure_count": {"const": 1},
+            "observed_max_absolute": {"const": 4.440892098500626e-16},
+            "observed_max_relative": {"const": 2.637573631646515e-14},
+            "observed_max_ulps": {"const": 151},
+            "absolute_derivation": {"const": "4 * 2^-53"},
+            "ceiling_rationale": {"type": "string", "minLength": 100}
+          }
+        },
         "derived_coefficient_v1": {
           "type": "object",
           "additionalProperties": false,
@@ -105,6 +124,25 @@
             "observed_example_ulps": {"const": 15},
             "ulp_derivation": {"const": "smallest power of two strictly above full-replay observed example: 16"},
             "ceiling_rationale": {"type": "string", "minLength": 80}
+          }
+        },
+        "propagated_zone_score_v1": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["controller_preflight_fixture_path", "observed_pattern", "observed_comparison_count", "observed_difference_count", "observed_failure_count", "observed_max_absolute", "observed_max_relative", "observed_max_ulps", "absolute_derivation", "relative_derivation", "ulp_derivation", "ceiling_rationale"],
+          "properties": {
+            "controller_preflight_fixture_path": {"const": "tests/phase4/fixtures/local-verifier-r11-macos-path-pattern-replay.json"},
+            "observed_pattern": {"const": "model.zones.*.top_zone_rows.*.0"},
+            "observed_comparison_count": {"const": 6246},
+            "observed_difference_count": {"const": 3206},
+            "observed_failure_count": {"const": 16},
+            "observed_max_absolute": {"const": 4.440892098500626e-16},
+            "observed_max_relative": {"const": 1.1285989447903035e-14},
+            "observed_max_ulps": {"const": 64},
+            "absolute_derivation": {"const": "4 * 2^-53"},
+            "relative_derivation": {"const": "smallest binary power strictly above observed maximum: 2^-46"},
+            "ulp_derivation": {"const": "observed maximum: 64"},
+            "ceiling_rationale": {"type": "string", "minLength": 100}
           }
         },
         "top1000_derived_probability_display_v3": {
@@ -166,6 +204,18 @@
         "max_ulps": {"const": 151}
       }
     },
+    "derivedNumberFeatureProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finite_required", "require_all_bounds", "max_absolute", "max_relative", "max_ulps"],
+      "properties": {
+        "finite_required": {"const": true},
+        "require_all_bounds": {"const": true},
+        "max_absolute": {"const": 4.440892098500626e-16},
+        "max_relative": {"const": 3e-14},
+        "max_ulps": {"const": 151}
+      }
+    },
     "derivedCoefficientProfile": {
       "type": "object",
       "additionalProperties": false,
@@ -176,6 +226,18 @@
         "max_absolute": {"const": 1e-12},
         "max_relative": {"const": 1e-12},
         "max_ulps": {"const": 16}
+      }
+    },
+    "propagatedZoneScoreProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finite_required", "require_all_bounds", "max_absolute", "max_relative", "max_ulps"],
+      "properties": {
+        "finite_required": {"const": true},
+        "require_all_bounds": {"const": true},
+        "max_absolute": {"const": 4.440892098500626e-16},
+        "max_relative": {"const": 1.4210854715202004e-14},
+        "max_ulps": {"const": 64}
       }
     },
     "top1000DerivedProbabilityDisplayProfile": {

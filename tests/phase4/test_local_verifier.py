@@ -156,8 +156,10 @@ class LocalVerifierNumericContractTests(unittest.TestCase):
                          if row["profile_id"] == "top1000_derived_probability_display_v3")
         self.assertEqual(new_paths, old_paths)
         self.assertEqual(self.contract["exact_invariants"], frozen_r11["exact_invariants"])
-        self.assertEqual(verifier._path_profile("model.zones.1.context.number_features.F04.7", self.contract), "derived_feature_context_v2")
+        self.assertEqual(verifier._path_profile("model.zones.1.context.number_features.F04.7", self.contract), "derived_number_feature_context_v1")
         self.assertEqual(verifier._path_profile("model.zones.1.coefficients.F04", self.contract), "derived_coefficient_v1")
+        self.assertEqual(verifier._path_profile("model.zones.1.top_zone_rows.33.0", self.contract), "propagated_zone_score_v1")
+        self.assertEqual(verifier._path_profile("model.zones.1.maximum_score", self.contract), "tight_recomputed_v1")
         fixture = json.loads((ROOT / evidence["full_replay_fixture_path"]).read_text())
         self.assertEqual(fixture["legacy_numeric_bound_failures"], 163)
         self.assertEqual(fixture["exact_identity_mismatches"], 0)
@@ -194,6 +196,66 @@ class LocalVerifierNumericContractTests(unittest.TestCase):
         self.assertFalse(ulp["passed"])
         with self.assertRaisesRegex(ValueError, "HOLD_REPLAY_NUMERIC_BOUND"):
             verifier.compare_value(ulp_base, ulp_outside, path, contract=self.contract)
+
+    def test_c5a9_remaining_paths_are_isolated_and_observed_maxima_are_covered(self) -> None:
+        fixture_path = ROOT / "tests/phase4/fixtures/local-verifier-r11-macos-path-pattern-replay.json"
+        fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        self.assertEqual(fixture["tested_commit"], "c5a9b3a307ae45e04a72c318f0ddb6e1ae1e069f")
+        self.assertEqual(fixture["terminal"]["new_bound_failures"], 17)
+        self.assertEqual(fixture["terminal"]["exact_identity_mismatches"], 0)
+        self.assertTrue(fixture["terminal"]["release_unchanged"])
+
+        expected = {
+            "model.zones.*.context.number_features.F04.*": "derived_number_feature_context_v1",
+            "model.zones.*.top_zone_rows.*.0": "propagated_zone_score_v1",
+        }
+        for row in fixture["offending_patterns"]:
+            profile_id = expected[row["pattern"]]
+            profile = self.contract["numeric_profiles"][profile_id]
+            self.assertLessEqual(row["max_absolute"]["value"], profile["max_absolute"])
+            self.assertLessEqual(row["max_relative"]["value"], profile["max_relative"])
+            self.assertLessEqual(row["max_ulps"]["value"], profile["max_ulps"])
+        self.assertEqual(fixture["corrected_profiles"]["derived_coefficient_v1"]["bound_failures"], 0)
+        self.assertEqual(fixture["corrected_profiles"]["top1000_derived_probability_display_v3"]["bound_failures"], 0)
+
+    def test_number_feature_and_zone_score_conjunctive_boundaries(self) -> None:
+        nested = "derived_number_feature_context_v1"
+        nested_base = 1.0
+        nested_at_absolute = nested_base
+        for _ in range(2):
+            nested_at_absolute = math.nextafter(nested_at_absolute, math.inf)
+        self.assertEqual(abs(nested_at_absolute - nested_base), 4 * 2**-53)
+        self.assertTrue(verifier.numeric_comparison(
+            nested_base, nested_at_absolute, contract=self.contract, profile_id=nested,
+        )["passed"])
+        nested_outside = math.nextafter(nested_at_absolute, math.inf)
+        self.assertFalse(verifier.numeric_comparison(
+            nested_base, nested_outside, contract=self.contract, profile_id=nested,
+        )["passed"])
+        with self.assertRaisesRegex(ValueError, "HOLD_REPLAY_NUMERIC_BOUND"):
+            verifier.compare_value(
+                nested_base, nested_outside,
+                "model.zones.0.context.number_features.F04.30", contract=self.contract,
+            )
+
+        zone = "propagated_zone_score_v1"
+        zone_base = 0.04
+        zone_at_ulp = zone_base
+        for _ in range(64):
+            zone_at_ulp = math.nextafter(zone_at_ulp, math.inf)
+        zone_result = verifier.numeric_comparison(
+            zone_base, zone_at_ulp, contract=self.contract, profile_id=zone,
+        )
+        self.assertEqual(zone_result["ulp_distance"], 64)
+        self.assertTrue(zone_result["passed"])
+        zone_outside = math.nextafter(zone_at_ulp, math.inf)
+        self.assertFalse(verifier.numeric_comparison(
+            zone_base, zone_outside, contract=self.contract, profile_id=zone,
+        )["passed"])
+        with self.assertRaisesRegex(ValueError, "HOLD_REPLAY_NUMERIC_BOUND"):
+            verifier.compare_value(
+                zone_base, zone_outside, "model.zones.1.top_zone_rows.33.0", contract=self.contract,
+            )
 
     def test_coefficient_profile_16_ulp_boundary_and_17_ulp_negative(self) -> None:
         profile = "derived_coefficient_v1"

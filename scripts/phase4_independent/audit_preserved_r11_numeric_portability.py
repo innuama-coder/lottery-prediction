@@ -24,6 +24,7 @@ EXPECTED_CLOSURE_HASHES = {
     "contracts/local-verifier-contract.json": "e584a691f52c782b869ea5f0b0c4833d5dcbab281581b2ea636b702ca65e6d04",
 }
 FULL_MATRIX_FIXTURE = ROOT / "tests/phase4/fixtures/local-verifier-r11-macos-full-replay.json"
+PATH_PATTERN_FIXTURE = ROOT / "tests/phase4/fixtures/local-verifier-r11-macos-path-pattern-replay.json"
 
 
 def sha(path: Path) -> str:
@@ -113,17 +114,30 @@ class MatrixCollector:
 
 def validate_controller_matrix_and_classification(contract: dict[str, object]) -> dict[str, object]:
     fixture = replay.load(FULL_MATRIX_FIXTURE)
+    path_fixture = replay.load(PATH_PATTERN_FIXTURE)
     if (fixture.get("release_id") != EXPECTED_RELEASE_ID
             or fixture.get("legacy_numeric_bound_failures") != 163
             or fixture.get("exact_identity_mismatches") != 0
             or fixture.get("semantic_comparisons_by_game") != {"ssq": 54807, "dlt": 54865}):
         raise ValueError("HOLD_R11_NUMERIC_PREFLIGHT:controller_fixture")
+    if (path_fixture.get("release_id") != EXPECTED_RELEASE_ID
+            or path_fixture.get("tested_commit") != "c5a9b3a307ae45e04a72c318f0ddb6e1ae1e069f"
+            or path_fixture.get("terminal") != {
+                "exit_code": 20,
+                "status": "HOLD",
+                "new_bound_failures": 17,
+                "exact_identity_mismatches": 0,
+                "release_unchanged": True,
+            }
+            or len(path_fixture.get("offending_patterns", [])) != 2):
+        raise ValueError("HOLD_R11_NUMERIC_PREFLIGHT:path_pattern_fixture")
     expected_routes = {
         "feature_snapshot.634.feature_values.F04": "derived_feature_context_v2",
-        "model.zones.1.context.number_features.F04.7": "derived_feature_context_v2",
+        "model.zones.1.context.number_features.F04.7": "derived_number_feature_context_v1",
         "model.zones.1.context.normalization.F04.mean": "derived_feature_context_v2",
         "model.zones.1.coefficients.F04": "derived_coefficient_v1",
         "model.objective_trace.gradient_at_zero_by_zone.1.F04": "derived_coefficient_v1",
+        "model.zones.1.top_zone_rows.33.0": "propagated_zone_score_v1",
         "model.report_only_metrics.0.model_joint_log_loss": "tight_recomputed_v1",
         "shadow_top1000.968.joint_probability": "top1000_derived_probability_display_v3",
     }
@@ -144,16 +158,33 @@ def validate_controller_matrix_and_classification(contract: dict[str, object]) -
             and probability["max_relative"] <= profiles["top1000_derived_probability_display_v3"]["max_relative"]
             and probability["max_ulps"] <= profiles["top1000_derived_probability_display_v3"]["max_ulps"]):
         raise ValueError("HOLD_R11_NUMERIC_PREFLIGHT:controller_maximum_not_covered")
+    expected_pattern_profiles = {
+        "model.zones.*.context.number_features.F04.*": "derived_number_feature_context_v1",
+        "model.zones.*.top_zone_rows.*.0": "propagated_zone_score_v1",
+    }
+    for row in path_fixture["offending_patterns"]:
+        profile = profiles[expected_pattern_profiles[row["pattern"]]]
+        if not (row["max_absolute"]["value"] <= profile["max_absolute"]
+                and row["max_relative"]["value"] <= profile["max_relative"]
+                and row["max_ulps"]["value"] <= profile["max_ulps"]):
+            raise ValueError(f"HOLD_R11_NUMERIC_PREFLIGHT:path_maximum_not_covered:{row['pattern']}")
+    corrected = path_fixture["corrected_profiles"]
+    if (corrected["derived_coefficient_v1"]["bound_failures"] != 0
+            or corrected["top1000_derived_probability_display_v3"]["bound_failures"] != 0):
+        raise ValueError("HOLD_R11_NUMERIC_PREFLIGHT:already_corrected_profile_regression")
     configured_patterns = sum(len(row["paths"]) for row in contract["path_numeric_profiles"])
     if configured_patterns != 86:
         raise ValueError(f"HOLD_R11_NUMERIC_PREFLIGHT:path_count:{configured_patterns}")
     return {
         "fixture_sha256": sha(FULL_MATRIX_FIXTURE),
+        "path_pattern_fixture_sha256": sha(PATH_PATTERN_FIXTURE),
         "legacy_bound_failures_preserved": 163,
+        "c5a9_bound_failures_preserved": 17,
         "legacy_exact_identity_mismatches": 0,
         "known_failure_paths_reclassified": expected_routes,
         "configured_pattern_count": configured_patterns,
         "all_legacy_profile_maxima_covered_by_source_class": True,
+        "all_c5a9_path_pattern_maxima_covered_by_source_class": True,
     }
 
 
@@ -167,7 +198,9 @@ def boundary_audit(contract: dict[str, object]) -> list[dict[str, object]]:
     bases = {
         "tight_recomputed_v1": 1.0,
         "derived_feature_context_v2": 0.0099312201839453045,
+        "derived_number_feature_context_v1": 0.0099312201839453045,
         "derived_coefficient_v1": 0.02098171210825526,
+        "propagated_zone_score_v1": 0.04,
         "top1000_derived_probability_display_v3": float("5.75e-08"),
     }
     results = []

@@ -31,7 +31,7 @@ _NUMERIC_AUDIT_SUPPRESS_BOUNDS = False
 
 def local_contract() -> dict[str, object]:
     value = load(LOCAL_CONTRACT_PATH)
-    if value.get("contract_id") != "P4-LOCAL-PATH-CLASSIFIED-BINARY64-4":
+    if value.get("contract_id") != "P4-LOCAL-PATH-CLASSIFIED-BINARY64-5":
         raise ValueError("HOLD_LOCAL_VERIFIER_CONTRACT")
     return value
 

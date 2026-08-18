@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.5.0",
+  "schema_version": "1.6.0",
   "artifact_type": "phase4_local_verifier_contract",
-  "contract_id": "P4-LOCAL-PATH-CLASSIFIED-BINARY64-4",
+  "contract_id": "P4-LOCAL-PATH-CLASSIFIED-BINARY64-5",
   "supported_runtime": {
     "implementation": "CPython",
     "python_major_minor": "3.12",
@@ -35,12 +35,26 @@
       "max_relative": 3e-14,
       "max_ulps": 151
     },
+    "derived_number_feature_context_v1": {
+      "finite_required": true,
+      "require_all_bounds": true,
+      "max_absolute": 4.440892098500626E-16,
+      "max_relative": 3E-14,
+      "max_ulps": 151
+    },
     "derived_coefficient_v1": {
       "finite_required": true,
       "require_all_bounds": true,
       "max_absolute": 1e-12,
       "max_relative": 1e-12,
       "max_ulps": 16
+    },
+    "propagated_zone_score_v1": {
+      "finite_required": true,
+      "require_all_bounds": true,
+      "max_absolute": 4.440892098500626E-16,
+      "max_relative": 1.4210854715202004E-14,
+      "max_ulps": 64
     },
     "top1000_derived_probability_display_v3": {
       "finite_required": true,
@@ -61,7 +75,6 @@
         "model.zones.*.context.pair_values.*",
         "model.zones.*.context.recency_gap_raw.*",
         "model.zones.*.context.rolling_raw.*.*",
-        "model.zones.*.top_zone_rows.*.0",
         "model.zones.*.log_normalizer",
         "model.zones.*.probability_square_sum",
         "model.zones.*.normalization_mass",
@@ -97,7 +110,6 @@
       "paths": [
         "model.zones.*.context.normalization.*.mean",
         "model.zones.*.context.normalization.*.scale",
-        "model.zones.*.context.number_features.*.*",
         "feature_snapshot.*.feature_values.F01",
         "feature_snapshot.*.feature_values.F02",
         "feature_snapshot.*.feature_values.F03",
@@ -143,10 +155,22 @@
       ]
     },
     {
+      "profile_id": "derived_number_feature_context_v1",
+      "paths": [
+        "model.zones.*.context.number_features.*.*"
+      ]
+    },
+    {
       "profile_id": "derived_coefficient_v1",
       "paths": [
         "model.objective_trace.gradient_at_zero_by_zone.*.*",
         "model.zones.*.coefficients.*"
+      ]
+    },
+    {
+      "profile_id": "propagated_zone_score_v1",
+      "paths": [
+        "model.zones.*.top_zone_rows.*.0"
       ]
     },
     {
@@ -166,7 +190,7 @@
       "legacy_max_absolute": 3.552713678800501e-15,
       "legacy_max_relative": 2.637573631646515e-14,
       "legacy_max_ulps": 151,
-      "ceiling_rationale": "The legacy maxima identify misclassified nested feature and coefficient paths. After those paths move to source-specific profiles, all remaining tight path bounds stay byte-semantically unchanged at 1e-12 absolute, 1e-12 relative, and 8 ULP."
+      "ceiling_rationale": "The legacy maxima identify misclassified nested feature, coefficient, and propagated zone-score paths. After those paths move to source-specific profiles, all remaining 35 tight path bounds stay byte-semantically unchanged at 1e-12 absolute, 1e-12 relative, and 8 ULP."
     },
     "derived_feature_context_v2": {
       "prior_fixture_path": "tests/phase4/fixtures/local-verifier-feature-snapshot-macos-31211.json",
@@ -176,7 +200,19 @@
       "observed_max_relative": 2.637573631646515e-14,
       "observed_max_ulps": 151,
       "absolute_derivation": "3 * 2^-53",
-      "ceiling_rationale": "Snapshot feature values and the same values nested in independently rebuilt model contexts share one computation provenance. The absolute ceiling is the exact binary expression of the full replay maximum; relative 3e-14 and 151 ULP retain the prior narrow feature semantics."
+      "ceiling_rationale": "Snapshot feature values and context normalization leaves retain the prior narrow feature semantics. The absolute ceiling remains the exact binary expression of their full replay maximum; relative 3e-14 and 151 ULP are unchanged."
+    },
+    "derived_number_feature_context_v1": {
+      "controller_preflight_fixture_path": "tests/phase4/fixtures/local-verifier-r11-macos-path-pattern-replay.json",
+      "observed_pattern": "model.zones.*.context.number_features.F04.*",
+      "observed_comparison_count": 288,
+      "observed_difference_count": 70,
+      "observed_failure_count": 1,
+      "observed_max_absolute": 4.440892098500626E-16,
+      "observed_max_relative": 2.637573631646515E-14,
+      "observed_max_ulps": 151,
+      "absolute_derivation": "4 * 2^-53",
+      "ceiling_rationale": "Only the single enumerated nested number-feature pattern moves. Its absolute bound is the exact binary expression of the controller maximum; the already-derived 3e-14 relative and 151-ULP feature bounds remain unchanged and conjunctive."
     },
     "derived_coefficient_v1": {
       "full_replay_fixture_path": "tests/phase4/fixtures/local-verifier-r11-macos-full-replay.json",
@@ -184,6 +220,20 @@
       "observed_example_ulps": 15,
       "ulp_derivation": "smallest power of two strictly above full-replay observed example: 16",
       "ceiling_rationale": "Fitted coefficients and their objective gradients are isolated from both raw feature leaves and downstream metrics. Their inherited absolute/relative bounds remain unchanged while a 16-ULP propagation envelope covers the full-replay 15-ULP coefficient example without widening the remaining tight paths."
+    },
+    "propagated_zone_score_v1": {
+      "controller_preflight_fixture_path": "tests/phase4/fixtures/local-verifier-r11-macos-path-pattern-replay.json",
+      "observed_pattern": "model.zones.*.top_zone_rows.*.0",
+      "observed_comparison_count": 6246,
+      "observed_difference_count": 3206,
+      "observed_failure_count": 16,
+      "observed_max_absolute": 4.440892098500626E-16,
+      "observed_max_relative": 1.1285989447903035E-14,
+      "observed_max_ulps": 64,
+      "absolute_derivation": "4 * 2^-53",
+      "relative_derivation": "smallest binary power strictly above observed maximum: 2^-46",
+      "ulp_derivation": "observed maximum: 64",
+      "ceiling_rationale": "Only the enumerated propagated zone-score value column moves out of tight. Absolute and ULP bounds equal their controller maxima; the relative bound is the smallest binary power above its independent maximum, with all three axes still conjunctive."
     },
     "top1000_derived_probability_display_v3": {
       "prior_fixture_path": "tests/phase4/fixtures/local-verifier-top1000-probability-macos-31211.json",

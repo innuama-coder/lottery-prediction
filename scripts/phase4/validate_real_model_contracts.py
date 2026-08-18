@@ -85,8 +85,18 @@ def main() -> int:
         "derived_feature_context_v2": {"finite_required": True, "require_all_bounds": True,
                                        "max_absolute": 3.3306690738754696e-16,
                                        "max_relative": 3e-14, "max_ulps": 151},
+        "derived_number_feature_context_v1": {
+            "finite_required": True, "require_all_bounds": True,
+            "max_absolute": 4.440892098500626e-16,
+            "max_relative": 3e-14, "max_ulps": 151,
+        },
         "derived_coefficient_v1": {"finite_required": True, "require_all_bounds": True,
                                    "max_absolute": 1e-12, "max_relative": 1e-12, "max_ulps": 16},
+        "propagated_zone_score_v1": {
+            "finite_required": True, "require_all_bounds": True,
+            "max_absolute": 4.440892098500626e-16,
+            "max_relative": 1.4210854715202004e-14, "max_ulps": 64,
+        },
         "top1000_derived_probability_display_v3": {
             "finite_required": True, "require_all_bounds": True,
             "max_absolute": 4.235164736271502e-22,
@@ -104,8 +114,8 @@ def main() -> int:
     } | {
         "model.zones.*.context.normalization.*.mean",
         "model.zones.*.context.normalization.*.scale",
-        "model.zones.*.context.number_features.*.*",
     }
+    expected_number_feature_context_paths = {"model.zones.*.context.number_features.*.*"}
     expected_coefficient_paths = {
         "model.objective_trace.gradient_at_zero_by_zone.*.*",
         "model.zones.*.coefficients.*",
@@ -118,7 +128,6 @@ def main() -> int:
         "model.zones.*.context.pair_values.*",
         "model.zones.*.context.recency_gap_raw.*",
         "model.zones.*.context.rolling_raw.*.*",
-        "model.zones.*.top_zone_rows.*.0",
         "model.zones.*.log_normalizer",
         "model.zones.*.probability_square_sum",
         "model.zones.*.normalization_mass",
@@ -153,6 +162,7 @@ def main() -> int:
         "historical_top1000.*.joint_probability",
         "shadow_top1000.*.joint_probability",
     }
+    expected_propagated_zone_score_paths = {"model.zones.*.top_zone_rows.*.0"}
     expected_score_order_contract = {
         "score_order_key_id": "P4S10HE1",
         "canonical_source": "exact finite binary64 value converted to an exact decimal rational",
@@ -165,15 +175,17 @@ def main() -> int:
     }
     actual_score_order_contract = dict(local_contract.get("score_order_contract", {}))
     actual_score_order_contract.pop("resolution_rationale", None)
-    if (local_contract.get("contract_id") != "P4-LOCAL-PATH-CLASSIFIED-BINARY64-4"
-            or local_contract.get("schema_version") != "1.5.0"
+    if (local_contract.get("contract_id") != "P4-LOCAL-PATH-CLASSIFIED-BINARY64-5"
+            or local_contract.get("schema_version") != "1.6.0"
             or actual_score_order_contract != expected_score_order_contract
             or local_contract.get("default_numeric_profile") != "tight_recomputed_v1"
             or local_contract.get("numeric_profiles") != expected_profiles
             or set(profile_ids) != set(expected_profiles) or len(profile_ids) != len(set(profile_ids))
             or paths_by_profile.get("tight_recomputed_v1") != expected_tight_paths
             or paths_by_profile.get("derived_feature_context_v2") != expected_derived_feature_paths
+            or paths_by_profile.get("derived_number_feature_context_v1") != expected_number_feature_context_paths
             or paths_by_profile.get("derived_coefficient_v1") != expected_coefficient_paths
+            or paths_by_profile.get("propagated_zone_score_v1") != expected_propagated_zone_score_paths
             or paths_by_profile.get("top1000_derived_probability_display_v3") != expected_top_probability_paths
             or len(numeric_paths) != len(set(numeric_paths)) or any("**" in path for path in numeric_paths)
             or local_contract["historical_formal_evidence"]["local_reexecution_required"] is not False

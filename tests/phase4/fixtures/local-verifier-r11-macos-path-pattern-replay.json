@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase4_controller_r11_macos_path_pattern_replay",
+  "release_id": "P4-P4E2-20260815-r11",
+  "tested_commit": "c5a9b3a307ae45e04a72c318f0ddb6e1ae1e069f",
+  "runtime": {
+    "implementation": "CPython",
+    "python": "3.12.11",
+    "platform": "macOS arm64"
+  },
+  "command": ".p4-local-venv/bin/python scripts/phase4_independent/audit_preserved_r11_numeric_portability.py --release artifacts/phase-4/P4-P4E2-20260815-r11 --draws artifacts/phase-1/baseline-v1/draws.jsonl --require-zero-new-bound-failures",
+  "terminal": {
+    "exit_code": 20,
+    "status": "HOLD",
+    "new_bound_failures": 17,
+    "exact_identity_mismatches": 0,
+    "release_unchanged": true
+  },
+  "corrected_profiles": {
+    "derived_coefficient_v1": {
+      "bound_failures": 0,
+      "max_ulps": 15
+    },
+    "top1000_derived_probability_display_v3": {
+      "bound_failures": 0,
+      "formal_max_ulps": 27,
+      "historical_max_ulps": 26,
+      "shadow_max_ulps": 31
+    }
+  },
+  "offending_patterns": [
+    {
+      "pattern": "model.zones.*.context.number_features.F04.*",
+      "comparisons": 288,
+      "differing_leaves": 70,
+      "bound_failures": 1,
+      "max_absolute": {
+        "path": "model.zones.0.context.number_features.F04.30",
+        "value": 4.440892098500626E-16
+      },
+      "max_relative": {
+        "path": null,
+        "value": 2.637573631646515E-14
+      },
+      "max_ulps": {
+        "path": null,
+        "value": 151
+      }
+    },
+    {
+      "pattern": "model.zones.*.top_zone_rows.*.0",
+      "comparisons": 6246,
+      "differing_leaves": 3206,
+      "bound_failures": 16,
+      "max_absolute": {
+        "path": "model.zones.0.top_zone_rows.0.0",
+        "value": 4.440892098500626E-16
+      },
+      "max_relative": {
+        "path": "model.zones.1.top_zone_rows.33.0",
+        "value": 1.1285989447903035E-14
+      },
+      "max_ulps": {
+        "path": "model.zones.1.top_zone_rows.33.0",
+        "value": 64
+      }
+    }
+  ],
+  "path_pattern_context": [
+    {
+      "pattern": "feature_snapshot.*.feature_values.F04",
+      "comparisons": 96,
+      "differing_leaves": 20,
+      "legacy_bound_failures": 2,
+      "max_absolute": 3.3306690738754696E-16,
+      "max_relative": 2.637573631646515E-14,
+      "max_ulps": 151
+    },
+    {
+      "pattern": "model.zones.*.coefficients.F04",
+      "comparisons": 12,
+      "differing_leaves": 10,
+      "legacy_bound_failures": 1,
+      "max_absolute": 2.7755575615628914E-17,
+      "max_relative": 1.902762243414017E-15,
+      "max_ulps": 15
+    },
+    {
+      "pattern": "top1000.*.joint_probability",
+      "comparisons": 2000,
+      "differing_leaves": 9,
+      "legacy_bound_failures": 6,
+      "max_absolute": 2.2499312661442353E-22,
+      "max_relative": 3.558443060217724E-15,
+      "max_ulps": 27
+    },
+    {
+      "pattern": "historical_top1000.*.joint_probability",
+      "comparisons": 2000,
+      "differing_leaves": 3,
+      "legacy_bound_failures": 1,
+      "max_absolute": 1.7205356741102976E-22,
+      "max_relative": 3.5071419293993736E-15,
+      "max_ulps": 26
+    },
+    {
+      "pattern": "shadow_top1000.*.joint_probability",
+      "comparisons": 2000,
+      "differing_leaves": 134,
+      "legacy_bound_failures": 133,
+      "max_absolute": 3.441071348220595E-22,
+      "max_relative": 3.561621664915701E-15,
+      "max_ulps": 31
+    }
+  ]
+}

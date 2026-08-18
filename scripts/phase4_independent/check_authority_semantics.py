@@ -43,6 +43,9 @@ def main() -> int:
             "final_state": "READY_FOR_LOCAL_PRODUCT_ACCEPTANCE" in joined,
             "d00_before_d01": "D00" in joined and "D01" in joined,
             "requirements_complete": set(re.findall(r"P4-R(?:0[1-9]|1[0-7])", joined)) == set(config["requirement_ids"]),
+            "probability_display_v2_formula": "P4-LOCAL-STABLE-SCORE-KEY-3" in joined and "17 / 2^52 = 3.774758283725532e-15" in joined,
+            "probability_display_v2_narrow_paths": "top1000_derived_probability_display_v2" in joined and "三个 `joint_probability`" in joined,
+            "exact_identity_semantics_retained": "score/tie identity" in joined and "create-once" in joined and "exact" in joined,
             "config_rejects_baseline_pass": config["required_semantics"]["baseline_only_product_pass_allowed"] is False,
             "config_rejects_m0_lock": config["required_semantics"]["m0_product_lock_allowed"] is False,
         }

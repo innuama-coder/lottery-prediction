@@ -26,7 +26,7 @@ LOCAL_CONTRACT_PATH = ROOT / "config/phase4/local-verifier-contract.json"
 
 def local_contract() -> dict[str, object]:
     value = load(LOCAL_CONTRACT_PATH)
-    if value.get("contract_id") != "P4-LOCAL-STABLE-SCORE-KEY-2":
+    if value.get("contract_id") != "P4-LOCAL-STABLE-SCORE-KEY-3":
         raise ValueError("HOLD_LOCAL_VERIFIER_CONTRACT")
     return value
 

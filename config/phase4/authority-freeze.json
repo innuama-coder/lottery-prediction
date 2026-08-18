@@ -4,12 +4,12 @@
   "task_id": "D00",
   "task_branch": "codex/phase4-real-model-mvp-20260815-r01",
   "input_commit": "ec975d5228240db57be8eb767ad83a4c8e356bcf",
-  "authority_commit": "221d6bf1f2cf0371df8612ad64a1fa536be5d057",
+  "authority_commit": "18b25e2115afbcc573101329a4e24cb47f53c987",
   "authority_files": [
-    {"path": "ROADMAP.md", "sha256": "fb51aeb934dd3c08d5c44d40c5502e53f3122d9dec859dcf875a00e2a090ac4a"},
-    {"path": "tasks/phase4/README.md", "sha256": "1672751e7a926ceecbfdf9dcee84f63cd57ff91a4bc5131a92cb118cebe8e66e"},
-    {"path": "docs/research/phase-4-overall-design.md", "sha256": "b4da0318d6cabb93334207bbe0ae178d622eb8c82164dc3a5c92045450ce9afe"},
-    {"path": "docs/plans/phase-4-detailed-plan.md", "sha256": "798ed80013fc788b768b22e731889387bc782e5b60d70f82dfaf0b403c5577e5"}
+    {"path": "ROADMAP.md", "sha256": "8169dd5f799a37771d891beaa11dacb9f75765408605cc8835b57341d3b79941"},
+    {"path": "tasks/phase4/README.md", "sha256": "c43df2fd9b46ea717e3c3d18f22a560146c532daf5fe24a2569454739a678e37"},
+    {"path": "docs/research/phase-4-overall-design.md", "sha256": "554aec08a22781ec64e34e29aade04b401845fb073dfbb9862f1bf714756656a"},
+    {"path": "docs/plans/phase-4-detailed-plan.md", "sha256": "31aa3fad5e10cc89383301a2f5fa974a981860c02c1c0d951a3df15a4cb6a4f3"}
   ],
   "requirement_ids": ["P4-R01", "P4-R02", "P4-R03", "P4-R04", "P4-R05", "P4-R06", "P4-R07", "P4-R08", "P4-R09", "P4-R10", "P4-R11", "P4-R12", "P4-R13", "P4-R14", "P4-R15", "P4-R16", "P4-R17"],
   "required_semantics": {
@@ -21,7 +21,7 @@
     "m0_product_lock_allowed": false,
     "final_machine_state": "READY_FOR_LOCAL_PRODUCT_ACCEPTANCE",
     "authority_hold_released_by": "D00_TWO_CHECKERS_PASS",
-    "local_product_verifier": "P4-LOCAL-STABLE-SCORE-KEY-2",
+    "local_product_verifier": "P4-LOCAL-STABLE-SCORE-KEY-3",
     "local_supported_python": "CPython 3.12 any patch",
     "historical_phase2_suites_required_locally": false
   },

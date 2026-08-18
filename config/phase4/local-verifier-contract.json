@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.3.0",
+  "schema_version": "1.4.0",
   "artifact_type": "phase4_local_verifier_contract",
-  "contract_id": "P4-LOCAL-STABLE-SCORE-KEY-2",
+  "contract_id": "P4-LOCAL-STABLE-SCORE-KEY-3",
   "supported_runtime": {
     "implementation": "CPython",
     "python_major_minor": "3.12",
@@ -35,11 +35,11 @@
       "max_relative": 3e-14,
       "max_ulps": 151
     },
-    "top1000_derived_probability_display_v1": {
+    "top1000_derived_probability_display_v2": {
       "finite_required": true,
       "require_all_bounds": true,
       "max_absolute": 2.2499312661442353e-22,
-      "max_relative": 3.5383660753807325e-15,
+      "max_relative": 3.774758283725532e-15,
       "max_ulps": 17
     }
   },
@@ -138,7 +138,7 @@
       ]
     },
     {
-      "profile_id": "top1000_derived_probability_display_v1",
+      "profile_id": "top1000_derived_probability_display_v2",
       "paths": [
         "top1000.*.joint_probability",
         "historical_top1000.*.joint_probability",
@@ -155,13 +155,20 @@
       "observed_max_ulps": 151,
       "ceiling_rationale": "Round-06 independent macOS CPython 3.12.11 F04 fixture; absolute and relative ceilings are rounded upward while the ULP ceiling is the exact observed maximum."
     },
-    "top1000_derived_probability_display_v1": {
-      "fixture_path": "tests/phase4/fixtures/local-verifier-top1000-probability-macos-31211.json",
-      "observed_path": "top1000.622.joint_probability",
+    "top1000_derived_probability_display_v2": {
+      "prior_fixture_path": "tests/phase4/fixtures/local-verifier-top1000-probability-macos-31211.json",
+      "controller_failure_fixture_path": "tests/phase4/fixtures/local-verifier-top1000-probability-r11-macos-31211.json",
+      "audited_release_id": "P4-P4E2-20260815-r11",
+      "audited_scope_count": 6,
+      "audited_row_count": 6000,
+      "derivation": "17 / 2^52",
+      "derived_max_relative": 3.774758283725532e-15,
+      "exhaustive_max_relative_envelope": 3.774410052595433e-15,
+      "observed_path": "top1000.866.joint_probability",
       "observed_max_absolute": 2.2499312661442353e-22,
-      "observed_max_relative": 3.5383660753807325e-15,
+      "observed_max_relative": 3.5447298395667303e-15,
       "observed_max_ulps": 17,
-      "ceiling_rationale": "Round-07 independent macOS CPython 3.12.11 replay fixture; all three conjunctive ceilings equal the exact controller-observed Top-1000 derived display mismatch."
+      "ceiling_rationale": "The relative ceiling is the runtime-independent positive-normal binary64 upper bound implied by the unchanged 17-ULP limit, not a copied row value. Exhaustive bidirectional 0..17-ULP audit covers all 6,000 formal, historical, and shadow r11 Top-1000 probabilities. Absolute and ULP ceilings and both unrelated profiles remain unchanged."
     }
   },
   "exact_invariants": [

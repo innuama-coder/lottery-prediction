@@ -269,7 +269,7 @@ def main() -> int:
 
     local_contract_path = release / "contracts/local-verifier-contract.json"
     local_contract = load(local_contract_path)
-    if local_contract.get("contract_id") != "P4-LOCAL-STABLE-SCORE-KEY-2":
+    if local_contract.get("contract_id") != "P4-LOCAL-STABLE-SCORE-KEY-3":
         raise ValueError("HOLD_LOCAL_VERIFIER_CONTRACT")
     checklist_rows = {}
     for game in ("ssq", "dlt"):

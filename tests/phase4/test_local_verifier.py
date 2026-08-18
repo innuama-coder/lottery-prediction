@@ -62,9 +62,10 @@ class LocalVerifierNumericContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "HOLD_REPLAY_NUMERIC_BOUND"):
             verifier.compare_value(base, nine, "model.zones.0.coefficients.F04", contract=self.contract)
 
-    def test_observed_top1000_macos_17_ulp_fixture_passes_and_is_narrowly_routed(self) -> None:
-        evidence = self.contract["numeric_profile_evidence"]["top1000_derived_probability_display_v1"]
-        fixture = json.loads((ROOT / evidence["fixture_path"]).read_text(encoding="utf-8"))
+    def test_observed_top1000_macos_fixtures_pass_derived_v2_and_are_narrowly_routed(self) -> None:
+        profile = "top1000_derived_probability_display_v2"
+        evidence = self.contract["numeric_profile_evidence"][profile]
+        fixture = json.loads((ROOT / evidence["prior_fixture_path"]).read_text(encoding="utf-8"))
         released_rows = verifier.load_jsonl(next((ROOT / f"artifacts/phase-4/{fixture['release_id']}/forecasts/{fixture['game']}").glob("*/top1000.jsonl")))
         released = released_rows[fixture["rank"] - 1]
         self.assertEqual(released["rank"], fixture["rank"])
@@ -73,7 +74,7 @@ class LocalVerifierNumericContractTests(unittest.TestCase):
 
         result = verifier.numeric_comparison(
             fixture["release_value"], fixture["macos_value"], contract=self.contract,
-            profile_id=fixture["profile_id"],
+            profile_id=profile,
         )
         self.assertTrue(result["passed"])
         self.assertEqual(result["absolute_error"], fixture["absolute_error"])
@@ -81,16 +82,30 @@ class LocalVerifierNumericContractTests(unittest.TestCase):
         self.assertEqual(result["ulp_distance"], 17)
         verifier.compare_value(fixture["release_value"], fixture["macos_value"], fixture["path"], contract=self.contract)
 
+        failure = json.loads((ROOT / evidence["controller_failure_fixture_path"]).read_text(encoding="utf-8"))
+        r11_rows = verifier.load_jsonl(next((ROOT / f"artifacts/phase-4/{failure['release_id']}/forecasts/{failure['game']}").glob("*/top1000.jsonl")))
+        released = r11_rows[failure["rank"] - 1]
+        self.assertEqual(released["canonical_ticket_key"], failure["canonical_ticket_key"])
+        self.assertEqual(released["joint_probability"], failure["release_value"])
+        replayed = float(failure["release_value"])
+        for _ in range(failure["ulp_distance"]):
+            replayed = math.nextafter(replayed, -math.inf)
+        result = verifier.numeric_comparison(failure["release_value"], replayed, contract=self.contract, profile_id=profile)
+        self.assertTrue(result["passed"])
+        self.assertEqual(result["absolute_error"], failure["absolute_error"])
+        self.assertEqual(result["relative_error"], failure["relative_error"])
+        self.assertEqual(result["ulp_distance"], failure["ulp_distance"])
+
         for scope in ("top1000", "historical_top1000", "shadow_top1000"):
             self.assertEqual(
                 verifier._path_profile(f"{scope}.622.joint_probability", self.contract),
-                "top1000_derived_probability_display_v1",
+                profile,
             )
             self.assertEqual(verifier._path_profile(f"{scope}.622.log_joint_score", self.contract), "tight_recomputed_v1")
             self.assertIsNone(verifier._path_profile(f"{scope}.622.rank", self.contract))
 
     def test_top1000_probability_18_ulp_and_just_outside_bounds_fail(self) -> None:
-        profile = "top1000_derived_probability_display_v1"
+        profile = "top1000_derived_probability_display_v2"
         base = float("6.358672953029994052e-08")
         eighteen = base
         for _ in range(18):
@@ -103,18 +118,16 @@ class LocalVerifierNumericContractTests(unittest.TestCase):
         absolute_outside = math.nextafter(absolute_base, math.inf)
         absolute = verifier.numeric_comparison(absolute_base, absolute_outside, contract=self.contract, profile_id=profile)
         self.assertGreater(absolute["absolute_error"], 2.2499312661442353e-22)
-        self.assertLessEqual(absolute["relative_error"], 3.5383660753807325e-15)
+        self.assertLessEqual(absolute["relative_error"], 3.774758283725532e-15)
         self.assertEqual(absolute["ulp_distance"], 1)
         self.assertFalse(absolute["passed"])
 
-        relative_base = 2.0 ** -24
-        relative_outside = relative_base
-        for _ in range(16):
-            relative_outside = math.nextafter(relative_outside, math.inf)
+        relative_base = math.ulp(0.0)
+        relative_outside = math.nextafter(relative_base, math.inf)
         relative = verifier.numeric_comparison(relative_base, relative_outside, contract=self.contract, profile_id=profile)
         self.assertLessEqual(relative["absolute_error"], 2.2499312661442353e-22)
-        self.assertGreater(relative["relative_error"], 3.5383660753807325e-15)
-        self.assertEqual(relative["ulp_distance"], 16)
+        self.assertGreater(relative["relative_error"], 3.774758283725532e-15)
+        self.assertEqual(relative["ulp_distance"], 1)
         self.assertFalse(relative["passed"])
 
         for value in (math.nan, math.inf, -math.inf):
@@ -123,6 +136,26 @@ class LocalVerifierNumericContractTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "HOLD_REPLAY_NUMERIC_BOUND"):
             verifier.compare_value(base, eighteen, "top1000.622.joint_probability", contract=self.contract)
+
+    def test_probability_v2_is_formula_derived_and_other_profiles_are_unchanged(self) -> None:
+        profile = self.contract["numeric_profiles"]["top1000_derived_probability_display_v2"]
+        evidence = self.contract["numeric_profile_evidence"]["top1000_derived_probability_display_v2"]
+        self.assertEqual(profile["max_relative"], 17 / 2**52)
+        self.assertEqual(evidence["derivation"], "17 / 2^52")
+        self.assertEqual(evidence["derived_max_relative"], 17 / 2**52)
+
+        frozen_r11 = json.loads((ROOT / "artifacts/phase-4/P4-P4E2-20260815-r11/contracts/local-verifier-contract.json").read_text())
+        for unchanged in ("tight_recomputed_v1", "derived_feature_snapshot_v1"):
+            self.assertEqual(self.contract["numeric_profiles"][unchanged], frozen_r11["numeric_profiles"][unchanged])
+        old_probability = frozen_r11["numeric_profiles"]["top1000_derived_probability_display_v1"]
+        for unchanged in ("finite_required", "require_all_bounds", "max_absolute", "max_ulps"):
+            self.assertEqual(profile[unchanged], old_probability[unchanged])
+        old_paths = next(row["paths"] for row in frozen_r11["path_numeric_profiles"]
+                         if row["profile_id"] == "top1000_derived_probability_display_v1")
+        new_paths = next(row["paths"] for row in self.contract["path_numeric_profiles"]
+                         if row["profile_id"] == "top1000_derived_probability_display_v2")
+        self.assertEqual(new_paths, old_paths)
+        self.assertEqual(self.contract["exact_invariants"], frozen_r11["exact_invariants"])
 
     def test_derived_feature_boundary_immediately_above_each_maximum_fails(self) -> None:
         profile = "derived_feature_snapshot_v1"

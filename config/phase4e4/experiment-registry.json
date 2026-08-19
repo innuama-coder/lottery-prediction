@@ -1,0 +1,115 @@
+{
+  "artifact_type": "phase4e4_frozen_experiment_registry",
+  "registry_version": "P4E4-REGISTRY-20260819-v1",
+  "frozen_before_new_outcome_acquisition": true,
+  "games": ["ssq", "dlt"],
+  "common_estimation": {
+    "objective": "exact_fixed_cardinality_joint_log_likelihood_with_ridge_or_shrinkage",
+    "history_grid": [384, 640, "all_available"],
+    "l2_grid": [8.0, 32.0, 128.0],
+    "temperature_grid": [0.5, 1.0],
+    "selection": "nested_purged_walk_forward_only",
+    "coefficient_bound": 0.75,
+    "no_post_report_refit_or_reselection": true
+  },
+  "candidates": [
+    {
+      "candidate_id": "E401_MULTISCALE_REGIME",
+      "family": "multi_scale_temporal",
+      "features": [
+        "Jeffreys_shrunk_count_residuals_windows_8_16_32_64_128_256",
+        "EWMA_residuals_half_lives_4_12_36_108",
+        "short_minus_medium_and_medium_minus_long_trend",
+        "second_difference_acceleration",
+        "CUSUM_regime_change_score_clipped_at_6"
+      ],
+      "model": "ridge_exact_set_exponential_family"
+    },
+    {
+      "candidate_id": "E402_BAYES_RENEWAL",
+      "family": "bayesian_renewal_hazard",
+      "features": [
+        "beta_binomial_posterior_predictive_hazard_residual",
+        "gamma_poisson_interarrival_posterior_survival",
+        "standardized_age_minus_posterior_mean_interval",
+        "negative_log_posterior_predictive_surprise_clipped_at_8"
+      ],
+      "model": "ridge_exact_set_exponential_family"
+    },
+    {
+      "candidate_id": "E403_HYPERGRAPH_SURPRISE",
+      "family": "pair_triple_cooccurrence",
+      "features": [
+        "empirical_Bayes_pair_log_lift_with_Jeffreys_base_and_shrinkage_32_or_128",
+        "triple_log_lift_with_hierarchical_pair_prior_and_shrinkage_128_or_512",
+        "set_mean_max_and_upper_quartile_cooccurrence_surprise"
+      ],
+      "model": "set_level_shrunk_exponential_family",
+      "extra_grid": {"pair_shrinkage": [32.0, 128.0], "triple_shrinkage": [128.0, 512.0]}
+    },
+    {
+      "candidate_id": "E404_TEMPORAL_GRAPH",
+      "family": "temporal_transition_graph_embedding",
+      "features": [
+        "lag_1_2_4_directed_transition_PMI_residual",
+        "exponentially_weighted_transition_residual_half_life_24",
+        "top_four_symmetric_normalized_adjacency_eigenvectors_with_deterministic_sign",
+        "embedding_drift_from_prior_64_draw_graph"
+      ],
+      "model": "ridge_exact_set_exponential_family",
+      "extra_grid": {"graph_window": [96, 192, 256], "rank": [2, 4]}
+    },
+    {
+      "candidate_id": "E405_SET_SHAPE_INTERACTIONS",
+      "family": "set_shape",
+      "features": [
+        "ordered_gap_vector_summary_mean_sd_max_entropy_and_roughness",
+        "span_sum_sum_squared",
+        "odd_count_and_parity_runs",
+        "quartile_occupancy_vector_and_squared_imbalance",
+        "consecutive_pair_and_longest_run",
+        "gap_span_x_occupancy_and_sum_x_parity_interactions"
+      ],
+      "model": "exact_enumerated_set_exponential_family"
+    },
+    {
+      "candidate_id": "E406_CROSS_ZONE_COUPLING",
+      "family": "cross_zone_conditional_coupling",
+      "features": [
+        "front_sum_span_parity_occupancy_categories_condition_back_logits",
+        "back_sum_parity_and_gap_categories_condition_front_logits",
+        "symmetric_low_rank_category_interactions_rank_2"
+      ],
+      "model": "exact_category_factorized_joint_exponential_family",
+      "normalization": "sum_front_category_mass_times_back_category_mass_times_exp_coupling"
+    },
+    {
+      "candidate_id": "E407_NONLINEAR_SET_FACTOR",
+      "family": "nonlinear_low_rank_fixed_cardinality_set",
+      "features": [
+        "rank_2_or_4_number_embedding_pairwise_inner_product",
+        "tanh_of_cross_fitted_linear_score",
+        "shape_by_temporal_score_interaction"
+      ],
+      "model": "ridge_low_rank_pairwise_set_residual_with_exact_enumerated_normalizer",
+      "extra_grid": {"rank": [2, 4], "factor_l2": [32.0, 128.0]}
+    }
+  ],
+  "stacking": {
+    "candidate_registered": false,
+    "rule": "No stack may be introduced after freeze. Any diagnostic ensemble must be labeled non-promotable; cross-fitting alone does not add it to the hypothesis family."
+  },
+  "candidate_count": 7,
+  "primary_proper_scores": ["joint_log_loss", "full_multiclass_brier"],
+  "comparators": ["M0", "P4E2_r12_retrained", "P4E3_Transition_retrained"],
+  "multiplicity": {
+    "method": "Holm-Bonferroni",
+    "familywise_alpha": 0.05,
+    "hypothesis_count": 84,
+    "derivation": "7 candidates x 2 games x 3 comparators x 2 primary proper scores",
+    "one_sided": true,
+    "unreported_or_ineligible_hypotheses": "retained_as_p_equals_1"
+  },
+  "diagnostic_only_spread_target": {"top1_to_top1000_probability_ratio_minimum": 1.10, "promotion_authority": false},
+  "status": "FROZEN"
+}

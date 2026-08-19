@@ -1,0 +1,166 @@
+{
+  "artifact_type": "phase4e4_frozen_authority_contract",
+  "contract_version": "P4E4-CONTRACT-20260819-v1",
+  "phase": "P4E4_feature_strengthening",
+  "branch": "codex/phase4e4-feature-strengthening-20260819-r01",
+  "starting_commit": "b7471921de45e5d890f10608e3c76c1e978d4194",
+  "frozen_before_new_outcome_acquisition": true,
+  "terminal_states": {
+    "all_gates_pass": "IMPROVED_SERVING_ACCEPTED",
+    "statistical_or_scientific_gate_failure": "FEATURE_ENGINEERING_DELIVERED_NO_PROMOTION",
+    "official_history_or_independent_window_unavailable": "FEATURE_ENGINEERING_INFRASTRUCTURE_BLOCKED",
+    "selection_only_evidence_available": "FEATURE_ENGINEERING_DELIVERED_PROSPECTIVE_ONLY"
+  },
+  "immutable_authority": {
+    "serving_release": "P4-P4E2-20260815-r12",
+    "r12_git_tree": "e36e085da95e5a9d179d696c4aeb1443e14053c6",
+    "r12_contract_inventory_digest": "a673bc42d9ad1e7015d72c0c8c63575b9521c368",
+    "p4e3_terminal_commit": "b7471921de45e5d890f10608e3c76c1e978d4194",
+    "p4e3_status": "FEATURE_ENGINEERING_DELIVERED_NO_PROMOTION",
+    "p4e3_evidence_root": "artifacts/phase-4e3/delivery-20260819",
+    "all_prior_release_bytes_must_remain_unchanged": true
+  },
+  "original_200_draw_authority": {
+    "path": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "sha256": "f2e34a88fbd43a378d7fb6255d39deee1354216b918934f355a06ef986be60c1",
+    "rows_per_game": 200,
+    "ssq": {"first_issue": "2025037", "first_date": "2025-04-06", "last_issue": "2026085", "last_date": "2026-07-26"},
+    "dlt": {"first_issue": "2025034", "first_date": "2025-03-31", "last_issue": "2026083", "last_date": "2026-07-25"},
+    "allowed_uses": ["byte_and_fact_preservation_audit", "comparator_identity_audit"],
+    "forbidden_uses": ["feature_fit", "hyperparameter_tuning", "candidate_selection", "promotion_test"],
+    "p4e3_report_only_positions_half_open": [176, 200],
+    "p4e3_report_only_reuse": "FORBIDDEN"
+  },
+  "post_freeze_acquisition": {
+    "must_start_only_after_authority_commit_is_pushed": true,
+    "network_method": "GET",
+    "persist_raw_body_headers_request_url_timestamp_and_sha256": true,
+    "official_sources": [
+      {
+        "game": "ssq",
+        "source_id": "cwl_official_draw_notice_api",
+        "publisher": "China Welfare Lottery Issuance and Management Center",
+        "authority_class": "national_official_lottery_publisher",
+        "url_template": "https://www.cwl.gov.cn/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=ssq&issueCount=&issueStart=&issueEnd=&dayStart=2003-01-01&dayEnd=2025-04-05&pageNo={page}&pageSize=100&week=",
+        "page_sequence": "positive integers from 1 through the first page whose cumulative unique valid rows reaches all reported rows or whose result array is empty",
+        "maximum_pages": 60
+      },
+      {
+        "game": "dlt",
+        "source_id": "gdlottery_official_history_json",
+        "publisher": "Guangdong Sports Lottery Center",
+        "authority_class": "provincial_official_lottery_publisher",
+        "url": "https://www.gdlottery.cn/f_html/kjgg/gameNumber.json",
+        "filter": "valid DLT rows with draw_date strictly before 2025-03-31",
+        "maximum_requests": 1
+      }
+    ],
+    "no_synthetic_or_silently_imputed_rows": true,
+    "minimum_expanded_rows_per_game": 600,
+    "target_expanded_rows_per_game": 1000,
+    "expanded_count_includes_preserved_original_200": true,
+    "required_audits": [
+      "schema_and_game_rule_validation",
+      "canonical_time_order",
+      "duplicate_issue_and_core_fact_detection",
+      "official_internal_conflict_detection",
+      "overlap_fact_comparison_to_original_200",
+      "coverage_and_gap_inventory",
+      "raw_and_canonical_sha256_inventory"
+    ],
+    "failure_rule": "No usable official rows, a conflict, fewer than 400 new pre-baseline rows, or inability to form the frozen report window prohibits retrospective lift claims."
+  },
+  "role_partition": {
+    "unit": "zero_based_position_after_canonical_sort_by_draw_date_then_numeric_issue_within_game",
+    "eligible_new_history": "official rows strictly earlier than the first original-200 draw date for that game",
+    "report_only": "the newest 60 eligible new-history rows",
+    "selection_pool": "all eligible new-history rows before the report-only rows",
+    "report_rows_per_game": 60,
+    "minimum_pre_report_history": 480,
+    "original_200_role": "preservation_only",
+    "report_label_access": "Only the report command may open the report-label artifact, and only after both selection receipts are committed and the checkpoint commit is verified on origin/codex/phase4e4-feature-strengthening-20260819-r01.",
+    "selection_label_access": "Selection commands receive a capability-scoped selection-prefix artifact that excludes report labels and the original 200 rows.",
+    "selection_receipt_must_record_report_labels_read_false": true,
+    "selection_checkpoint_commit_and_push_required_before_report": true
+  },
+  "sequence_safety": {
+    "feature_source": "strict prefix ending before target",
+    "normalization_and_calibration_fit": "inner-training or prior out-of-fold predictions only",
+    "maximum_feature_window_draws": 256,
+    "purge_draws": 8,
+    "embargo_draws": 8,
+    "outer_walk_forward": {
+      "fold_count": 6,
+      "validation_draws_per_fold": 40,
+      "positions_relative_to_report_start_R": [
+        {"fold": 1, "train_end": "R-296", "validation": ["R-288", "R-248"]},
+        {"fold": 2, "train_end": "R-248", "validation": ["R-240", "R-200"]},
+        {"fold": 3, "train_end": "R-200", "validation": ["R-192", "R-152"]},
+        {"fold": 4, "train_end": "R-152", "validation": ["R-144", "R-104"]},
+        {"fold": 5, "train_end": "R-104", "validation": ["R-96", "R-56"]},
+        {"fold": 6, "train_end": "R-56", "validation": ["R-48", "R-8"]}
+      ]
+    },
+    "inner_walk_forward": "For every outer training prefix, choose hyperparameters using four expanding 24-draw validation blocks, each separated from its training prefix by an eight-draw purge; ties use canonical candidate/configuration bytes.",
+    "future_and_target_mutation_must_not_change_prior_features_or_predictions": true
+  },
+  "evidence_roles": {
+    "discrimination_diagnostics": [
+      "observed_ticket_rank",
+      "top_k_hit_rates",
+      "entropy",
+      "effective_support",
+      "top1_top10_top1000_probability_ratios",
+      "unique_front_set_concentration",
+      "minimum_diagnostic_top1_to_top1000_ratio_target_1.10"
+    ],
+    "proper_score_promotion_evidence": [
+      "joint_log_loss",
+      "full_multiclass_brier_over_the_exact_joint_ticket_space",
+      "zone_inclusion_brier_and_reliability_calibration"
+    ],
+    "rule": "Discrimination, concentration, entropy, ranking, and probability spread are diagnostic only and can never satisfy or override a promotion gate. Portfolio diversity is a separate deterministic ticket-selection output and must never modify model probabilities."
+  },
+  "comparators": [
+    "M0_exact_uniform_fixed_cardinality_joint",
+    "P4E2_r12_logic_retrained_sequence_safely_on_each_expanded_prefix",
+    "P4E3_C03_Transition_shadow_retrained_sequence_safely_on_each_expanded_prefix"
+  ],
+  "statistics": {
+    "bootstrap": {"method": "moving_block_bootstrap", "iterations": 8192, "block_length": 6, "confidence": 0.95, "seed_ssq": 2026081904, "seed_dlt": 2026081905},
+    "hypothesis_direction": "candidate proper score minus comparator proper score is less than zero",
+    "multiplicity": "Holm-Bonferroni familywise alpha 0.05 over every preregistered candidate, game, comparator, and primary proper score",
+    "registry": "config/phase4e4/experiment-registry.json"
+  },
+  "promotion_gates": {
+    "candidate_identity_frozen_before_report_access": true,
+    "mean_delta_vs_every_comparator_for_both_primary_proper_scores": "strictly_negative",
+    "moving_block_ci95_upper_vs_every_comparator_for_both_primary_proper_scores": "strictly_less_than_zero",
+    "holm_adjusted_one_sided_p_vs_every_comparator_for_both_primary_proper_scores": "strictly_less_than_0.05",
+    "selection_direction": "at_least_5_of_6 outer folds have negative mean joint-log-loss delta versus every comparator",
+    "report_direction": "at_least_42_of_60 report draws have negative joint-log-loss delta versus every comparator",
+    "calibration": "No zone inclusion-Brier mean may worsen by more than 0.0005 absolute and no 10-bin inclusion reliability ECE may worsen by more than 0.01 absolute versus any comparator.",
+    "exact_normalization": "absolute joint probability mass error at most 1e-12",
+    "implementation_evidence": "all leakage, mutation, replay, inventory, and current Phase 4 tests pass",
+    "all_games_required": true,
+    "partial_or_spread_only_success": "NO_PROMOTION"
+  },
+  "required_final_evidence": [
+    "deterministic_shadow_top1000_and_top10_summary_both_games",
+    "feature_snapshots_and_model_cards",
+    "selection_and_report_receipts",
+    "provenance_and_coverage_inventory",
+    "ablation_and_permutation",
+    "missingness_variance_pearson_spearman_effective_rank_condition_number",
+    "coefficient_factor_stability",
+    "entropy_effective_support_and_concentration",
+    "comparator_diagnostics",
+    "prior_release_byte_inventory",
+    "core_manifest",
+    "negative_future_and_target_mutation_evidence",
+    "independent_exact_replay",
+    "full_current_phase4_tests"
+  ],
+  "release_allocation": "FORBIDDEN_UNTIL_EVERY_FROZEN_GATE_PASSES",
+  "status": "FROZEN_BEFORE_NEW_OUTCOME_ACQUISITION"
+}

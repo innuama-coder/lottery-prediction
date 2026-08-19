@@ -1,0 +1,12 @@
+{
+  "schema_version": "phase4e5.freeze_receipt.v1",
+  "frozen_at_utc": "2026-08-19T09:33:58Z",
+  "base_commit": "3a65b5331f8ec8cb80d288347103db8a39992654",
+  "branch": "codex/phase4e5-exogenous-metadata-20260820-r01",
+  "pre_acquisition": true,
+  "pre_outcome_inspection": true,
+  "files": {
+    "docs/phase4e5/AUTHORITY_CONTRACT.md": "sha256:8bc45d44793c67e1552e0f749e943948f9acd773d49f1b8571c8d00bf28293ee",
+    "config/phase4e5_registry.json": "sha256:b85dcab94750702a7b22097417887b3d1a2187ab8353f47fb8dac0f71a88a2c8"
+  }
+}

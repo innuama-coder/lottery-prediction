@@ -1,0 +1,141 @@
+{
+  "schema_version": "phase4e5.registry.v1",
+  "frozen": true,
+  "phase": "P4E5",
+  "base_commit": "3a65b5331f8ec8cb80d288347103db8a39992654",
+  "serving_release": "r12",
+  "games": ["ssq", "dlt"],
+  "seed": 20260820,
+  "temporal_contract": {
+    "prediction_join": "metadata_issue < prediction_issue",
+    "embargo_draws": 1,
+    "fit_scope": "training_prefix_only",
+    "forbid_current_or_future_operational_fields": true,
+    "unofficial_source_promotion_authority": false
+  },
+  "roles": {
+    "exclude": [
+      "all_p4e4_report_or_acceptance_issue_ids",
+      "all_original_200_issue_ids"
+    ],
+    "contiguity_required": true,
+    "minimum_development_rows": 240,
+    "selection_rows": 120,
+    "report_rows": 120,
+    "run_choice": "most_recent_qualifying_contiguous_run",
+    "boundary_receipt_before_fit": true,
+    "fail_closed_status": "ENGINEERING_ONLY_NO_INDEPENDENT_WINDOW"
+  },
+  "folds": {
+    "kind": "expanding_origin",
+    "count": 5,
+    "validation_order": "strictly_after_training_prefix",
+    "embargo_draws": 1,
+    "cross_game_pooling": false
+  },
+  "feature_blocks": {
+    "calendar": [
+      "month_sin", "month_cos", "day_of_year_sin", "day_of_year_cos",
+      "scheduled_weekday_one_hot"
+    ],
+    "holiday": [
+      "official_holiday", "days_since_official_holiday_capped_30",
+      "days_until_official_holiday_capped_30"
+    ],
+    "draw_gap": [
+      "days_since_prior_draw", "scheduled_gap_days", "gap_anomaly"
+    ],
+    "regime": [
+      "predeclared_schedule_regime", "official_source_revision_regime"
+    ],
+    "lagged_operational": [
+      "sales_lag_1", "sales_lag_2", "sales_lag_4_mean",
+      "jackpot_lag_1", "jackpot_lag_2", "jackpot_lag_4_mean",
+      "first_prize_count_lag_1", "first_prize_count_lag_4_mean",
+      "first_prize_amount_lag_1", "first_prize_amount_lag_4_mean",
+      "second_prize_count_lag_1", "second_prize_count_lag_4_mean",
+      "second_prize_amount_lag_1", "second_prize_amount_lag_4_mean"
+    ],
+    "provincial_distribution_conditional": [
+      "province_first_prize_share_lag_1",
+      "province_first_prize_entropy_lag_1",
+      "province_first_prize_coverage_lag_1"
+    ],
+    "quality": [
+      "source_revision", "source_switch", "metadata_age_draws",
+      "metadata_stale", "field_missing", "block_missing_fraction"
+    ]
+  },
+  "conditional_enablement": {
+    "provincial_distribution_conditional": {
+      "official_only": true,
+      "minimum_overall_coverage": 0.95,
+      "minimum_selection_coverage": 0.95,
+      "reproducible_per_draw": true
+    }
+  },
+  "preprocessing_grid": {
+    "numeric_transform": ["robust_z", "log1p_robust_z"],
+    "winsor_quantiles": [[0.01, 0.99], [0.005, 0.995]],
+    "imputation": ["prefix_median_with_indicator"],
+    "categorical_unknown": ["explicit_unknown"]
+  },
+  "model_grid": {
+    "estimator": ["independent_ball_logistic"],
+    "regularization_c": [0.01, 0.1, 1.0],
+    "class_weight": ["none"],
+    "max_iter": [2000],
+    "probability_postprocessing": ["none"]
+  },
+  "candidates": [
+    {"id": "B0", "blocks": [], "description": "prefix empirical-frequency baseline"},
+    {"id": "C1", "blocks": ["calendar"]},
+    {"id": "C2", "blocks": ["calendar", "holiday", "draw_gap", "regime"]},
+    {"id": "O1", "blocks": ["lagged_operational", "quality"]},
+    {"id": "O2", "blocks": ["calendar", "holiday", "draw_gap", "regime", "lagged_operational", "quality"]},
+    {"id": "O3", "blocks": ["calendar", "holiday", "draw_gap", "regime", "lagged_operational", "provincial_distribution_conditional", "quality"], "conditional": true}
+  ],
+  "selection": {
+    "primary_metric": "mean_per_ball_bernoulli_log_loss",
+    "tie_breakers": ["mean_per_ball_brier", "candidate_id_lexicographic"],
+    "report_evaluations": 1
+  },
+  "metrics": [
+    "mean_per_ball_bernoulli_log_loss", "mean_per_ball_brier",
+    "calibration_intercept", "calibration_slope", "ece_10_equal_width",
+    "top1000_realized_ticket_containment", "top10_shadow_diagnostics"
+  ],
+  "multiplicity": {
+    "family": "all_nonbaseline_candidates_per_game",
+    "correction": "holm",
+    "alpha": 0.05,
+    "paired_bootstrap_resamples": 10000,
+    "bootstrap_unit": "draw",
+    "bootstrap_seed": 20260820
+  },
+  "promotion_gates": {
+    "independent_window_both_games": true,
+    "official_comparable_metadata_both_games": true,
+    "required_field_coverage_each_game": 0.95,
+    "raw_provenance_complete": true,
+    "deterministic_replay": true,
+    "all_leakage_tests_pass": true,
+    "holm_adjusted_log_loss_improvement": true,
+    "log_loss_effect_direction": "candidate_less_than_baseline",
+    "brier_noninferiority_margin": 0.0001,
+    "calibration_slope_range": [0.8, 1.2],
+    "ece_max": 0.03,
+    "both_games_must_pass": true,
+    "serving_change_allowed": false
+  },
+  "outputs": {
+    "top_k": [1000, 10],
+    "top10_label": "Shadow",
+    "probability_spread_adjustment": "forbidden",
+    "required": [
+      "model_cards", "feature_diagnostics", "ablation", "permutation",
+      "selection_receipt", "report_receipt", "prior_release_byte_inventory",
+      "manifest", "phase4_tests", "independent_acceptance"
+    ]
+  }
+}

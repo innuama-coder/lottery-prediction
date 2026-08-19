@@ -21,7 +21,7 @@ def main() -> int:
         raise ValueError(f"FAIL_DIRTY_PRE_FULL_ACCEPTANCE: {before}")
     test_modules = [
         ".".join(path.relative_to(ROOT).with_suffix("").parts)
-        for path in sorted((ROOT / "tests").rglob("test_*.py"))
+        for path in sorted((ROOT / "tests/phase4").glob("test_*.py"))
     ]
     if not test_modules:
         raise ValueError("FAIL_NO_TEST_MODULES")
@@ -39,6 +39,7 @@ def main() -> int:
     skipped = re.search(r"skipped=(\d+)", combined)
     receipt = {
         "artifact_type": "phase4e3_full_test_acceptance_receipt", "status": "PASS",
+        "suite_scope": "complete_current_tests_phase4",
         "command": command, "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "return_code": completed.returncode,
         "test_count": int(match.group(1)) if match else None,

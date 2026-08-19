@@ -1,0 +1,18 @@
+{
+  "schema_version": "phase4e6.design-freeze-receipt.v1",
+  "freeze_id": "P4E6-AUTHORITY-20260820-R01",
+  "status": "FROZEN_BEFORE_ACQUISITION",
+  "authority_commit": "1580ef01",
+  "registry": {
+    "path": "config/phase4e6_registry.json",
+    "sha256": "e8f4fc6ad0c77a1a78622fa88bfaa4f9909e9986c6656c854ad268984ff782d8"
+  },
+  "design": {
+    "path": "docs/phase4e6/FROZEN_DESIGN.md",
+    "sha256": "80a4532ef2551f29e70492e9a86ce0f1fcf59c1689da4626dc5d46ac76ee428a"
+  },
+  "authority_contract_sha256": "e41f236aae3012ca436c727d56568f4cebfab79f65ba8d00efdc8ebb4a267811",
+  "authority_registry_sha256": "17d0617d4090ae6ac253f40c7d03a5bfa3795f6058b86cbdbc4427b34e90ce3a",
+  "acquisition_started": false,
+  "report_labels_opened_by_p4e6": false
+}

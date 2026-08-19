@@ -1,0 +1,128 @@
+{
+  "schema_version": "phase4e6.registry.v1",
+  "freeze_id": "P4E6-AUTHORITY-20260820-R01",
+  "frozen": true,
+  "parent_commit": "40afa230",
+  "authority_commit": "1580ef01",
+  "serving_release": "P4-P4E2-20260815-r12",
+  "games": ["ssq", "dlt"],
+  "seed": 20260820,
+  "sources": {
+    "minimum_consensus_sources": 2,
+    "minimum_independent_capture_groups": 2,
+    "official_preferred_not_required": true,
+    "allowed_sources": ["official", "500.com", "17500", "ZHCW"],
+    "forbid_access_control_bypass": true,
+    "raw_capture_required": ["url", "request", "request_body", "response_headers", "response_body", "capture_time_utc", "sha256", "lineage", "suspected_common_upstream"],
+    "consensus_fields": {
+      "issue": {"kind": "exact"},
+      "draw_date": {"kind": "exact_iso_date"},
+      "front": {"kind": "exact_ordered_integer_list"},
+      "back": {"kind": "exact_ordered_integer_list"},
+      "sales": {"kind": "numeric_absolute", "tolerance": 1.0, "unit": "CNY"},
+      "jackpot": {"kind": "numeric_absolute", "tolerance": 1.0, "unit": "CNY"},
+      "first_prize_count": {"kind": "integer_exact"},
+      "first_prize_amount": {"kind": "numeric_absolute", "tolerance": 1.0, "unit": "CNY"},
+      "second_prize_count": {"kind": "integer_exact"},
+      "second_prize_amount": {"kind": "numeric_absolute", "tolerance": 1.0, "unit": "CNY"}
+    },
+    "conflict_action": "quarantine_entire_issue",
+    "missing_action": "quarantine_for_operational_features_and_retain_explicit_missingness",
+    "current_row_imputation": "forbidden"
+  },
+  "temporal_contract": {
+    "prediction_join": "metadata_issue_index <= prediction_issue_index - 1",
+    "minimum_lag_draws": 1,
+    "embargo_draws": 1,
+    "fit_scope": "training_prefix_only",
+    "current_or_future_row_action": "reject",
+    "future_mutation_invariance_required": true
+  },
+  "roles": {
+    "report_rows": 120,
+    "selection_rows": 120,
+    "minimum_development_rows": 240,
+    "report_must_be_disjoint_from": ["P4E3_report", "P4E4_report", "P4E5_report", "original_200", "all_prior_selection_or_model_fit_labels"],
+    "chronology_required": true,
+    "report_use_count": 1,
+    "report_access_requires_pushed_selection_checkpoint": true,
+    "no_valid_window_terminal_status": "PROSPECTIVE_ONLY"
+  },
+  "folds": {
+    "kind": "expanding_origin",
+    "count": 5,
+    "minimum_train_rows": 240,
+    "validation_rows": 48,
+    "embargo_draws": 1,
+    "cross_game_pooling": false
+  },
+  "features": {
+    "levels_lags": [1, 2, 4],
+    "change_lags": [1, 2],
+    "volatility_windows": [4, 8],
+    "operational_fields": ["sales", "jackpot", "first_prize_count", "first_prize_amount", "second_prize_count", "second_prize_amount"],
+    "quality_fields": ["source_count", "independent_source_count", "conflict", "quarantined", "staleness_draws", "missing_fraction"],
+    "rollover": "jackpot_lag_1 > jackpot_lag_2",
+    "regional_distribution": {"minimum_overall_coverage": 0.95, "minimum_selection_coverage": 0.95, "minimum_consensus_sources": 2}
+  },
+  "candidates": [
+    {"id": "B0", "blocks": [], "description": "prefix empirical-frequency baseline"},
+    {"id": "C1", "blocks": ["calendar"]},
+    {"id": "Q1", "blocks": ["consensus_quality"]},
+    {"id": "O1", "blocks": ["consensus_quality", "lagged_operational"]},
+    {"id": "O2", "blocks": ["calendar", "consensus_quality", "lagged_operational"]},
+    {"id": "O3", "blocks": ["calendar", "consensus_quality", "lagged_operational", "regional_distribution"], "conditional": true}
+  ],
+  "preprocessing_grid": {
+    "numeric_transform": ["robust_z", "log1p_robust_z"],
+    "winsor_quantiles": [[0.01, 0.99]],
+    "imputation": ["prefix_median_with_indicator"],
+    "probability_postprocessing": ["none"]
+  },
+  "model_grid": {
+    "estimator": ["independent_ball_logistic"],
+    "regularization_c": [0.01, 0.1, 1.0],
+    "class_weight": ["none"],
+    "max_iter": [2000]
+  },
+  "selection": {
+    "primary_metric": "mean_per_ball_bernoulli_log_loss",
+    "tie_breakers": ["mean_per_ball_brier", "candidate_id_lexicographic"],
+    "proper_scores": ["mean_per_ball_bernoulli_log_loss", "mean_per_ball_brier"],
+    "report_evaluations": 1
+  },
+  "inference": {
+    "paired_bootstrap_resamples": 10000,
+    "bootstrap_unit": "draw",
+    "bootstrap_seed": 20260820,
+    "multiplicity_family": "all_nonbaseline_candidates_per_game",
+    "correction": "holm",
+    "alpha": 0.05
+  },
+  "calibration_gates": {
+    "slope_range": [0.8, 1.2],
+    "absolute_intercept_max": 0.25,
+    "ece_10_equal_width_max": 0.03
+  },
+  "promotion_gates": {
+    "valid_untouched_report_window_both_games": true,
+    "consensus_operational_coverage_each_game_min": 0.95,
+    "conflict_fraction_each_game_max": 0.01,
+    "raw_provenance_complete": true,
+    "deterministic_replay": true,
+    "all_temporal_and_quality_tests_pass": true,
+    "holm_adjusted_log_loss_p_max": 0.05,
+    "log_loss_ci95_upper_max": 0.0,
+    "brier_noninferiority_margin": 0.0001,
+    "calibration_all_gates": true,
+    "both_games_must_pass": true,
+    "serving_change_allowed": false
+  },
+  "outputs": {
+    "top_k": [1000, 10],
+    "top10_label": "Shadow",
+    "probability_spread_adjustment": "forbidden",
+    "prospective_ledger_required": true,
+    "required": ["coverage", "conflicts", "source_lineage", "cards", "diagnostics", "ablation", "selection_or_prospective_receipt", "inventories", "manifest", "full_tests", "independent_acceptance"]
+  }
+}

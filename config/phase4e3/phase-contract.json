@@ -1,0 +1,74 @@
+{
+  "artifact_type": "phase4e3_frozen_phase_contract",
+  "contract_version": "P4E3-CONTRACT-20260819-v1",
+  "phase": "P4E3_feature_strengthening",
+  "state_if_not_promoted": "FEATURE_ENGINEERING_DELIVERED_NO_PROMOTION",
+  "state_if_promoted": "IMPROVED_SERVING_ACCEPTED",
+  "baseline": {
+    "commit": "61afa5be20b49e5545d106d490cdc0c33cba9dc4",
+    "release": "P4-P4E2-20260815-r12",
+    "release_tree_inventory_digest": "a673bc42d9ad1e7015d72c0c8c63575b9521c368",
+    "delivery_manifest_sha256": "206c24136b65e36067ed6b25f2fa6018e9b07141518131de63dfd88f7b547920",
+    "serving_status": {"ssq": "no_confirmed_lift", "dlt": "no_confirmed_lift"},
+    "immutable": true
+  },
+  "data_authority": {
+    "path": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "sha256": "f2e34a88fbd43a378d7fb6255d39deee1354216b918934f355a06ef986be60c1",
+    "draw_count_per_game": 200,
+    "canonical_order_id": "phase1-baseline-v1-jsonl-per-game-order-v1",
+    "allowed_fields": ["game", "issue", "front", "back", "fact_hash"],
+    "external_signals": "FORBIDDEN",
+    "fabricated_availability_or_labels": "FORBIDDEN",
+    "serving_positive_controls": "FORBIDDEN"
+  },
+  "sequence_safety": {
+    "target_feature_cutoff": "target_position-1",
+    "max_source_position_must_equal_cutoff": true,
+    "normalization_fit_scope": "strict_prefix_or_inner_training_only",
+    "mutation_after_cutoff_must_not_change_features_or_predictions": true,
+    "minimum_history": 60,
+    "purge_draws": 2
+  },
+  "evaluation": {
+    "report_only_positions": {"ssq": [176, 200], "dlt": [176, 200], "interval": "half_open"},
+    "report_only_label_count_per_game": 24,
+    "selection_positions": {"ssq": [96, 174], "dlt": [96, 174], "interval": "half_open"},
+    "outer_selection_folds": [
+      {"train_end": 128, "validation": [130, 140]},
+      {"train_end": 140, "validation": [142, 152]},
+      {"train_end": 152, "validation": [154, 164]},
+      {"train_end": 164, "validation": [166, 174]}
+    ],
+    "inner_tuning": "expanding_purged_walk_forward_within_each_outer_training_prefix",
+    "report_only_untouched_by_selection": true,
+    "comparators": ["M0_uniform", "P4E2_r12_recomputed_sequence_safe_l2_72"],
+    "primary_metrics": ["joint_log_loss", "front_inclusion_log_loss", "back_inclusion_log_loss", "front_inclusion_brier", "back_inclusion_brier"],
+    "secondary_metrics": ["rank", "top_k_recall", "entropy", "effective_support", "score_probability_dispersion"],
+    "bootstrap": {"method": "moving_block_bootstrap", "iterations": 4096, "block_length": 4, "seed_ssq": 20260819, "seed_dlt": 20260820},
+    "multiplicity_registry": "config/phase4e3/experiment-registry.json"
+  },
+  "feature_gates": {
+    "sequence_safe": "required",
+    "reproducible": "required",
+    "finite_and_nonconstant": {"minimum_nonzero_variance_fold_share": 0.75},
+    "redundancy": {"maximum_absolute_spearman_with_existing_or_kept": 0.95},
+    "dimension": {"maximum_new_features_per_zone": 12, "maximum_total_features_per_zone": 20},
+    "selection_direction": "mean proper-score delta favorable and at least 3_of_4 outer folds nonpositive",
+    "regularization_and_shrinkage": "required"
+  },
+  "promotion": {
+    "independent_recomputation_required": true,
+    "report_only_joint_log_loss_mean_delta_vs_m0": "strictly_negative",
+    "report_only_joint_log_loss_mean_delta_vs_r12": "strictly_negative",
+    "holm_adjusted_one_sided_p_vs_both": "less_than_0.05",
+    "bootstrap_ci95_upper_vs_both": "less_than_0",
+    "stable_direction": "at_least_3_of_4_selection_folds_and_18_of_24_report_draws_vs_each_comparator",
+    "calibration": "no_material_regression_in_inclusion_brier_or_mean_probability_ratio",
+    "leakage_mutation_replay": "all_pass",
+    "probability_spread_alone": "never_sufficient"
+  },
+  "release_allocation": "FORBIDDEN_UNTIL_ALL_PRE_ALLOCATION_GATES_PASS",
+  "branch": "codex/phase4e3-feature-strengthening-20260819",
+  "status": "FROZEN_BEFORE_REPORT_ONLY_EVALUATION"
+}

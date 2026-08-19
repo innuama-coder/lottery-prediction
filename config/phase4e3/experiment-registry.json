@@ -1,0 +1,65 @@
+{
+  "artifact_type": "phase4e3_frozen_experiment_registry",
+  "registry_version": "P4E3-REGISTRY-20260819-v1",
+  "frozen_before_report_only_evaluation": true,
+  "games": ["ssq", "dlt"],
+  "candidate_families": [
+    {
+      "candidate_id": "C00_P4E2_R12",
+      "role": "accepted_baseline",
+      "feature_ids": ["F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08", "F09", "F10", "F11", "F12", "F13", "F14"],
+      "model": "accepted_P4E2_R_one_step_uniform_gradient",
+      "tuning": {"l2": 72.0}
+    },
+    {
+      "candidate_id": "C01_SURPRISE_REGIME",
+      "role": "candidate",
+      "feature_ids": ["E01_short_long_surprise", "E02_multiscale_change_point"],
+      "model": "shrunk_conditional_log_linear",
+      "tuning": {"history": [80, 120], "l2": [4.0, 12.0, 36.0], "temperature": [0.5, 1.0]}
+    },
+    {
+      "candidate_id": "C02_RENEWAL_HAZARD",
+      "role": "candidate",
+      "feature_ids": ["E03_geometric_hazard_residual", "E04_interarrival_residual"],
+      "model": "shrunk_conditional_log_linear",
+      "tuning": {"history": [80, 120], "l2": [4.0, 12.0, 36.0], "temperature": [0.5, 1.0]}
+    },
+    {
+      "candidate_id": "C03_TRANSITION",
+      "role": "candidate",
+      "feature_ids": ["E05_lag1_transition_residual", "E06_lag2_autocorrelation_residual"],
+      "model": "shrunk_conditional_log_linear",
+      "tuning": {"history": [80, 120], "l2": [4.0, 12.0, 36.0], "temperature": [0.5, 1.0]}
+    },
+    {
+      "candidate_id": "C04_GRAPH",
+      "role": "candidate",
+      "feature_ids": ["E07_shrunk_graph_degree", "E08_low_rank_graph_projection"],
+      "model": "shrunk_conditional_log_linear",
+      "tuning": {"history": [80, 120], "l2": [4.0, 12.0, 36.0], "temperature": [0.5, 1.0], "pair_shrinkage": [20.0, 60.0]}
+    },
+    {
+      "candidate_id": "C05_SET_SHAPE",
+      "role": "candidate",
+      "feature_ids": ["E09_gap_entropy", "E10_gap_roughness", "E11_occupancy_deviation"],
+      "model": "shrunk_conditional_log_linear",
+      "tuning": {"history": [80, 120], "l2": [4.0, 12.0, 36.0], "temperature": [0.5, 1.0]}
+    },
+    {
+      "candidate_id": "C06_GATED_COMPOSITE_NONLINEAR",
+      "role": "candidate",
+      "feature_ids": ["selection_gate_survivors", "calibrated_tanh_number_score", "front_back_additive_only"],
+      "model": "hierarchical_shrunk_conditional_log_linear_with_selection_only_temperature",
+      "tuning": {"history": [80, 120], "l2": [4.0, 12.0, 36.0], "temperature": [0.5, 1.0]},
+      "eligibility": "only families passing safety_nonconstancy_redundancy_selection_direction gates"
+    }
+  ],
+  "candidate_count_for_multiplicity": 6,
+  "multiplicity": {
+    "method": "holm_bonferroni_one_sided_familywise_0.05",
+    "scope": "C01-C06 separately by game on report-only joint log-loss versus both comparators",
+    "probability_spread_not_a_hypothesis_test": true
+  },
+  "status": "FROZEN"
+}

@@ -188,6 +188,10 @@ def main() -> int:
         for entry in manifest["entries"]
     )
     check("manifest_all_entries_match", manifest_matches and len(manifest["entries"]) == manifest["entry_count"])
+    full_tests = load_json(args.delivery / "acceptance/full-test-receipt.json")
+    check("full_current_phase4_suite_receipt", verify_digest(full_tests, "receipt_sha256")
+          and full_tests["status"] == "PASS" and full_tests["suite_scope"] == "complete_current_tests_phase4"
+          and full_tests["return_code"] == 0 and full_tests["test_count"] > 0 and full_tests["clean_worktree_before_run"])
     check("branch_name", subprocess.check_output(["git", "branch", "--show-current"], cwd=ROOT, text=True).strip() == contract["branch"])
     status = "PASS" if all(row["pass"] for row in checks) else "FAIL"
     result = {

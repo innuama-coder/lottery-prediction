@@ -1,0 +1,18 @@
+{
+  "schema_version": "p4e6-authority-registry-v1",
+  "freeze_id": "P4E6-AUTHORITY-20260820-R01",
+  "status": "FROZEN_BEFORE_OUTCOME_INSPECTION",
+  "parent_commit": "40afa230",
+  "branch": "codex/phase4e6-multisource-consensus-20260820-r01",
+  "serving_incumbent": "r12",
+  "registrations": [
+    {
+      "authority_id": "P4E6-SOURCE-CONSENSUS",
+      "document": "artifacts/phase4e6/frozen/authority_contract.json",
+      "sha256": "e41f236aae3012ca436c727d56568f4cebfab79f65ba8d00efdc8ebb4a267811",
+      "state": "binding"
+    }
+  ],
+  "amendment_policy": "No amendment after outcome inspection. Corrections require a new explicitly versioned freeze that cannot weaken temporal, provenance, report-window, data-quality, statistical, or promotion constraints.",
+  "inspection_barrier": "Repository outcomes, prior evaluation results, candidate performance, acquisition results, and report-window availability must not be inspected until this registry and its authority contract are committed and pushed."
+}

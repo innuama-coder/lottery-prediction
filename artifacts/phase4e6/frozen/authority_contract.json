@@ -1,0 +1,121 @@
+{
+  "schema_version": "p4e6-authority-contract-v1",
+  "freeze_id": "P4E6-AUTHORITY-20260820-R01",
+  "status": "FROZEN_BEFORE_OUTCOME_INSPECTION",
+  "parent_commit": "40afa230",
+  "branch": "codex/phase4e6-multisource-consensus-20260820-r01",
+  "serving_incumbent": "r12",
+  "immutability": {
+    "preserve_p4e5_and_earlier_bytes": true,
+    "append_only_phase4e6": true,
+    "no_prior_report_window_reuse": true,
+    "no_original_200_reuse": true
+  },
+  "source_authority": {
+    "official_preferred_not_required": true,
+    "non_official_authorized": true,
+    "minimum_independently_captured_accessible_sources_per_issue": 2,
+    "operational_metadata_requires_consensus": true,
+    "allowed_archive_examples": ["500.com", "17500", "ZHCW"],
+    "archive_condition": "accessible and reproducibly captured",
+    "prohibited": [
+      "CAPTCHA bypass",
+      "access-control bypass",
+      "silent current-row imputation"
+    ],
+    "required_raw_capture": [
+      "source identity",
+      "source lineage",
+      "suspected common upstream",
+      "URL",
+      "request",
+      "response body",
+      "response headers",
+      "capture time",
+      "SHA256"
+    ]
+  },
+  "consensus": {
+    "issue": "exact agreement",
+    "draw_date": "exact agreement after frozen normalization",
+    "balls": "exact ordered agreement after frozen normalization",
+    "sales": "predeclared field tolerance required",
+    "jackpot": "predeclared field tolerance required",
+    "prize": "predeclared field tolerance required",
+    "conflicts": "quarantine",
+    "missingness": "quarantine or explicit missing feature; never silently impute current rows",
+    "independence": "sources suspected to share a common upstream do not alone satisfy the two-source minimum"
+  },
+  "temporal_safety": {
+    "strict_lag": 1,
+    "rule": "draw T may use only information available at T-1 or earlier",
+    "current_row_rejection_required": true,
+    "future_mutation_test_required": true,
+    "deterministic_replay_required": true
+  },
+  "feature_scope": {
+    "required": [
+      "source count",
+      "conflict",
+      "staleness",
+      "lagged sales levels",
+      "lagged sales changes",
+      "lagged sales volatility",
+      "lagged jackpot levels",
+      "lagged jackpot changes",
+      "lagged jackpot volatility",
+      "lagged prize levels",
+      "lagged prize changes",
+      "lagged prize volatility",
+      "rollover"
+    ],
+    "optional": ["regional distribution"],
+    "optional_rule": "enable only above a frozen coverage threshold"
+  },
+  "pre_acquisition_freeze": [
+    "candidate models",
+    "folds",
+    "proper scores",
+    "bootstrap procedure",
+    "Holm multiplicity correction",
+    "calibration gates",
+    "field tolerances",
+    "coverage thresholds",
+    "promotion gates"
+  ],
+  "evaluation": {
+    "games": "both repository-supported games",
+    "outputs": ["Top1000", "Top10 Shadow"],
+    "probability_constraint": "do not widen probability spread artificially",
+    "report_window": "genuinely untouched and excludes every P4E3, P4E4, P4E5 report window and original-200",
+    "report_window_use": "once only, after a pushed selection checkpoint",
+    "no_valid_window_terminal_status": "PROSPECTIVE_ONLY",
+    "no_valid_window_outputs": ["engineering deliverables", "prospective prediction ledger"],
+    "promotion": "only if every data-quality and statistical gate passes; otherwise retain r12"
+  },
+  "required_tests": [
+    "consensus",
+    "conflict quarantine",
+    "current-row rejection",
+    "future mutation",
+    "deterministic replay",
+    "missingness",
+    "provenance",
+    "normalization"
+  ],
+  "required_deliverables": [
+    "both-games Top1000",
+    "both-games Top10 Shadow",
+    "coverage report",
+    "conflict report",
+    "cards",
+    "diagnostics",
+    "ablation",
+    "selection checkpoint and report receipt, or prospective receipt",
+    "inventories",
+    "manifest",
+    "full tests",
+    "independent acceptance"
+  ],
+  "terminal_rule": "honest terminal status, committed and pushed, no pull request"
+}

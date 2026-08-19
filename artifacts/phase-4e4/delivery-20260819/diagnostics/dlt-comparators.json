@@ -1,0 +1,1 @@
+{"M0":{"full_multiclass_brier":0.9999999533271053,"joint_log_loss":16.880102254101306},"P4E2_r12_retrained":{"full_multiclass_brier":0.9999999532590168,"joint_log_loss":16.879626048581137},"P4E3_Transition_retrained":{"full_multiclass_brier":0.999999953903292,"joint_log_loss":16.885050859085045}}

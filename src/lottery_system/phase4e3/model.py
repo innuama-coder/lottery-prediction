@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import itertools
+import heapq
 import math
 from functools import lru_cache
 from typing import Sequence
@@ -339,10 +340,15 @@ def top_zone(distribution: dict[str, object], limit: int = 1000) -> list[tuple[f
     rows = []
     for combo in itertools.combinations(range(1, int(distribution["n"]) + 1), int(distribution["k"])):
         probability = subset_probability(combo, distribution)
-        rows.append((probability, combo))
-    rows.sort(key=lambda row: row[1])
-    rows.sort(key=lambda row: row[0], reverse=True)
-    return rows[:limit]
+        entry = (probability, tuple(-number for number in combo), combo)
+        if len(rows) < limit:
+            heapq.heappush(rows, entry)
+        elif entry[:2] > rows[0][:2]:
+            heapq.heapreplace(rows, entry)
+    result = [(probability, combo) for probability, _, combo in rows]
+    result.sort(key=lambda row: row[1])
+    result.sort(key=lambda row: row[0], reverse=True)
+    return result
 
 
 def _shape_raw(combo: Sequence[int], n: int) -> tuple[float, float, float]:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import itertools
 import json
 import math
@@ -74,6 +75,10 @@ def combine(zones):
     probability = math.prod(zone["subset_probability"] for zone in zones)
     return {"joint_probability": probability, "joint_log_loss": -math.log(probability),
             "multiclass_brier": 1 - 2 * probability + math.prod(zone["probability_square_sum"] for zone in zones),
+            "front_inclusion_log_loss": zones[0]["inclusion_log_loss"],
+            "back_inclusion_log_loss": zones[1]["inclusion_log_loss"],
+            "front_inclusion_brier": zones[0]["inclusion_brier"],
+            "back_inclusion_brier": zones[1]["inclusion_brier"],
             "mean_zone_inclusion_log_loss": mean(zone["inclusion_log_loss"] for zone in zones),
             "mean_zone_inclusion_brier": mean(zone["inclusion_brier"] for zone in zones)}
 
@@ -85,15 +90,41 @@ def choose_candidate(selection):
     return min(modelled, key=lambda item: item[1]["nested_mean_delta_joint_log_loss_vs_m0"])[0] if modelled else None
 
 
+def holm_table(selection, candidate, raw_p):
+    """Apply the frozen six-family Holm correction, retaining unopened hypotheses."""
+    hypotheses = [
+        {
+            "candidate": family,
+            "raw_one_sided_p": raw_p if family == candidate else 1.0,
+            "report_only_evaluated": family == candidate,
+            "selection_eligible": family in selection["eligible_for_report_only"],
+        }
+        for family in (
+            "C01_SURPRISE_REGIME", "C02_RENEWAL_HAZARD", "C03_TRANSITION",
+            "C04_GRAPH", "C05_SET_SHAPE", "C06_GATED_COMPOSITE_NONLINEAR",
+        )
+    ]
+    ordered = sorted(hypotheses, key=lambda row: (row["raw_one_sided_p"], row["candidate"]))
+    running = 0.0
+    for rank, row in enumerate(ordered, 1):
+        running = max(running, min(1.0, (len(ordered) - rank + 1) * row["raw_one_sided_p"]))
+        row["holm_rank"] = rank
+        row["holm_adjusted_p"] = min(1.0, running)
+    return ordered
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--contract", type=Path, default=ROOT / "config/phase4e3/phase-contract.json")
     parser.add_argument("--draws", type=Path, default=ROOT / "artifacts/phase-1/baseline-v1/draws.jsonl")
     parser.add_argument("--selection", type=Path, default=ROOT / "artifacts/phase-4e3/delivery-20260819/selection")
     parser.add_argument("--output", type=Path, default=ROOT / "artifacts/phase-4e3/delivery-20260819/report")
+    parser.add_argument("--game", choices=("ssq", "dlt"), required=True)
     args = parser.parse_args()
     contract = json.loads(args.contract.read_text())
-    for game in ("ssq", "dlt"):
+    if hashlib.sha256(args.draws.read_bytes()).hexdigest() != contract["data_authority"]["sha256"]:
+        raise ValueError("FAIL_DATA_AUTHORITY")
+    for game in (args.game,):
         selection_path = args.selection / f"{game}-selection-receipt.json"
         selection = json.loads(selection_path.read_text())
         receipt_hash = selection.pop("receipt_sha256")
@@ -104,6 +135,7 @@ def main():
         if candidate is None:
             raise ValueError("HOLD_NO_REPRODUCIBLE_CANDIDATE")
         candidate_row = selection["families"][candidate]
+        selection_eligible = candidate in selection["eligible_for_report_only"]
         feature_ids = candidate_row["feature_ids"]
         config = candidate_row["final_config"]
         draws = load_draws(args.draws, game)
@@ -137,30 +169,58 @@ def main():
         comparisons = {}
         for comparator in ("r12", "m0"):
             values = [row[f"delta_joint_log_loss_vs_{comparator}"] for row in rows]
-            evidence = bootstrap(values, 20260819 + int(game == "dlt") + 100 * int(comparator == "r12"))
+            seed = int(contract["evaluation"]["bootstrap"][f"seed_{game}"])
+            evidence = bootstrap(values, seed)
+            table = holm_table(selection, candidate, evidence["one_sided_p_mean_ge_zero"])
+            selected_hypothesis = next(row for row in table if row["candidate"] == candidate)
             evidence.update({"mean_delta_joint_log_loss": mean(values), "favorable_draw_count": sum(value <= 0 for value in values),
-                             "holm_conservative_adjusted_p_six_candidates": min(1.0, 6 * evidence["one_sided_p_mean_ge_zero"])})
+                             "holm_family_size": len(table), "holm_method": "holm_bonferroni_one_sided_familywise_0.05",
+                             "holm_table": table, "holm_adjusted_p": selected_hypothesis["holm_adjusted_p"]})
             comparisons[comparator] = evidence
         candidate_brier = mean(row["candidate"]["mean_zone_inclusion_brier"] for row in rows)
+        candidate_ratio_vs_m0 = mean(row["candidate"]["joint_probability"] / row["m0"]["joint_probability"] for row in rows)
+        candidate_ratio_vs_r12 = mean(row["candidate"]["joint_probability"] / row["r12"]["joint_probability"] for row in rows)
+        r12_ratio_vs_m0 = mean(row["r12"]["joint_probability"] / row["m0"]["joint_probability"] for row in rows)
         calibration = {
             "candidate_mean_zone_inclusion_brier": candidate_brier,
             "r12_mean_zone_inclusion_brier": mean(row["r12"]["mean_zone_inclusion_brier"] for row in rows),
             "m0_mean_zone_inclusion_brier": mean(row["m0"]["mean_zone_inclusion_brier"] for row in rows),
+            "candidate_mean_observed_probability_ratio_vs_m0": candidate_ratio_vs_m0,
+            "candidate_mean_observed_probability_ratio_vs_r12": candidate_ratio_vs_r12,
+            "r12_mean_observed_probability_ratio_vs_m0": r12_ratio_vs_m0,
             "material_absolute_tolerance": 0.002,
         }
-        selection_pass = bool(candidate_row.get("selection_direction_pass"))
-        statistical_pass = all(comparisons[key]["ci95"][1] < 0 and comparisons[key]["holm_conservative_adjusted_p_six_candidates"] < 0.05
+        selection_pass = selection_eligible and bool(candidate_row.get("selection_direction_pass"))
+        statistical_pass = all(comparisons[key]["mean_delta_joint_log_loss"] < 0
+                               and comparisons[key]["ci95"][1] < 0 and comparisons[key]["holm_adjusted_p"] < 0.05
                                and comparisons[key]["favorable_draw_count"] >= 18 for key in ("r12", "m0"))
-        calibration_pass = candidate_brier <= min(calibration["r12_mean_zone_inclusion_brier"], calibration["m0_mean_zone_inclusion_brier"]) + 0.002
+        brier_pass = candidate_brier <= min(calibration["r12_mean_zone_inclusion_brier"], calibration["m0_mean_zone_inclusion_brier"]) + 0.002
+        probability_ratio_pass = candidate_ratio_vs_m0 >= 0.998 and candidate_ratio_vs_r12 >= 0.998
+        calibration_pass = brier_pass and probability_ratio_pass
+        primary_metric_summary = {
+            model: {
+                metric: mean(row[model][metric] for row in rows)
+                for metric in (
+                    "joint_log_loss", "front_inclusion_log_loss", "back_inclusion_log_loss",
+                    "front_inclusion_brier", "back_inclusion_brier", "multiclass_brier",
+                )
+            }
+            for model in ("candidate", "r12", "m0")
+        }
         payload = {
             "artifact_type": "phase4e3_independent_report_only_evidence", "game": game, "candidate": candidate,
             "candidate_feature_ids": feature_ids, "candidate_config": config,
+            "evaluation_role": "promotion_candidate" if selection_eligible else "adverse_shadow_no_promotion",
+            "selection_eligible": selection_eligible,
             "selection_receipt_path": str(selection_path.relative_to(ROOT)), "selection_receipt_sha256": receipt_hash,
             "report_positions": [176, 200], "report_count": len(rows), "rows": rows,
-            "comparisons": comparisons, "calibration": {**calibration, "pass": calibration_pass},
+            "primary_metric_summary": primary_metric_summary,
+            "comparisons": comparisons, "calibration": {**calibration, "inclusion_brier_pass": brier_pass,
+                                                            "mean_probability_ratio_pass": probability_ratio_pass,
+                                                            "pass": calibration_pass},
             "selection_direction_pass": selection_pass, "statistical_gate_pass": statistical_pass,
             "preliminary_promotion_gate_pass": selection_pass and statistical_pass and calibration_pass,
-            "multiple_candidate_correction": "six_candidate_conservative_Bonferroni_equivalent_to_worst_case_Holm_first_step",
+            "multiple_candidate_correction": "holm_bonferroni_one_sided_familywise_0.05_across_C01_C06",
             "adverse_results_retained": True,
         }
         payload["report_sha256"] = digest(payload)

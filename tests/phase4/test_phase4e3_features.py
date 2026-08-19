@@ -14,8 +14,12 @@ from lottery_system.phase4e3.model import (
     fit_zone,
     inclusion_probabilities,
     score_zone_observation,
+    subset_probability,
+    top_zone,
     zone_distribution,
 )
+from scripts.phase4e3.run_report import bootstrap, holm_table
+from scripts.phase4e3.run_delivery import top_product
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -75,6 +79,33 @@ class Phase4E3FeatureTests(unittest.TestCase):
         self.assertEqual(first["normalizer"], second["normalizer"])
         self.assertEqual(score_zone_observation(draws[130].front, first), score_zone_observation(draws[130].front, second))
         self.assertAlmostEqual(sum(first["inclusion_probabilities"]), RULES["dlt"][0][1], places=12)
+
+    def test_frozen_bootstrap_and_six_family_holm_are_deterministic(self) -> None:
+        values = [-0.2, -0.1, 0.05, -0.3] * 6
+        first = bootstrap(values, 20260820)
+        self.assertEqual(first, bootstrap(values, 20260820))
+        selection = {"eligible_for_report_only": ["C03_TRANSITION"]}
+        table = holm_table(selection, "C03_TRANSITION", 0.004)
+        transition = next(row for row in table if row["candidate"] == "C03_TRANSITION")
+        self.assertEqual(transition["holm_rank"], 1)
+        self.assertAlmostEqual(transition["holm_adjusted_p"], 0.024)
+        self.assertEqual(sum(row["report_only_evaluated"] for row in table), 1)
+
+    def test_streaming_zone_and_product_top_k_match_complete_sort(self) -> None:
+        distribution = {"n": 7, "k": 2, "weights": [1.0, 1.3, 0.7, 2.0, 0.9, 1.7, 1.1]}
+        distribution["normalizer"] = elementary(distribution["weights"], distribution["k"])
+        expected = [
+            (subset_probability(combo, distribution), combo)
+            for combo in __import__("itertools").combinations(range(1, 8), 2)
+        ]
+        expected.sort(key=lambda row: row[1])
+        expected.sort(key=lambda row: row[0], reverse=True)
+        self.assertEqual(top_zone(distribution, 8), expected[:8])
+        front, back = expected[:8], [(0.6, (1,)), (0.4, (2,))]
+        product = [(left * right, a, b) for left, a in front for right, b in back]
+        product.sort(key=lambda row: (row[1], row[2]))
+        product.sort(key=lambda row: row[0], reverse=True)
+        self.assertEqual(top_product(front, back, 10), product[:10])
 
 
 if __name__ == "__main__":

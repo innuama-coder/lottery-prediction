@@ -1,0 +1,10 @@
+{"back":[1],"front":[1,6,14,17,22,26],"game":"ssq","joint_probability":9.674762952054549e-08,"model":"B0","rank":1,"status":"Shadow","target_draw_date":"2026-08-20","target_issue":"2026096"}
+{"back":[1],"front":[1,14,17,18,22,26],"game":"ssq","joint_probability":9.621065618546653e-08,"model":"B0","rank":2,"status":"Shadow","target_draw_date":"2026-08-20","target_issue":"2026096"}
+{"back":[16],"front":[1,6,14,17,22,26],"game":"ssq","joint_probability":9.588077604107262e-08,"model":"B0","rank":3,"status":"Shadow","target_draw_date":"2026-08-20","target_issue":"2026096"}
+{"back":[1],"front":[1,6,14,18,22,26],"game":"ssq","joint_probability":9.585534746636273e-08,"model":"B0","rank":4,"status":"Shadow","target_draw_date":"2026-08-20","target_issue":"2026096"}
+{"back":[15],"front":[1,6,14,17,22,26],"game":"ssq","joint_probability":9.54477485889822e-08,"model":"B0","rank":5,"status":"Shadow","target_draw_date":"2026-08-20","target_issue":"2026096"}
+{"back":[16],"front":[1,14,17,18,22,26],"game":"ssq","joint_probability":9.534861395776493e-08,"model":"B0","rank":6,"status":"Shadow","target_draw_date":"2026-08-20","target_issue":"2026096"}
+{"back":[1],"front":[1,14,17,22,26,32],"game":"ssq","joint_probability":9.531822741170872e-08,"model":"B0","rank":7,"status":"Shadow","target_draw_date":"2026-08-20","target_issue":"2026096"}
+{"back":[1],"front":[1,2,14,17,22,26],"game":"ssq","joint_probability":9.531822741170872e-08,"model":"B0","rank":8,"status":"Shadow","target_draw_date":"2026-08-20","target_issue":"2026096"}
+{"back":[1],"front":[1,6,14,17,18,22],"game":"ssq","joint_probability":9.515106069575613e-08,"model":"B0","rank":9,"status":"Shadow","target_draw_date":"2026-08-20","target_issue":"2026096"}
+{"back":[16],"front":[1,6,14,18,22,26],"game":"ssq","joint_probability":9.499648878538955e-08,"model":"B0","rank":10,"status":"Shadow","target_draw_date":"2026-08-20","target_issue":"2026096"}

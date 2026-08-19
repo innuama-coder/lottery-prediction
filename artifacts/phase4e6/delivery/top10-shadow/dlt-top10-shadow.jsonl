@@ -1,0 +1,10 @@
+{"back":[5,7],"front":[1,2,3,7,26],"game":"dlt","joint_probability":1.0492850037746682e-07,"model":"B0","rank":1,"status":"Shadow","target_draw_date":"2026-08-19","target_issue":"2026094"}
+{"back":[5,7],"front":[2,3,4,7,26],"game":"dlt","joint_probability":1.0492850037746682e-07,"model":"B0","rank":2,"status":"Shadow","target_draw_date":"2026-08-19","target_issue":"2026094"}
+{"back":[5,7],"front":[2,3,7,11,26],"game":"dlt","joint_probability":1.0492850037746682e-07,"model":"B0","rank":3,"status":"Shadow","target_draw_date":"2026-08-19","target_issue":"2026094"}
+{"back":[5,7],"front":[2,3,5,7,26],"game":"dlt","joint_probability":1.0492850037746682e-07,"model":"B0","rank":4,"status":"Shadow","target_draw_date":"2026-08-19","target_issue":"2026094"}
+{"back":[5,7],"front":[2,3,7,26,28],"game":"dlt","joint_probability":1.0304228396319271e-07,"model":"B0","rank":5,"status":"Shadow","target_draw_date":"2026-08-19","target_issue":"2026094"}
+{"back":[5,7],"front":[3,5,7,11,26],"game":"dlt","joint_probability":1.0245691943126377e-07,"model":"B0","rank":6,"status":"Shadow","target_draw_date":"2026-08-19","target_issue":"2026094"}
+{"back":[5,7],"front":[1,3,5,7,26],"game":"dlt","joint_probability":1.0245691943126377e-07,"model":"B0","rank":7,"status":"Shadow","target_draw_date":"2026-08-19","target_issue":"2026094"}
+{"back":[5,7],"front":[1,3,7,11,26],"game":"dlt","joint_probability":1.0245691943126377e-07,"model":"B0","rank":8,"status":"Shadow","target_draw_date":"2026-08-19","target_issue":"2026094"}
+{"back":[5,7],"front":[3,4,5,7,26],"game":"dlt","joint_probability":1.0245691943126377e-07,"model":"B0","rank":9,"status":"Shadow","target_draw_date":"2026-08-19","target_issue":"2026094"}
+{"back":[5,7],"front":[1,3,4,7,26],"game":"dlt","joint_probability":1.0245691943126377e-07,"model":"B0","rank":10,"status":"Shadow","target_draw_date":"2026-08-19","target_issue":"2026094"}

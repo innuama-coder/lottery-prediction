@@ -65,6 +65,11 @@ def _mean(values: Sequence[object]) -> float | None:
     return sum(finite) / len(finite) if finite else None
 
 
+def require_strict_prior(target_issue: str, source_record: dict[str, object]) -> None:
+    if int(str(source_record["issue"])) >= int(target_issue):
+        raise ValueError(f"current/future metadata rejected: target={target_issue} source={source_record['issue']}")
+
+
 def build_feature_rows(
     game: str,
     draws: Sequence[dict[str, object]],
@@ -80,6 +85,9 @@ def build_feature_rows(
         values["holiday_calendar_available"] = float(bool(values["holiday_calendar_available"]))
         values["schedule_regime_v1"] = 1.0
         prior_records = [metadata.get(str(draws[position]["issue"])) for position in range(max(0, index - 4), index)]
+        for record in prior_records:
+            if record is not None:
+                require_strict_prior(issue, record)
         lag1 = prior_records[-1] if prior_records else None
         lag2 = prior_records[-2] if len(prior_records) >= 2 else None
         for field in ("sales", "jackpot"):
@@ -109,8 +117,6 @@ def build_feature_rows(
         missing = {field: lag1 is None or lag1.get(field) is None for field in OPERATIONAL_FIELDS}
         values.update({f"{field}_missing": float(flag) for field, flag in missing.items()})
         values["block_missing_fraction"] = sum(missing.values()) / len(missing)
-        if lag1 is not None and int(str(lag1["issue"])) >= int(issue):
-            raise ValueError(f"current/future metadata rejected: target={issue} source={lag1['issue']}")
         rows.append({
             "game": game,
             "issue": issue,
@@ -199,6 +205,14 @@ def apply_preprocessor(matrix: np.ndarray, spec: Preprocessor) -> np.ndarray:
     clipped = np.clip(filled, np.asarray(spec.lower), np.asarray(spec.upper))
     normalized = (clipped - np.asarray(spec.center)) / np.asarray(spec.scale)
     return np.column_stack((normalized, missing.astype(np.float64)))
+
+
+def preprocessor_from_payload(payload: dict[str, object]) -> Preprocessor:
+    return Preprocessor(
+        tuple(payload["names"]), str(payload["transform"]), tuple(payload["winsor_quantiles"]),
+        tuple(payload["lower"]), tuple(payload["upper"]), tuple(payload["median"]),
+        tuple(payload["center"]), tuple(payload["scale"]),
+    )
 
 
 def transformed_names(names: Sequence[str]) -> list[str]:

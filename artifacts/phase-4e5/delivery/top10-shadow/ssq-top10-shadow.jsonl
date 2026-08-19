@@ -1,0 +1,10 @@
+{"back":[1],"candidate_id":"B0","front":[1,6,14,22,26,32],"game":"ssq","joint_probability":1.0049035868258024e-07,"rank":1,"serving_status":"Top-1000 Shadow","target_date":"2024-11-07","target_issue":"2024128"}
+{"back":[1],"candidate_id":"B0","front":[1,14,17,22,26,32],"game":"ssq","joint_probability":1.0049035868258024e-07,"rank":2,"serving_status":"Top-1000 Shadow","target_date":"2024-11-07","target_issue":"2024128"}
+{"back":[1],"candidate_id":"B0","front":[1,14,20,22,26,32],"game":"ssq","joint_probability":1.0027997914758517e-07,"rank":3,"serving_status":"Top-1000 Shadow","target_date":"2024-11-07","target_issue":"2024128"}
+{"back":[1],"candidate_id":"B0","front":[1,6,14,17,22,26],"game":"ssq","joint_probability":1.0007085539747294e-07,"rank":4,"serving_status":"Top-1000 Shadow","target_date":"2024-11-07","target_issue":"2024128"}
+{"back":[1],"candidate_id":"B0","front":[1,14,17,20,22,26],"game":"ssq","joint_probability":9.986135410499988e-08,"rank":5,"serving_status":"Top-1000 Shadow","target_date":"2024-11-07","target_issue":"2024128"}
+{"back":[1],"candidate_id":"B0","front":[1,6,14,20,22,26],"game":"ssq","joint_probability":9.986135410499988e-08,"rank":6,"serving_status":"Top-1000 Shadow","target_date":"2024-11-07","target_issue":"2024128"}
+{"back":[1],"candidate_id":"B0","front":[1,14,22,26,27,32],"game":"ssq","joint_probability":9.944013234452637e-08,"rank":7,"serving_status":"Top-1000 Shadow","target_date":"2024-11-07","target_issue":"2024128"}
+{"back":[1],"candidate_id":"B0","front":[1,14,18,22,26,32],"game":"ssq","joint_probability":9.944013234452637e-08,"rank":8,"serving_status":"Top-1000 Shadow","target_date":"2024-11-07","target_issue":"2024128"}
+{"back":[1],"candidate_id":"B0","front":[1,7,14,22,26,32],"game":"ssq","joint_probability":9.923058748255615e-08,"rank":9,"serving_status":"Top-1000 Shadow","target_date":"2024-11-07","target_issue":"2024128"}
+{"back":[1],"candidate_id":"B0","front":[1,6,14,17,26,32],"game":"ssq","joint_probability":9.903440448979996e-08,"rank":10,"serving_status":"Top-1000 Shadow","target_date":"2024-11-07","target_issue":"2024128"}

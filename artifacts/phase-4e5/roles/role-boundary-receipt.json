@@ -1,0 +1,78 @@
+{
+  "artifact_type": "phase4e5_role_boundary_receipt",
+  "schema_version": "phase4e5.roles.v1",
+  "registry": "config/phase4e5_registry.json",
+  "registry_sha256": "b85dcab94750702a7b22097417887b3d1a2187ab8353f47fb8dac0f71a88a2c8",
+  "created_before_model_fit": true,
+  "boundary_uses_outcomes": false,
+  "selection_and_report_rows_are_disjoint": true,
+  "excluded_roles": [
+    "P4E4 sealed report",
+    "preservation-only original 200"
+  ],
+  "games": {
+    "ssq": {
+      "eligible_source": "artifacts/phase-4e4/data-20260819/selection-prefix/ssq.jsonl",
+      "eligible_source_sha256": "222e35c97f9b2cbf45f0cdcf1662f6c8e9198c2c65c074ed6fcbbc916891678b",
+      "excluded_issue_count": 260,
+      "excluded_issue_ids_sha256": "dcc649164962b2292648e0a1d0253a972f6cc67896fef8fc18a93a191e534ef3",
+      "development": {
+        "row_count": 2982,
+        "first_issue": "2003001",
+        "first_date": "2003-02-23",
+        "last_issue": "2023038",
+        "last_date": "2023-04-06",
+        "issue_ids_sha256": "f160b02cf356ed59b3c86e53ab2c84354ef2a5ae49d9338720324491c640cde6"
+      },
+      "selection": {
+        "row_count": 120,
+        "first_issue": "2023039",
+        "first_date": "2023-04-09",
+        "last_issue": "2024007",
+        "last_date": "2024-01-16",
+        "issue_ids_sha256": "ae7a9b045a5586324152816efd8679200fab99259ae4904e855171d8839676a8"
+      },
+      "report": {
+        "row_count": 120,
+        "first_issue": "2024008",
+        "first_date": "2024-01-18",
+        "last_issue": "2024127",
+        "last_date": "2024-11-05",
+        "issue_ids_sha256": "66c3c6d95999a9d64333fc453bad278f3b9efd65fcb33193a5117a4ae64ae4fb",
+        "independent_of_p4e4_report_and_original_200": true
+      }
+    },
+    "dlt": {
+      "eligible_source": "artifacts/phase-4e4/data-20260819/selection-prefix/dlt.jsonl",
+      "eligible_source_sha256": "053726ac2b5777a987687eda77e182c6f9ed21090e87f817e5641bafd1b8ca5a",
+      "excluded_issue_count": 260,
+      "excluded_issue_ids_sha256": "736704ab82afe8ceff3a94ff8c0d462175f8964b442734171aed64447d6d1b46",
+      "development": {
+        "row_count": 773,
+        "first_issue": "2018001",
+        "first_date": "2018-01-01",
+        "last_issue": "2023035",
+        "last_date": "2023-04-01",
+        "issue_ids_sha256": "e366c0bcde4ee8fe6f55c0fb46684f1297d7ffad176aea6067c471e6f576eaf4"
+      },
+      "selection": {
+        "row_count": 120,
+        "first_issue": "2023036",
+        "first_date": "2023-04-03",
+        "last_issue": "2024005",
+        "last_date": "2024-01-10",
+        "issue_ids_sha256": "d16365eb6a399b1f73c00c41ab9190b405f457ff26e6480eebde363a6a50b381"
+      },
+      "report": {
+        "row_count": 120,
+        "first_issue": "2024006",
+        "first_date": "2024-01-13",
+        "last_issue": "2024125",
+        "last_date": "2024-10-28",
+        "issue_ids_sha256": "25de2b137217b57b8e9a5c002188b6bc2f83ac6dbde400599287823ba8016b28",
+        "independent_of_p4e4_report_and_original_200": true
+      }
+    }
+  },
+  "status": "INDEPENDENT_WINDOW_AVAILABLE"
+}

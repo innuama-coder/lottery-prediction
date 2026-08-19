@@ -19,7 +19,13 @@ def main() -> int:
     before = subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).splitlines()
     if before:
         raise ValueError(f"FAIL_DIRTY_PRE_FULL_ACCEPTANCE: {before}")
-    command = [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py", "-q"]
+    test_modules = [
+        ".".join(path.relative_to(ROOT).with_suffix("").parts)
+        for path in sorted((ROOT / "tests").rglob("test_*.py"))
+    ]
+    if not test_modules:
+        raise ValueError("FAIL_NO_TEST_MODULES")
+    command = [sys.executable, "-m", "unittest", "-q", *test_modules]
     environment = {**os.environ, "PYTHONPATH": "src:."}
     completed = subprocess.run(command, cwd=ROOT, env=environment, text=True, capture_output=True, check=False)
     combined = completed.stdout + completed.stderr
@@ -27,6 +33,9 @@ def main() -> int:
         print(combined)
         return completed.returncode
     match = re.search(r"Ran (\d+) tests in ([0-9.]+)s", combined)
+    if match is None or int(match.group(1)) == 0:
+        print(combined)
+        raise ValueError("FAIL_ZERO_TESTS")
     skipped = re.search(r"skipped=(\d+)", combined)
     receipt = {
         "artifact_type": "phase4e3_full_test_acceptance_receipt", "status": "PASS",

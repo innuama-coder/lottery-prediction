@@ -152,8 +152,19 @@ class Phase4E17ArtifactTests(unittest.TestCase):
                     )
                     for size in sizes:
                         fixed = value["fixed_size_set_metrics"][str(size)]
-                        self.assertEqual(fixed["predicted_number_trials"], expected_draws * size)
-                        self.assertIn("actual_number_coverage_rate", fixed)
+                        self.assertEqual(fixed["group_count"], expected_draws)
+                        self.assertEqual(len(fixed["groups"]), expected_draws)
+                        self.assertIn("best_single_group_hit_rate", fixed)
+                        self.assertTrue(
+                            all(
+                                group["hit_rate"] == group["hit_count"] / group["number_count"]
+                                for group in fixed["groups"]
+                            )
+                        )
+                        self.assertEqual(
+                            fixed["best_single_group_hit_rate"],
+                            max(group["hit_rate"] for group in fixed["groups"]),
+                        )
 
     def test_exact_ticket_gates_hashes_and_strict_lag_are_unchanged(self) -> None:
         for game in ("ssq", "dlt"):

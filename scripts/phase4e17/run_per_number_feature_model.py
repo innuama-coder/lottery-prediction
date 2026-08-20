@@ -580,11 +580,9 @@ def confidence_set_from_scores(
         "ranked_numbers": ranked,
         "selected_numbers": selected,
         "overlap_count": overlap,
-        "predicted_number_hits": overlap,
-        "predicted_number_trials": size,
-        "predicted_number_hit_rate": overlap / size,
-        "actual_number_coverage_rate": overlap / zone_draw_count,
-        "any_number_hit": overlap > 0,
+        "single_group_hit_count": overlap,
+        "single_group_number_count": size,
+        "single_group_hit_rate": overlap / size,
         "exact_all_zone_numbers_hit": overlap == zone_draw_count,
         "raw_marginal_inclusion_mass_sum": raw_sum,
         "raw_marginal_confidence_mass": raw_sum / zone_draw_count,
@@ -657,6 +655,11 @@ def inherited_zone_output(source: dict[str, object], zone: str) -> dict[str, obj
     for value in inherited["confidence_sets"].values():
         value["candidate_score_sum"] = value["orientation_score_sum"]
         value["mean_candidate_score"] = value["mean_orientation_score"]
+        value["single_group_hit_count"] = int(value.pop("predicted_number_hits"))
+        value["single_group_number_count"] = int(value.pop("predicted_number_trials"))
+        value["single_group_hit_rate"] = float(value.pop("predicted_number_hit_rate"))
+        value.pop("actual_number_coverage_rate", None)
+        value.pop("any_number_hit", None)
     return inherited
 
 
@@ -726,36 +729,30 @@ def fixed_size_metrics(
                     "binary_hit": int(observation["binary_hit"]),
                 }
             )
-    overlap_total = sum(int(value["overlap_count"]) for value in values)
     draws = len(rows)
-    zone_draw_count = int(rows[0]["zones"][zone]["zone_draw_count"])
-    predicted_trials = draws * size
-    coverage_trials = draws * zone_draw_count
-    any_hits = sum(bool(value["any_number_hit"]) for value in values)
+    group_rates = [
+        {
+            "issue": value["issue"],
+            "hit_count": int(value["single_group_hit_count"]),
+            "number_count": int(value["single_group_number_count"]),
+            "hit_rate": float(value["single_group_hit_rate"]),
+        }
+        for value in values
+    ]
+    best_group = max(group_rates, key=lambda value: (value["hit_rate"], value["issue"]))
+    overlap_total = sum(int(value["overlap_count"]) for value in values)
     exact_hits = sum(bool(value["exact_all_zone_numbers_hit"]) for value in values)
     return {
         "draws": draws,
         "set_size": size,
-        "overlap_total": overlap_total,
-        "average_overlap_count": overlap_total / draws,
-        "predicted_number_hits": overlap_total,
-        "predicted_number_trials": predicted_trials,
-        "predicted_number_hit_rate": overlap_total / predicted_trials,
-        "predicted_number_hit_rate_wilson95": e16.e13.wilson(
-            overlap_total, predicted_trials
-        ),
-        "actual_number_coverage_hits": overlap_total,
-        "actual_number_coverage_trials": coverage_trials,
-        "actual_number_coverage_rate": overlap_total / coverage_trials,
-        "actual_number_coverage_rate_wilson95": e16.e13.wilson(
-            overlap_total, coverage_trials
-        ),
-        "any_number_hit_count": any_hits,
-        "any_number_hit_rate": any_hits / draws,
-        "any_number_hit_rate_wilson95": e16.e13.wilson(any_hits, draws),
-        "exact_all_zone_numbers_hit_count": exact_hits,
-        "exact_all_zone_numbers_hit_rate": exact_hits / draws,
-        "exact_all_zone_numbers_hit_rate_wilson95": e16.e13.wilson(exact_hits, draws),
+        "group_count": len(group_rates),
+        "groups": group_rates,
+        "best_single_group_hit_rate": float(best_group["hit_rate"]),
+        "best_single_group_issue": best_group["issue"],
+        "best_single_group_hit_count": int(best_group["hit_count"]),
+        "best_single_group_number_count": int(best_group["number_count"]),
+        "overlap_total_descriptive_only": overlap_total,
+        "exact_all_zone_numbers_hit_count_descriptive_only": exact_hits,
         "selected_number_observation_association": e16.e15.association_metrics(
             selected_observations, "candidate_score", "binary_hit"
         ),

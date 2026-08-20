@@ -97,20 +97,20 @@ The machine-readable split reports include rho and slope separately for every ca
 | 34 | -0.008493 | 3.731126 | no |
 | 35 | -0.404201 | -49.237653 | no |
 
-## DLT-front fixed-size partial-hit coverage
+## DLT-front single-group hit-rate evaluation
 
-These are descriptive last-60 overlaps. Wilson intervals use predicted-number trials (`60 × set size`); candidate outcomes within a draw are dependent.
+The accepted hit-rate unit is one predicted number group for one target draw. For a group of size `K`, its hit rate is `overlap_count / K`. The aggregate value for a fixed size is the maximum hit rate among the evaluated groups; cross-draw sums and “any number hit” rates are not used.
 
-| Size | Overlap | Predicted-number hit rate (Wilson 95%) | Actual-number coverage | Draws with any hit | Exact front-zone hits |
-|---:|---:|---:|---:|---:|---:|
-| 5 | 55 | 0.1833 (0.1436–0.2310) | 0.1833 | 36 | 0 |
-| 8 | 81 | 0.1688 (0.1379–0.2049) | 0.2700 | 48 | 0 |
-| 10 | 95 | 0.1583 (0.1313–0.1897) | 0.3167 | 49 | 0 |
-| 12 | 114 | 0.1583 (0.1335–0.1868) | 0.3800 | 56 | 0 |
-| 15 | 140 | 0.1556 (0.1333–0.1807) | 0.4667 | 58 | 1 |
-| 20 | 183 | 0.1525 (0.1333–0.1739) | 0.6100 | 60 | 6 |
+| Group size | Best single-group hit rate | Best group issue | Hit count / group size |
+|---:|---:|---:|---:|
+| 5 | 0.6000 | 2026074 | 3 / 5 |
+| 8 | 0.5000 | 2026075 | 4 / 8 |
+| 10 | 0.4000 | 2026075 | 4 / 10 |
+| 12 | 0.3333 | 2026091 | 4 / 12 |
+| 15 | 0.3333 | 2026091 | 5 / 15 |
+| 20 | 0.2500 | 2026091 | 5 / 20 |
 
-Equivalent fixed-size overlap, coverage, Wilson intervals, and per-canonical-number metrics are retained for both inherited zones and SSQ in the JSON artifacts.
+Each JSON fixed-size record contains the complete per-group list plus `best_single_group_hit_rate`, `best_single_group_issue`, `best_single_group_hit_count`, and `best_single_group_number_count`. No arbitrary cross-period hit-rate aggregation is emitted.
 
 ## Exact-ticket gates and evidence
 

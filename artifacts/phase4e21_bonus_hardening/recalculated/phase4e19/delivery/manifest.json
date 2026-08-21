@@ -1,0 +1,95 @@
+{
+  "artifact_type": "phase4e19_delivery_manifest",
+  "decision": "NO_PROMOTION",
+  "dlt_isolation": {
+    "all_dlt_hashes_match": true,
+    "dlt_files": [
+      {
+        "expected_sha256": "40d52f1d4a97b2e8e4a4736aad994bf46e4a033cd342ec39e74b43dd6386d3fc",
+        "matches": true,
+        "observed_sha256": "40d52f1d4a97b2e8e4a4736aad994bf46e4a033cd342ec39e74b43dd6386d3fc",
+        "path": "artifacts/phase4e17/dlt/report.json"
+      },
+      {
+        "expected_sha256": "9d8186a6d8bf3197747121fb66e9e78d846404f5af268e5fb5f5c7da66299634",
+        "matches": true,
+        "observed_sha256": "9d8186a6d8bf3197747121fb66e9e78d846404f5af268e5fb5f5c7da66299634",
+        "path": "artifacts/phase4e17/dlt/outer-rolling-report.jsonl"
+      },
+      {
+        "expected_sha256": "ff4e61df206638ae380f2d198188fe893f435d3b417df331aeebb06a31e7146c",
+        "matches": true,
+        "observed_sha256": "ff4e61df206638ae380f2d198188fe893f435d3b417df331aeebb06a31e7146c",
+        "path": "artifacts/phase4e17/summary.json"
+      },
+      {
+        "expected_sha256": "d117e7bb7b0fe1ccc30d58c4971a53151e2db8b457068572d6a0b19c3990967e",
+        "matches": true,
+        "observed_sha256": "d117e7bb7b0fe1ccc30d58c4971a53151e2db8b457068572d6a0b19c3990967e",
+        "path": "artifacts/phase4e6/delivery/decision.json"
+      }
+    ],
+    "game_scope": "ssq_only",
+    "p4e6_serving_identity_matches": true,
+    "p4e6_serving_release": "P4-P4E2-20260815-r12",
+    "p4e6_terminal_status": "PROSPECTIVE_ONLY"
+  },
+  "files": [
+    {
+      "bytes": 5460,
+      "path": "candidate-registry.json",
+      "sha256": "c6dbf681c2775f851bf29688c6ad7de25283eb955b1831f62a114a89fad3699c"
+    },
+    {
+      "bytes": 85506,
+      "path": "feature-lineage.json",
+      "sha256": "67f004d014b1c63227fd3a68cb353d498a95c4863ee2c8a49dac634e5bce109a"
+    },
+    {
+      "bytes": 2391,
+      "path": "strict-lag-hashes.json",
+      "sha256": "6f1235a89b03326db660c863073c24d2ce3a9ef3b63a6bf7d49be91fc7fce9c6"
+    },
+    {
+      "bytes": 5277655,
+      "path": "inner-rolling-report.jsonl",
+      "sha256": "f4d86003698f391ea7b494d47c485641364b5c6a1e7c7420223e7ea65c29ea34"
+    },
+    {
+      "bytes": 2643234,
+      "path": "outer-rolling-report.jsonl",
+      "sha256": "c813c1b879182592723bf42f5660b3f37317054e5f666cc154771e6f9dabe8ac"
+    },
+    {
+      "bytes": 9589,
+      "path": "calibration-summary.json",
+      "sha256": "e518df139ac5e74daf10ff32c6806b43df8505a7cd4c675c2b2539125710f0f6"
+    },
+    {
+      "bytes": 9579,
+      "path": "evaluation-summary.json",
+      "sha256": "f8e52a46b0a49bd57ae43c329fa339bd7e5eef82a389d08a53c3700e55252640"
+    },
+    {
+      "bytes": 9621,
+      "path": "all-120-summary.json",
+      "sha256": "b9e711d22b9f8766788c02a538a3b3efcfc67b6a2a75dcdeb70bf42c67f35bf2"
+    },
+    {
+      "bytes": 482,
+      "path": "replay-evidence.json",
+      "sha256": "3f5f383ba52ffa12c48d8823c2f44ffd714d7ab7a620d422796bbd1ab6e4cebd"
+    },
+    {
+      "bytes": 667873,
+      "path": "report.json",
+      "sha256": "e008c6e0ff27408a5a444794f586600fcee6d036491e3e2132851477f2e1181c"
+    },
+    {
+      "bytes": 426,
+      "path": "delivery/decision.json",
+      "sha256": "fb1400f647cdd5415a7770f64c520b5844560efe4c8cd4cb91a45f5de79217a2"
+    }
+  ],
+  "game": "ssq"
+}

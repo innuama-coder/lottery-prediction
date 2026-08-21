@@ -1,0 +1,14 @@
+{
+  "artifact_type": "phase4e20_deterministic_replay",
+  "exact_ticket_order_matches": true,
+  "game": "ssq",
+  "mutated_positions": [
+    3362,
+    3481
+  ],
+  "original_horizon0_portfolio_sha256_int64_le": "0a9112aca3dce88c1300476675e88e54abcc56773a8469ec9f68f5dbc2696661",
+  "outer_label_mutation_coefficient_hash_matches": true,
+  "outer_label_mutation_portfolio_matches": true,
+  "replay_horizon0_portfolio_sha256_int64_le": "0a9112aca3dce88c1300476675e88e54abcc56773a8469ec9f68f5dbc2696661",
+  "selected_candidate": "sup_ensemble_unique_latin"
+}

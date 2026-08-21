@@ -1,0 +1,76 @@
+{
+  "artifact_type": "phase4e20_candidate_registry",
+  "baselines": [
+    {
+      "candidate_id": "e19_raw_control",
+      "definition": "exact frozen-origin Phase4E19 raw_control"
+    },
+    {
+      "candidate_id": "deterministic_random",
+      "definition": "seeded affine permutation baseline"
+    }
+  ],
+  "candidate_count": 4,
+  "candidates": [
+    {
+      "blue_allocation": "probability_rank_round_robin",
+      "candidate_id": "sup_a1_unique_rr",
+      "head_ids": [
+        "ridge_a1"
+      ],
+      "red_union": false,
+      "tickets_per_red_cap": 1,
+      "unique_red_count": 100000
+    },
+    {
+      "blue_allocation": "probability_rank_latin",
+      "candidate_id": "sup_a25_unique_latin",
+      "head_ids": [
+        "ridge_a25"
+      ],
+      "red_union": false,
+      "tickets_per_red_cap": 1,
+      "unique_red_count": 100000
+    },
+    {
+      "blue_allocation": "ensemble_probability_rank_latin",
+      "candidate_id": "sup_ensemble_unique_latin",
+      "head_ids": [
+        "ridge_a1",
+        "ridge_a25"
+      ],
+      "red_union": true,
+      "tickets_per_red_cap": 1,
+      "unique_red_count": 100000
+    },
+    {
+      "blue_allocation": "ensemble_probability_rank_round_robin",
+      "candidate_id": "sup_ensemble_layered2_rr",
+      "head_ids": [
+        "ridge_a1",
+        "ridge_a25"
+      ],
+      "red_union": true,
+      "tickets_per_red_cap": 2,
+      "unique_red_count": 60000
+    }
+  ],
+  "game": "ssq",
+  "head_configuration_grid": [
+    {
+      "alpha": 1.0,
+      "head_id": "ridge_a1",
+      "model": "ridge",
+      "training_draws": 1200
+    },
+    {
+      "alpha": 25.0,
+      "head_id": "ridge_a25",
+      "model": "ridge",
+      "training_draws": 1200
+    }
+  ],
+  "registered_before_inner_labels_evaluated": true,
+  "registered_before_outer_labels_evaluated": true,
+  "registry_sha256": "545eff274d577d0adaedea4747ff77a16624fc80371cece5e20b44e371af1d6e"
+}

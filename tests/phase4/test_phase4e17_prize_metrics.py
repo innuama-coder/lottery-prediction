@@ -37,12 +37,12 @@ class Phase4E17PrizeMetricTests(unittest.TestCase):
 
         third = ticket_prize("dlt", "2026087", 4, 2)
         self.assertEqual(third["prize_tier"], 3)
-        self.assertEqual(third["fixed_prize_yuan"], 6666.0)
+        self.assertEqual(third["fixed_prize_yuan"], 5000)
 
-    def test_dlt_2026_promotion_is_explicit(self):
+    def test_dlt_2026_promotion_metadata_is_ignored(self):
         prize = ticket_prize("dlt", "2026050", 3, 0)
         self.assertEqual(prize["prize_tier"], 6)
-        self.assertEqual(prize["fixed_prize_yuan"], 22.5)
+        self.assertEqual(prize["fixed_prize_yuan"], 15)
 
     def test_ssq_second_prize_is_known_fixed_amount(self):
         prize = ticket_prize("ssq", "2026014", 6, 0)
@@ -54,8 +54,8 @@ class Phase4E17PrizeMetricTests(unittest.TestCase):
         metric = ticket_group_prize_metrics([self.row()], 5, 2)
         group = metric["groups"][0]
         self.assertEqual(group["ticket_count"], 1)
-        self.assertEqual(group["known_prize_total_yuan"], 6666.0)
-        self.assertEqual(group["average_known_prize_yuan"], 6666.0)
+        self.assertEqual(group["known_prize_total_yuan"], 5000.0)
+        self.assertEqual(group["average_known_prize_yuan"], 5000.0)
 
     def test_incomplete_back_group_is_not_a_legal_ticket_group(self):
         group = ticket_group_prize_metrics([self.row()], 5, 1)["groups"][0]

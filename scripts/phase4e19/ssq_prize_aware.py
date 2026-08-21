@@ -19,6 +19,12 @@ from typing import Iterable, Mapping, Sequence
 
 import numpy as np
 
+from lottery_system.phase4.bonus import (
+    SSQ_FIXED_PRIZES,
+    SSQ_NEW_RULE,
+    fixed_bonus,
+)
+
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "artifacts/phase-4e4/data-20260819/canonical/ssq.jsonl"
 DEFAULT_OUT = ROOT / "artifacts/phase4e19"
@@ -28,7 +34,6 @@ SSQ_PARTITION_SIZES = (
     1000, 5000, 10000, 20000, 30000, 40000, 50000, 60000,
     70000, 80000, 90000, 100000,
 )
-SSQ_FIXED_PRIZES = {1: 5_000_000.0, 2: 100_000.0, 3: 3_000.0, 4: 200.0, 5: 10.0, 6: 5.0}
 OUTER_DRAWS = 120
 CALIBRATION_DRAWS = 60
 INNER_DRAWS = 240
@@ -70,21 +75,12 @@ def vector_hash(values: np.ndarray | Sequence[float] | Sequence[int]) -> str:
 
 
 def prize_tier(red_hits: int, blue_hits: int) -> int | None:
-    pattern = (int(red_hits), int(blue_hits))
-    patterns = {
-        1: {(6, 1)},
-        2: {(6, 0)},
-        3: {(5, 1)},
-        4: {(5, 0), (4, 1)},
-        5: {(4, 0), (3, 1)},
-        6: {(3, 0), (2, 1), (1, 1), (0, 1)},
-    }
-    return next((tier for tier, values in patterns.items() if pattern in values), None)
+    return fixed_bonus("ssq", SSQ_NEW_RULE, red_hits, blue_hits)["prize_tier"]  # type: ignore[return-value]
 
 
-def ticket_prize(red: Sequence[int], blue: int, actual_red: Iterable[int], actual_blue: int) -> float:
+def ticket_prize(red: Sequence[int], blue: int, actual_red: Iterable[int], actual_blue: int) -> int:
     tier = prize_tier(len(set(red) & set(actual_red)), int(blue == actual_blue))
-    return SSQ_FIXED_PRIZES.get(tier, 0.0)
+    return SSQ_FIXED_PRIZES.get(tier, 0)
 
 
 def expected_prize_contributions(red_hit_probabilities: Sequence[float], blue_hit_probability: float) -> dict[int, float]:

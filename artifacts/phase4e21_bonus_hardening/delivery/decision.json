@@ -1,0 +1,18 @@
+{
+  "acceptance_conclusion": "ACCEPT_BONUS_HARDENING_NO_PROMOTION",
+  "artifact_type": "phase4e21_bonus_hardening_decision",
+  "dlt_and_serving_isolation_passed": true,
+  "historical_inputs_changed": false,
+  "independent_replay_passed": true,
+  "models_features_parameters_partitions_changed": false,
+  "p4e6_serving_release": "P4-P4E2-20260815-r12",
+  "p4e6_terminal_status": "PROSPECTIVE_ONLY",
+  "phase4e19_gate_status": "NO_PROMOTION",
+  "phase4e19_hard_gate_passed": false,
+  "phase4e20_gate_status": "NO_PROMOTION",
+  "phase4e20_hard_gate_passed": false,
+  "prior_phase4e18_e19_e20_artifacts_overwritten": false,
+  "routine_fixed_prize_rule_checks_pass": true,
+  "status": "NO_PROMOTION",
+  "thresholds_changed": false
+}

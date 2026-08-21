@@ -1,0 +1,296 @@
+{
+  "draws": 60,
+  "first_issue": "2026026",
+  "last_issue": "2026085",
+  "partitions": {
+    "1000": {
+      "average_prize_yuan": 1.6928333333333334,
+      "average_prize_yuan_confidence_interval_95": {
+        "lower": -0.03361084865244002,
+        "method": "draw_level_normal_approximation_95",
+        "standard_error": 0.8808550542784178,
+        "upper": 3.4192775153191066
+      },
+      "complete_ticket_count": 60000,
+      "draw_prize_total_sha256_float64_le": "7c816647690a0f9ed60ea124122369f47199c90ec4834473679ed38ec3b4ee44",
+      "draws": 60,
+      "known_prize_total_yuan": 101570.0,
+      "partition_size": 1000,
+      "prize_tier_ticket_counts": {
+        "1": 0,
+        "2": 0,
+        "3": 7,
+        "4": 149,
+        "5": 1130,
+        "6": 7894
+      },
+      "winning_ticket_count": 9180,
+      "winning_ticket_rate": 0.153
+    },
+    "10000": {
+      "average_prize_yuan": 1.334325,
+      "average_prize_yuan_confidence_interval_95": {
+        "lower": 0.45181009764422575,
+        "method": "draw_level_normal_approximation_95",
+        "standard_error": 0.45027097911846303,
+        "upper": 2.2168399023557743
+      },
+      "complete_ticket_count": 600000,
+      "draw_prize_total_sha256_float64_le": "16fe0dc880f94984f30fb003768a967e2e1d3584b60d5eea7935c5fb03f95810",
+      "draws": 60,
+      "known_prize_total_yuan": 800595.0,
+      "partition_size": 10000,
+      "prize_tier_ticket_counts": {
+        "1": 0,
+        "2": 1,
+        "3": 20,
+        "4": 818,
+        "5": 9019,
+        "6": 77361
+      },
+      "winning_ticket_count": 87219,
+      "winning_ticket_rate": 0.145365
+    },
+    "100000": {
+      "average_prize_yuan": 1.0851166666666667,
+      "average_prize_yuan_confidence_interval_95": {
+        "lower": 0.6533492986981062,
+        "method": "draw_level_normal_approximation_95",
+        "standard_error": 0.22029352139849837,
+        "upper": 1.5168840346352273
+      },
+      "complete_ticket_count": 6000000,
+      "draw_prize_total_sha256_float64_le": "8b8666fac693f41c0ae3c74ab412df286e3193bf18a22971acce83a3cd04e0a1",
+      "draws": 60,
+      "known_prize_total_yuan": 6510700.0,
+      "partition_size": 100000,
+      "prize_tier_ticket_counts": {
+        "1": 0,
+        "2": 11,
+        "3": 48,
+        "4": 4220,
+        "5": 68308,
+        "6": 747924
+      },
+      "winning_ticket_count": 820511,
+      "winning_ticket_rate": 0.13675183333333332
+    },
+    "20000": {
+      "average_prize_yuan": 1.4768666666666668,
+      "average_prize_yuan_confidence_interval_95": {
+        "lower": 0.4836188559943132,
+        "method": "draw_level_normal_approximation_95",
+        "standard_error": 0.5067683990659856,
+        "upper": 2.47011447733902
+      },
+      "complete_ticket_count": 1200000,
+      "draw_prize_total_sha256_float64_le": "45d62156e8ca98f2ae82376e8a162c5c86b9e2e91df44297048b37895d40c37f",
+      "draws": 60,
+      "known_prize_total_yuan": 1772240.0,
+      "partition_size": 20000,
+      "prize_tier_ticket_counts": {
+        "1": 0,
+        "2": 5,
+        "3": 25,
+        "4": 1323,
+        "5": 16564,
+        "6": 153400
+      },
+      "winning_ticket_count": 171317,
+      "winning_ticket_rate": 0.14276416666666666
+    },
+    "30000": {
+      "average_prize_yuan": 1.2840055555555556,
+      "average_prize_yuan_confidence_interval_95": {
+        "lower": 0.5402003339911263,
+        "method": "draw_level_normal_approximation_95",
+        "standard_error": 0.37949943337299563,
+        "upper": 2.027810777119985
+      },
+      "complete_ticket_count": 1800000,
+      "draw_prize_total_sha256_float64_le": "d10fa97dfe47d8f08aa0d793a3dbb5e3376e6d50952743e1cebd19caeb48db75",
+      "draws": 60,
+      "known_prize_total_yuan": 2311210.0,
+      "partition_size": 30000,
+      "prize_tier_ticket_counts": {
+        "1": 0,
+        "2": 5,
+        "3": 27,
+        "4": 1740,
+        "5": 23712,
+        "6": 229018
+      },
+      "winning_ticket_count": 254502,
+      "winning_ticket_rate": 0.14139
+    },
+    "40000": {
+      "average_prize_yuan": 1.1840479166666666,
+      "average_prize_yuan_confidence_interval_95": {
+        "lower": 0.5683573870134998,
+        "method": "draw_level_normal_approximation_95",
+        "standard_error": 0.31413359353011344,
+        "upper": 1.7997384463198336
+      },
+      "complete_ticket_count": 2400000,
+      "draw_prize_total_sha256_float64_le": "c4404452a17174d027dd8013994e20d3adc5c5714c99904f8f6a9841a3f9aec2",
+      "draws": 60,
+      "known_prize_total_yuan": 2841715.0,
+      "partition_size": 40000,
+      "prize_tier_ticket_counts": {
+        "1": 0,
+        "2": 5,
+        "3": 30,
+        "4": 2142,
+        "5": 30594,
+        "6": 303475
+      },
+      "winning_ticket_count": 336246,
+      "winning_ticket_rate": 0.1401025
+    },
+    "5000": {
+      "average_prize_yuan": 1.6567333333333334,
+      "average_prize_yuan_confidence_interval_95": {
+        "lower": 0.3403305752561365,
+        "method": "draw_level_normal_approximation_95",
+        "standard_error": 0.6716464019037154,
+        "upper": 2.97313609141053
+      },
+      "complete_ticket_count": 300000,
+      "draw_prize_total_sha256_float64_le": "8f4a5b873dfcc5534cda9765f3fc65a4213a88a4b624f90140559d973171d3f1",
+      "draws": 60,
+      "known_prize_total_yuan": 497020.0,
+      "partition_size": 5000,
+      "prize_tier_ticket_counts": {
+        "1": 0,
+        "2": 1,
+        "3": 18,
+        "4": 501,
+        "5": 4811,
+        "6": 38942
+      },
+      "winning_ticket_count": 44273,
+      "winning_ticket_rate": 0.14757666666666666
+    },
+    "50000": {
+      "average_prize_yuan": 1.15333,
+      "average_prize_yuan_confidence_interval_95": {
+        "lower": 0.606641212054602,
+        "method": "draw_level_normal_approximation_95",
+        "standard_error": 0.2789279763595706,
+        "upper": 1.7000187879453978
+      },
+      "complete_ticket_count": 3000000,
+      "draw_prize_total_sha256_float64_le": "2c0358da035bd3e5eb56fd2fdb6eaffee72b83688a932d42fa1293105f08eca1",
+      "draws": 60,
+      "known_prize_total_yuan": 3459990.0,
+      "partition_size": 50000,
+      "prize_tier_ticket_counts": {
+        "1": 0,
+        "2": 6,
+        "3": 31,
+        "4": 2515,
+        "5": 37158,
+        "6": 378482
+      },
+      "winning_ticket_count": 418192,
+      "winning_ticket_rate": 0.13939733333333335
+    },
+    "60000": {
+      "average_prize_yuan": 1.1877777777777778,
+      "average_prize_yuan_confidence_interval_95": {
+        "lower": 0.6353405884027039,
+        "method": "draw_level_normal_approximation_95",
+        "standard_error": 0.28186088812479615,
+        "upper": 1.7402149671528517
+      },
+      "complete_ticket_count": 3600000,
+      "draw_prize_total_sha256_float64_le": "ed53d1f2783a07322c51fb9495022a5b7dda50e2219c652ae984f54f06425471",
+      "draws": 60,
+      "known_prize_total_yuan": 4276000.0,
+      "partition_size": 60000,
+      "prize_tier_ticket_counts": {
+        "1": 0,
+        "2": 9,
+        "3": 35,
+        "4": 2858,
+        "5": 43556,
+        "6": 452768
+      },
+      "winning_ticket_count": 499226,
+      "winning_ticket_rate": 0.1386738888888889
+    },
+    "70000": {
+      "average_prize_yuan": 1.1643535714285713,
+      "average_prize_yuan_confidence_interval_95": {
+        "lower": 0.6571968614898016,
+        "method": "draw_level_normal_approximation_95",
+        "standard_error": 0.2587581781803937,
+        "upper": 1.671510281367341
+      },
+      "complete_ticket_count": 4200000,
+      "draw_prize_total_sha256_float64_le": "c58479243112ea899d0f842778cc297fa60a7b1d361e4a91f10bd3a7fd6d64b8",
+      "draws": 60,
+      "known_prize_total_yuan": 4890285.0,
+      "partition_size": 70000,
+      "prize_tier_ticket_counts": {
+        "1": 0,
+        "2": 10,
+        "3": 40,
+        "4": 3191,
+        "5": 49942,
+        "6": 526533
+      },
+      "winning_ticket_count": 579716,
+      "winning_ticket_rate": 0.13802761904761904
+    },
+    "80000": {
+      "average_prize_yuan": 1.1266875,
+      "average_prize_yuan_confidence_interval_95": {
+        "lower": 0.655852711949273,
+        "method": "draw_level_normal_approximation_95",
+        "standard_error": 0.24022624485174812,
+        "upper": 1.5975222880507267
+      },
+      "complete_ticket_count": 4800000,
+      "draw_prize_total_sha256_float64_le": "ea57a6ad11230b74ac0a7f3c76c485c18ae7ea6176e99fb9b3a5fbb3432f8794",
+      "draws": 60,
+      "known_prize_total_yuan": 5408100.0,
+      "partition_size": 80000,
+      "prize_tier_ticket_counts": {
+        "1": 0,
+        "2": 10,
+        "3": 44,
+        "4": 3544,
+        "5": 56243,
+        "6": 600974
+      },
+      "winning_ticket_count": 660815,
+      "winning_ticket_rate": 0.13766979166666668
+    },
+    "90000": {
+      "average_prize_yuan": 1.0932212962962964,
+      "average_prize_yuan_confidence_interval_95": {
+        "lower": 0.6541687916640468,
+        "method": "draw_level_normal_approximation_95",
+        "standard_error": 0.2240104961598476,
+        "upper": 1.5322738009285455
+      },
+      "complete_ticket_count": 5400000,
+      "draw_prize_total_sha256_float64_le": "859f096517c14c717645dbe9ca4622199973fcaacc04704cd255e88c670ecd63",
+      "draws": 60,
+      "known_prize_total_yuan": 5903395.0,
+      "partition_size": 90000,
+      "prize_tier_ticket_counts": {
+        "1": 0,
+        "2": 10,
+        "3": 46,
+        "4": 3855,
+        "5": 62121,
+        "6": 674637
+      },
+      "winning_ticket_count": 740669,
+      "winning_ticket_rate": 0.13716092592592594
+    }
+  },
+  "primary_metric": "known_prize_total_yuan / (draws * N complete tickets)"
+}

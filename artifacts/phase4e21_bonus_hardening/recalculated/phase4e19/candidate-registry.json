@@ -1,0 +1,175 @@
+{
+  "artifact_type": "phase4e19_finite_candidate_registry",
+  "candidates": [
+    {
+      "blue_weights": {
+        "blue_frequency_360": 1.0
+      },
+      "candidate_id": "raw_control",
+      "diversified": false,
+      "family": "raw_control",
+      "red_weights": {
+        "red_frequency_360": 1.0
+      },
+      "score_kind": "raw_complete_ticket_likelihood",
+      "structure_weights": {}
+    },
+    {
+      "blue_weights": {
+        "blue_frequency_1200": 0.32,
+        "blue_frequency_360": 0.24,
+        "blue_frequency_720": 0.28,
+        "blue_recency_360": 0.06,
+        "blue_recency_720": 0.04,
+        "blue_transition_720": 0.06
+      },
+      "candidate_id": "prize_aware_multiscale",
+      "diversified": false,
+      "family": "prize_aware",
+      "red_weights": {
+        "red_frequency_1200": 0.34,
+        "red_frequency_360": 0.22,
+        "red_frequency_720": 0.28,
+        "red_recency_1200": 0.03,
+        "red_recency_360": 0.05,
+        "red_recency_720": 0.04,
+        "red_transition_720": 0.04
+      },
+      "score_kind": "all_tier_expected_prize",
+      "structure_weights": {
+        "historical_combination_similarity": 0.02,
+        "red_blue_parity_interaction": 0.04,
+        "red_consecutive_structure": 0.03,
+        "red_parity_structure": 0.05,
+        "red_sum_structure": 0.03,
+        "red_zone_distribution": 0.05
+      }
+    },
+    {
+      "blue_weights": {
+        "blue_frequency_1200": 0.5,
+        "blue_frequency_720": 0.25,
+        "blue_recency_1200": 0.09,
+        "blue_recency_720": 0.08,
+        "blue_transition_1200": 0.08
+      },
+      "candidate_id": "long_window_prize",
+      "diversified": false,
+      "family": "long_window",
+      "red_weights": {
+        "red_frequency_1200": 0.5,
+        "red_frequency_720": 0.25,
+        "red_recency_1200": 0.09,
+        "red_recency_720": 0.08,
+        "red_transition_1200": 0.08
+      },
+      "score_kind": "all_tier_expected_prize",
+      "structure_weights": {
+        "historical_combination_similarity": 0.03,
+        "red_consecutive_structure": 0.02,
+        "red_parity_structure": 0.04,
+        "red_sum_structure": 0.04,
+        "red_zone_distribution": 0.04
+      }
+    },
+    {
+      "blue_weights": {
+        "blue_frequency_1200": 0.15,
+        "blue_frequency_720": 0.2,
+        "blue_recency_360": 0.1,
+        "blue_transition_1200": 0.1,
+        "blue_transition_360": 0.25,
+        "blue_transition_720": 0.2
+      },
+      "candidate_id": "transition_joint_prize",
+      "diversified": false,
+      "family": "transition_joint",
+      "red_weights": {
+        "red_blue_parity_number_interaction": 0.05,
+        "red_frequency_1200": 0.18,
+        "red_frequency_720": 0.22,
+        "red_recency_360": 0.08,
+        "red_transition_1200": 0.1,
+        "red_transition_360": 0.18,
+        "red_transition_720": 0.19
+      },
+      "score_kind": "all_tier_expected_prize",
+      "structure_weights": {
+        "historical_combination_similarity": 0.03,
+        "red_blue_parity_interaction": 0.08,
+        "red_consecutive_structure": 0.03,
+        "red_parity_structure": 0.04,
+        "red_sum_structure": 0.03,
+        "red_zone_distribution": 0.03
+      }
+    },
+    {
+      "blue_weights": {
+        "blue_frequency_1200": 0.32,
+        "blue_frequency_360": 0.24,
+        "blue_frequency_720": 0.28,
+        "blue_recency_360": 0.06,
+        "blue_recency_720": 0.04,
+        "blue_transition_720": 0.06
+      },
+      "candidate_id": "diversified_prize",
+      "diversified": true,
+      "diversity_pool_multiplier": 4,
+      "family": "diversified",
+      "red_weights": {
+        "red_frequency_1200": 0.34,
+        "red_frequency_360": 0.22,
+        "red_frequency_720": 0.28,
+        "red_recency_1200": 0.03,
+        "red_recency_360": 0.05,
+        "red_recency_720": 0.04,
+        "red_transition_720": 0.04
+      },
+      "score_kind": "all_tier_expected_prize",
+      "structure_weights": {
+        "historical_combination_similarity": -0.06,
+        "red_blue_parity_interaction": 0.04,
+        "red_consecutive_structure": 0.03,
+        "red_parity_structure": 0.05,
+        "red_sum_structure": 0.03,
+        "red_zone_distribution": 0.05
+      }
+    },
+    {
+      "blue_weights": {
+        "blue_frequency_1200": 0.15,
+        "blue_frequency_720": 0.2,
+        "blue_recency_360": 0.1,
+        "blue_transition_1200": 0.1,
+        "blue_transition_360": 0.25,
+        "blue_transition_720": 0.2
+      },
+      "candidate_id": "diversified_transition_joint",
+      "diversified": true,
+      "diversity_pool_multiplier": 4,
+      "family": "diversified_transition_joint",
+      "red_weights": {
+        "red_blue_parity_number_interaction": 0.05,
+        "red_frequency_1200": 0.18,
+        "red_frequency_720": 0.22,
+        "red_recency_360": 0.08,
+        "red_transition_1200": 0.1,
+        "red_transition_360": 0.18,
+        "red_transition_720": 0.19
+      },
+      "score_kind": "all_tier_expected_prize",
+      "structure_weights": {
+        "historical_combination_similarity": -0.07,
+        "red_blue_parity_interaction": 0.08,
+        "red_consecutive_structure": 0.03,
+        "red_parity_structure": 0.04,
+        "red_sum_structure": 0.03,
+        "red_zone_distribution": 0.03
+      }
+    }
+  ],
+  "finite_candidate_count": 6,
+  "game": "ssq",
+  "registered_before_inner_or_outer_labels_loaded": true,
+  "registry_sha256": "982b1f0affffe72e4c5d2be44c5623450452d78d1c85e380bcdba6d2031fb5e5"
+}

@@ -1,0 +1,271 @@
+{
+  "artifact_type": "phase4e21_phase4e18_bonus_recalculation",
+  "game": "ssq",
+  "gate_status": "NO_PROMOTION",
+  "p4e6_serving_release": "P4-P4E2-20260815-r12",
+  "p4e6_terminal_status": "PROSPECTIVE_ONLY",
+  "partitions": {
+    "all_120": {
+      "1000": {
+        "average_prize_yuan": 0.69675,
+        "draws": 120,
+        "known_prize_total_yuan": 83610,
+        "partition_size": 1000,
+        "winning_ticket_count": 14709
+      },
+      "10000": {
+        "average_prize_yuan": 0.7330708333333333,
+        "draws": 120,
+        "known_prize_total_yuan": 879685,
+        "partition_size": 10000,
+        "winning_ticket_count": 144509
+      },
+      "100000": {
+        "average_prize_yuan": 0.7614233333333333,
+        "draws": 120,
+        "known_prize_total_yuan": 9137080,
+        "partition_size": 100000,
+        "winning_ticket_count": 1440563
+      },
+      "20000": {
+        "average_prize_yuan": 0.741975,
+        "draws": 120,
+        "known_prize_total_yuan": 1780740,
+        "partition_size": 20000,
+        "winning_ticket_count": 290068
+      },
+      "30000": {
+        "average_prize_yuan": 0.7456638888888889,
+        "draws": 120,
+        "known_prize_total_yuan": 2684390,
+        "partition_size": 30000,
+        "winning_ticket_count": 434370
+      },
+      "40000": {
+        "average_prize_yuan": 0.7515708333333333,
+        "draws": 120,
+        "known_prize_total_yuan": 3607540,
+        "partition_size": 40000,
+        "winning_ticket_count": 578654
+      },
+      "5000": {
+        "average_prize_yuan": 0.7265916666666666,
+        "draws": 120,
+        "known_prize_total_yuan": 435955,
+        "partition_size": 5000,
+        "winning_ticket_count": 72608
+      },
+      "50000": {
+        "average_prize_yuan": 0.75262,
+        "draws": 120,
+        "known_prize_total_yuan": 4515720,
+        "partition_size": 50000,
+        "winning_ticket_count": 722356
+      },
+      "60000": {
+        "average_prize_yuan": 0.7540763888888888,
+        "draws": 120,
+        "known_prize_total_yuan": 5429350,
+        "partition_size": 60000,
+        "winning_ticket_count": 866892
+      },
+      "70000": {
+        "average_prize_yuan": 0.7550720238095238,
+        "draws": 120,
+        "known_prize_total_yuan": 6342605,
+        "partition_size": 70000,
+        "winning_ticket_count": 1010312
+      },
+      "80000": {
+        "average_prize_yuan": 0.7547338541666667,
+        "draws": 120,
+        "known_prize_total_yuan": 7245445,
+        "partition_size": 80000,
+        "winning_ticket_count": 1153930
+      },
+      "90000": {
+        "average_prize_yuan": 0.7539976851851852,
+        "draws": 120,
+        "known_prize_total_yuan": 8143175,
+        "partition_size": 90000,
+        "winning_ticket_count": 1297376
+      }
+    },
+    "calibration": {
+      "1000": {
+        "average_prize_yuan": 0.6505,
+        "draws": 60,
+        "known_prize_total_yuan": 39030,
+        "partition_size": 1000,
+        "winning_ticket_count": 7106
+      },
+      "10000": {
+        "average_prize_yuan": 0.6958166666666666,
+        "draws": 60,
+        "known_prize_total_yuan": 417490,
+        "partition_size": 10000,
+        "winning_ticket_count": 70123
+      },
+      "100000": {
+        "average_prize_yuan": 0.7280083333333334,
+        "draws": 60,
+        "known_prize_total_yuan": 4368050,
+        "partition_size": 100000,
+        "winning_ticket_count": 700516
+      },
+      "20000": {
+        "average_prize_yuan": 0.7051833333333334,
+        "draws": 60,
+        "known_prize_total_yuan": 846220,
+        "partition_size": 20000,
+        "winning_ticket_count": 140874
+      },
+      "30000": {
+        "average_prize_yuan": 0.7131666666666666,
+        "draws": 60,
+        "known_prize_total_yuan": 1283700,
+        "partition_size": 30000,
+        "winning_ticket_count": 211316
+      },
+      "40000": {
+        "average_prize_yuan": 0.7213604166666666,
+        "draws": 60,
+        "known_prize_total_yuan": 1731265,
+        "partition_size": 40000,
+        "winning_ticket_count": 281372
+      },
+      "5000": {
+        "average_prize_yuan": 0.6654833333333333,
+        "draws": 60,
+        "known_prize_total_yuan": 199645,
+        "partition_size": 5000,
+        "winning_ticket_count": 35213
+      },
+      "50000": {
+        "average_prize_yuan": 0.7232316666666667,
+        "draws": 60,
+        "known_prize_total_yuan": 2169695,
+        "partition_size": 50000,
+        "winning_ticket_count": 351549
+      },
+      "60000": {
+        "average_prize_yuan": 0.7263875,
+        "draws": 60,
+        "known_prize_total_yuan": 2614995,
+        "partition_size": 60000,
+        "winning_ticket_count": 421623
+      },
+      "70000": {
+        "average_prize_yuan": 0.7300380952380953,
+        "draws": 60,
+        "known_prize_total_yuan": 3066160,
+        "partition_size": 70000,
+        "winning_ticket_count": 491132
+      },
+      "80000": {
+        "average_prize_yuan": 0.7298145833333334,
+        "draws": 60,
+        "known_prize_total_yuan": 3503110,
+        "partition_size": 80000,
+        "winning_ticket_count": 560875
+      },
+      "90000": {
+        "average_prize_yuan": 0.7287398148148149,
+        "draws": 60,
+        "known_prize_total_yuan": 3935195,
+        "partition_size": 90000,
+        "winning_ticket_count": 630812
+      }
+    },
+    "evaluation": {
+      "1000": {
+        "average_prize_yuan": 0.743,
+        "draws": 60,
+        "known_prize_total_yuan": 44580,
+        "partition_size": 1000,
+        "winning_ticket_count": 7603
+      },
+      "10000": {
+        "average_prize_yuan": 0.770325,
+        "draws": 60,
+        "known_prize_total_yuan": 462195,
+        "partition_size": 10000,
+        "winning_ticket_count": 74386
+      },
+      "100000": {
+        "average_prize_yuan": 0.7948383333333333,
+        "draws": 60,
+        "known_prize_total_yuan": 4769030,
+        "partition_size": 100000,
+        "winning_ticket_count": 740047
+      },
+      "20000": {
+        "average_prize_yuan": 0.7787666666666667,
+        "draws": 60,
+        "known_prize_total_yuan": 934520,
+        "partition_size": 20000,
+        "winning_ticket_count": 149194
+      },
+      "30000": {
+        "average_prize_yuan": 0.7781611111111111,
+        "draws": 60,
+        "known_prize_total_yuan": 1400690,
+        "partition_size": 30000,
+        "winning_ticket_count": 223054
+      },
+      "40000": {
+        "average_prize_yuan": 0.78178125,
+        "draws": 60,
+        "known_prize_total_yuan": 1876275,
+        "partition_size": 40000,
+        "winning_ticket_count": 297282
+      },
+      "5000": {
+        "average_prize_yuan": 0.7877,
+        "draws": 60,
+        "known_prize_total_yuan": 236310,
+        "partition_size": 5000,
+        "winning_ticket_count": 37395
+      },
+      "50000": {
+        "average_prize_yuan": 0.7820083333333333,
+        "draws": 60,
+        "known_prize_total_yuan": 2346025,
+        "partition_size": 50000,
+        "winning_ticket_count": 370807
+      },
+      "60000": {
+        "average_prize_yuan": 0.7817652777777778,
+        "draws": 60,
+        "known_prize_total_yuan": 2814355,
+        "partition_size": 60000,
+        "winning_ticket_count": 445269
+      },
+      "70000": {
+        "average_prize_yuan": 0.7801059523809524,
+        "draws": 60,
+        "known_prize_total_yuan": 3276445,
+        "partition_size": 70000,
+        "winning_ticket_count": 519180
+      },
+      "80000": {
+        "average_prize_yuan": 0.779653125,
+        "draws": 60,
+        "known_prize_total_yuan": 3742335,
+        "partition_size": 80000,
+        "winning_ticket_count": 593055
+      },
+      "90000": {
+        "average_prize_yuan": 0.7792555555555556,
+        "draws": 60,
+        "known_prize_total_yuan": 4207980,
+        "partition_size": 90000,
+        "winning_ticket_count": 666564
+      }
+    }
+  },
+  "routine_fixed_prizes_only": true,
+  "source_outer_rows": "artifacts/phase4e18/ssq/outer-rolling-report.jsonl",
+  "source_outer_rows_sha256": "34e8240e40dc4d2716801b1e7e7c48261eac0c80bbe68795dea06d64ead5d9c5",
+  "status": "RETROSPECTIVE_BACKTEST_ONLY"
+}

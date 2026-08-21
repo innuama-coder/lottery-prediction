@@ -19,6 +19,13 @@ sys.path.insert(0, str(ROOT / "scripts/phase4e16"))
 import run_stable_orientation as e16
 
 from lottery_system.phase4e3 import model as p4e3
+from lottery_system.phase4.bonus import (
+    DLT_NEW_FIXED_PRIZES,
+    DLT_OLD_FIXED_PRIZES,
+    SSQ_FIXED_PRIZES,
+    fixed_bonus,
+    registered_rule_version,
+)
 
 OUT = ROOT / "artifacts/phase4e17"
 E13 = ROOT / "artifacts/phase4e13"
@@ -826,97 +833,17 @@ def per_canonical_number_metrics(
     return result
 
 
-SSQ_FIXED_PRIZES = {
-    1: 5000000.0,
-    2: 100000.0,
-    3: 3000.0,
-    4: 200.0,
-    5: 10.0,
-    6: 5.0,
-}
-DLT_OLD_FIXED_PRIZES = {
-    1: 5000000.0,
-    2: 100000.0,
-    3: 10000.0,
-    4: 3000.0,
-    5: 600.0,
-    6: 100.0,
-    7: 10.0,
-    8: 5.0,
-    9: 5.0,
-}
-DLT_NEW_FIXED_PRIZES = {
-    1: 5000000.0,
-    2: 100000.0,
-    3: 6666.0,
-    4: 380.0,
-    5: 200.0,
-    6: 18.0,
-    7: 7.0,
-}
-DLT_PROMO_2026050_FIXED_PRIZES = {
-    1: 5000000.0,
-    2: 100000.0,
-    3: 7500.0,
-    4: 450.0,
-    5: 225.0,
-    6: 22.5,
-    7: 10.0,
-}
-
-
 def ticket_prize(
-    game: str, issue: str, front_hits: int, back_hits: int
+    game: str, issue: str, front_hits: int, back_hits: int,
+    *, prize_rule_version: str | None = None, **metadata: object,
 ) -> dict[str, object]:
     """Return the rule-derived tier and known fixed amount for one complete ticket.
 
     First/second prizes use the configured fixed benchmark amounts requested for
     this experiment.
     """
-    front_hits, back_hits = int(front_hits), int(back_hits)
-    if game == "ssq":
-        patterns = {
-            1: {(6, 1)},
-            2: {(6, 0)},
-            3: {(5, 1)},
-            4: {(5, 0), (4, 1)},
-            5: {(4, 0), (3, 1)},
-            6: {(3, 0), (2, 1), (1, 1), (0, 1)},
-        }
-        fixed = SSQ_FIXED_PRIZES
-    elif game == "dlt":
-        if str(issue) == "2026050":
-            fixed = DLT_PROMO_2026050_FIXED_PRIZES
-            patterns = {
-                1: {(5, 2)}, 2: {(5, 1)}, 3: {(5, 0), (4, 2)},
-                4: {(4, 1), (3, 2)}, 5: {(4, 0), (3, 1), (2, 2)},
-                6: {(3, 0), (2, 1), (1, 2), (0, 2)},
-                7: {(2, 0), (1, 1), (0, 1)},
-            }
-        elif str(issue) >= "2026014":
-            fixed = DLT_NEW_FIXED_PRIZES
-            patterns = {
-                1: {(5, 2)}, 2: {(5, 1)}, 3: {(5, 0), (4, 2)},
-                4: {(4, 1), (3, 2)}, 5: {(4, 0), (3, 1), (2, 2)},
-                6: {(3, 0), (2, 1), (1, 2), (0, 2)},
-                7: {(2, 0), (1, 1), (0, 1)},
-            }
-        else:
-            fixed = DLT_OLD_FIXED_PRIZES
-            patterns = {
-                1: {(5, 2)}, 2: {(5, 1)}, 3: {(5, 0), (4, 2)},
-                4: {(4, 1), (3, 2)}, 5: {(4, 0), (3, 1), (2, 2)},
-                6: {(3, 0), (2, 2)}, 7: {(2, 1), (1, 2)},
-                8: {(2, 0), (1, 1), (0, 2)}, 9: {(1, 0), (0, 1)},
-            }
-    else:
-        raise ValueError(f"unsupported game: {game}")
-    tier = next((tier for tier, matches in patterns.items() if (front_hits, back_hits) in matches), None)
-    return {
-        "prize_tier": tier,
-        "fixed_prize_yuan": None if tier is None else fixed.get(tier),
-        "is_floating_prize": False,
-    }
+    version = prize_rule_version or registered_rule_version(game, issue)
+    return fixed_bonus(game, version, front_hits, back_hits, issue=issue, **metadata)
 
 
 def _choose(n: int, k: int) -> int:

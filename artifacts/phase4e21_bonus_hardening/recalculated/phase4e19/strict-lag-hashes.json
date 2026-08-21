@@ -1,0 +1,57 @@
+{
+  "all_maximum_source_positions_before_first_scored_target": true,
+  "artifact_type": "phase4e19_strict_lag_hashes",
+  "cutoffs": [
+    {
+      "cutoff_issue_exclusive": "2024028",
+      "cutoff_position_exclusive": 3122,
+      "feature_bundle_sha256": "ed90f00dfb66fea906cc5dfd62e41c436292956688dab2deaba21376ca1edc80",
+      "maximum_source_issue": "2024027",
+      "maximum_source_position": 3121,
+      "prefix_input_sha256": "5f90e5b502b34dfd2479bb084143aae52bfedd6e945de898a2293b84f927762c"
+    },
+    {
+      "cutoff_issue_exclusive": "2024088",
+      "cutoff_position_exclusive": 3182,
+      "feature_bundle_sha256": "e3f9a06b21bccaa94453eec9a7f8b914e8d5f0cb0ec1393383ba4fc4b132a670",
+      "maximum_source_issue": "2024087",
+      "maximum_source_position": 3181,
+      "prefix_input_sha256": "f595573834d1e4c09aba83a28ec6f46cbe4eef7c98a589a7320e3c7419234e7f"
+    },
+    {
+      "cutoff_issue_exclusive": "2024148",
+      "cutoff_position_exclusive": 3242,
+      "feature_bundle_sha256": "b743d63a0be76b14f40bdbae08dc9458f4e881e6cb0b9ede3b427847900bc1e2",
+      "maximum_source_issue": "2024147",
+      "maximum_source_position": 3241,
+      "prefix_input_sha256": "fc9439057b70776421060749b5db16b20d5a62f89112c5b464851c6df22fe470"
+    },
+    {
+      "cutoff_issue_exclusive": "2025057",
+      "cutoff_position_exclusive": 3302,
+      "feature_bundle_sha256": "8baaf330cbbbecc6655f98b589c422b364f61e04415ef4032b8e3a9c791c357b",
+      "maximum_source_issue": "2025056",
+      "maximum_source_position": 3301,
+      "prefix_input_sha256": "484bdb7aba7c4827995bbeff7a2a4623dee622fc466510bdbb51463ae68a201a"
+    },
+    {
+      "cutoff_issue_exclusive": "2025117",
+      "cutoff_position_exclusive": 3362,
+      "feature_bundle_sha256": "4b68c0f1ee53851f9c5ef4b9d1f84d8b52592a104c6c5c14a571b231c58cbff7",
+      "maximum_source_issue": "2025116",
+      "maximum_source_position": 3361,
+      "prefix_input_sha256": "ab4ed7c012a753776e2adcb4faad085e36d14e360bfe996031f6eb9ecab4024b"
+    }
+  ],
+  "game": "ssq",
+  "outer_label_mutation_test": {
+    "feature_hashes_match": true,
+    "mutated_feature_bundle_sha256": "4b68c0f1ee53851f9c5ef4b9d1f84d8b52592a104c6c5c14a571b231c58cbff7",
+    "mutated_positions": [
+      3362,
+      3481
+    ],
+    "original_feature_bundle_sha256": "4b68c0f1ee53851f9c5ef4b9d1f84d8b52592a104c6c5c14a571b231c58cbff7",
+    "portfolio_hashes_match": true
+  }
+}

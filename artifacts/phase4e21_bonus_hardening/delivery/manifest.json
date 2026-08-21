@@ -1,0 +1,175 @@
+{
+  "artifact_type": "phase4e21_bonus_hardening_manifest",
+  "files": [
+    {
+      "bytes": 728,
+      "path": "delivery/decision.json",
+      "sha256": "fab5752f6f13226c963c586a695d357bc6f57ff56c0a4c65cb4c8f04f84f6b56"
+    },
+    {
+      "bytes": 1646,
+      "path": "dlt-serving-isolation.json",
+      "sha256": "51288bf7bd0272d82460f13a5f7b71f0c0f7a8620bf8e323df7bfa56c0c49b94"
+    },
+    {
+      "bytes": 7204,
+      "path": "independent-replay.json",
+      "sha256": "8192937e78c23a2c7be48f37059b91429a7937745582daa3b3ab1648b36b7265"
+    },
+    {
+      "bytes": 1930,
+      "path": "old-new-report-hashes.json",
+      "sha256": "7a2851b8e512b067a12bf3a2943a8a5a6d9be6c4ba87853a352609ef6da570cf"
+    },
+    {
+      "bytes": 6045405,
+      "path": "recalculated/phase4e17/dlt/report.json",
+      "sha256": "74dfb62df73ce84d37888ba54f496fcaa5c6916a5ea1de6ba8fe29cbb5f1c066"
+    },
+    {
+      "bytes": 5722639,
+      "path": "recalculated/phase4e17/ssq/report.json",
+      "sha256": "3deea46bbd7e0c35a78b24461102f652bbacf11a0e84296d9cc5961869f0f0e5"
+    },
+    {
+      "bytes": 8079,
+      "path": "recalculated/phase4e18/ssq/report.json",
+      "sha256": "b26ea3ca7ae2a57f7413dd41fec1e90a304412451e37d91ef56b4e3989f95cb3"
+    },
+    {
+      "bytes": 9621,
+      "path": "recalculated/phase4e19/all-120-summary.json",
+      "sha256": "b9e711d22b9f8766788c02a538a3b3efcfc67b6a2a75dcdeb70bf42c67f35bf2"
+    },
+    {
+      "bytes": 9589,
+      "path": "recalculated/phase4e19/calibration-summary.json",
+      "sha256": "e518df139ac5e74daf10ff32c6806b43df8505a7cd4c675c2b2539125710f0f6"
+    },
+    {
+      "bytes": 5460,
+      "path": "recalculated/phase4e19/candidate-registry.json",
+      "sha256": "c6dbf681c2775f851bf29688c6ad7de25283eb955b1831f62a114a89fad3699c"
+    },
+    {
+      "bytes": 426,
+      "path": "recalculated/phase4e19/delivery/decision.json",
+      "sha256": "fb1400f647cdd5415a7770f64c520b5844560efe4c8cd4cb91a45f5de79217a2"
+    },
+    {
+      "bytes": 3265,
+      "path": "recalculated/phase4e19/delivery/manifest.json",
+      "sha256": "83fcab4bf23518297768b8bbe507ca6c508cb1b5b32c60331f08494a818cd5f2"
+    },
+    {
+      "bytes": 9579,
+      "path": "recalculated/phase4e19/evaluation-summary.json",
+      "sha256": "f8e52a46b0a49bd57ae43c329fa339bd7e5eef82a389d08a53c3700e55252640"
+    },
+    {
+      "bytes": 85506,
+      "path": "recalculated/phase4e19/feature-lineage.json",
+      "sha256": "67f004d014b1c63227fd3a68cb353d498a95c4863ee2c8a49dac634e5bce109a"
+    },
+    {
+      "bytes": 5277655,
+      "path": "recalculated/phase4e19/inner-rolling-report.jsonl",
+      "sha256": "f4d86003698f391ea7b494d47c485641364b5c6a1e7c7420223e7ea65c29ea34"
+    },
+    {
+      "bytes": 2643234,
+      "path": "recalculated/phase4e19/outer-rolling-report.jsonl",
+      "sha256": "c813c1b879182592723bf42f5660b3f37317054e5f666cc154771e6f9dabe8ac"
+    },
+    {
+      "bytes": 482,
+      "path": "recalculated/phase4e19/replay-evidence.json",
+      "sha256": "3f5f383ba52ffa12c48d8823c2f44ffd714d7ab7a620d422796bbd1ab6e4cebd"
+    },
+    {
+      "bytes": 667873,
+      "path": "recalculated/phase4e19/report.json",
+      "sha256": "e008c6e0ff27408a5a444794f586600fcee6d036491e3e2132851477f2e1181c"
+    },
+    {
+      "bytes": 2391,
+      "path": "recalculated/phase4e19/strict-lag-hashes.json",
+      "sha256": "6f1235a89b03326db660c863073c24d2ce3a9ef3b63a6bf7d49be91fc7fce9c6"
+    },
+    {
+      "bytes": 9636,
+      "path": "recalculated/phase4e20/all-120-summary.json",
+      "sha256": "36a0be0f2986d53521c4266025861e341a014ae29925a5075dbd2af15867ab85"
+    },
+    {
+      "bytes": 9582,
+      "path": "recalculated/phase4e20/calibration-summary.json",
+      "sha256": "165d500a4f11a5c6e5bedc053e45141563e6981989dbc7406acd605df1fc5ffa"
+    },
+    {
+      "bytes": 1903,
+      "path": "recalculated/phase4e20/candidate-registry.json",
+      "sha256": "1343a4c61ed83aae6bc3caf9175972a47d24725e825c6e11ec88829726f075c4"
+    },
+    {
+      "bytes": 85914,
+      "path": "recalculated/phase4e20/coefficients.json",
+      "sha256": "0a0b462153ea678485fe4afa52738c10b749912c597630c2ed24dd9393e8dea6"
+    },
+    {
+      "bytes": 554,
+      "path": "recalculated/phase4e20/delivery/decision.json",
+      "sha256": "ad92ad2648e7218edb367cd612cfb1505fc1089e8bd3a028293286a13ef8f639"
+    },
+    {
+      "bytes": 3629,
+      "path": "recalculated/phase4e20/delivery/manifest.json",
+      "sha256": "6c93d5b16a57c7340b901502c0f5802615de98202111254dda0cd656727ed183"
+    },
+    {
+      "bytes": 426,
+      "path": "recalculated/phase4e20/dlt-isolation-baseline.sha256",
+      "sha256": "02449bc698f87108a3caf7e3974dc0bbacf317c610029f2864527781c0f85958"
+    },
+    {
+      "bytes": 9555,
+      "path": "recalculated/phase4e20/evaluation-summary.json",
+      "sha256": "293ec5be9238e8c2e30424df7edd913e3872d7bbcbe50ec685ee2b18b74d5aba"
+    },
+    {
+      "bytes": 4511088,
+      "path": "recalculated/phase4e20/inner-rolling-report.jsonl",
+      "sha256": "87c7314771b3dfb5116528db8fc17dc8966f05850c606819770d9888c727fa3c"
+    },
+    {
+      "bytes": 21663,
+      "path": "recalculated/phase4e20/model-feature-lineage.json",
+      "sha256": "5f76acae0fc1acdd5b0873ce563bc0e70dafa8ecd209b670f4dcecbe85bacc66"
+    },
+    {
+      "bytes": 2266293,
+      "path": "recalculated/phase4e20/outer-rolling-report.jsonl",
+      "sha256": "6d6f895b2a2ca8dc81cef13ec9dd2163173c447b63af41d19eae4cda640e531f"
+    },
+    {
+      "bytes": 5129948,
+      "path": "recalculated/phase4e20/portfolio-hashes.json",
+      "sha256": "286af5da40ba4be704dc749562c739530592ba7fb6add41f3065887a13321221"
+    },
+    {
+      "bytes": 552,
+      "path": "recalculated/phase4e20/replay-evidence.json",
+      "sha256": "60177b6591361af752e878845679a9622f014b7ca65635f1066e9be537ee6e3b"
+    },
+    {
+      "bytes": 537466,
+      "path": "recalculated/phase4e20/report.json",
+      "sha256": "511817ea452c060d615480020ea06ccdcd60da71a71f106fdc522b7d731ed00b"
+    },
+    {
+      "bytes": 12753,
+      "path": "state-space-audit.json",
+      "sha256": "c1f0fff07fbbe0f9b0e2fa0c386127cd4cb46f88694fa640dd7ea2ad13b9fd3e"
+    }
+  ]
+}

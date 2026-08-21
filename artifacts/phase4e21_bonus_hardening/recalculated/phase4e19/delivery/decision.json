@@ -1,0 +1,12 @@
+{
+  "artifact_type": "phase4e19_delivery_decision",
+  "decision": "NO_PROMOTION",
+  "dlt_changed": false,
+  "game": "ssq",
+  "hard_gate_passed": false,
+  "p4e6_serving_changed": false,
+  "reason": "at least one calibration/evaluation/all-120 registered-N average is not strictly greater than 2 yuan",
+  "selected_candidate": "raw_control",
+  "serving_release": "P4-P4E2-20260815-r12",
+  "serving_status": "PROSPECTIVE_ONLY"
+}

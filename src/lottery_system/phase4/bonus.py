@@ -14,19 +14,19 @@ from typing import Final, Mapping
 
 SSQ_OLD_RULE: Final = "SSQ_PRIZE_2018_6TIER"
 SSQ_NEW_RULE: Final = "SSQ_PRIZE_2026_BASE"
-# The active DLT contract has seven tiers.  Keep the old symbol as a
-# compatibility alias so stale callers cannot silently select a nine-tier table.
+DLT_OLD_RULE: Final = "DLT_PRIZE_2019_9TIER"
 DLT_NEW_RULE: Final = "DLT_PRIZE_2026_7TIER"
-DLT_OLD_RULE: Final = DLT_NEW_RULE
 
 
 SSQ_FIXED_PRIZES: Final[Mapping[int, int]] = MappingProxyType(
     {1: 5_000_000, 2: 100_000, 3: 3_000, 4: 200, 5: 10, 6: 5}
 )
-DLT_FIXED_PRIZES: Final[Mapping[int, int]] = MappingProxyType(
-    {1: 5_000_000, 2: 100_000, 3: 5_000, 4: 300, 5: 150, 6: 15, 7: 5}
+DLT_OLD_FIXED_PRIZES: Final[Mapping[int, int]] = MappingProxyType(
+    {1: 5_000_000, 2: 100_000, 3: 10_000, 4: 3_000, 5: 600, 6: 100, 7: 10, 8: 5, 9: 5}
 )
-DLT_NEW_FIXED_PRIZES = DLT_FIXED_PRIZES
+DLT_NEW_FIXED_PRIZES: Final[Mapping[int, int]] = MappingProxyType(
+    {1: 5_000_000, 2: 100_000, 3: 6_666, 4: 380, 5: 200, 6: 18, 7: 7}
+)
 
 
 SSQ_TIER_STATES: Final[Mapping[int, frozenset[tuple[int, int]]]] = MappingProxyType(
@@ -51,14 +51,26 @@ DLT_NEW_TIER_STATES: Final[Mapping[int, frozenset[tuple[int, int]]]] = MappingPr
         7: frozenset({(2, 0), (1, 1), (0, 1)}),
     }
 )
-DLT_OLD_TIER_STATES = DLT_NEW_TIER_STATES
-DLT_OLD_FIXED_PRIZES = DLT_NEW_FIXED_PRIZES
+DLT_OLD_TIER_STATES: Final[Mapping[int, frozenset[tuple[int, int]]]] = MappingProxyType(
+    {
+        1: frozenset({(5, 2)}),
+        2: frozenset({(5, 1)}),
+        3: frozenset({(5, 0), (4, 2)}),
+        4: frozenset({(4, 1), (3, 2)}),
+        5: frozenset({(4, 0), (3, 1), (2, 2)}),
+        6: frozenset({(3, 0), (2, 1), (1, 2)}),
+        7: frozenset({(2, 0), (1, 1), (0, 2)}),
+        8: frozenset({(1, 0), (0, 1)}),
+        9: frozenset(),
+    }
+)
 
 
 _RULES: Final[Mapping[tuple[str, str], tuple[Mapping[int, frozenset[tuple[int, int]]], Mapping[int, int]]]] = MappingProxyType(
     {
         ("ssq", SSQ_OLD_RULE): (SSQ_TIER_STATES, SSQ_FIXED_PRIZES),
         ("ssq", SSQ_NEW_RULE): (SSQ_TIER_STATES, SSQ_FIXED_PRIZES),
+        ("dlt", DLT_OLD_RULE): (DLT_OLD_TIER_STATES, DLT_OLD_FIXED_PRIZES),
         ("dlt", DLT_NEW_RULE): (DLT_NEW_TIER_STATES, DLT_NEW_FIXED_PRIZES),
     }
 )
@@ -73,7 +85,7 @@ def registered_rule_version(game: str, issue: str) -> str:
     if game == "ssq":
         return SSQ_NEW_RULE if str(issue) >= "2026014" else SSQ_OLD_RULE
     if game == "dlt":
-        return DLT_NEW_RULE
+        return DLT_NEW_RULE if str(issue) >= "2026014" else DLT_OLD_RULE
     raise ValueError(f"unsupported game: {game}")
 
 

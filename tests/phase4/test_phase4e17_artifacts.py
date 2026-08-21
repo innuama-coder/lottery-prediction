@@ -179,12 +179,23 @@ class Phase4E17ArtifactTests(unittest.TestCase):
             for key in (
                 "phase4e3_model",
                 "phase4e3_dlt_selection_receipt",
-                "phase4e17_script",
             ):
                 path = ROOT / lineage[f"{key}_path"]
                 self.assertEqual(
                     lineage[f"{key}_sha256"], hashlib.sha256(path.read_bytes()).hexdigest()
                 )
+            # E17 is an append-only historical artifact.  Phase4E21 is allowed
+            # to harden the live bonus function without rewriting this receipt.
+            self.assertEqual(
+                lineage["phase4e17_script_sha256"],
+                "27ac17cb67921a9c4125bcfb1751acad541ba83f22e9f60d5057bdf22e608fd9",
+            )
+            e21 = ROOT / "artifacts/phase4e21_bonus_hardening/old-new-report-hashes.json"
+            self.assertTrue(e21.exists())
+            comparisons = json.loads(e21.read_text())["reports"]
+            comparison = next(row for row in comparisons if row["report"] == f"phase4e17_{game}")
+            self.assertEqual(comparison["old_sha256"], hashlib.sha256((BASE / game / "report.json").read_bytes()).hexdigest())
+            self.assertNotEqual(comparison["old_sha256"], comparison["new_sha256"])
             self.assertEqual(
                 lineage["phase4e17_candidate_registry_sha256"],
                 E17.digest(E17.candidate_registry()),

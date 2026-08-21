@@ -7,6 +7,19 @@
       "files": [
         {
           "matches": true,
+          "path": "report.json",
+          "primary_sha256": "92ab4e19875e847b799c3d36a0dac21748b916610adb539b73267e3246f6dba0",
+          "replay_sha256": "92ab4e19875e847b799c3d36a0dac21748b916610adb539b73267e3246f6dba0"
+        }
+      ],
+      "normalized_report_match": true,
+      "phase": "phase4e17_dlt"
+    },
+    {
+      "byte_identical_payloads": true,
+      "files": [
+        {
+          "matches": true,
           "path": "candidate-registry.json",
           "primary_sha256": "c6dbf681c2775f851bf29688c6ad7de25283eb955b1831f62a114a89fad3699c",
           "replay_sha256": "c6dbf681c2775f851bf29688c6ad7de25283eb955b1831f62a114a89fad3699c"

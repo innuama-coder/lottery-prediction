@@ -226,11 +226,11 @@
     },
     {
       "all_amounts_integer_yuan": true,
-      "assigned_state_count": 16,
+      "assigned_state_count": 17,
       "first_prize_yuan": 5000000,
       "game": "dlt",
       "mutually_exclusive": true,
-      "rule_version": "DLT_PRIZE_2026_7TIER",
+      "rule_version": "DLT_PRIZE_2019_9TIER",
       "second_prize_yuan": 100000,
       "state_count": 18,
       "states": [
@@ -246,102 +246,102 @@
           "fixed_prize_yuan": 5,
           "front_hits": 0,
           "is_floating_prize": false,
-          "prize_tier": 7
+          "prize_tier": 8
         },
         {
           "back_hits": 2,
-          "fixed_prize_yuan": 15,
+          "fixed_prize_yuan": 10,
           "front_hits": 0,
           "is_floating_prize": false,
-          "prize_tier": 6
+          "prize_tier": 7
         },
         {
           "back_hits": 0,
-          "fixed_prize_yuan": 0,
+          "fixed_prize_yuan": 5,
           "front_hits": 1,
           "is_floating_prize": false,
-          "prize_tier": null
+          "prize_tier": 8
         },
         {
           "back_hits": 1,
-          "fixed_prize_yuan": 5,
+          "fixed_prize_yuan": 10,
           "front_hits": 1,
           "is_floating_prize": false,
           "prize_tier": 7
         },
         {
           "back_hits": 2,
-          "fixed_prize_yuan": 15,
+          "fixed_prize_yuan": 100,
           "front_hits": 1,
           "is_floating_prize": false,
           "prize_tier": 6
         },
         {
           "back_hits": 0,
-          "fixed_prize_yuan": 5,
+          "fixed_prize_yuan": 10,
           "front_hits": 2,
           "is_floating_prize": false,
           "prize_tier": 7
         },
         {
           "back_hits": 1,
-          "fixed_prize_yuan": 15,
+          "fixed_prize_yuan": 100,
           "front_hits": 2,
           "is_floating_prize": false,
           "prize_tier": 6
         },
         {
           "back_hits": 2,
-          "fixed_prize_yuan": 150,
+          "fixed_prize_yuan": 600,
           "front_hits": 2,
           "is_floating_prize": false,
           "prize_tier": 5
         },
         {
           "back_hits": 0,
-          "fixed_prize_yuan": 15,
+          "fixed_prize_yuan": 100,
           "front_hits": 3,
           "is_floating_prize": false,
           "prize_tier": 6
         },
         {
           "back_hits": 1,
-          "fixed_prize_yuan": 150,
+          "fixed_prize_yuan": 600,
           "front_hits": 3,
           "is_floating_prize": false,
           "prize_tier": 5
         },
         {
           "back_hits": 2,
-          "fixed_prize_yuan": 300,
+          "fixed_prize_yuan": 3000,
           "front_hits": 3,
           "is_floating_prize": false,
           "prize_tier": 4
         },
         {
           "back_hits": 0,
-          "fixed_prize_yuan": 150,
+          "fixed_prize_yuan": 600,
           "front_hits": 4,
           "is_floating_prize": false,
           "prize_tier": 5
         },
         {
           "back_hits": 1,
-          "fixed_prize_yuan": 300,
+          "fixed_prize_yuan": 3000,
           "front_hits": 4,
           "is_floating_prize": false,
           "prize_tier": 4
         },
         {
           "back_hits": 2,
-          "fixed_prize_yuan": 5000,
+          "fixed_prize_yuan": 10000,
           "front_hits": 4,
           "is_floating_prize": false,
           "prize_tier": 3
         },
         {
           "back_hits": 0,
-          "fixed_prize_yuan": 5000,
+          "fixed_prize_yuan": 10000,
           "front_hits": 5,
           "is_floating_prize": false,
           "prize_tier": 3
@@ -361,7 +361,7 @@
           "prize_tier": 1
         }
       ],
-      "unmatched_state_count": 2
+      "unmatched_state_count": 1
     },
     {
       "all_amounts_integer_yuan": true,
@@ -382,14 +382,14 @@
         },
         {
           "back_hits": 1,
-          "fixed_prize_yuan": 5,
+          "fixed_prize_yuan": 7,
           "front_hits": 0,
           "is_floating_prize": false,
           "prize_tier": 7
         },
         {
           "back_hits": 2,
-          "fixed_prize_yuan": 15,
+          "fixed_prize_yuan": 18,
           "front_hits": 0,
           "is_floating_prize": false,
           "prize_tier": 6
@@ -403,84 +403,84 @@
         },
         {
           "back_hits": 1,
-          "fixed_prize_yuan": 5,
+          "fixed_prize_yuan": 7,
           "front_hits": 1,
           "is_floating_prize": false,
           "prize_tier": 7
         },
         {
           "back_hits": 2,
-          "fixed_prize_yuan": 15,
+          "fixed_prize_yuan": 18,
           "front_hits": 1,
           "is_floating_prize": false,
           "prize_tier": 6
         },
         {
           "back_hits": 0,
-          "fixed_prize_yuan": 5,
+          "fixed_prize_yuan": 7,
           "front_hits": 2,
           "is_floating_prize": false,
           "prize_tier": 7
         },
         {
           "back_hits": 1,
-          "fixed_prize_yuan": 15,
+          "fixed_prize_yuan": 18,
           "front_hits": 2,
           "is_floating_prize": false,
           "prize_tier": 6
         },
         {
           "back_hits": 2,
-          "fixed_prize_yuan": 150,
+          "fixed_prize_yuan": 200,
           "front_hits": 2,
           "is_floating_prize": false,
           "prize_tier": 5
         },
         {
           "back_hits": 0,
-          "fixed_prize_yuan": 15,
+          "fixed_prize_yuan": 18,
           "front_hits": 3,
           "is_floating_prize": false,
           "prize_tier": 6
         },
         {
           "back_hits": 1,
-          "fixed_prize_yuan": 150,
+          "fixed_prize_yuan": 200,
           "front_hits": 3,
           "is_floating_prize": false,
           "prize_tier": 5
         },
         {
           "back_hits": 2,
-          "fixed_prize_yuan": 300,
+          "fixed_prize_yuan": 380,
           "front_hits": 3,
           "is_floating_prize": false,
           "prize_tier": 4
         },
         {
           "back_hits": 0,
-          "fixed_prize_yuan": 150,
+          "fixed_prize_yuan": 200,
           "front_hits": 4,
           "is_floating_prize": false,
           "prize_tier": 5
         },
         {
           "back_hits": 1,
-          "fixed_prize_yuan": 300,
+          "fixed_prize_yuan": 380,
           "front_hits": 4,
           "is_floating_prize": false,
           "prize_tier": 4
         },
         {
           "back_hits": 2,
-          "fixed_prize_yuan": 5000,
+          "fixed_prize_yuan": 6666,
           "front_hits": 4,
           "is_floating_prize": false,
           "prize_tier": 3
         },
         {
           "back_hits": 0,
-          "fixed_prize_yuan": 5000,
+          "fixed_prize_yuan": 6666,
           "front_hits": 5,
           "is_floating_prize": false,
           "prize_tier": 3

@@ -430,6 +430,67 @@ def manifest(output_dir: Path, paths: Sequence[Path]) -> dict[str, object]:
     return {"artifact_type": "phase4e21_bonus_hardening_manifest", "files": rows}
 
 
+def refresh_dlt_evidence(output_dir: Path) -> dict[str, object]:
+    """Refresh only the DLT rule audit/report after a rule-table code review."""
+    state_path = output_dir / "state-space-audit.json"
+    write_json(state_path, state_space_audit())
+    primary_path = recalculate_e17_game("dlt", output_dir)
+    with tempfile.TemporaryDirectory(prefix="phase4e21-dlt-replay-") as temporary:
+        replay_path = recalculate_e17_game("dlt", Path(temporary))
+        replay_sha256 = sha256_file(replay_path)
+    primary_sha256 = sha256_file(primary_path)
+
+    replay_receipt_path = output_dir / "independent-replay.json"
+    replay_receipt = read_json(replay_receipt_path)
+    comparisons = [
+        row for row in replay_receipt.get("comparisons", [])
+        if row.get("phase") != "phase4e17_dlt"
+    ]
+    comparisons.insert(
+        0,
+        {
+            "phase": "phase4e17_dlt",
+            "byte_identical_payloads": primary_sha256 == replay_sha256,
+            "normalized_report_match": primary_sha256 == replay_sha256,
+            "files": [{
+                "path": "report.json",
+                "primary_sha256": primary_sha256,
+                "replay_sha256": replay_sha256,
+                "matches": primary_sha256 == replay_sha256,
+            }],
+        },
+    )
+    replay_receipt["comparisons"] = comparisons
+    replay_receipt["all_deterministic_payloads_match"] = all(
+        row["byte_identical_payloads"] and row["normalized_report_match"]
+        for row in comparisons
+    )
+    write_json(replay_receipt_path, replay_receipt)
+
+    hashes_path = output_dir / "old-new-report-hashes.json"
+    hashes = read_json(hashes_path)
+    dlt_row = next(row for row in hashes["reports"] if row["report"] == "phase4e17_dlt")
+    dlt_row["new_sha256"] = primary_sha256
+    write_json(hashes_path, hashes)
+
+    decision_path = output_dir / "delivery/decision.json"
+    decision = read_json(decision_path)
+    decision["routine_fixed_prize_rule_checks_pass"] = state_space_audit()["all_checks_pass"]
+    decision["independent_replay_passed"] = replay_receipt["all_deterministic_payloads_match"]
+    write_json(decision_path, decision)
+
+    manifest_path = output_dir / "delivery/manifest.json"
+    old_manifest = read_json(manifest_path)
+    paths = [output_dir / row["path"] for row in old_manifest["files"]]
+    write_json(manifest_path, manifest(output_dir, paths))
+    return {
+        "dlt_report_sha256": primary_sha256,
+        "dlt_replay_sha256": replay_sha256,
+        "dlt_replay_matches": primary_sha256 == replay_sha256,
+        "manifest_sha256": sha256_file(manifest_path),
+    }
+
+
 def run(
     output_dir: Path,
     independent_replay: bool = True,
@@ -589,7 +650,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUT)
     parser.add_argument("--skip-independent-replay", action="store_true")
     parser.add_argument("--resume-existing", action="store_true")
+    parser.add_argument("--refresh-dlt-evidence", action="store_true")
     arguments = parser.parse_args(argv)
+    if arguments.refresh_dlt_evidence:
+        print(json.dumps(refresh_dlt_evidence(arguments.output_dir), sort_keys=True))
+        return 0
     print(
         json.dumps(
             run(

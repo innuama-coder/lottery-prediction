@@ -9,6 +9,9 @@ from lottery_system.phase4.bonus import (
     DLT_NEW_FIXED_PRIZES,
     DLT_NEW_RULE,
     DLT_NEW_TIER_STATES,
+    DLT_OLD_FIXED_PRIZES,
+    DLT_OLD_RULE,
+    DLT_OLD_TIER_STATES,
     SSQ_FIXED_PRIZES,
     SSQ_NEW_RULE,
     SSQ_OLD_RULE,
@@ -48,6 +51,25 @@ class Phase4E21BonusHardeningTests(unittest.TestCase):
         (2, 0): 7,
         (1, 1): 7,
         (0, 1): 7,
+    }
+    DLT_OLD_EXPECTED = {
+        (5, 2): 1,
+        (5, 1): 2,
+        (5, 0): 3,
+        (4, 2): 3,
+        (4, 1): 4,
+        (3, 2): 4,
+        (4, 0): 5,
+        (3, 1): 5,
+        (2, 2): 5,
+        (3, 0): 6,
+        (2, 1): 6,
+        (1, 2): 6,
+        (2, 0): 7,
+        (1, 1): 7,
+        (0, 2): 7,
+        (1, 0): 8,
+        (0, 1): 8,
     }
 
     def assert_exhaustive(
@@ -97,10 +119,23 @@ class Phase4E21BonusHardeningTests(unittest.TestCase):
             DLT_NEW_TIER_STATES,
         )
 
+    def test_exhaustive_dlt_6_by_3_old_rule(self):
+        self.assertEqual(set(DLT_OLD_TIER_STATES), set(range(1, 10)))
+        self.assertEqual(DLT_OLD_TIER_STATES[9], frozenset())
+        self.assert_exhaustive(
+            "dlt",
+            DLT_OLD_RULE,
+            range(6),
+            range(3),
+            self.DLT_OLD_EXPECTED,
+            DLT_OLD_FIXED_PRIZES,
+            DLT_OLD_TIER_STATES,
+        )
+
     def test_first_and_second_prizes_are_exact_fixed_integers(self):
         for game, versions, first_state, second_state in (
             ("ssq", (SSQ_OLD_RULE, SSQ_NEW_RULE), (6, 1), (6, 0)),
-            ("dlt", (DLT_NEW_RULE,), (5, 2), (5, 1)),
+            ("dlt", (DLT_OLD_RULE, DLT_NEW_RULE), (5, 2), (5, 1)),
         ):
             for version in versions:
                 with self.subTest(game=game, version=version):
@@ -123,6 +158,7 @@ class Phase4E21BonusHardeningTests(unittest.TestCase):
         cases = (
             ("ssq", SSQ_NEW_RULE, 6, 1),
             ("ssq", SSQ_OLD_RULE, 3, 0),
+            ("dlt", DLT_OLD_RULE, 2, 2),
             ("dlt", DLT_NEW_RULE, 2, 2),
             ("dlt", DLT_NEW_RULE, 0, 2),
         )
@@ -137,15 +173,15 @@ class Phase4E21BonusHardeningTests(unittest.TestCase):
 
     def test_wrapper_uses_explicit_registered_version_not_mutated_issue(self):
         expected = ticket_prize(
-            "dlt", "2025001", 0, 2, prize_rule_version=DLT_NEW_RULE,
+            "dlt", "2025001", 0, 2, prize_rule_version=DLT_OLD_RULE,
             special_payout=1_000_000,
         )
         mutated = ticket_prize(
-            "dlt", "2026999", 0, 2, prize_rule_version=DLT_NEW_RULE,
+            "dlt", "2026999", 0, 2, prize_rule_version=DLT_OLD_RULE,
             special_payout=0, promotion="different",
         )
         self.assertEqual(mutated, expected)
-        self.assertEqual(expected, {"prize_tier": 6, "fixed_prize_yuan": 15, "is_floating_prize": False})
+        self.assertEqual(expected, {"prize_tier": 7, "fixed_prize_yuan": 10, "is_floating_prize": False})
 
     def test_ssq_and_dlt_rule_isolation(self):
         ssq_before = fixed_bonus("ssq", SSQ_NEW_RULE, 3, 0)

@@ -10,7 +10,7 @@
     },
     {
       "new_path": "artifacts/phase4e21_bonus_hardening/recalculated/phase4e17/dlt/report.json",
-      "new_sha256": "74dfb62df73ce84d37888ba54f496fcaa5c6916a5ea1de6ba8fe29cbb5f1c066",
+      "new_sha256": "92ab4e19875e847b799c3d36a0dac21748b916610adb539b73267e3246f6dba0",
       "old_path": "artifacts/phase4e17/dlt/report.json",
       "old_sha256": "40d52f1d4a97b2e8e4a4736aad994bf46e4a033cd342ec39e74b43dd6386d3fc",
       "report": "phase4e17_dlt"

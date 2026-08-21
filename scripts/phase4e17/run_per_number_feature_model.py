@@ -826,13 +826,16 @@ def per_canonical_number_metrics(
 
 
 SSQ_FIXED_PRIZES = {
-    2: 250000.0,
+    1: 5000000.0,
+    2: 100000.0,
     3: 3000.0,
     4: 200.0,
     5: 10.0,
     6: 5.0,
 }
 DLT_OLD_FIXED_PRIZES = {
+    1: 5000000.0,
+    2: 100000.0,
     3: 10000.0,
     4: 3000.0,
     5: 600.0,
@@ -842,6 +845,8 @@ DLT_OLD_FIXED_PRIZES = {
     9: 5.0,
 }
 DLT_NEW_FIXED_PRIZES = {
+    1: 5000000.0,
+    2: 100000.0,
     3: 6666.0,
     4: 380.0,
     5: 200.0,
@@ -849,6 +854,8 @@ DLT_NEW_FIXED_PRIZES = {
     7: 7.0,
 }
 DLT_PROMO_2026050_FIXED_PRIZES = {
+    1: 5000000.0,
+    2: 100000.0,
     3: 7500.0,
     4: 450.0,
     5: 225.0,
@@ -862,9 +869,8 @@ def ticket_prize(
 ) -> dict[str, object]:
     """Return the rule-derived tier and known fixed amount for one complete ticket.
 
-    First/second prizes are deliberately represented as floating (amount=None):
-    canonical draw rows do not contain reliable per-issue payout amounts, so this
-    metric never fabricates them.
+    First/second prizes use the configured fixed benchmark amounts requested for
+    this experiment.
     """
     front_hits, back_hits = int(front_hits), int(back_hits)
     if game == "ssq":
@@ -908,9 +914,7 @@ def ticket_prize(
     return {
         "prize_tier": tier,
         "fixed_prize_yuan": None if tier is None else fixed.get(tier),
-        "is_floating_prize": bool(
-            (game == "dlt" and tier in (1, 2)) or (game == "ssq" and tier == 1)
-        ),
+        "is_floating_prize": False,
     }
 
 

@@ -27,8 +27,8 @@ class Phase4E17PrizeMetricTests(unittest.TestCase):
     def test_dlt_2026_fixed_and_floating_tiers(self):
         first = ticket_prize("dlt", "2026087", 5, 2)
         self.assertEqual(first["prize_tier"], 1)
-        self.assertIsNone(first["fixed_prize_yuan"])
-        self.assertTrue(first["is_floating_prize"])
+        self.assertEqual(first["fixed_prize_yuan"], 5000000.0)
+        self.assertFalse(first["is_floating_prize"])
 
         third = ticket_prize("dlt", "2026087", 4, 2)
         self.assertEqual(third["prize_tier"], 3)
@@ -42,7 +42,7 @@ class Phase4E17PrizeMetricTests(unittest.TestCase):
     def test_ssq_second_prize_is_known_fixed_amount(self):
         prize = ticket_prize("ssq", "2026014", 6, 0)
         self.assertEqual(prize["prize_tier"], 2)
-        self.assertEqual(prize["fixed_prize_yuan"], 250000.0)
+        self.assertEqual(prize["fixed_prize_yuan"], 100000.0)
         self.assertFalse(prize["is_floating_prize"])
 
     def test_group_average_is_total_divided_by_complete_ticket_count(self):

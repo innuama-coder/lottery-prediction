@@ -116,7 +116,7 @@ Each JSON fixed-size record contains the complete per-group list plus `best_sing
 
 For each outer split, `ticket_group_average_prize_metrics` evaluates every front-size/back-size pair as a Cartesian product of complete legal tickets (DLT: 5 front + 2 back; SSQ: 6 red + 1 blue). A group record contains `ticket_count`, `prize_tier_ticket_counts`, `known_prize_total_yuan`, and `average_known_prize_yuan`; the latter is exactly `known_prize_total_yuan / ticket_count`. The split-level record also reports pooled and mean per-group averages.
 
-Prize classification is rule-versioned by issue: DLT old nine-tier rules before 2026014, DLT seven-tier rules from 2026014, and the 2026050 promotion overlay; SSQ fixed tiers are likewise represented. First/second DLT prizes (and first SSQ prize) are floating and no amount is fabricated when the canonical row lacks official per-issue payout data. Such tickets are counted in `floating_prize_ticket_count` and marked with `floating_prize_amounts_excluded=true`; fixed-prize totals and averages are therefore explicitly “known prize” amounts, not a claim of total realized payout.
+Prize classification is rule-versioned by issue: DLT old nine-tier rules before 2026014, DLT seven-tier rules from 2026014, and the 2026050 promotion overlay; SSQ fixed tiers are likewise represented. Per the experiment configuration, first prize is fixed at 5,000,000 yuan and second prize at 100,000 yuan for both games. Therefore first/second prizes are included in `known_prize_total_yuan`; `floating_prize_ticket_count` remains zero under this configured benchmark.
 
 ## Exact-ticket gates and evidence
 

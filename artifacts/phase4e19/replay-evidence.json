@@ -1,0 +1,10 @@
+{
+  "artifact_type": "phase4e19_deterministic_replay",
+  "exact_ticket_order_matches": true,
+  "feature_replay_matches_after_outer_label_mutation": true,
+  "first_portfolio_sha256_int64_le": "6057590784b2c9daa74f944acfa3dd328f165588dbcb4198642f3fd782965526",
+  "game": "ssq",
+  "replay_portfolio_sha256_int64_le": "6057590784b2c9daa74f944acfa3dd328f165588dbcb4198642f3fd782965526",
+  "selected_candidate": "raw_control",
+  "ticket_replay_matches_after_outer_label_mutation": true
+}

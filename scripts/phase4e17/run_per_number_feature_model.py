@@ -825,6 +825,175 @@ def per_canonical_number_metrics(
     return result
 
 
+SSQ_FIXED_PRIZES = {
+    2: 250000.0,
+    3: 3000.0,
+    4: 200.0,
+    5: 10.0,
+    6: 5.0,
+}
+DLT_OLD_FIXED_PRIZES = {
+    3: 10000.0,
+    4: 3000.0,
+    5: 600.0,
+    6: 100.0,
+    7: 10.0,
+    8: 5.0,
+    9: 5.0,
+}
+DLT_NEW_FIXED_PRIZES = {
+    3: 6666.0,
+    4: 380.0,
+    5: 200.0,
+    6: 18.0,
+    7: 7.0,
+}
+DLT_PROMO_2026050_FIXED_PRIZES = {
+    3: 7500.0,
+    4: 450.0,
+    5: 225.0,
+    6: 22.5,
+    7: 10.0,
+}
+
+
+def ticket_prize(
+    game: str, issue: str, front_hits: int, back_hits: int
+) -> dict[str, object]:
+    """Return the rule-derived tier and known fixed amount for one complete ticket.
+
+    First/second prizes are deliberately represented as floating (amount=None):
+    canonical draw rows do not contain reliable per-issue payout amounts, so this
+    metric never fabricates them.
+    """
+    front_hits, back_hits = int(front_hits), int(back_hits)
+    if game == "ssq":
+        patterns = {
+            1: {(6, 1)},
+            2: {(6, 0)},
+            3: {(5, 1)},
+            4: {(5, 0), (4, 1)},
+            5: {(4, 0), (3, 1)},
+            6: {(3, 0), (2, 1), (1, 1), (0, 1)},
+        }
+        fixed = SSQ_FIXED_PRIZES
+    elif game == "dlt":
+        if str(issue) == "2026050":
+            fixed = DLT_PROMO_2026050_FIXED_PRIZES
+            patterns = {
+                1: {(5, 2)}, 2: {(5, 1)}, 3: {(5, 0), (4, 2)},
+                4: {(4, 1), (3, 2)}, 5: {(4, 0), (3, 1), (2, 2)},
+                6: {(3, 0), (2, 1), (1, 2), (0, 2)},
+                7: {(2, 0), (1, 1), (0, 1)},
+            }
+        elif str(issue) >= "2026014":
+            fixed = DLT_NEW_FIXED_PRIZES
+            patterns = {
+                1: {(5, 2)}, 2: {(5, 1)}, 3: {(5, 0), (4, 2)},
+                4: {(4, 1), (3, 2)}, 5: {(4, 0), (3, 1), (2, 2)},
+                6: {(3, 0), (2, 1), (1, 2), (0, 2)},
+                7: {(2, 0), (1, 1), (0, 1)},
+            }
+        else:
+            fixed = DLT_OLD_FIXED_PRIZES
+            patterns = {
+                1: {(5, 2)}, 2: {(5, 1)}, 3: {(5, 0), (4, 2)},
+                4: {(4, 1), (3, 2)}, 5: {(4, 0), (3, 1), (2, 2)},
+                6: {(3, 0), (2, 2)}, 7: {(2, 1), (1, 2)},
+                8: {(2, 0), (1, 1), (0, 2)}, 9: {(1, 0), (0, 1)},
+            }
+    else:
+        raise ValueError(f"unsupported game: {game}")
+    tier = next((tier for tier, matches in patterns.items() if (front_hits, back_hits) in matches), None)
+    return {
+        "prize_tier": tier,
+        "fixed_prize_yuan": None if tier is None else fixed.get(tier),
+        "is_floating_prize": bool(
+            (game == "dlt" and tier in (1, 2)) or (game == "ssq" and tier == 1)
+        ),
+    }
+
+
+def _choose(n: int, k: int) -> int:
+    return math.comb(n, k) if 0 <= k <= n else 0
+
+
+def ticket_group_prize_metrics(
+    rows: Sequence[dict[str, object]], front_size: int, back_size: int
+) -> dict[str, object]:
+    """Score the Cartesian product of front/back confidence sets as full tickets."""
+    groups = []
+    for row in rows:
+        front = row["phase4e17_per_number_feature_model"]["zones"]["front"]["confidence_sets"][str(front_size)]
+        back = row["phase4e17_per_number_feature_model"]["zones"]["back"]["confidence_sets"][str(back_size)]
+        actual_front = set(map(int, row["zones"]["front"]["actual_numbers"]))
+        actual_back = set(map(int, row["zones"]["back"]["actual_numbers"]))
+        chosen_front = set(map(int, front["selected_numbers"]))
+        chosen_back = set(map(int, back["selected_numbers"]))
+        required_front = 6 if str(row.get("game", "dlt")) == "ssq" else 5
+        required_back = 1 if str(row.get("game", "dlt")) == "ssq" else 2
+        front_hits_in_set = len(chosen_front & actual_front)
+        back_hits_in_set = len(chosen_back & actual_back)
+        ticket_count = _choose(front_size, required_front) * _choose(back_size, required_back)
+        tier_counts: dict[str, int] = {}
+        known_total = 0.0
+        floating_count = 0
+        for hf in range(required_front + 1):
+            front_ways = _choose(front_hits_in_set, hf) * _choose(front_size - front_hits_in_set, required_front - hf)
+            if not front_ways:
+                continue
+            for hb in range(required_back + 1):
+                count = front_ways * _choose(back_hits_in_set, hb) * _choose(back_size - back_hits_in_set, required_back - hb)
+                if not count:
+                    continue
+                prize = ticket_prize(str(row.get("game", "dlt")), str(row["issue"]), hf, hb)
+                tier = prize["prize_tier"]
+                if tier is not None:
+                    tier_counts[str(tier)] = tier_counts.get(str(tier), 0) + count
+                amount = prize["fixed_prize_yuan"]
+                if prize["is_floating_prize"]:
+                    floating_count += count
+                elif amount is not None:
+                    known_total += float(amount) * count
+        groups.append({
+            "issue": str(row["issue"]),
+            "front_size": front_size,
+            "back_size": back_size,
+            "ticket_count": ticket_count,
+            "front_hit_count_in_set": front_hits_in_set,
+            "back_hit_count_in_set": back_hits_in_set,
+            "known_prize_total_yuan": known_total,
+            "valid_complete_ticket_group": ticket_count > 0,
+            "average_known_prize_yuan": known_total / ticket_count if ticket_count else None,
+            "floating_prize_ticket_count": floating_count,
+            "floating_prize_amounts_excluded": floating_count > 0,
+            "prize_tier_ticket_counts": tier_counts,
+        })
+    total_tickets = sum(int(group["ticket_count"]) for group in groups)
+    total_known = math.fsum(float(group["known_prize_total_yuan"]) for group in groups)
+    return {
+        "front_size": front_size,
+        "back_size": back_size,
+        "group_count": len(groups),
+        "groups": groups,
+        "total_ticket_count": total_tickets,
+        "known_prize_total_yuan": total_known,
+        "pooled_average_known_prize_yuan": total_known / total_tickets if total_tickets else 0.0,
+        "mean_group_average_known_prize_yuan": (
+            statistics.fmean(
+                float(group["average_known_prize_yuan"])
+                for group in groups
+                if group["average_known_prize_yuan"] is not None
+            )
+            if any(group["average_known_prize_yuan"] is not None for group in groups)
+            else None
+        ),
+        "floating_prize_ticket_count": sum(int(group["floating_prize_ticket_count"]) for group in groups),
+        "floating_prize_amounts_excluded": any(bool(group["floating_prize_amounts_excluded"]) for group in groups),
+        "definition": "complete Cartesian product of selected front/back numbers; known fixed prize total divided by complete ticket count",
+    }
+
+
 def split_metrics(rows: Sequence[dict[str, object]]) -> dict[str, object]:
     result: dict[str, object] = {"draws": len(rows)}
     for zone, sizes in ZONE_SIZES.items():
@@ -847,6 +1016,13 @@ def split_metrics(rows: Sequence[dict[str, object]]) -> dict[str, object]:
             "acceptance_pass": bool(individual["positive_association"]),
             "acceptance_uses_fixed_set_or_pooled_set_association": False,
         }
+    result["ticket_group_average_prize_metrics"] = {
+        str(front_size): {
+            str(back_size): ticket_group_prize_metrics(rows, front_size, back_size)
+            for back_size in ZONE_SIZES["back"]
+        }
+        for front_size in ZONE_SIZES["front"]
+    }
     return result
 
 

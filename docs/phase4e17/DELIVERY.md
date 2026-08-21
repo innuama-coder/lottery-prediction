@@ -112,6 +112,12 @@ The accepted hit-rate unit is one predicted number group for one target draw. Fo
 
 Each JSON fixed-size record contains the complete per-group list plus `best_single_group_hit_rate`, `best_single_group_issue`, `best_single_group_hit_count`, and `best_single_group_number_count`. No arbitrary cross-period hit-rate aggregation is emitted.
 
+## Complete-ticket average prize metric
+
+For each outer split, `ticket_group_average_prize_metrics` evaluates every front-size/back-size pair as a Cartesian product of complete legal tickets (DLT: 5 front + 2 back; SSQ: 6 red + 1 blue). A group record contains `ticket_count`, `prize_tier_ticket_counts`, `known_prize_total_yuan`, and `average_known_prize_yuan`; the latter is exactly `known_prize_total_yuan / ticket_count`. The split-level record also reports pooled and mean per-group averages.
+
+Prize classification is rule-versioned by issue: DLT old nine-tier rules before 2026014, DLT seven-tier rules from 2026014, and the 2026050 promotion overlay; SSQ fixed tiers are likewise represented. First/second DLT prizes (and first SSQ prize) are floating and no amount is fabricated when the canonical row lacks official per-issue payout data. Such tickets are counted in `floating_prize_ticket_count` and marked with `floating_prize_amounts_excluded=true`; fixed-prize totals and averages are therefore explicitly “known prize” amounts, not a claim of total realized payout.
+
 ## Exact-ticket gates and evidence
 
 The E13–E16 exact-ticket comparison is copied unchanged. No compressed space is accepted; DLT's first-ranked-space evaluation remains 59/60 and SSQ's remains 52/60; `gates_changed=false`. E17 does not use the alternative number model to construct or rescore exact tickets.

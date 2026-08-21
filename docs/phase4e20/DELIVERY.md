@@ -56,7 +56,8 @@ Observed results on the delivery host:
 - Independent replay: 12 deterministic payload files byte-identical; normalized `report.json` identical after removing only `runtime_seconds` (`5df768696193dfdb13417e61ac1a046cd335b91bf64e9bb4d4b96a3bb0fb95ba`).
 - Focused E20 tests after artifact generation: 8/8 passed in 9.05 seconds.
 - Focused E17/E19/E20 regression: 36/36 passed in 17.34 seconds.
-- Full dirty-worktree Phase4 discovery: 323 tests in 1,042.84 seconds; 302 passed, 20 expected superseded-evidence skips, and the single from-scratch release test correctly stopped at `FAIL_UNFROZEN_MODEL_PATH` because E20 paths were not yet committed. That test is rerun after the delivery commit.
+- Full dirty-worktree Phase4 discovery: 323 tests in 1,042.84 seconds; 302 passed, 20 expected superseded-evidence skips, and the single from-scratch release test correctly stopped at `FAIL_UNFROZEN_MODEL_PATH` because E20 paths were not yet committed. It was rerun after the implementation commit as recorded below.
+- Post-commit from-scratch dual-game release and independent replay: 1/1 passed in 2,427.57 seconds (40:27.70 wall), peak RSS 78,952 KiB. Combined with the discovery run, all 303 runnable Phase4 cases passed; 20 cases remained expected superseded-evidence skips.
 - All four frozen DLT/P4E6 hashes passed, and serving remained `P4-P4E2-20260815-r12 / PROSPECTIVE_ONLY`.
 
 ## Evidence map
@@ -69,4 +70,4 @@ Observed results on the delivery host:
 - `replay-evidence.json` and `independent-replay-evidence.json`: in-process exact replay, future-label mutation, and separate full-run comparison.
 - `report.json`, `delivery/decision.json`, and `delivery/manifest.json`: selection, all candidate/baseline comparisons, binding gate, isolation, decision, and file hashes.
 
-All Phase4E18 and Phase4E19 paths are preserved append-only. The only pre-existing untracked path, `artifacts/tmp_vk6puli/`, was left untouched and is not part of this delivery.
+All Phase4E18 and Phase4E19 paths are preserved append-only.

@@ -118,6 +118,14 @@ For each outer split, `ticket_group_average_prize_metrics` evaluates every front
 
 Prize classification is rule-versioned by issue: DLT old nine-tier rules before 2026014, DLT seven-tier rules from 2026014, and the 2026050 promotion overlay; SSQ fixed tiers are likewise represented. Per the experiment configuration, first prize is fixed at 5,000,000 yuan and second prize at 100,000 yuan for both games. Therefore first/second prizes are included in `known_prize_total_yuan`; `floating_prize_ticket_count` remains zero under this configured benchmark.
 
+## Ranked complete-ticket partitions
+
+The primary partition metric is now defined over ranked complete legal tickets, not over individual numbers and not over the maximum single-ticket hit rate. For each target, all legal tickets are ranked by the additive front-score plus back-score ranking key. The partitions are `N = 1000, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000`. For each prefix of `N` tickets:
+
+`partition_evaluation = known_prize_total_yuan / N`
+
+Unwinning tickets contribute zero. The partition evaluation is the primary value and is ordered higher-is-better. `winning_ticket_count` and `best_single_ticket_hit_rate` remain diagnostic fields only. The machine-readable field is `ranked_ticket_partition_prize_metrics`; scores remain ranking diagnostics and are not true lottery probabilities.
+
 ## Exact-ticket gates and evidence
 
 The E13–E16 exact-ticket comparison is copied unchanged. No compressed space is accepted; DLT's first-ranked-space evaluation remains 59/60 and SSQ's remains 52/60; `gates_changed=false`. E17 does not use the alternative number model to construct or rescore exact tickets.

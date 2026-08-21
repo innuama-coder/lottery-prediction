@@ -47,6 +47,7 @@ SELECTION_BLOCK_DRAWS = 60
 SELECTION_BLOCKS = 4
 STABLE_POSITIVE_BLOCKS = 3
 ZONE_SIZES = e16.ZONE_SIZES
+TICKET_PARTITION_SIZES = (1000, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000)
 
 # The candidate order and every configuration are registered before any E17 label is
 # read.  The two model configurations reuse the conservative and strongest DLT
@@ -922,6 +923,74 @@ def _choose(n: int, k: int) -> int:
     return math.comb(n, k) if 0 <= k <= n else 0
 
 
+def _ranked_zone_combinations(scores: Sequence[float], choose: int) -> list[tuple[float, tuple[int, ...]]]:
+    import itertools
+    ranked = [
+        (math.fsum(float(scores[number - 1]) for number in combo), tuple(combo))
+        for combo in itertools.combinations(range(1, len(scores) + 1), choose)
+    ]
+    ranked.sort(key=lambda value: (-value[0], value[1]))
+    return ranked
+
+
+def ranked_ticket_partition_prize_metrics(
+    row: dict[str, object], game: str, partition_sizes: Sequence[int] = TICKET_PARTITION_SIZES
+) -> dict[str, object]:
+    """Evaluate top-N complete tickets ranked by additive front/back model score."""
+    import heapq
+    import itertools
+    front_zone = row["phase4e17_per_number_feature_model"]["zones"]["front"]
+    back_zone = row["phase4e17_per_number_feature_model"]["zones"]["back"]
+    front_scores = [float(value["candidate_score"]) for value in front_zone["number_observations"]]
+    back_scores = [float(value["candidate_score"]) for value in back_zone["number_observations"]]
+    front_ranked = _ranked_zone_combinations(front_scores, 6 if game == "ssq" else 5)
+    back_ranked = _ranked_zone_combinations(back_scores, 1 if game == "ssq" else 2)
+    max_n = min(max(partition_sizes), len(front_ranked) * len(back_ranked))
+    heap: list[tuple[float, tuple[int, ...], tuple[int, ...], int, int]] = []
+    for front_index, (front_score, front_combo) in enumerate(front_ranked):
+        back_score, back_combo = back_ranked[0]
+        heapq.heappush(heap, (-(front_score + back_score), front_combo, back_combo, front_index, 0))
+    actual_front = set(map(int, row["zones"]["front"]["actual_numbers"]))
+    actual_back = set(map(int, row["zones"]["back"]["actual_numbers"]))
+    results = {int(size): {"partition_size": int(size), "known_prize_total_yuan": 0.0, "winning_ticket_count": 0, "best_single_ticket_hit_rate": 0.0, "best_single_ticket": None} for size in partition_sizes}
+    total = 0.0
+    winners = 0
+    best_rate = 0.0
+    best_ticket = None
+    for rank in range(1, max_n + 1):
+        neg_score, front_combo, back_combo, front_index, back_index = heapq.heappop(heap)
+        front_hits = len(set(front_combo) & actual_front)
+        back_hits = len(set(back_combo) & actual_back)
+        prize = ticket_prize(game, str(row["issue"]), front_hits, back_hits)
+        amount = float(prize["fixed_prize_yuan"] or 0.0)
+        total += amount
+        if amount > 0:
+            winners += 1
+        hit_rate = (front_hits + back_hits) / (len(front_combo) + len(back_combo))
+        if hit_rate > best_rate:
+            best_rate = hit_rate
+            best_ticket = {"rank": rank, "front": list(front_combo), "back": list(back_combo), "front_hits": front_hits, "back_hits": back_hits, "hit_rate": hit_rate}
+        if rank in results:
+            results[rank].update({
+                "known_prize_total_yuan": total,
+                "average_prize_yuan": total / rank,
+                "winning_ticket_count": winners,
+                "best_single_ticket_hit_rate": best_rate,
+                "best_single_ticket": best_ticket,
+                "ranking_score_is_true_lottery_probability": False,
+            })
+        next_back = back_index + 1
+        if next_back < len(back_ranked):
+            back_score, next_back_combo = back_ranked[next_back]
+            heapq.heappush(heap, (-(front_ranked[front_index][0] + back_score), front_combo, next_back_combo, front_index, next_back))
+    return {
+        "ranking_definition": "complete legal tickets ranked by additive front/back candidate scores",
+        "primary_metric": "known_prize_total_yuan / partition_size",
+        "partitions": results,
+        "score_is_true_lottery_probability": False,
+    }
+
+
 def ticket_group_prize_metrics(
     rows: Sequence[dict[str, object]], front_size: int, back_size: int
 ) -> dict[str, object]:
@@ -998,7 +1067,7 @@ def ticket_group_prize_metrics(
     }
 
 
-def split_metrics(rows: Sequence[dict[str, object]]) -> dict[str, object]:
+def split_metrics(rows: Sequence[dict[str, object]], game: str) -> dict[str, object]:
     result: dict[str, object] = {"draws": len(rows)}
     for zone, sizes in ZONE_SIZES.items():
         zone17 = rows[0]["phase4e17_per_number_feature_model"]["zones"][zone]
@@ -1026,6 +1095,10 @@ def split_metrics(rows: Sequence[dict[str, object]]) -> dict[str, object]:
             for back_size in ZONE_SIZES["back"]
         }
         for front_size in ZONE_SIZES["front"]
+    }
+    result["ranked_ticket_partition_prize_metrics"] = {
+        str(row["issue"]): ranked_ticket_partition_prize_metrics(row, game)
+        for row in rows
     }
     return result
 
@@ -1128,9 +1201,9 @@ def run_game(
         if projected != source:
             raise ValueError("FAIL_PHASE4E17_PHASE4E16_OUTER_MUTATION")
     metrics = {
-        "calibration": split_metrics(decorated[:OUTER_CALIBRATION_DRAWS]),
-        "evaluation": split_metrics(decorated[OUTER_CALIBRATION_DRAWS:]),
-        "all_120_descriptive": split_metrics(decorated),
+        "calibration": split_metrics(decorated[:OUTER_CALIBRATION_DRAWS], game),
+        "evaluation": split_metrics(decorated[OUTER_CALIBRATION_DRAWS:], game),
+        "all_120_descriptive": split_metrics(decorated, game),
     }
     evaluation_zone_pass = {
         zone: bool(metrics["evaluation"][zone]["acceptance_pass"])

@@ -2,7 +2,12 @@ import sys
 import unittest
 
 sys.path.insert(0, "scripts/phase4e17")
-from run_per_number_feature_model import ticket_group_prize_metrics, ticket_prize
+from run_per_number_feature_model import (
+    TICKET_PARTITION_SIZES,
+    ranked_ticket_partition_prize_metrics,
+    ticket_group_prize_metrics,
+    ticket_prize,
+)
 
 
 class Phase4E17PrizeMetricTests(unittest.TestCase):
@@ -57,6 +62,22 @@ class Phase4E17PrizeMetricTests(unittest.TestCase):
         self.assertEqual(group["ticket_count"], 0)
         self.assertFalse(group["valid_complete_ticket_group"])
         self.assertIsNone(group["average_known_prize_yuan"])
+
+    def test_ranked_ticket_partitions_use_total_prize_divided_by_n(self):
+        row = self.row()
+        row["phase4e17_per_number_feature_model"]["zones"]["front"]["number_observations"] = [
+            {"number": n, "candidate_score": float(36 - n)} for n in range(1, 36)
+        ]
+        row["phase4e17_per_number_feature_model"]["zones"]["back"]["number_observations"] = [
+            {"number": n, "candidate_score": float(13 - n)} for n in range(1, 13)
+        ]
+        metric = ranked_ticket_partition_prize_metrics(row, "dlt", (1000, 5000))
+        self.assertEqual(tuple(metric["partitions"]), (1000, 5000))
+        for value in metric["partitions"].values():
+            self.assertEqual(
+                value["average_prize_yuan"],
+                value["known_prize_total_yuan"] / value["partition_size"],
+            )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,4038 @@
+{
+  "artifact_type": "phase4e18_ssq_specialized_model_report",
+  "baseline_partition_average_prize_yuan": {
+    "all_120": {
+      "1000": 0.69675,
+      "10000": 0.7330708333333333,
+      "100000": 0.7614233333333333,
+      "20000": 0.741975,
+      "30000": 0.7456638888888889,
+      "40000": 0.7515708333333333,
+      "5000": 0.7265916666666666,
+      "50000": 0.75262,
+      "60000": 0.7540763888888888,
+      "70000": 0.7550720238095238,
+      "80000": 0.7547338541666667,
+      "90000": 0.7539976851851852
+    },
+    "calibration": {
+      "1000": 0.6505,
+      "10000": 0.6958166666666666,
+      "100000": 0.7280083333333334,
+      "20000": 0.7051833333333334,
+      "30000": 0.7131666666666666,
+      "40000": 0.7213604166666666,
+      "5000": 0.6654833333333333,
+      "50000": 0.7232316666666667,
+      "60000": 0.7263875,
+      "70000": 0.7300380952380953,
+      "80000": 0.7298145833333334,
+      "90000": 0.7287398148148149
+    },
+    "evaluation": {
+      "1000": 0.743,
+      "10000": 0.770325,
+      "100000": 0.7948383333333333,
+      "20000": 0.7787666666666667,
+      "30000": 0.7781611111111111,
+      "40000": 0.78178125,
+      "5000": 0.7877,
+      "50000": 0.7820083333333333,
+      "60000": 0.7817652777777778,
+      "70000": 0.7801059523809524,
+      "80000": 0.779653125,
+      "90000": 0.7792555555555556
+    }
+  },
+  "dlt_isolation_required": true,
+  "game": "ssq",
+  "optimization_result": "NO_PROMOTION: specialized feature candidates did not beat the registered raw-control stability gate",
+  "outer_draws": 120,
+  "p4e6_serving_release": "P4-P4E2-20260815-r12",
+  "p4e6_serving_unchanged": true,
+  "partitions": {
+    "all_120": {
+      "1000": {
+        "average_prize_yuan": 0.69675,
+        "draws": 120,
+        "known_prize_total_yuan": 83610.0,
+        "partition_size": 1000,
+        "winning_ticket_count": 14709
+      },
+      "10000": {
+        "average_prize_yuan": 0.7330708333333333,
+        "draws": 120,
+        "known_prize_total_yuan": 879685.0,
+        "partition_size": 10000,
+        "winning_ticket_count": 144509
+      },
+      "100000": {
+        "average_prize_yuan": 0.7614233333333333,
+        "draws": 120,
+        "known_prize_total_yuan": 9137080.0,
+        "partition_size": 100000,
+        "winning_ticket_count": 1440563
+      },
+      "20000": {
+        "average_prize_yuan": 0.741975,
+        "draws": 120,
+        "known_prize_total_yuan": 1780740.0,
+        "partition_size": 20000,
+        "winning_ticket_count": 290068
+      },
+      "30000": {
+        "average_prize_yuan": 0.7456638888888889,
+        "draws": 120,
+        "known_prize_total_yuan": 2684390.0,
+        "partition_size": 30000,
+        "winning_ticket_count": 434370
+      },
+      "40000": {
+        "average_prize_yuan": 0.7515708333333333,
+        "draws": 120,
+        "known_prize_total_yuan": 3607540.0,
+        "partition_size": 40000,
+        "winning_ticket_count": 578654
+      },
+      "5000": {
+        "average_prize_yuan": 0.7265916666666666,
+        "draws": 120,
+        "known_prize_total_yuan": 435955.0,
+        "partition_size": 5000,
+        "winning_ticket_count": 72608
+      },
+      "50000": {
+        "average_prize_yuan": 0.75262,
+        "draws": 120,
+        "known_prize_total_yuan": 4515720.0,
+        "partition_size": 50000,
+        "winning_ticket_count": 722356
+      },
+      "60000": {
+        "average_prize_yuan": 0.7540763888888888,
+        "draws": 120,
+        "known_prize_total_yuan": 5429350.0,
+        "partition_size": 60000,
+        "winning_ticket_count": 866892
+      },
+      "70000": {
+        "average_prize_yuan": 0.7550720238095238,
+        "draws": 120,
+        "known_prize_total_yuan": 6342605.0,
+        "partition_size": 70000,
+        "winning_ticket_count": 1010312
+      },
+      "80000": {
+        "average_prize_yuan": 0.7547338541666667,
+        "draws": 120,
+        "known_prize_total_yuan": 7245445.0,
+        "partition_size": 80000,
+        "winning_ticket_count": 1153930
+      },
+      "90000": {
+        "average_prize_yuan": 0.7539976851851852,
+        "draws": 120,
+        "known_prize_total_yuan": 8143175.0,
+        "partition_size": 90000,
+        "winning_ticket_count": 1297376
+      }
+    },
+    "calibration": {
+      "1000": {
+        "average_prize_yuan": 0.6505,
+        "draws": 60,
+        "known_prize_total_yuan": 39030.0,
+        "partition_size": 1000,
+        "winning_ticket_count": 7106
+      },
+      "10000": {
+        "average_prize_yuan": 0.6958166666666666,
+        "draws": 60,
+        "known_prize_total_yuan": 417490.0,
+        "partition_size": 10000,
+        "winning_ticket_count": 70123
+      },
+      "100000": {
+        "average_prize_yuan": 0.7280083333333334,
+        "draws": 60,
+        "known_prize_total_yuan": 4368050.0,
+        "partition_size": 100000,
+        "winning_ticket_count": 700516
+      },
+      "20000": {
+        "average_prize_yuan": 0.7051833333333334,
+        "draws": 60,
+        "known_prize_total_yuan": 846220.0,
+        "partition_size": 20000,
+        "winning_ticket_count": 140874
+      },
+      "30000": {
+        "average_prize_yuan": 0.7131666666666666,
+        "draws": 60,
+        "known_prize_total_yuan": 1283700.0,
+        "partition_size": 30000,
+        "winning_ticket_count": 211316
+      },
+      "40000": {
+        "average_prize_yuan": 0.7213604166666666,
+        "draws": 60,
+        "known_prize_total_yuan": 1731265.0,
+        "partition_size": 40000,
+        "winning_ticket_count": 281372
+      },
+      "5000": {
+        "average_prize_yuan": 0.6654833333333333,
+        "draws": 60,
+        "known_prize_total_yuan": 199645.0,
+        "partition_size": 5000,
+        "winning_ticket_count": 35213
+      },
+      "50000": {
+        "average_prize_yuan": 0.7232316666666667,
+        "draws": 60,
+        "known_prize_total_yuan": 2169695.0,
+        "partition_size": 50000,
+        "winning_ticket_count": 351549
+      },
+      "60000": {
+        "average_prize_yuan": 0.7263875,
+        "draws": 60,
+        "known_prize_total_yuan": 2614995.0,
+        "partition_size": 60000,
+        "winning_ticket_count": 421623
+      },
+      "70000": {
+        "average_prize_yuan": 0.7300380952380953,
+        "draws": 60,
+        "known_prize_total_yuan": 3066160.0,
+        "partition_size": 70000,
+        "winning_ticket_count": 491132
+      },
+      "80000": {
+        "average_prize_yuan": 0.7298145833333334,
+        "draws": 60,
+        "known_prize_total_yuan": 3503110.0,
+        "partition_size": 80000,
+        "winning_ticket_count": 560875
+      },
+      "90000": {
+        "average_prize_yuan": 0.7287398148148149,
+        "draws": 60,
+        "known_prize_total_yuan": 3935195.0,
+        "partition_size": 90000,
+        "winning_ticket_count": 630812
+      }
+    },
+    "evaluation": {
+      "1000": {
+        "average_prize_yuan": 0.743,
+        "draws": 60,
+        "known_prize_total_yuan": 44580.0,
+        "partition_size": 1000,
+        "winning_ticket_count": 7603
+      },
+      "10000": {
+        "average_prize_yuan": 0.770325,
+        "draws": 60,
+        "known_prize_total_yuan": 462195.0,
+        "partition_size": 10000,
+        "winning_ticket_count": 74386
+      },
+      "100000": {
+        "average_prize_yuan": 0.7948383333333333,
+        "draws": 60,
+        "known_prize_total_yuan": 4769030.0,
+        "partition_size": 100000,
+        "winning_ticket_count": 740047
+      },
+      "20000": {
+        "average_prize_yuan": 0.7787666666666667,
+        "draws": 60,
+        "known_prize_total_yuan": 934520.0,
+        "partition_size": 20000,
+        "winning_ticket_count": 149194
+      },
+      "30000": {
+        "average_prize_yuan": 0.7781611111111111,
+        "draws": 60,
+        "known_prize_total_yuan": 1400690.0,
+        "partition_size": 30000,
+        "winning_ticket_count": 223054
+      },
+      "40000": {
+        "average_prize_yuan": 0.78178125,
+        "draws": 60,
+        "known_prize_total_yuan": 1876275.0,
+        "partition_size": 40000,
+        "winning_ticket_count": 297282
+      },
+      "5000": {
+        "average_prize_yuan": 0.7877,
+        "draws": 60,
+        "known_prize_total_yuan": 236310.0,
+        "partition_size": 5000,
+        "winning_ticket_count": 37395
+      },
+      "50000": {
+        "average_prize_yuan": 0.7820083333333333,
+        "draws": 60,
+        "known_prize_total_yuan": 2346025.0,
+        "partition_size": 50000,
+        "winning_ticket_count": 370807
+      },
+      "60000": {
+        "average_prize_yuan": 0.7817652777777778,
+        "draws": 60,
+        "known_prize_total_yuan": 2814355.0,
+        "partition_size": 60000,
+        "winning_ticket_count": 445269
+      },
+      "70000": {
+        "average_prize_yuan": 0.7801059523809524,
+        "draws": 60,
+        "known_prize_total_yuan": 3276445.0,
+        "partition_size": 70000,
+        "winning_ticket_count": 519180
+      },
+      "80000": {
+        "average_prize_yuan": 0.779653125,
+        "draws": 60,
+        "known_prize_total_yuan": 3742335.0,
+        "partition_size": 80000,
+        "winning_ticket_count": 593055
+      },
+      "90000": {
+        "average_prize_yuan": 0.7792555555555556,
+        "draws": 60,
+        "known_prize_total_yuan": 4207980.0,
+        "partition_size": 90000,
+        "winning_ticket_count": 666564
+      }
+    }
+  },
+  "primary_metric": "known_prize_total_yuan / (draws * N)",
+  "promotion_eligible": false,
+  "selected_candidates": {
+    "back": "raw_control",
+    "front": "raw_control"
+  },
+  "selection": {
+    "back": {
+      "candidates": [
+        {
+          "blocks": [
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.031249999999999993
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.0567005487902918,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.06018535677979522,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.06234341924259446,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 16,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.08333333333333333,
+                  "hit_rate_wilson95": [
+                    0.05194399577339312,
+                    0.13106862594890198
+                  ],
+                  "mean_orientation_score": 0.06452014909073664,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 10,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.052083333333333336,
+                  "hit_rate_wilson95": [
+                    0.028533458315420764,
+                    0.09320511003604648
+                  ],
+                  "mean_orientation_score": 0.06875052609658189,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.05320624510080031,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 0.14870007838719507
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.003680197209603717
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.03125
+                },
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.005208333333333336
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.010416666666666664
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 18,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.09375,
+                  "hit_rate_wilson95": [
+                    0.06012513639418231,
+                    0.1433121697850554
+                  ],
+                  "mean_orientation_score": 0.05993726861945357,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.0616786304200188,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.06268713661574865,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 9,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.046875,
+                  "hit_rate_wilson95": [
+                    0.024854233439434065,
+                    0.08667199268356186
+                  ],
+                  "mean_orientation_score": 0.06347782594555144,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 10,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.052083333333333336,
+                  "hit_rate_wilson95": [
+                    0.028533458315420764,
+                    0.09320511003604648
+                  ],
+                  "mean_orientation_score": 0.06471913839922754,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.6589798217612848,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -9.543677148180556
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.06574664550827906
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.026041666666666664
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.056944613022394425,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 13,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.06770833333333333,
+                  "hit_rate_wilson95": [
+                    0.03999268563113287,
+                    0.1123829094057483
+                  ],
+                  "mean_orientation_score": 0.0602733383370635,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 8,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.041666666666666664,
+                  "hit_rate_wilson95": [
+                    0.021261895946792238,
+                    0.08005198794773236
+                  ],
+                  "mean_orientation_score": 0.062168770563541476,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 13,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.06770833333333333,
+                  "hit_rate_wilson95": [
+                    0.03999268563113287,
+                    0.1123829094057483
+                  ],
+                  "mean_orientation_score": 0.06348608973209612,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 15,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.078125,
+                  "hit_rate_wilson95": [
+                    0.04791391008238129,
+                    0.12488636941144249
+                  ],
+                  "mean_orientation_score": 0.06962718834490449,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.033931961750210224,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 0.45708861199663636
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.01788855352516237
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.036458333333333336
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.05603685146824933,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 14,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.07291666666666667,
+                  "hit_rate_wilson95": [
+                    0.04392874874927421,
+                    0.11865918851607826
+                  ],
+                  "mean_orientation_score": 0.05945582811445263,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 7,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.036458333333333336,
+                  "hit_rate_wilson95": [
+                    0.017770646576572728,
+                    0.07333089508948057
+                  ],
+                  "mean_orientation_score": 0.06166687263897496,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.06451486935449262,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 17,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.08854166666666667,
+                  "hit_rate_wilson95": [
+                    0.05601543330346269,
+                    0.13720953064730373
+                  ],
+                  "mean_orientation_score": 0.07082557842383046,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": -0.027271643178166494,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 1.436346290850664
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.024410421997877817
+            }
+          ],
+          "candidate_id": "raw_control",
+          "median_rho": 0.01788855352516237,
+          "positive_blocks": 3
+        },
+        {
+          "blocks": [
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.005208333333333329
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.015625
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 8,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.041666666666666664,
+                  "hit_rate_wilson95": [
+                    0.021261895946792238,
+                    0.08005198794773236
+                  ],
+                  "mean_orientation_score": 0.05398702182159119,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 13,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.06770833333333333,
+                  "hit_rate_wilson95": [
+                    0.03999268563113287,
+                    0.1123829094057483
+                  ],
+                  "mean_orientation_score": 0.061667784959860354,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.06389797287348804,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 15,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.078125,
+                  "hit_rate_wilson95": [
+                    0.04791391008238129,
+                    0.12488636941144249
+                  ],
+                  "mean_orientation_score": 0.06537083099250765,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.06757638935255277,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": -0.03977207989079613,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 1.6363532782527381
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.021397939893814014
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.026041666666666664
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.005208333333333336
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 15,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.078125,
+                  "hit_rate_wilson95": [
+                    0.04791391008238129,
+                    0.12488636941144249
+                  ],
+                  "mean_orientation_score": 0.05602184114055492,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 10,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.052083333333333336,
+                  "hit_rate_wilson95": [
+                    0.028533458315420764,
+                    0.09320511003604648
+                  ],
+                  "mean_orientation_score": 0.061608365362288954,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.06338406125817497,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.06469227611056022,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.06679345612842093,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.15966307543850566,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -1.5546092070160908
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.01653759505581417
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.03125000000000001
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.05858087955132412,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 14,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.07291666666666667,
+                  "hit_rate_wilson95": [
+                    0.04392874874927421,
+                    0.11865918851607826
+                  ],
+                  "mean_orientation_score": 0.06181263789082076,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 14,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.07291666666666667,
+                  "hit_rate_wilson95": [
+                    0.04392874874927421,
+                    0.11865918851607826
+                  ],
+                  "mean_orientation_score": 0.06296637847244031,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 8,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.041666666666666664,
+                  "hit_rate_wilson95": [
+                    0.021261895946792238,
+                    0.08005198794773236
+                  ],
+                  "mean_orientation_score": 0.06379484417476372,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 13,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.06770833333333333,
+                  "hit_rate_wilson95": [
+                    0.03999268563113287,
+                    0.1123829094057483
+                  ],
+                  "mean_orientation_score": 0.06534525991065109,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.14194838481893213,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -1.2711741571029138
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.013074793461967636
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.03125
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 8,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.041666666666666664,
+                  "hit_rate_wilson95": [
+                    0.021261895946792238,
+                    0.08005198794773236
+                  ],
+                  "mean_orientation_score": 0.05688479769488978,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 15,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.078125,
+                  "hit_rate_wilson95": [
+                    0.04791391008238129,
+                    0.12488636941144249
+                  ],
+                  "mean_orientation_score": 0.06005786584631825,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 9,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.046875,
+                  "hit_rate_wilson95": [
+                    0.024854233439434065,
+                    0.08667199268356186
+                  ],
+                  "mean_orientation_score": 0.062391250015408684,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 9,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.046875,
+                  "hit_rate_wilson95": [
+                    0.024854233439434065,
+                    0.08667199268356186
+                  ],
+                  "mean_orientation_score": 0.06462066890998189,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 19,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.09895833333333333,
+                  "hit_rate_wilson95": [
+                    0.06427041684371626,
+                    0.14937923156399277
+                  ],
+                  "mean_orientation_score": 0.0685454175334014,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": -0.13028968299797336,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 3.0846349279675738
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.047469885526407435
+            }
+          ],
+          "candidate_id": "surprise_renewal",
+          "median_rho": 0.021397939893814014,
+          "positive_blocks": 2
+        },
+        {
+          "blocks": [
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.026041666666666664
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 13,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.06770833333333333,
+                  "hit_rate_wilson95": [
+                    0.03999268563113287,
+                    0.1123829094057483
+                  ],
+                  "mean_orientation_score": 0.05836456390528532,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 13,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.06770833333333333,
+                  "hit_rate_wilson95": [
+                    0.03999268563113287,
+                    0.1123829094057483
+                  ],
+                  "mean_orientation_score": 0.06127342343010727,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 8,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.041666666666666664,
+                  "hit_rate_wilson95": [
+                    0.021261895946792238,
+                    0.08005198794773236
+                  ],
+                  "mean_orientation_score": 0.06274790048195918,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.06378280048517806,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 14,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.07291666666666667,
+                  "hit_rate_wilson95": [
+                    0.04392874874927421,
+                    0.11865918851607826
+                  ],
+                  "mean_orientation_score": 0.06633131169747015,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.0401130909072488,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 0.3581905454840192
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.007577797871987367
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.04166666666666667
+                },
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.005208333333333336
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.026041666666666664
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 20,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.10416666666666667,
+                  "hit_rate_wilson95": [
+                    0.0684489159645522,
+                    0.15541307467162818
+                  ],
+                  "mean_orientation_score": 0.0603454869661397,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.061851040895460674,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.06244136425129174,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.06296530047922143,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 6,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.03125,
+                  "hit_rate_wilson95": [
+                    0.014399282241477667,
+                    0.06648991719610431
+                  ],
+                  "mean_orientation_score": 0.06489680740788646,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.9245656173085293,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -13.793049876936468
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.0955688816605019
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.031249999999999993
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.010416666666666671
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 13,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.06770833333333333,
+                  "hit_rate_wilson95": [
+                    0.03999268563113287,
+                    0.1123829094057483
+                  ],
+                  "mean_orientation_score": 0.06041618713996569,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 16,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.08333333333333333,
+                  "hit_rate_wilson95": [
+                    0.05194399577339312,
+                    0.13106862594890198
+                  ],
+                  "mean_orientation_score": 0.0617299036651501,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 10,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.052083333333333336,
+                  "hit_rate_wilson95": [
+                    0.028533458315420764,
+                    0.09320511003604648
+                  ],
+                  "mean_orientation_score": 0.062235490825922925,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 8,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.041666666666666664,
+                  "hit_rate_wilson95": [
+                    0.021261895946792238,
+                    0.08005198794773236
+                  ],
+                  "mean_orientation_score": 0.06285158422769108,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 13,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.06770833333333333,
+                  "hit_rate_wilson95": [
+                    0.03999268563113287,
+                    0.1123829094057483
+                  ],
+                  "mean_orientation_score": 0.06526683414127021,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.31596584714217135,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -4.055453554274742
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.021258244461639854
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.026041666666666664
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.02604166666666667
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.015624999999999993
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.059088185241484646,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 7,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.036458333333333336,
+                  "hit_rate_wilson95": [
+                    0.017770646576572728,
+                    0.07333089508948057
+                  ],
+                  "mean_orientation_score": 0.060920658878349014,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 18,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.09375,
+                  "hit_rate_wilson95": [
+                    0.06012513639418231,
+                    0.1433121697850554
+                  ],
+                  "mean_orientation_score": 0.06210965561587536,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 13,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.06770833333333333,
+                  "hit_rate_wilson95": [
+                    0.03999268563113287,
+                    0.1123829094057483
+                  ],
+                  "mean_orientation_score": 0.06341921126863465,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 10,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.052083333333333336,
+                  "hit_rate_wilson95": [
+                    0.028533458315420764,
+                    0.09320511003604648
+                  ],
+                  "mean_orientation_score": 0.06696228899565634,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.06043292853487719,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 0.033073143441964985
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.009146158541225084
+            }
+          ],
+          "candidate_id": "transition_graph",
+          "median_rho": 0.007577797871987367,
+          "positive_blocks": 2
+        },
+        {
+          "blocks": [
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.031249999999999993
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 10,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.052083333333333336,
+                  "hit_rate_wilson95": [
+                    0.028533458315420764,
+                    0.09320511003604648
+                  ],
+                  "mean_orientation_score": 0.0521433129830442,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.05812780551370836,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 16,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.08333333333333333,
+                  "hit_rate_wilson95": [
+                    0.05194399577339312,
+                    0.13106862594890198
+                  ],
+                  "mean_orientation_score": 0.06323841595166367,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 10,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.052083333333333336,
+                  "hit_rate_wilson95": [
+                    0.028533458315420764,
+                    0.09320511003604648
+                  ],
+                  "mean_orientation_score": 0.06653637752280793,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.07245408802877586,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.04353477795801011,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 0.3034435526718382
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.004767175288389625
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.05208333333333333
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.036458333333333336
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 16,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.08333333333333333,
+                  "hit_rate_wilson95": [
+                    0.05194399577339312,
+                    0.13106862594890198
+                  ],
+                  "mean_orientation_score": 0.053286210328795464,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 6,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.03125,
+                  "hit_rate_wilson95": [
+                    0.014399282241477667,
+                    0.06648991719610431
+                  ],
+                  "mean_orientation_score": 0.060197161763173766,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 15,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.078125,
+                  "hit_rate_wilson95": [
+                    0.04791391008238129,
+                    0.12488636941144249
+                  ],
+                  "mean_orientation_score": 0.06320475226080953,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 15,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.078125,
+                  "hit_rate_wilson95": [
+                    0.04791391008238129,
+                    0.12488636941144249
+                  ],
+                  "mean_orientation_score": 0.06580564024050282,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 8,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.041666666666666664,
+                  "hit_rate_wilson95": [
+                    0.021261895946792238,
+                    0.08005198794773236
+                  ],
+                  "mean_orientation_score": 0.07000623540671842,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.14450941601913406,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -1.312150656306145
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.02604088911605668
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.005208333333333336
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.010416666666666671
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.005208333333333336
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.05492993813489817,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.05863774298277615,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 14,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.07291666666666667,
+                  "hit_rate_wilson95": [
+                    0.04392874874927421,
+                    0.11865918851607826
+                  ],
+                  "mean_orientation_score": 0.062289233143281574,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 12,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.0625,
+                  "hit_rate_wilson95": [
+                    0.03611064877145607,
+                    0.1060526040369538
+                  ],
+                  "mean_orientation_score": 0.06512133647029637,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.0715217492687477,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.09086170888135234,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -0.45378734210163735
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.004549779672632443
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.020833333333333336
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 8,
+                  "binary_trials": 192,
+                  "bucket": 1,
+                  "hit_rate": 0.041666666666666664,
+                  "hit_rate_wilson95": [
+                    0.021261895946792238,
+                    0.08005198794773236
+                  ],
+                  "mean_orientation_score": 0.05449529103577133,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 2,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.05904391547425456,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 15,
+                  "binary_trials": 192,
+                  "bucket": 3,
+                  "hit_rate": 0.078125,
+                  "hit_rate_wilson95": [
+                    0.04791391008238129,
+                    0.12488636941144249
+                  ],
+                  "mean_orientation_score": 0.062054785359933355,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 11,
+                  "binary_trials": 192,
+                  "bucket": 4,
+                  "hit_rate": 0.057291666666666664,
+                  "hit_rate_wilson95": [
+                    0.03228852736382153,
+                    0.09966238321611698
+                  ],
+                  "mean_orientation_score": 0.06477443385352023,
+                  "observations": 192
+                },
+                {
+                  "binary_hits": 15,
+                  "binary_trials": 192,
+                  "bucket": 5,
+                  "hit_rate": 0.078125,
+                  "hit_rate_wilson95": [
+                    0.04791391008238129,
+                    0.12488636941144249
+                  ],
+                  "mean_orientation_score": 0.07213157427652052,
+                  "observations": 192
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": -0.05374436607189283,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 1.8599098571502852
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 960,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.04740777249333395
+            }
+          ],
+          "candidate_id": "short_window_blue",
+          "median_rho": 0.004767175288389625,
+          "positive_blocks": 2
+        }
+      ],
+      "selected": {
+        "blocks": [
+          {
+            "adjacent_bucket_inversions": [
+              {
+                "higher_bucket": 5,
+                "lower_bucket": 4,
+                "magnitude": 0.031249999999999993
+              }
+            ],
+            "buckets": [
+              {
+                "binary_hits": 11,
+                "binary_trials": 192,
+                "bucket": 1,
+                "hit_rate": 0.057291666666666664,
+                "hit_rate_wilson95": [
+                  0.03228852736382153,
+                  0.09966238321611698
+                ],
+                "mean_orientation_score": 0.0567005487902918,
+                "observations": 192
+              },
+              {
+                "binary_hits": 11,
+                "binary_trials": 192,
+                "bucket": 2,
+                "hit_rate": 0.057291666666666664,
+                "hit_rate_wilson95": [
+                  0.03228852736382153,
+                  0.09966238321611698
+                ],
+                "mean_orientation_score": 0.06018535677979522,
+                "observations": 192
+              },
+              {
+                "binary_hits": 12,
+                "binary_trials": 192,
+                "bucket": 3,
+                "hit_rate": 0.0625,
+                "hit_rate_wilson95": [
+                  0.03611064877145607,
+                  0.1060526040369538
+                ],
+                "mean_orientation_score": 0.06234341924259446,
+                "observations": 192
+              },
+              {
+                "binary_hits": 16,
+                "binary_trials": 192,
+                "bucket": 4,
+                "hit_rate": 0.08333333333333333,
+                "hit_rate_wilson95": [
+                  0.05194399577339312,
+                  0.13106862594890198
+                ],
+                "mean_orientation_score": 0.06452014909073664,
+                "observations": 192
+              },
+              {
+                "binary_hits": 10,
+                "binary_trials": 192,
+                "bucket": 5,
+                "hit_rate": 0.052083333333333336,
+                "hit_rate_wilson95": [
+                  0.028533458315420764,
+                  0.09320511003604648
+                ],
+                "mean_orientation_score": 0.06875052609658189,
+                "observations": 192
+              }
+            ],
+            "descriptive_linear_association": {
+              "intercept": 0.05320624510080031,
+              "interpretation": "descriptive OLS association, not probability calibration",
+              "slope": 0.14870007838719507
+            },
+            "monotonic_bucket_behavior": false,
+            "observation_unit": "one_draw_x_one_candidate_number",
+            "observations": 960,
+            "outcome": "binary_number_appears_in_actual_zone_draw",
+            "positive_association": true,
+            "positive_descriptive_slope": true,
+            "positive_spearman_rho": true,
+            "score_field": "candidate_score",
+            "score_is_true_lottery_probability": false,
+            "spearman_rho": 0.003680197209603717
+          },
+          {
+            "adjacent_bucket_inversions": [
+              {
+                "higher_bucket": 2,
+                "lower_bucket": 1,
+                "magnitude": 0.03125
+              },
+              {
+                "higher_bucket": 3,
+                "lower_bucket": 2,
+                "magnitude": 0.005208333333333336
+              },
+              {
+                "higher_bucket": 4,
+                "lower_bucket": 3,
+                "magnitude": 0.010416666666666664
+              }
+            ],
+            "buckets": [
+              {
+                "binary_hits": 18,
+                "binary_trials": 192,
+                "bucket": 1,
+                "hit_rate": 0.09375,
+                "hit_rate_wilson95": [
+                  0.06012513639418231,
+                  0.1433121697850554
+                ],
+                "mean_orientation_score": 0.05993726861945357,
+                "observations": 192
+              },
+              {
+                "binary_hits": 12,
+                "binary_trials": 192,
+                "bucket": 2,
+                "hit_rate": 0.0625,
+                "hit_rate_wilson95": [
+                  0.03611064877145607,
+                  0.1060526040369538
+                ],
+                "mean_orientation_score": 0.0616786304200188,
+                "observations": 192
+              },
+              {
+                "binary_hits": 11,
+                "binary_trials": 192,
+                "bucket": 3,
+                "hit_rate": 0.057291666666666664,
+                "hit_rate_wilson95": [
+                  0.03228852736382153,
+                  0.09966238321611698
+                ],
+                "mean_orientation_score": 0.06268713661574865,
+                "observations": 192
+              },
+              {
+                "binary_hits": 9,
+                "binary_trials": 192,
+                "bucket": 4,
+                "hit_rate": 0.046875,
+                "hit_rate_wilson95": [
+                  0.024854233439434065,
+                  0.08667199268356186
+                ],
+                "mean_orientation_score": 0.06347782594555144,
+                "observations": 192
+              },
+              {
+                "binary_hits": 10,
+                "binary_trials": 192,
+                "bucket": 5,
+                "hit_rate": 0.052083333333333336,
+                "hit_rate_wilson95": [
+                  0.028533458315420764,
+                  0.09320511003604648
+                ],
+                "mean_orientation_score": 0.06471913839922754,
+                "observations": 192
+              }
+            ],
+            "descriptive_linear_association": {
+              "intercept": 0.6589798217612848,
+              "interpretation": "descriptive OLS association, not probability calibration",
+              "slope": -9.543677148180556
+            },
+            "monotonic_bucket_behavior": false,
+            "observation_unit": "one_draw_x_one_candidate_number",
+            "observations": 960,
+            "outcome": "binary_number_appears_in_actual_zone_draw",
+            "positive_association": false,
+            "positive_descriptive_slope": false,
+            "positive_spearman_rho": false,
+            "score_field": "candidate_score",
+            "score_is_true_lottery_probability": false,
+            "spearman_rho": -0.06574664550827906
+          },
+          {
+            "adjacent_bucket_inversions": [
+              {
+                "higher_bucket": 3,
+                "lower_bucket": 2,
+                "magnitude": 0.026041666666666664
+              }
+            ],
+            "buckets": [
+              {
+                "binary_hits": 11,
+                "binary_trials": 192,
+                "bucket": 1,
+                "hit_rate": 0.057291666666666664,
+                "hit_rate_wilson95": [
+                  0.03228852736382153,
+                  0.09966238321611698
+                ],
+                "mean_orientation_score": 0.056944613022394425,
+                "observations": 192
+              },
+              {
+                "binary_hits": 13,
+                "binary_trials": 192,
+                "bucket": 2,
+                "hit_rate": 0.06770833333333333,
+                "hit_rate_wilson95": [
+                  0.03999268563113287,
+                  0.1123829094057483
+                ],
+                "mean_orientation_score": 0.0602733383370635,
+                "observations": 192
+              },
+              {
+                "binary_hits": 8,
+                "binary_trials": 192,
+                "bucket": 3,
+                "hit_rate": 0.041666666666666664,
+                "hit_rate_wilson95": [
+                  0.021261895946792238,
+                  0.08005198794773236
+                ],
+                "mean_orientation_score": 0.062168770563541476,
+                "observations": 192
+              },
+              {
+                "binary_hits": 13,
+                "binary_trials": 192,
+                "bucket": 4,
+                "hit_rate": 0.06770833333333333,
+                "hit_rate_wilson95": [
+                  0.03999268563113287,
+                  0.1123829094057483
+                ],
+                "mean_orientation_score": 0.06348608973209612,
+                "observations": 192
+              },
+              {
+                "binary_hits": 15,
+                "binary_trials": 192,
+                "bucket": 5,
+                "hit_rate": 0.078125,
+                "hit_rate_wilson95": [
+                  0.04791391008238129,
+                  0.12488636941144249
+                ],
+                "mean_orientation_score": 0.06962718834490449,
+                "observations": 192
+              }
+            ],
+            "descriptive_linear_association": {
+              "intercept": 0.033931961750210224,
+              "interpretation": "descriptive OLS association, not probability calibration",
+              "slope": 0.45708861199663636
+            },
+            "monotonic_bucket_behavior": false,
+            "observation_unit": "one_draw_x_one_candidate_number",
+            "observations": 960,
+            "outcome": "binary_number_appears_in_actual_zone_draw",
+            "positive_association": true,
+            "positive_descriptive_slope": true,
+            "positive_spearman_rho": true,
+            "score_field": "candidate_score",
+            "score_is_true_lottery_probability": false,
+            "spearman_rho": 0.01788855352516237
+          },
+          {
+            "adjacent_bucket_inversions": [
+              {
+                "higher_bucket": 3,
+                "lower_bucket": 2,
+                "magnitude": 0.036458333333333336
+              }
+            ],
+            "buckets": [
+              {
+                "binary_hits": 11,
+                "binary_trials": 192,
+                "bucket": 1,
+                "hit_rate": 0.057291666666666664,
+                "hit_rate_wilson95": [
+                  0.03228852736382153,
+                  0.09966238321611698
+                ],
+                "mean_orientation_score": 0.05603685146824933,
+                "observations": 192
+              },
+              {
+                "binary_hits": 14,
+                "binary_trials": 192,
+                "bucket": 2,
+                "hit_rate": 0.07291666666666667,
+                "hit_rate_wilson95": [
+                  0.04392874874927421,
+                  0.11865918851607826
+                ],
+                "mean_orientation_score": 0.05945582811445263,
+                "observations": 192
+              },
+              {
+                "binary_hits": 7,
+                "binary_trials": 192,
+                "bucket": 3,
+                "hit_rate": 0.036458333333333336,
+                "hit_rate_wilson95": [
+                  0.017770646576572728,
+                  0.07333089508948057
+                ],
+                "mean_orientation_score": 0.06166687263897496,
+                "observations": 192
+              },
+              {
+                "binary_hits": 11,
+                "binary_trials": 192,
+                "bucket": 4,
+                "hit_rate": 0.057291666666666664,
+                "hit_rate_wilson95": [
+                  0.03228852736382153,
+                  0.09966238321611698
+                ],
+                "mean_orientation_score": 0.06451486935449262,
+                "observations": 192
+              },
+              {
+                "binary_hits": 17,
+                "binary_trials": 192,
+                "bucket": 5,
+                "hit_rate": 0.08854166666666667,
+                "hit_rate_wilson95": [
+                  0.05601543330346269,
+                  0.13720953064730373
+                ],
+                "mean_orientation_score": 0.07082557842383046,
+                "observations": 192
+              }
+            ],
+            "descriptive_linear_association": {
+              "intercept": -0.027271643178166494,
+              "interpretation": "descriptive OLS association, not probability calibration",
+              "slope": 1.436346290850664
+            },
+            "monotonic_bucket_behavior": false,
+            "observation_unit": "one_draw_x_one_candidate_number",
+            "observations": 960,
+            "outcome": "binary_number_appears_in_actual_zone_draw",
+            "positive_association": true,
+            "positive_descriptive_slope": true,
+            "positive_spearman_rho": true,
+            "score_field": "candidate_score",
+            "score_is_true_lottery_probability": false,
+            "spearman_rho": 0.024410421997877817
+          }
+        ],
+        "candidate_id": "raw_control",
+        "median_rho": 0.01788855352516237,
+        "positive_blocks": 3
+      },
+      "selection_uses_outer_labels": false
+    },
+    "front": {
+      "candidates": [
+        {
+          "blocks": [
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.04292929292929293
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.02777777777777779
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 56,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.1414141414141414,
+                  "hit_rate_wilson95": [
+                    0.11053185623902961,
+                    0.1791866215855582
+                  ],
+                  "mean_orientation_score": 0.16045281732477598,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 82,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.20707070707070707,
+                  "hit_rate_wilson95": [
+                    0.1700680346846548,
+                    0.2497019894537409
+                  ],
+                  "mean_orientation_score": 0.1721574029919759,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 65,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.16414141414141414,
+                  "hit_rate_wilson95": [
+                    0.13091894629398126,
+                    0.20381737448538623
+                  ],
+                  "mean_orientation_score": 0.1809413850490225,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 84,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.21212121212121213,
+                  "hit_rate_wilson95": [
+                    0.17472104898998334,
+                    0.25505294024947456
+                  ],
+                  "mean_orientation_score": 0.19067066808620714,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 73,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.18434343434343434,
+                  "hit_rate_wilson95": [
+                    0.1492475855535273,
+                    0.22550459563008873
+                  ],
+                  "mean_orientation_score": 0.20486863563892763,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.04817122308752253,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 0.735058273018626
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.03200236305732986
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.030303030303030304
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.0025252525252525415
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.0050505050505050275
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 80,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.20202020202020202,
+                  "hit_rate_wilson95": [
+                    0.1654242564719236,
+                    0.24434180256540994
+                  ],
+                  "mean_orientation_score": 0.1596225502073338,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 68,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.1717171717171717,
+                  "hit_rate_wilson95": [
+                    0.13777100619804672,
+                    0.21197126223291396
+                  ],
+                  "mean_orientation_score": 0.17264552398315078,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 72,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.18181818181818182,
+                  "hit_rate_wilson95": [
+                    0.14694683906585965,
+                    0.22280335956722536
+                  ],
+                  "mean_orientation_score": 0.1808275824856523,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 71,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.17929292929292928,
+                  "hit_rate_wilson95": [
+                    0.14464876376870905,
+                    0.2200994523138448
+                  ],
+                  "mean_orientation_score": 0.19015910379704065,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 69,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.17424242424242425,
+                  "hit_rate_wilson95": [
+                    0.14006080164506884,
+                    0.21468344933642292
+                  ],
+                  "mean_orientation_score": 0.20583614861773167,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.2583045784882996,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -0.4206751816856476
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.01947541616081045
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.01010101010101011
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.03282828282828282
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 67,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.1691919191919192,
+                  "hit_rate_wilson95": [
+                    0.1354840648570972,
+                    0.20925622102333247
+                  ],
+                  "mean_orientation_score": 0.1673325478292726,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 79,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.1994949494949495,
+                  "hit_rate_wilson95": [
+                    0.16310590961560317,
+                    0.24165816687119934
+                  ],
+                  "mean_orientation_score": 0.17743305869848783,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 75,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.1893939393939394,
+                  "hit_rate_wilson95": [
+                    0.15385692602769221,
+                    0.23089922025698598
+                  ],
+                  "mean_orientation_score": 0.18163666063472217,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 62,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.15656565656565657,
+                  "hit_rate_wilson95": [
+                    0.12409398685885983,
+                    0.19563638626891447
+                  ],
+                  "mean_orientation_score": 0.18578787754909512,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 77,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.19444444444444445,
+                  "hit_rate_wilson95": [
+                    0.15847646670411514,
+                    0.23628364468162522
+                  ],
+                  "mean_orientation_score": 0.19690076437933135,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.13636060175542547,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 0.25001669034516
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.007761758611084084
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.03787878787878787
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 66,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.16666666666666666,
+                  "hit_rate_wilson95": [
+                    0.1332000276032997,
+                    0.20653827572659883
+                  ],
+                  "mean_orientation_score": 0.14812539541896244,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 75,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.1893939393939394,
+                  "hit_rate_wilson95": [
+                    0.15385692602769221,
+                    0.23089922025698598
+                  ],
+                  "mean_orientation_score": 0.16748154323509504,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 60,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.15151515151515152,
+                  "hit_rate_wilson95": [
+                    0.11955983821508462,
+                    0.19016656981162752
+                  ],
+                  "mean_orientation_score": 0.18008822511441602,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 74,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.18686868686868688,
+                  "hit_rate_wilson95": [
+                    0.15155096136269985,
+                    0.2282032023714473
+                  ],
+                  "mean_orientation_score": 0.19311004959921022,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 85,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.21464646464646464,
+                  "hit_rate_wilson95": [
+                    0.17705094451919098,
+                    0.25772502727079794
+                  ],
+                  "mean_orientation_score": 0.22028569572322534,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.08367045018331438,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 0.5398125239917709
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.0348477302931523
+            }
+          ],
+          "candidate_id": "raw_control",
+          "median_rho": 0.03200236305732986,
+          "positive_blocks": 3
+        },
+        {
+          "blocks": [
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.020202020202020193
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.01010101010101011
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.01767676767676768
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 73,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.18434343434343434,
+                  "hit_rate_wilson95": [
+                    0.1492475855535273,
+                    0.22550459563008873
+                  ],
+                  "mean_orientation_score": 0.1742699696317927,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 65,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.16414141414141414,
+                  "hit_rate_wilson95": [
+                    0.13091894629398126,
+                    0.20381737448538623
+                  ],
+                  "mean_orientation_score": 0.18003927231610178,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 79,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.1994949494949495,
+                  "hit_rate_wilson95": [
+                    0.16310590961560317,
+                    0.24165816687119934
+                  ],
+                  "mean_orientation_score": 0.18247066084026384,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 75,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.1893939393939394,
+                  "hit_rate_wilson95": [
+                    0.15385692602769221,
+                    0.23089922025698598
+                  ],
+                  "mean_orientation_score": 0.18442402177590922,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 68,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.1717171717171717,
+                  "hit_rate_wilson95": [
+                    0.13777100619804672,
+                    0.21197126223291396
+                  ],
+                  "mean_orientation_score": 0.1878869845268416,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.17359091315172753,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 0.045249977665498584
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.0024352861285662285
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.03787878787878787
+                },
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.015151515151515166
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.03282828282828282
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 89,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.22474747474747475,
+                  "hit_rate_wilson95": [
+                    0.1863924602925272,
+                    0.268391441699586
+                  ],
+                  "mean_orientation_score": 0.17832099413236566,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 74,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.18686868686868688,
+                  "hit_rate_wilson95": [
+                    0.15155096136269985,
+                    0.2282032023714473
+                  ],
+                  "mean_orientation_score": 0.1806742606944487,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 68,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.1717171717171717,
+                  "hit_rate_wilson95": [
+                    0.13777100619804672,
+                    0.21197126223291396
+                  ],
+                  "mean_orientation_score": 0.18173239577762507,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 71,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.17929292929292928,
+                  "hit_rate_wilson95": [
+                    0.14464876376870905,
+                    0.2200994523138448
+                  ],
+                  "mean_orientation_score": 0.18284245537053065,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 58,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.14646464646464646,
+                  "hit_rate_wilson95": [
+                    0.11503894227780004,
+                    0.18468350064784994
+                  ],
+                  "mean_orientation_score": 0.18552080311593902,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 1.9135747802381913,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -9.524661291310052
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.0631616543410827
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.027777777777777762
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.01767676767676768
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.022727272727272707
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 80,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.20202020202020202,
+                  "hit_rate_wilson95": [
+                    0.1654242564719236,
+                    0.24434180256540994
+                  ],
+                  "mean_orientation_score": 0.17712907602517447,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 69,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.17424242424242425,
+                  "hit_rate_wilson95": [
+                    0.14006080164506884,
+                    0.21468344933642292
+                  ],
+                  "mean_orientation_score": 0.18044968541128806,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 78,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.19696969696969696,
+                  "hit_rate_wilson95": [
+                    0.1607899682509756,
+                    0.23897212568529577
+                  ],
+                  "mean_orientation_score": 0.18200634408838584,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 71,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.17929292929292928,
+                  "hit_rate_wilson95": [
+                    0.14464876376870905,
+                    0.2200994523138448
+                  ],
+                  "mean_orientation_score": 0.18355870178787784,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 62,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.15656565656565657,
+                  "hit_rate_wilson95": [
+                    0.12409398685885983,
+                    0.19563638626891447
+                  ],
+                  "mean_orientation_score": 0.18594710177818294,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.9639198907275057,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -4.301559399001281
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.03167246540679972
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.06060606060606061
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 64,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.16161616161616163,
+                  "hit_rate_wilson95": [
+                    0.12864087476085542,
+                    0.201093463467981
+                  ],
+                  "mean_orientation_score": 0.17315148356371948,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 83,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.20959595959595959,
+                  "hit_rate_wilson95": [
+                    0.17239340258681085,
+                    0.2523786041021159
+                  ],
+                  "mean_orientation_score": 0.1793837580329755,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 59,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.14898989898989898,
+                  "hit_rate_wilson95": [
+                    0.11729769991760863,
+                    0.18742672555857237
+                  ],
+                  "mean_orientation_score": 0.18193975249777888,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 76,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.1919191919191919,
+                  "hit_rate_wilson95": [
+                    0.15616544042305108,
+                    0.23359268841215813
+                  ],
+                  "mean_orientation_score": 0.18443569030181414,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 78,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.19696969696969696,
+                  "hit_rate_wilson95": [
+                    0.1607899682509756,
+                    0.23897212568529577
+                  ],
+                  "mean_orientation_score": 0.1901802246946211,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": -0.17699124792645515,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 1.9734518635955034
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.024423880918762523
+            }
+          ],
+          "candidate_id": "surprise_renewal",
+          "median_rho": -0.0024352861285662285,
+          "positive_blocks": 1
+        },
+        {
+          "blocks": [
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.01010101010101011
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.020202020202020193
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 76,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.1919191919191919,
+                  "hit_rate_wilson95": [
+                    0.15616544042305108,
+                    0.23359268841215813
+                  ],
+                  "mean_orientation_score": 0.17013055304397584,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 77,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.19444444444444445,
+                  "hit_rate_wilson95": [
+                    0.15847646670411514,
+                    0.23628364468162522
+                  ],
+                  "mean_orientation_score": 0.17654152588942607,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 73,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.18434343434343434,
+                  "hit_rate_wilson95": [
+                    0.1492475855535273,
+                    0.22550459563008873
+                  ],
+                  "mean_orientation_score": 0.18144017005361918,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 65,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.16414141414141414,
+                  "hit_rate_wilson95": [
+                    0.13091894629398126,
+                    0.20381737448538623
+                  ],
+                  "mean_orientation_score": 0.18614047824630264,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 69,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.17424242424242425,
+                  "hit_rate_wilson95": [
+                    0.14006080164506884,
+                    0.21468344933642292
+                  ],
+                  "mean_orientation_score": 0.1948381818575854,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.39517027774055236,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -1.173436527573038
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.026845421311889994
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.020202020202020193
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.027777777777777762
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 68,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.1717171717171717,
+                  "hit_rate_wilson95": [
+                    0.13777100619804672,
+                    0.21197126223291396
+                  ],
+                  "mean_orientation_score": 0.17532845633925412,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 83,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.20959595959595959,
+                  "hit_rate_wilson95": [
+                    0.17239340258681085,
+                    0.2523786041021159
+                  ],
+                  "mean_orientation_score": 0.1789947559592336,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 75,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.1893939393939394,
+                  "hit_rate_wilson95": [
+                    0.15385692602769221,
+                    0.23089922025698598
+                  ],
+                  "mean_orientation_score": 0.18151250445417097,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 64,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.16161616161616163,
+                  "hit_rate_wilson95": [
+                    0.12864087476085542,
+                    0.201093463467981
+                  ],
+                  "mean_orientation_score": 0.1842824149692433,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 70,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.17676767676767677,
+                  "hit_rate_wilson95": [
+                    0.14235340300144594,
+                    0.2173928305305769
+                  ],
+                  "mean_orientation_score": 0.18897277736900708,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.24364394945047105,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -0.3400417219775907
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.008655231414603209
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.020202020202020193
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.010101010101010083
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.005050505050505055
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 72,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.18181818181818182,
+                  "hit_rate_wilson95": [
+                    0.14694683906585965,
+                    0.22280335956722536
+                  ],
+                  "mean_orientation_score": 0.1759081077955141,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 64,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.16161616161616163,
+                  "hit_rate_wilson95": [
+                    0.12864087476085542,
+                    0.201093463467981
+                  ],
+                  "mean_orientation_score": 0.17959771299733918,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 78,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.19696969696969696,
+                  "hit_rate_wilson95": [
+                    0.1607899682509756,
+                    0.23897212568529577
+                  ],
+                  "mean_orientation_score": 0.18168306453642744,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 74,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.18686868686868688,
+                  "hit_rate_wilson95": [
+                    0.15155096136269985,
+                    0.2282032023714473
+                  ],
+                  "mean_orientation_score": 0.18393675401980197,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 72,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.18181818181818182,
+                  "hit_rate_wilson95": [
+                    0.14694683906585965,
+                    0.22280335956722536
+                  ],
+                  "mean_orientation_score": 0.1879652697418264,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.18404424578105508,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -0.012243351795802947
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.003528072095947311
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.007575757575757569
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.04292929292929293
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 72,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.18181818181818182,
+                  "hit_rate_wilson95": [
+                    0.14694683906585965,
+                    0.22280335956722536
+                  ],
+                  "mean_orientation_score": 0.17255250333968153,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 75,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.1893939393939394,
+                  "hit_rate_wilson95": [
+                    0.15385692602769221,
+                    0.23089922025698598
+                  ],
+                  "mean_orientation_score": 0.17806019382856791,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 72,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.18181818181818182,
+                  "hit_rate_wilson95": [
+                    0.14694683906585965,
+                    0.22280335956722536
+                  ],
+                  "mean_orientation_score": 0.18236552513540197,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 79,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.1994949494949495,
+                  "hit_rate_wilson95": [
+                    0.16310590961560317,
+                    0.24165816687119934
+                  ],
+                  "mean_orientation_score": 0.18570581191722244,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 62,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.15656565656565657,
+                  "hit_rate_wilson95": [
+                    0.12409398685885983,
+                    0.19563638626891447
+                  ],
+                  "mean_orientation_score": 0.19040687487003521,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.37249506072550004,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -1.0487228339902501
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.015901524946733952
+            }
+          ],
+          "candidate_id": "transition_graph",
+          "median_rho": -0.008655231414603209,
+          "positive_blocks": 0
+        },
+        {
+          "blocks": [
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.010101010101010083
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.005050505050505055
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 73,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.18434343434343434,
+                  "hit_rate_wilson95": [
+                    0.1492475855535273,
+                    0.22550459563008873
+                  ],
+                  "mean_orientation_score": 0.17112584502121733,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 69,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.17424242424242425,
+                  "hit_rate_wilson95": [
+                    0.14006080164506884,
+                    0.21468344933642292
+                  ],
+                  "mean_orientation_score": 0.17788447588719025,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 70,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.17676767676767677,
+                  "hit_rate_wilson95": [
+                    0.14235340300144594,
+                    0.2173928305305769
+                  ],
+                  "mean_orientation_score": 0.18166568467621869,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 75,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.1893939393939394,
+                  "hit_rate_wilson95": [
+                    0.15385692602769221,
+                    0.23089922025698598
+                  ],
+                  "mean_orientation_score": 0.18521494980011807,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 73,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.18434343434343434,
+                  "hit_rate_wilson95": [
+                    0.1492475855535273,
+                    0.22550459563008873
+                  ],
+                  "mean_orientation_score": 0.1931999537061648,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.13737718411842925,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 0.24442548734863914
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.00745247956371208
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 2,
+                  "lower_bucket": 1,
+                  "magnitude": 0.012626262626262624
+                },
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.005050505050505055
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.02525252525252525
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 78,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.19696969696969696,
+                  "hit_rate_wilson95": [
+                    0.1607899682509756,
+                    0.23897212568529577
+                  ],
+                  "mean_orientation_score": 0.1692855722690927,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 73,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.18434343434343434,
+                  "hit_rate_wilson95": [
+                    0.1492475855535273,
+                    0.22550459563008873
+                  ],
+                  "mean_orientation_score": 0.1769741193264499,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 71,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.17929292929292928,
+                  "hit_rate_wilson95": [
+                    0.14464876376870905,
+                    0.2200994523138448
+                  ],
+                  "mean_orientation_score": 0.18152566085639804,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 74,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.18686868686868688,
+                  "hit_rate_wilson95": [
+                    0.15155096136269985,
+                    0.2282032023714473
+                  ],
+                  "mean_orientation_score": 0.18689209523895817,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 64,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.16161616161616163,
+                  "hit_rate_wilson95": [
+                    0.12864087476085542,
+                    0.201093463467981
+                  ],
+                  "mean_orientation_score": 0.1944134614000103,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.33712723929549776,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": -0.8541998161252377
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": false,
+              "positive_descriptive_slope": false,
+              "positive_spearman_rho": false,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": -0.021170723531590326
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.01010101010101011
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.012626262626262624
+                },
+                {
+                  "higher_bucket": 5,
+                  "lower_bucket": 4,
+                  "magnitude": 0.0025252525252525138
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 63,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.1590909090909091,
+                  "hit_rate_wilson95": [
+                    0.12636586891494334,
+                    0.198366486763362
+                  ],
+                  "mean_orientation_score": 0.1703276328159065,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 80,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.20202020202020202,
+                  "hit_rate_wilson95": [
+                    0.1654242564719236,
+                    0.24434180256540994
+                  ],
+                  "mean_orientation_score": 0.177776700350712,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 76,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.1919191919191919,
+                  "hit_rate_wilson95": [
+                    0.15616544042305108,
+                    0.23359268841215813
+                  ],
+                  "mean_orientation_score": 0.1819776070435165,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 71,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.17929292929292928,
+                  "hit_rate_wilson95": [
+                    0.14464876376870905,
+                    0.2200994523138448
+                  ],
+                  "mean_orientation_score": 0.18580793357104808,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 70,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.17676767676767677,
+                  "hit_rate_wilson95": [
+                    0.14235340300144594,
+                    0.2173928305305769
+                  ],
+                  "mean_orientation_score": 0.193201035309726,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.14920325906807716,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 0.17938207512557564
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.0006643772128731949
+            },
+            {
+              "adjacent_bucket_inversions": [
+                {
+                  "higher_bucket": 3,
+                  "lower_bucket": 2,
+                  "magnitude": 0.02020202020202022
+                },
+                {
+                  "higher_bucket": 4,
+                  "lower_bucket": 3,
+                  "magnitude": 0.015151515151515138
+                }
+              ],
+              "buckets": [
+                {
+                  "binary_hits": 66,
+                  "binary_trials": 396,
+                  "bucket": 1,
+                  "hit_rate": 0.16666666666666666,
+                  "hit_rate_wilson95": [
+                    0.1332000276032997,
+                    0.20653827572659883
+                  ],
+                  "mean_orientation_score": 0.1634943448104329,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 79,
+                  "binary_trials": 396,
+                  "bucket": 2,
+                  "hit_rate": 0.1994949494949495,
+                  "hit_rate_wilson95": [
+                    0.16310590961560317,
+                    0.24165816687119934
+                  ],
+                  "mean_orientation_score": 0.17579865603458275,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 71,
+                  "binary_trials": 396,
+                  "bucket": 3,
+                  "hit_rate": 0.17929292929292928,
+                  "hit_rate_wilson95": [
+                    0.14464876376870905,
+                    0.2200994523138448
+                  ],
+                  "mean_orientation_score": 0.18178380576481568,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 65,
+                  "binary_trials": 396,
+                  "bucket": 4,
+                  "hit_rate": 0.16414141414141414,
+                  "hit_rate_wilson95": [
+                    0.13091894629398126,
+                    0.20381737448538623
+                  ],
+                  "mean_orientation_score": 0.18767606126657216,
+                  "observations": 396
+                },
+                {
+                  "binary_hits": 79,
+                  "binary_trials": 396,
+                  "bucket": 5,
+                  "hit_rate": 0.1994949494949495,
+                  "hit_rate_wilson95": [
+                    0.16310590961560317,
+                    0.24165816687119934
+                  ],
+                  "mean_orientation_score": 0.2003380412145056,
+                  "observations": 396
+                }
+              ],
+              "descriptive_linear_association": {
+                "intercept": 0.030446375994254482,
+                "interpretation": "descriptive OLS association, not probability calibration",
+                "slope": 0.8325449320316003
+              },
+              "monotonic_bucket_behavior": false,
+              "observation_unit": "one_draw_x_one_candidate_number",
+              "observations": 1980,
+              "outcome": "binary_number_appears_in_actual_zone_draw",
+              "positive_association": true,
+              "positive_descriptive_slope": true,
+              "positive_spearman_rho": true,
+              "score_field": "candidate_score",
+              "score_is_true_lottery_probability": false,
+              "spearman_rho": 0.014987433540056693
+            }
+          ],
+          "candidate_id": "short_window_blue",
+          "median_rho": 0.00745247956371208,
+          "positive_blocks": 3
+        }
+      ],
+      "selected": {
+        "blocks": [
+          {
+            "adjacent_bucket_inversions": [
+              {
+                "higher_bucket": 3,
+                "lower_bucket": 2,
+                "magnitude": 0.04292929292929293
+              },
+              {
+                "higher_bucket": 5,
+                "lower_bucket": 4,
+                "magnitude": 0.02777777777777779
+              }
+            ],
+            "buckets": [
+              {
+                "binary_hits": 56,
+                "binary_trials": 396,
+                "bucket": 1,
+                "hit_rate": 0.1414141414141414,
+                "hit_rate_wilson95": [
+                  0.11053185623902961,
+                  0.1791866215855582
+                ],
+                "mean_orientation_score": 0.16045281732477598,
+                "observations": 396
+              },
+              {
+                "binary_hits": 82,
+                "binary_trials": 396,
+                "bucket": 2,
+                "hit_rate": 0.20707070707070707,
+                "hit_rate_wilson95": [
+                  0.1700680346846548,
+                  0.2497019894537409
+                ],
+                "mean_orientation_score": 0.1721574029919759,
+                "observations": 396
+              },
+              {
+                "binary_hits": 65,
+                "binary_trials": 396,
+                "bucket": 3,
+                "hit_rate": 0.16414141414141414,
+                "hit_rate_wilson95": [
+                  0.13091894629398126,
+                  0.20381737448538623
+                ],
+                "mean_orientation_score": 0.1809413850490225,
+                "observations": 396
+              },
+              {
+                "binary_hits": 84,
+                "binary_trials": 396,
+                "bucket": 4,
+                "hit_rate": 0.21212121212121213,
+                "hit_rate_wilson95": [
+                  0.17472104898998334,
+                  0.25505294024947456
+                ],
+                "mean_orientation_score": 0.19067066808620714,
+                "observations": 396
+              },
+              {
+                "binary_hits": 73,
+                "binary_trials": 396,
+                "bucket": 5,
+                "hit_rate": 0.18434343434343434,
+                "hit_rate_wilson95": [
+                  0.1492475855535273,
+                  0.22550459563008873
+                ],
+                "mean_orientation_score": 0.20486863563892763,
+                "observations": 396
+              }
+            ],
+            "descriptive_linear_association": {
+              "intercept": 0.04817122308752253,
+              "interpretation": "descriptive OLS association, not probability calibration",
+              "slope": 0.735058273018626
+            },
+            "monotonic_bucket_behavior": false,
+            "observation_unit": "one_draw_x_one_candidate_number",
+            "observations": 1980,
+            "outcome": "binary_number_appears_in_actual_zone_draw",
+            "positive_association": true,
+            "positive_descriptive_slope": true,
+            "positive_spearman_rho": true,
+            "score_field": "candidate_score",
+            "score_is_true_lottery_probability": false,
+            "spearman_rho": 0.03200236305732986
+          },
+          {
+            "adjacent_bucket_inversions": [
+              {
+                "higher_bucket": 2,
+                "lower_bucket": 1,
+                "magnitude": 0.030303030303030304
+              },
+              {
+                "higher_bucket": 4,
+                "lower_bucket": 3,
+                "magnitude": 0.0025252525252525415
+              },
+              {
+                "higher_bucket": 5,
+                "lower_bucket": 4,
+                "magnitude": 0.0050505050505050275
+              }
+            ],
+            "buckets": [
+              {
+                "binary_hits": 80,
+                "binary_trials": 396,
+                "bucket": 1,
+                "hit_rate": 0.20202020202020202,
+                "hit_rate_wilson95": [
+                  0.1654242564719236,
+                  0.24434180256540994
+                ],
+                "mean_orientation_score": 0.1596225502073338,
+                "observations": 396
+              },
+              {
+                "binary_hits": 68,
+                "binary_trials": 396,
+                "bucket": 2,
+                "hit_rate": 0.1717171717171717,
+                "hit_rate_wilson95": [
+                  0.13777100619804672,
+                  0.21197126223291396
+                ],
+                "mean_orientation_score": 0.17264552398315078,
+                "observations": 396
+              },
+              {
+                "binary_hits": 72,
+                "binary_trials": 396,
+                "bucket": 3,
+                "hit_rate": 0.18181818181818182,
+                "hit_rate_wilson95": [
+                  0.14694683906585965,
+                  0.22280335956722536
+                ],
+                "mean_orientation_score": 0.1808275824856523,
+                "observations": 396
+              },
+              {
+                "binary_hits": 71,
+                "binary_trials": 396,
+                "bucket": 4,
+                "hit_rate": 0.17929292929292928,
+                "hit_rate_wilson95": [
+                  0.14464876376870905,
+                  0.2200994523138448
+                ],
+                "mean_orientation_score": 0.19015910379704065,
+                "observations": 396
+              },
+              {
+                "binary_hits": 69,
+                "binary_trials": 396,
+                "bucket": 5,
+                "hit_rate": 0.17424242424242425,
+                "hit_rate_wilson95": [
+                  0.14006080164506884,
+                  0.21468344933642292
+                ],
+                "mean_orientation_score": 0.20583614861773167,
+                "observations": 396
+              }
+            ],
+            "descriptive_linear_association": {
+              "intercept": 0.2583045784882996,
+              "interpretation": "descriptive OLS association, not probability calibration",
+              "slope": -0.4206751816856476
+            },
+            "monotonic_bucket_behavior": false,
+            "observation_unit": "one_draw_x_one_candidate_number",
+            "observations": 1980,
+            "outcome": "binary_number_appears_in_actual_zone_draw",
+            "positive_association": false,
+            "positive_descriptive_slope": false,
+            "positive_spearman_rho": false,
+            "score_field": "candidate_score",
+            "score_is_true_lottery_probability": false,
+            "spearman_rho": -0.01947541616081045
+          },
+          {
+            "adjacent_bucket_inversions": [
+              {
+                "higher_bucket": 3,
+                "lower_bucket": 2,
+                "magnitude": 0.01010101010101011
+              },
+              {
+                "higher_bucket": 4,
+                "lower_bucket": 3,
+                "magnitude": 0.03282828282828282
+              }
+            ],
+            "buckets": [
+              {
+                "binary_hits": 67,
+                "binary_trials": 396,
+                "bucket": 1,
+                "hit_rate": 0.1691919191919192,
+                "hit_rate_wilson95": [
+                  0.1354840648570972,
+                  0.20925622102333247
+                ],
+                "mean_orientation_score": 0.1673325478292726,
+                "observations": 396
+              },
+              {
+                "binary_hits": 79,
+                "binary_trials": 396,
+                "bucket": 2,
+                "hit_rate": 0.1994949494949495,
+                "hit_rate_wilson95": [
+                  0.16310590961560317,
+                  0.24165816687119934
+                ],
+                "mean_orientation_score": 0.17743305869848783,
+                "observations": 396
+              },
+              {
+                "binary_hits": 75,
+                "binary_trials": 396,
+                "bucket": 3,
+                "hit_rate": 0.1893939393939394,
+                "hit_rate_wilson95": [
+                  0.15385692602769221,
+                  0.23089922025698598
+                ],
+                "mean_orientation_score": 0.18163666063472217,
+                "observations": 396
+              },
+              {
+                "binary_hits": 62,
+                "binary_trials": 396,
+                "bucket": 4,
+                "hit_rate": 0.15656565656565657,
+                "hit_rate_wilson95": [
+                  0.12409398685885983,
+                  0.19563638626891447
+                ],
+                "mean_orientation_score": 0.18578787754909512,
+                "observations": 396
+              },
+              {
+                "binary_hits": 77,
+                "binary_trials": 396,
+                "bucket": 5,
+                "hit_rate": 0.19444444444444445,
+                "hit_rate_wilson95": [
+                  0.15847646670411514,
+                  0.23628364468162522
+                ],
+                "mean_orientation_score": 0.19690076437933135,
+                "observations": 396
+              }
+            ],
+            "descriptive_linear_association": {
+              "intercept": 0.13636060175542547,
+              "interpretation": "descriptive OLS association, not probability calibration",
+              "slope": 0.25001669034516
+            },
+            "monotonic_bucket_behavior": false,
+            "observation_unit": "one_draw_x_one_candidate_number",
+            "observations": 1980,
+            "outcome": "binary_number_appears_in_actual_zone_draw",
+            "positive_association": true,
+            "positive_descriptive_slope": true,
+            "positive_spearman_rho": true,
+            "score_field": "candidate_score",
+            "score_is_true_lottery_probability": false,
+            "spearman_rho": 0.007761758611084084
+          },
+          {
+            "adjacent_bucket_inversions": [
+              {
+                "higher_bucket": 3,
+                "lower_bucket": 2,
+                "magnitude": 0.03787878787878787
+              }
+            ],
+            "buckets": [
+              {
+                "binary_hits": 66,
+                "binary_trials": 396,
+                "bucket": 1,
+                "hit_rate": 0.16666666666666666,
+                "hit_rate_wilson95": [
+                  0.1332000276032997,
+                  0.20653827572659883
+                ],
+                "mean_orientation_score": 0.14812539541896244,
+                "observations": 396
+              },
+              {
+                "binary_hits": 75,
+                "binary_trials": 396,
+                "bucket": 2,
+                "hit_rate": 0.1893939393939394,
+                "hit_rate_wilson95": [
+                  0.15385692602769221,
+                  0.23089922025698598
+                ],
+                "mean_orientation_score": 0.16748154323509504,
+                "observations": 396
+              },
+              {
+                "binary_hits": 60,
+                "binary_trials": 396,
+                "bucket": 3,
+                "hit_rate": 0.15151515151515152,
+                "hit_rate_wilson95": [
+                  0.11955983821508462,
+                  0.19016656981162752
+                ],
+                "mean_orientation_score": 0.18008822511441602,
+                "observations": 396
+              },
+              {
+                "binary_hits": 74,
+                "binary_trials": 396,
+                "bucket": 4,
+                "hit_rate": 0.18686868686868688,
+                "hit_rate_wilson95": [
+                  0.15155096136269985,
+                  0.2282032023714473
+                ],
+                "mean_orientation_score": 0.19311004959921022,
+                "observations": 396
+              },
+              {
+                "binary_hits": 85,
+                "binary_trials": 396,
+                "bucket": 5,
+                "hit_rate": 0.21464646464646464,
+                "hit_rate_wilson95": [
+                  0.17705094451919098,
+                  0.25772502727079794
+                ],
+                "mean_orientation_score": 0.22028569572322534,
+                "observations": 396
+              }
+            ],
+            "descriptive_linear_association": {
+              "intercept": 0.08367045018331438,
+              "interpretation": "descriptive OLS association, not probability calibration",
+              "slope": 0.5398125239917709
+            },
+            "monotonic_bucket_behavior": false,
+            "observation_unit": "one_draw_x_one_candidate_number",
+            "observations": 1980,
+            "outcome": "binary_number_appears_in_actual_zone_draw",
+            "positive_association": true,
+            "positive_descriptive_slope": true,
+            "positive_spearman_rho": true,
+            "score_field": "candidate_score",
+            "score_is_true_lottery_probability": false,
+            "spearman_rho": 0.0348477302931523
+          }
+        ],
+        "candidate_id": "raw_control",
+        "median_rho": 0.03200236305732986,
+        "positive_blocks": 3
+      },
+      "selection_uses_outer_labels": false
+    }
+  },
+  "status": "RETROSPECTIVE_BACKTEST_ONLY",
+  "strict_lag": true
+}

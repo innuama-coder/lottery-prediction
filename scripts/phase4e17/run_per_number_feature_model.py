@@ -923,12 +923,13 @@ def _choose(n: int, k: int) -> int:
     return math.comb(n, k) if 0 <= k <= n else 0
 
 
-def _ranked_zone_combinations(scores: Sequence[float], choose: int) -> list[tuple[float, tuple[int, ...]]]:
+def _ranked_zone_combinations(scores: Sequence[float], choose: int, limit: int | None = None) -> list[tuple[float, tuple[int, ...]]]:
     import itertools
-    ranked = [
+    values = (
         (math.fsum(float(scores[number - 1]) for number in combo), tuple(combo))
         for combo in itertools.combinations(range(1, len(scores) + 1), choose)
-    ]
+    )
+    ranked = list(__import__("heapq").nlargest(int(limit), values, key=lambda value: (value[0], tuple(-n for n in value[1]))) if limit else values)
     ranked.sort(key=lambda value: (-value[0], value[1]))
     return ranked
 
@@ -943,8 +944,9 @@ def ranked_ticket_partition_prize_metrics(
     back_zone = row["phase4e17_per_number_feature_model"]["zones"]["back"]
     front_scores = [float(value["candidate_score"]) for value in front_zone["number_observations"]]
     back_scores = [float(value["candidate_score"]) for value in back_zone["number_observations"]]
-    front_ranked = _ranked_zone_combinations(front_scores, 6 if game == "ssq" else 5)
-    back_ranked = _ranked_zone_combinations(back_scores, 1 if game == "ssq" else 2)
+    max_partition = max(partition_sizes)
+    front_ranked = _ranked_zone_combinations(front_scores, 6 if game == "ssq" else 5, max_partition)
+    back_ranked = _ranked_zone_combinations(back_scores, 1 if game == "ssq" else 2, max_partition)
     max_n = min(max(partition_sizes), len(front_ranked) * len(back_ranked))
     heap: list[tuple[float, tuple[int, ...], tuple[int, ...], int, int]] = []
     for front_index, (front_score, front_combo) in enumerate(front_ranked):

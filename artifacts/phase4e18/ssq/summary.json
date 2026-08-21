@@ -1,0 +1,13 @@
+{
+  "dlt_isolation_required": true,
+  "game": "ssq",
+  "optimization_result": "NO_PROMOTION: specialized feature candidates did not beat the registered raw-control stability gate",
+  "p4e6_serving_unchanged": true,
+  "primary_metric": "known_prize_total_yuan / (draws * N)",
+  "promotion_eligible": false,
+  "selected_candidates": {
+    "back": "raw_control",
+    "front": "raw_control"
+  },
+  "status": "RETROSPECTIVE_BACKTEST_ONLY"
+}

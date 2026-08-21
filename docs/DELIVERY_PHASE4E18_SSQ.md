@@ -19,3 +19,7 @@ Across the truth set, the reported value is total prefix prize divided by `draws
 ## Result
 
 The registered raw-control candidate remains selected for both SSQ front and back. The specialized feature candidates do not pass the three-of-four positive stability-block gate, so no specialized model is promoted. This is an intentional no-promotion result; P4E6 remains unchanged and SSQ remains retrospective-only.
+
+## Prize threshold gate
+
+The requested acceptance threshold is `average_prize_yuan > 2.0` for the 120-draw aggregate. The current result does not pass: the best all-120 value is approximately `0.7614 yuan/ticket`. Under the configured fixed prize table, a uniform random SSQ ticket has an analytical expected value of approximately `1.1007 yuan/ticket`; therefore the requested threshold requires a substantial out-of-sample lift and cannot be asserted without evidence. The gate is recorded as `passed=false` in `summary.json`.

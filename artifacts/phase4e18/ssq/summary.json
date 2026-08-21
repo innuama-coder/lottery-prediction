@@ -1,10 +1,17 @@
 {
+  "acceptance_gate": {
+    "comparison": "strictly_greater_than",
+    "metric": "average_prize_yuan",
+    "passed": false,
+    "threshold_yuan_per_ticket": 2.0
+  },
   "dlt_isolation_required": true,
   "game": "ssq",
   "optimization_result": "NO_PROMOTION: specialized feature candidates did not beat the registered raw-control stability gate",
   "p4e6_serving_unchanged": true,
   "primary_metric": "known_prize_total_yuan / (draws * N)",
   "promotion_eligible": false,
+  "random_baseline_expected_prize_yuan_per_ticket": 1.100691447387429,
   "selected_candidates": {
     "back": "raw_control",
     "front": "raw_control"

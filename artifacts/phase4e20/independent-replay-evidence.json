@@ -1,0 +1,30 @@
+{
+  "artifact_type": "phase4e20_external_independent_replay",
+  "byte_identical_paths": [
+    "candidate-registry.json",
+    "model-feature-lineage.json",
+    "coefficients.json",
+    "portfolio-hashes.json",
+    "inner-rolling-report.jsonl",
+    "outer-rolling-report.jsonl",
+    "calibration-summary.json",
+    "evaluation-summary.json",
+    "all-120-summary.json",
+    "replay-evidence.json",
+    "dlt-isolation-baseline.sha256",
+    "delivery/decision.json"
+  ],
+  "command": "PYTHONPATH=src python3 scripts/phase4e20/ssq_supervised_compression.py --output-dir $(mktemp -d /tmp/phase4e20-replay.XXXXXX)",
+  "deterministic_payloads_match": true,
+  "game": "ssq",
+  "normalized_report_match": true,
+  "normalized_report_sha256": "5df768696193dfdb13417e61ac1a046cd335b91bf64e9bb4d4b96a3bb0fb95ba",
+  "normalization": "removed only report.runtime_seconds; manifest runtime and report hash are consequently host-timing-dependent",
+  "primary_runtime_seconds": 354.30364403198473,
+  "replay_runtime_seconds": 328.32878483692184,
+  "replay_wall_seconds": 329.59,
+  "replay_peak_rss_kib": 276220,
+  "selected_candidate_matches": true,
+  "decision_matches": true,
+  "binding_cell_matches": true
+}

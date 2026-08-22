@@ -1,0 +1,320 @@
+{
+  "games": {
+    "dlt": {
+      "evaluation_draw_count": 120,
+      "evaluation_issue_first": "2025114",
+      "evaluation_issue_last": "2026083",
+      "full_space_oracle": {
+        "bonus_contract_fingerprint": "0c57745377d7821a26fb3b8bd954d0010c1c4410c51643e6a5650e53aabad2d1",
+        "expected": {
+          "prize_total_yuan": 18890405,
+          "ticket_count": 21425712,
+          "winning_ticket_count": 1429197
+        },
+        "fixed_prize_total_yuan": 18890405,
+        "game": "dlt",
+        "matches_frozen_oracle": true,
+        "rule_version": "DLT_PRIZE_FIXED_7TIER",
+        "tier_winning_counts": {
+          "1": 1,
+          "2": 20,
+          "3": 195,
+          "4": 3000,
+          "5": 11100,
+          "6": 127600,
+          "7": 1287281
+        },
+        "total_ticket_count": 21425712,
+        "winning_ticket_count": 1429197
+      },
+      "rule_version": "DLT_PRIZE_FIXED_7TIER",
+      "strategies": {
+        "back_lock_coverage": {
+          "1000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.21175833333333333,
+              0.6425697916666663
+            ],
+            "difference_vs_m0_uniform_yuan": -0.05458333333333337,
+            "mean_average_prize_yuan": 0.3949583333333333,
+            "mean_win_rate": 0.056975,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 1000
+          },
+          "10000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.26997124999999994,
+              0.855934895833333
+            ],
+            "difference_vs_m0_uniform_yuan": -0.007295833333333279,
+            "mean_average_prize_yuan": 0.4959166666666667,
+            "mean_win_rate": 0.05619333333333333,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 10000
+          },
+          "5000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.20192208333333336,
+              1.1217975
+            ],
+            "difference_vs_m0_uniform_yuan": 0.04218333333333335,
+            "mean_average_prize_yuan": 0.5388416666666667,
+            "mean_win_rate": 0.051261666666666664,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 5000
+          }
+        },
+        "front_spread": {
+          "1000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.26212291666666665,
+              0.5099302083333332
+            ],
+            "difference_vs_m0_uniform_yuan": -0.07304166666666667,
+            "mean_average_prize_yuan": 0.3765,
+            "mean_win_rate": 0.05525,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 1000
+          },
+          "10000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.2899528125,
+              0.7541535416666663
+            ],
+            "difference_vs_m0_uniform_yuan": -0.03675416666666659,
+            "mean_average_prize_yuan": 0.46645833333333336,
+            "mean_win_rate": 0.053906666666666665,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 10000
+          },
+          "5000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.23225791666666665,
+              0.4628018749999999
+            ],
+            "difference_vs_m0_uniform_yuan": -0.16075833333333334,
+            "mean_average_prize_yuan": 0.3359,
+            "mean_win_rate": 0.04826,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 5000
+          }
+        },
+        "m0_uniform": {
+          "1000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.310953125,
+              0.6015916666666666
+            ],
+            "difference_vs_m0_uniform_yuan": 0.0,
+            "mean_average_prize_yuan": 0.4495416666666667,
+            "mean_win_rate": 0.07364166666666666,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 1000
+          },
+          "10000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.3129998958333333,
+              0.7709832291666665
+            ],
+            "difference_vs_m0_uniform_yuan": 0.0,
+            "mean_average_prize_yuan": 0.5032125,
+            "mean_win_rate": 0.070765,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 10000
+          },
+          "5000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.3121922916666666,
+              0.7354956249999999
+            ],
+            "difference_vs_m0_uniform_yuan": 0.0,
+            "mean_average_prize_yuan": 0.4966583333333333,
+            "mean_win_rate": 0.071065,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 5000
+          }
+        }
+      },
+      "theoretical_baseline_average_prize_yuan": 0.8816698833625692
+    },
+    "ssq": {
+      "evaluation_draw_count": 120,
+      "evaluation_issue_first": "2025117",
+      "evaluation_issue_last": "2026085",
+      "full_space_oracle": {
+        "bonus_contract_fingerprint": "0c57745377d7821a26fb3b8bd954d0010c1c4410c51643e6a5650e53aabad2d1",
+        "expected": {
+          "prize_total_yuan": 15117950,
+          "ticket_count": 17721088,
+          "winning_ticket_count": 1188988
+        },
+        "fixed_prize_total_yuan": 15117950,
+        "game": "ssq",
+        "matches_frozen_oracle": true,
+        "rule_version": "SSQ_PRIZE_FIXED_6TIER",
+        "tier_winning_counts": {
+          "1": 1,
+          "2": 15,
+          "3": 162,
+          "4": 7695,
+          "5": 137475,
+          "6": 1043640
+        },
+        "total_ticket_count": 17721088,
+        "winning_ticket_count": 1188988
+      },
+      "rule_version": "SSQ_PRIZE_FIXED_6TIER",
+      "strategies": {
+        "back_lock_coverage": {
+          "1000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.37764479166666665,
+              0.9031489583333332
+            ],
+            "difference_vs_m0_uniform_yuan": -0.11516666666666675,
+            "mean_average_prize_yuan": 0.6156666666666666,
+            "mean_win_rate": 0.10090833333333334,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 1000
+          },
+          "10000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.6740109375,
+              1.3905592708333332
+            ],
+            "difference_vs_m0_uniform_yuan": 0.3384708333333334,
+            "mean_average_prize_yuan": 1.0065958333333334,
+            "mean_win_rate": 0.10012916666666666,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 10000
+          },
+          "5000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.649485625,
+              1.8028129166666667
+            ],
+            "difference_vs_m0_uniform_yuan": 0.48911666666666676,
+            "mean_average_prize_yuan": 1.1676083333333334,
+            "mean_win_rate": 0.10084166666666668,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 5000
+          }
+        },
+        "front_spread": {
+          "1000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.37536770833333327,
+              1.5655552083333335
+            ],
+            "difference_vs_m0_uniform_yuan": 0.10512500000000002,
+            "mean_average_prize_yuan": 0.8359583333333334,
+            "mean_win_rate": 0.09791666666666667,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 1000
+          },
+          "10000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.5353901041666667,
+              1.2883856249999999
+            ],
+            "difference_vs_m0_uniform_yuan": 0.22381666666666666,
+            "mean_average_prize_yuan": 0.8919416666666666,
+            "mean_win_rate": 0.0968875,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 10000
+          },
+          "5000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.6196858333333333,
+              1.7021947916666667
+            ],
+            "difference_vs_m0_uniform_yuan": 0.446975,
+            "mean_average_prize_yuan": 1.1254666666666666,
+            "mean_win_rate": 0.098845,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 5000
+          }
+        },
+        "m0_uniform": {
+          "1000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.44290416666666665,
+              1.1539052083333332
+            ],
+            "difference_vs_m0_uniform_yuan": 0.0,
+            "mean_average_prize_yuan": 0.7308333333333333,
+            "mean_win_rate": 0.07339999999999999,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 1000
+          },
+          "10000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.4888310416666667,
+              0.8658484375
+            ],
+            "difference_vs_m0_uniform_yuan": 0.0,
+            "mean_average_prize_yuan": 0.668125,
+            "mean_win_rate": 0.0723125,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 10000
+          },
+          "5000": {
+            "bootstrap_95pct_ci_yuan": [
+              0.476565,
+              0.9148112499999997
+            ],
+            "difference_vs_m0_uniform_yuan": 0.0,
+            "mean_average_prize_yuan": 0.6784916666666666,
+            "mean_win_rate": 0.072755,
+            "scientific_status": "no_confirmed_lift",
+            "target_2_yuan_supported": false,
+            "ticket_count": 5000
+          }
+        }
+      },
+      "theoretical_baseline_average_prize_yuan": 0.8531050689438482
+    }
+  },
+  "protocol": {
+    "bootstrap": {
+      "block_length": 10,
+      "confidence_level": 0.95,
+      "method": "circular_moving_block_percentile",
+      "replicates": 2000,
+      "seed": 0
+    },
+    "draw_source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "evaluation_draws_per_game": 120,
+    "group_sizes": [
+      1000,
+      5000,
+      10000
+    ],
+    "name": "phase4e23-pre-registered-group-prize-evaluation-route-c",
+    "selection": "last 120 issues after ascending issue_id sort",
+    "strategies": [
+      "m0_uniform",
+      "back_lock_coverage",
+      "front_spread"
+    ]
+  },
+  "scientific_status": "no_confirmed_lift",
+  "target_average_prize_yuan": 2.0
+}

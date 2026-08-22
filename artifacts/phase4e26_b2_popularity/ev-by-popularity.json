@@ -1,0 +1,563 @@
+{
+  "model": {
+    "game": "dlt",
+    "rule_version": "DLT_PRIZE_PARIMUTUEL_v1",
+    "birthday_bias": 0.2,
+    "birthday_bias_is_assumption": true,
+    "target_ev_yuan": 2.0,
+    "ticket_price_yuan": 2,
+    "pool_definition": "sum(prize_per_ticket_yuan * winners) for all matching base/add-on tier labels",
+    "limitations": "Popularity is a birthday-effect proxy, not an observed DLT betting distribution or a return guarantee."
+  },
+  "representative_tickets": {
+    "uniform": {
+      "front_numbers": null,
+      "back_numbers": [
+        1,
+        2
+      ],
+      "popularity_weight": 1.0
+    },
+    "birthday": {
+      "front_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "back_numbers": [
+        1,
+        2
+      ],
+      "popularity_weight": 1.214338114443879
+    },
+    "anti_birthday": {
+      "front_numbers": [
+        31,
+        32,
+        33,
+        34,
+        35
+      ],
+      "back_numbers": [
+        1,
+        2
+      ],
+      "popularity_weight": 0.2398692571740996
+    }
+  },
+  "draws": [
+    {
+      "issue_id": "26070",
+      "national_sales_yuan": 312722588,
+      "pool_rollover_yuan": 814894461,
+      "tier1_pool_yuan": 10000000,
+      "tier2_pool_yuan": 18877106,
+      "total_bets": 156361294,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 0.7311126707829507
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.7011460014099503
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 1.2139755353645927
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 56321977.40270072,
+      "additional_tier1_pool_needed_yuan": 46321977.40270072
+    },
+    {
+      "issue_id": "26069",
+      "national_sales_yuan": 312134107,
+      "pool_rollover_yuan": 757966457,
+      "tier1_pool_yuan": 79642148,
+      "tier2_pool_yuan": 23642048,
+      "total_bets": 156067053,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 1.1541197938026577
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 1.0565579625233723
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 2.521973011650723
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 48918085.8594048,
+      "additional_tier1_pool_needed_yuan": 0.0
+    },
+    {
+      "issue_id": "26068",
+      "national_sales_yuan": 333899407,
+      "pool_rollover_yuan": 802145380,
+      "tier1_pool_yuan": 42726019,
+      "tier2_pool_yuan": 15098470,
+      "total_bets": 166949703,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 0.8716333789852683
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.8196484386432239
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 1.6172142243281362
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 66256554.62275977,
+      "additional_tier1_pool_needed_yuan": 23530535.622759767
+    },
+    {
+      "issue_id": "26067",
+      "national_sales_yuan": 322509643,
+      "pool_rollover_yuan": 791339917,
+      "tier1_pool_yuan": 49641822,
+      "tier2_pool_yuan": 15641722,
+      "total_bets": 161254821,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 0.9230606605361886
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.8629115762737936
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 1.7743561469545575
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 63204323.118350655,
+      "additional_tier1_pool_needed_yuan": 13562501.118350655
+    },
+    {
+      "issue_id": "26066",
+      "national_sales_yuan": 352461614,
+      "pool_rollover_yuan": 817519004,
+      "tier1_pool_yuan": 20000000,
+      "tier2_pool_yuan": 23119074,
+      "total_bets": 176230807,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 0.7865389442108807
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.7474037869709054
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 1.4023311536420089
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 58070348.74073804,
+      "additional_tier1_pool_needed_yuan": 38070348.74073804
+    },
+    {
+      "issue_id": "26065",
+      "national_sales_yuan": 361984211,
+      "pool_rollover_yuan": 802840285,
+      "tier1_pool_yuan": 45589314,
+      "tier2_pool_yuan": 17148075,
+      "total_bets": 180992105,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 0.8743708290441284
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.8216045472912347
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 1.6435363727327603
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 68702470.32373878,
+      "additional_tier1_pool_needed_yuan": 23113156.323738784
+    },
+    {
+      "issue_id": "26064",
+      "national_sales_yuan": 352495130,
+      "pool_rollover_yuan": 787631261,
+      "tier1_pool_yuan": 46403436,
+      "tier2_pool_yuan": 20243706,
+      "total_bets": 176247565,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 0.9038733325961097
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.8461587862359974
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 1.7504122381301372
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 62302696.63575684,
+      "additional_tier1_pool_needed_yuan": 15899260.635756843
+    },
+    {
+      "issue_id": "26063",
+      "national_sales_yuan": 353853854,
+      "pool_rollover_yuan": 762261291,
+      "tier1_pool_yuan": 63270799,
+      "tier2_pool_yuan": 24497835,
+      "total_bets": 176926927,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 1.0115706738408432
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.9362021078795659
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 2.108686164112655
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 56329552.530029684,
+      "additional_tier1_pool_needed_yuan": 0.0
+    },
+    {
+      "issue_id": "26062",
+      "national_sales_yuan": 397538816,
+      "pool_rollover_yuan": 738675961,
+      "tier1_pool_yuan": 99999993,
+      "tier2_pool_yuan": 20646883,
+      "total_bets": 198769408,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 1.1124189726153142
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 1.0206398337749278
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 2.425571945295268
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 70591106.72126807,
+      "additional_tier1_pool_needed_yuan": 0.0
+    },
+    {
+      "issue_id": "26061",
+      "national_sales_yuan": 354547009,
+      "pool_rollover_yuan": 807705563,
+      "tier1_pool_yuan": 40000000,
+      "tier2_pool_yuan": 22153686,
+      "total_bets": 177273504,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 0.8804872185270449
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.8263545629527551
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 1.6886510519819469
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 59910197.16376432,
+      "additional_tier1_pool_needed_yuan": 19910197.16376432
+    },
+    {
+      "issue_id": "26060",
+      "national_sales_yuan": 364299680,
+      "pool_rollover_yuan": 769160539,
+      "tier1_pool_yuan": 99999976,
+      "tier2_pool_yuan": 33607085,
+      "total_bets": 182149840,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 1.2296012620665777
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 1.1183357342618327
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 2.8414072483654884
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 45209337.79669388,
+      "additional_tier1_pool_needed_yuan": 0.0
+    },
+    {
+      "issue_id": "26059",
+      "national_sales_yuan": 373161795,
+      "pool_rollover_yuan": 818749861,
+      "tier1_pool_yuan": 30000000,
+      "tier2_pool_yuan": 17547026,
+      "total_bets": 186580897,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 0.7926940518384437
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.7530094727400777
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 1.3911666644020486
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 70293036.37989601,
+      "additional_tier1_pool_needed_yuan": 40293036.379896015
+    },
+    {
+      "issue_id": "26058",
+      "national_sales_yuan": 354634349,
+      "pool_rollover_yuan": 786536913,
+      "tier1_pool_yuan": 57779229,
+      "tier2_pool_yuan": 28779190,
+      "total_bets": 177317174,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 1.0070118964921202
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.9320068229297983
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 2.1183529567249333
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 50209533.59669993,
+      "additional_tier1_pool_needed_yuan": 0.0
+    },
+    {
+      "issue_id": "26057",
+      "national_sales_yuan": 341310042,
+      "pool_rollover_yuan": 801147297,
+      "tier1_pool_yuan": 38468236,
+      "tier2_pool_yuan": 20314926,
+      "total_bets": 170655021,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 0.8735290830540701
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.8207192790134736
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 1.6554447806922779
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 59954907.89073915,
+      "additional_tier1_pool_needed_yuan": 21486671.89073915
+    },
+    {
+      "issue_id": "26056",
+      "national_sales_yuan": 368991091,
+      "pool_rollover_yuan": 767589409,
+      "tier1_pool_yuan": 60107157,
+      "tier2_pool_yuan": 19917848,
+      "total_bets": 184495545,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 0.954188687464518
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.8883095372678869
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 1.909538419800757
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 66048720.726220705,
+      "additional_tier1_pool_needed_yuan": 5941563.726220705
+    },
+    {
+      "issue_id": "26055",
+      "national_sales_yuan": 348746645,
+      "pool_rollover_yuan": 757078646,
+      "tier1_pool_yuan": 40000000,
+      "tier2_pool_yuan": 22042556,
+      "total_bets": 174373322,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 0.8848889864761303
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.8300793905636009
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 1.7011810185619733
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 58901050.90421732,
+      "additional_tier1_pool_needed_yuan": 18901050.904217318
+    },
+    {
+      "issue_id": "26054",
+      "national_sales_yuan": 349381748,
+      "pool_rollover_yuan": 718927617,
+      "tier1_pool_yuan": 96716697,
+      "tier2_pool_yuan": 21688276,
+      "total_bets": 174690874,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 1.1715144087459355
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 1.0707833290566278
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 2.586858194240331
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 59551741.072129466,
+      "additional_tier1_pool_needed_yuan": 0.0
+    },
+    {
+      "issue_id": "26053",
+      "national_sales_yuan": 374349995,
+      "pool_rollover_yuan": 738749152,
+      "tier1_pool_yuan": 99999984,
+      "tier2_pool_yuan": 15955535,
+      "total_bets": 187174997,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 1.1191031343746918
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 1.0268875554933234
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 2.409821288090044
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 72819308.65940633,
+      "additional_tier1_pool_needed_yuan": 0.0
+    },
+    {
+      "issue_id": "26052",
+      "national_sales_yuan": 353399952,
+      "pool_rollover_yuan": 782179260,
+      "tier1_pool_yuan": 86872587,
+      "tier2_pool_yuan": 19659765,
+      "total_bets": 176699976,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 1.1040219575756833
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 1.0142323593904554
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 2.368777025042307
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 63340702.384421706,
+      "additional_tier1_pool_needed_yuan": 0.0
+    },
+    {
+      "issue_id": "26051",
+      "national_sales_yuan": 355675446,
+      "pool_rollover_yuan": 799348751,
+      "tier1_pool_yuan": 46138963,
+      "tier2_pool_yuan": 22138877,
+      "total_bets": 177837723,
+      "tickets": {
+        "uniform": {
+          "popularity_weight": 1.0,
+          "total_ev": 0.9102509664888582
+        },
+        "birthday": {
+          "popularity_weight": 1.214338114443879,
+          "total_ev": 0.8513365202928629
+        },
+        "anti_birthday": {
+          "popularity_weight": 0.2398692571740996,
+          "total_ev": 1.7812148742230514
+        }
+      },
+      "anti_birthday_tier1_pool_threshold_for_2_yuan": 60159482.73059466,
+      "additional_tier1_pool_needed_yuan": 14020519.730594657
+    }
+  ],
+  "summary": {
+    "uniform": {
+      "popularity_weight": 1.0,
+      "mean_total_ev": 0.9647995454759208,
+      "min_total_ev": 0.7311126707829507,
+      "max_total_ev": 1.2296012620665777
+    },
+    "birthday": {
+      "popularity_weight": 1.214338114443879,
+      "mean_total_ev": 0.8972163802482832,
+      "min_total_ev": 0.7011460014099503,
+      "max_total_ev": 1.1183357342618327
+    },
+    "anti_birthday": {
+      "popularity_weight": 0.2398692571740996,
+      "mean_total_ev": 1.9455235157167998,
+      "min_total_ev": 1.2139755353645927,
+      "max_total_ev": 2.8414072483654884
+    },
+    "ev_differences": {
+      "birthday_minus_uniform_mean": -0.06758316522763763,
+      "anti_birthday_minus_uniform_mean": 0.980723970240879,
+      "anti_birthday_minus_birthday_mean": 1.0483071354685167
+    }
+  },
+  "target_analysis": {
+    "any_observed_ticket_draw_total_ev_at_least_2": true,
+    "minimum_anti_birthday_tier1_pool_threshold_yuan": 45209337.79669388,
+    "maximum_anti_birthday_tier1_pool_threshold_yuan": 72819308.65940633,
+    "interpretation": "Counterfactual tier-1 pool thresholds conditional on each draw's sales and tier-2 pool; not a claim that rollover becomes tier-1 payout or that 2 yuan EV will be reached."
+  }
+}

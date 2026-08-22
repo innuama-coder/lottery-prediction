@@ -1,0 +1,65 @@
+{
+  "model": "phase4e24-b0-parimutuel-ev-v1",
+  "target_total_ev_yuan": 2.0,
+  "probe_assumptions": {
+    "total_bets": 100000000,
+    "tier2_pool_yuan": 100000000,
+    "popularity_weights": [
+      0.5,
+      1.0,
+      2.0
+    ],
+    "external_data_used": false
+  },
+  "games": {
+    "ssq": {
+      "rule_version": "SSQ_PRIZE_PARIMUTUEL_v1",
+      "low_fixed_tier_ev_yuan": 0.4863104342126172,
+      "threshold_combinations": [
+        {
+          "tier1_pool_yuan": 0,
+          "popularity_weight": 0.5,
+          "total_ev_yuan": 2.4401450208870936,
+          "meets_target": true
+        },
+        {
+          "tier1_pool_yuan": 61846619,
+          "popularity_weight": 1.0,
+          "total_ev_yuan": 2.000000008299052,
+          "meets_target": true
+        },
+        {
+          "tier1_pool_yuan": 221340859,
+          "popularity_weight": 2.0,
+          "total_ev_yuan": 2.0000000031670973,
+          "meets_target": true
+        }
+      ]
+    },
+    "dlt": {
+      "rule_version": "DLT_PRIZE_PARIMUTUEL_v1",
+      "low_fixed_tier_ev_yuan": 0.5549596204784233,
+      "threshold_combinations": [
+        {
+          "tier1_pool_yuan": 0,
+          "popularity_weight": 0.5,
+          "total_ev_yuan": 2.51300707912755,
+          "meets_target": true
+        },
+        {
+          "tier1_pool_yuan": 55326372,
+          "popularity_weight": 1.0,
+          "total_ev_yuan": 2.0000000022637994,
+          "meets_target": true
+        },
+        {
+          "tier1_pool_yuan": 209846102,
+          "popularity_weight": 2.0,
+          "total_ev_yuan": 2.0000000009875456,
+          "meets_target": true
+        }
+      ]
+    }
+  },
+  "interpretation": "Conditional model thresholds only; they are not claims that such pools or popularity differences are realistic or that a ticket will return 2 yuan."
+}

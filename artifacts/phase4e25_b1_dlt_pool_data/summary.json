@@ -1,0 +1,375 @@
+{
+  "schema_version": "phase4e25-b1-v1",
+  "method": "observed announced payout / (national sales / 2 yuan)",
+  "frozen_fixed_ev_yuan": 0.88167,
+  "target_ev_yuan": 2.0,
+  "draw_count": 20,
+  "missing_issues": [],
+  "real_ev_range_yuan": {
+    "min": 0.6159199539497288,
+    "max": 1.737900829286567
+  },
+  "draws": [
+    {
+      "issue_id": "26070",
+      "real_ev_per_ticket_yuan": 0.6159199539497288,
+      "first_prize_per_ticket_yuan": 10000000,
+      "second_prize_per_ticket_yuan": 142147,
+      "difference_from_frozen_fixed_ev_yuan": -0.2657500460502712,
+      "gap_to_2_yuan": 1.3840800460502711,
+      "pool_rollover_yuan": 814894461,
+      "b0_threshold": {
+        "tier1_pool_yuan": 10000000,
+        "tier2_pool_yuan": 15920464,
+        "required_tier1_pool_yuan": 238930584,
+        "required_to_real_tier1_pool_multiple": 23.8930584,
+        "required_to_reported_rollover_multiple": 0.2932043294376988,
+        "b0_total_bets_proxy_floor_sales_div_2": 156361294,
+        "b0_total_ev_at_threshold_yuan": 2.000000002289082
+      }
+    },
+    {
+      "issue_id": "26069",
+      "real_ev_per_ticket_yuan": 1.2630758227264154,
+      "first_prize_per_ticket_yuan": 7110906,
+      "second_prize_per_ticket_yuan": 201724,
+      "difference_from_frozen_fixed_ev_yuan": 0.38140582272641543,
+      "gap_to_2_yuan": 0.7369241772735846,
+      "pool_rollover_yuan": 757966457,
+      "b0_threshold": {
+        "tier1_pool_yuan": 56887248,
+        "tier2_pool_yuan": 19768952,
+        "required_tier1_pool_yuan": 234154550,
+        "required_to_real_tier1_pool_multiple": 4.11611667345905,
+        "required_to_reported_rollover_multiple": 0.3089246863598345,
+        "b0_total_bets_proxy_floor_sales_div_2": 156067053,
+        "b0_total_ev_at_threshold_yuan": 2.000000004117475
+      }
+    },
+    {
+      "issue_id": "26068",
+      "real_ev_per_ticket_yuan": 0.9152761927486741,
+      "first_prize_per_ticket_yuan": 7366555,
+      "second_prize_per_ticket_yuan": 57893,
+      "difference_from_frozen_fixed_ev_yuan": 0.03360619274867416,
+      "gap_to_2_yuan": 1.0847238072513259,
+      "pool_rollover_yuan": 802145380,
+      "b0_threshold": {
+        "tier1_pool_yuan": 36832775,
+        "tier2_pool_yuan": 12273316,
+        "required_tier1_pool_yuan": 258449948,
+        "required_to_real_tier1_pool_multiple": 7.01684703365413,
+        "required_to_reported_rollover_multiple": 0.32219838752920327,
+        "b0_total_bets_proxy_floor_sales_div_2": 166949703,
+        "b0_total_ev_at_threshold_yuan": 2.0000000018433566
+      }
+    },
+    {
+      "issue_id": "26067",
+      "real_ev_per_ticket_yuan": 1.1423454274823033,
+      "first_prize_per_ticket_yuan": 7300268,
+      "second_prize_per_ticket_yuan": 79968,
+      "difference_from_frozen_fixed_ev_yuan": 0.2606754274823033,
+      "gap_to_2_yuan": 0.8576545725176967,
+      "pool_rollover_yuan": 791339917,
+      "b0_threshold": {
+        "tier1_pool_yuan": 43801608,
+        "tier2_pool_yuan": 12634944,
+        "required_tier1_pool_yuan": 249761478,
+        "required_to_real_tier1_pool_multiple": 5.702107511669435,
+        "required_to_reported_rollover_multiple": 0.3156184499662994,
+        "b0_total_bets_proxy_floor_sales_div_2": 161254821,
+        "b0_total_ev_at_threshold_yuan": 2.000000000257501
+      }
+    },
+    {
+      "issue_id": "26066",
+      "real_ev_per_ticket_yuan": 1.280563794955555,
+      "first_prize_per_ticket_yuan": 10000000,
+      "second_prize_per_ticket_yuan": 194605,
+      "difference_from_frozen_fixed_ev_yuan": 0.3988937949555551,
+      "gap_to_2_yuan": 0.7194362050444449,
+      "pool_rollover_yuan": 817519004,
+      "b0_threshold": {
+        "tier1_pool_yuan": 20000000,
+        "tier2_pool_yuan": 20628130,
+        "required_tier1_pool_yuan": 262625394,
+        "required_to_real_tier1_pool_multiple": 13.1312697,
+        "required_to_reported_rollover_multiple": 0.3212468367279692,
+        "b0_total_bets_proxy_floor_sales_div_2": 176230807,
+        "b0_total_ev_at_threshold_yuan": 2.000000002821806
+      }
+    },
+    {
+      "issue_id": "26065",
+      "real_ev_per_ticket_yuan": 1.167115788925943,
+      "first_prize_per_ticket_yuan": 7598219,
+      "second_prize_per_ticket_yuan": 77875,
+      "difference_from_frozen_fixed_ev_yuan": 0.28544578892594297,
+      "gap_to_2_yuan": 0.8328842110740571,
+      "pool_rollover_yuan": 802840285,
+      "b0_threshold": {
+        "tier1_pool_yuan": 45589314,
+        "tier2_pool_yuan": 14718375,
+        "required_tier1_pool_yuan": 276138050,
+        "required_to_real_tier1_pool_multiple": 6.057078419736695,
+        "required_to_reported_rollover_multiple": 0.3439514124531008,
+        "b0_total_bets_proxy_floor_sales_div_2": 180992105,
+        "b0_total_ev_at_threshold_yuan": 2.000000002996033
+      }
+    },
+    {
+      "issue_id": "26064",
+      "real_ev_per_ticket_yuan": 1.0718743092989682,
+      "first_prize_per_ticket_yuan": 8286328,
+      "second_prize_per_ticket_yuan": 154532,
+      "difference_from_frozen_fixed_ev_yuan": 0.19020430929896825,
+      "gap_to_2_yuan": 0.9281256907010318,
+      "pool_rollover_yuan": 787631261,
+      "b0_threshold": {
+        "tier1_pool_yuan": 33145312,
+        "tier2_pool_yuan": 15916796,
+        "required_tier1_pool_yuan": 267901982,
+        "required_to_real_tier1_pool_multiple": 8.082650783314394,
+        "required_to_reported_rollover_multiple": 0.3401362988816159,
+        "b0_total_bets_proxy_floor_sales_div_2": 176247565,
+        "b0_total_ev_at_threshold_yuan": 2.000000004302306
+      }
+    },
+    {
+      "issue_id": "26063",
+      "real_ev_per_ticket_yuan": 1.0237801394696693,
+      "first_prize_per_ticket_yuan": 7715951,
+      "second_prize_per_ticket_yuan": 274025,
+      "difference_from_frozen_fixed_ev_yuan": 0.14211013946966933,
+      "gap_to_2_yuan": 0.9762198605303307,
+      "pool_rollover_yuan": 762261291,
+      "b0_threshold": {
+        "tier1_pool_yuan": 38579755,
+        "tier2_pool_yuan": 21647975,
+        "required_tier1_pool_yuan": 262504111,
+        "required_to_real_tier1_pool_multiple": 6.804193313306422,
+        "required_to_reported_rollover_multiple": 0.3443754970892258,
+        "b0_total_bets_proxy_floor_sales_div_2": 176926927,
+        "b0_total_ev_at_threshold_yuan": 2.000000004490998
+      }
+    },
+    {
+      "issue_id": "26062",
+      "real_ev_per_ticket_yuan": 1.737900829286567,
+      "first_prize_per_ticket_yuan": 5747126,
+      "second_prize_per_ticket_yuan": 55984,
+      "difference_from_frozen_fixed_ev_yuan": 0.856230829286567,
+      "gap_to_2_yuan": 0.262099170713433,
+      "pool_rollover_yuan": 738675961,
+      "b0_threshold": {
+        "tier1_pool_yuan": 86206890,
+        "tier2_pool_yuan": 17019136,
+        "required_tier1_pool_yuan": 299438248,
+        "required_to_real_tier1_pool_multiple": 3.4734839407847793,
+        "required_to_reported_rollover_multiple": 0.4053715889097412,
+        "b0_total_bets_proxy_floor_sales_div_2": 198769408,
+        "b0_total_ev_at_threshold_yuan": 2.000000000852059
+      }
+    },
+    {
+      "issue_id": "26061",
+      "real_ev_per_ticket_yuan": 0.9821184022454974,
+      "first_prize_per_ticket_yuan": 10000000,
+      "second_prize_per_ticket_yuan": 160534,
+      "difference_from_frozen_fixed_ev_yuan": 0.10044840224549745,
+      "gap_to_2_yuan": 1.0178815977545026,
+      "pool_rollover_yuan": 807705563,
+      "b0_threshold": {
+        "tier1_pool_yuan": 40000000,
+        "tier2_pool_yuan": 18300876,
+        "required_tier1_pool_yuan": 266738841,
+        "required_to_real_tier1_pool_multiple": 6.668471025,
+        "required_to_reported_rollover_multiple": 0.3302426691346188,
+        "b0_total_bets_proxy_floor_sales_div_2": 177273504,
+        "b0_total_ev_at_threshold_yuan": 2.000000001626253
+      }
+    },
+    {
+      "issue_id": "26060",
+      "real_ev_per_ticket_yuan": 1.568939714687644,
+      "first_prize_per_ticket_yuan": 2645502,
+      "second_prize_per_ticket_yuan": 319459,
+      "difference_from_frozen_fixed_ev_yuan": 0.6872697146876441,
+      "gap_to_2_yuan": 0.43106028531235596,
+      "pool_rollover_yuan": 769160539,
+      "b0_threshold": {
+        "tier1_pool_yuan": 97883574,
+        "tier2_pool_yuan": 31306982,
+        "required_tier1_pool_yuan": 259389950,
+        "required_to_real_tier1_pool_multiple": 2.6499844601097218,
+        "required_to_reported_rollover_multiple": 0.3372377245681867,
+        "b0_total_bets_proxy_floor_sales_div_2": 182149840,
+        "b0_total_ev_at_threshold_yuan": 2.0000000003750165
+      }
+    },
+    {
+      "issue_id": "26059",
+      "real_ev_per_ticket_yuan": 1.0858901083375911,
+      "first_prize_per_ticket_yuan": 10000000,
+      "second_prize_per_ticket_yuan": 56494,
+      "difference_from_frozen_fixed_ev_yuan": 0.2042201083375912,
+      "gap_to_2_yuan": 0.9141098916624089,
+      "pool_rollover_yuan": 818749861,
+      "b0_threshold": {
+        "tier1_pool_yuan": 30000000,
+        "tier2_pool_yuan": 15196886,
+        "required_tier1_pool_yuan": 283732673,
+        "required_to_real_tier1_pool_multiple": 9.457755766666667,
+        "required_to_reported_rollover_multiple": 0.3465437815811733,
+        "b0_total_bets_proxy_floor_sales_div_2": 186580897,
+        "b0_total_ev_at_threshold_yuan": 2.00000000382458
+      }
+    },
+    {
+      "issue_id": "26058",
+      "real_ev_per_ticket_yuan": 1.3953910200616242,
+      "first_prize_per_ticket_yuan": 9961936,
+      "second_prize_per_ticket_yuan": 209761,
+      "difference_from_frozen_fixed_ev_yuan": 0.5137210200616242,
+      "gap_to_2_yuan": 0.6046089799383758,
+      "pool_rollover_yuan": 786536913,
+      "b0_threshold": {
+        "tier1_pool_yuan": 49809680,
+        "tier2_pool_yuan": 24751798,
+        "required_tier1_pool_yuan": 259615474,
+        "required_to_real_tier1_pool_multiple": 5.212149003968706,
+        "required_to_reported_rollover_multiple": 0.33007411312684315,
+        "b0_total_bets_proxy_floor_sales_div_2": 177317174,
+        "b0_total_ev_at_threshold_yuan": 2.0000000013288393
+      }
+    },
+    {
+      "issue_id": "26057",
+      "real_ev_per_ticket_yuan": 1.0131031948951563,
+      "first_prize_per_ticket_yuan": 9617059,
+      "second_prize_per_ticket_yuan": 113112,
+      "difference_from_frozen_fixed_ev_yuan": 0.13143319489515637,
+      "gap_to_2_yuan": 0.9868968051048437,
+      "pool_rollover_yuan": 801147297,
+      "b0_threshold": {
+        "tier1_pool_yuan": 38468236,
+        "tier2_pool_yuan": 17871696,
+        "required_tier1_pool_yuan": 257574417,
+        "required_to_real_tier1_pool_multiple": 6.695768867592473,
+        "required_to_reported_rollover_multiple": 0.3215069413134399,
+        "b0_total_bets_proxy_floor_sales_div_2": 170655021,
+        "b0_total_ev_at_threshold_yuan": 2.000000004203494
+      }
+    },
+    {
+      "issue_id": "26056",
+      "real_ev_per_ticket_yuan": 1.166914433714607,
+      "first_prize_per_ticket_yuan": 7155614,
+      "second_prize_per_ticket_yuan": 114339,
+      "difference_from_frozen_fixed_ev_yuan": 0.28524443371460695,
+      "gap_to_2_yuan": 0.8330855662853931,
+      "pool_rollover_yuan": 767589409,
+      "b0_threshold": {
+        "tier1_pool_yuan": 42933684,
+        "tier2_pool_yuan": 17265189,
+        "required_tier1_pool_yuan": 278405560,
+        "required_to_real_tier1_pool_multiple": 6.484548588935438,
+        "required_to_reported_rollover_multiple": 0.36270114821242927,
+        "b0_total_bets_proxy_floor_sales_div_2": 184495545,
+        "b0_total_ev_at_threshold_yuan": 2.0000000025428357
+      }
+    },
+    {
+      "issue_id": "26055",
+      "real_ev_per_ticket_yuan": 0.9686617114266433,
+      "first_prize_per_ticket_yuan": 10000000,
+      "second_prize_per_ticket_yuan": 232027,
+      "difference_from_frozen_fixed_ev_yuan": 0.0869917114266433,
+      "gap_to_2_yuan": 1.0313382885733566,
+      "pool_rollover_yuan": 757078646,
+      "b0_threshold": {
+        "tier1_pool_yuan": 40000000,
+        "tier2_pool_yuan": 19258241,
+        "required_tier1_pool_yuan": 261444999,
+        "required_to_real_tier1_pool_multiple": 6.536124975,
+        "required_to_reported_rollover_multiple": 0.3453340024597656,
+        "b0_total_bets_proxy_floor_sales_div_2": 174373322,
+        "b0_total_ev_at_threshold_yuan": 2.000000000318912
+      }
+    },
+    {
+      "issue_id": "26054",
+      "real_ev_per_ticket_yuan": 1.3108119946780963,
+      "first_prize_per_ticket_yuan": 6280305,
+      "second_prize_per_ticket_yuan": 187940,
+      "difference_from_frozen_fixed_ev_yuan": 0.42914199467809633,
+      "gap_to_2_yuan": 0.6891880053219037,
+      "pool_rollover_yuan": 718927617,
+      "b0_threshold": {
+        "tier1_pool_yuan": 81643965,
+        "tier2_pool_yuan": 18981940,
+        "required_tier1_pool_yuan": 262216210,
+        "required_to_real_tier1_pool_multiple": 3.211703522728226,
+        "required_to_reported_rollover_multiple": 0.3647324206214212,
+        "b0_total_bets_proxy_floor_sales_div_2": 174690874,
+        "b0_total_ev_at_threshold_yuan": 2.000000002149379
+      }
+    },
+    {
+      "issue_id": "26053",
+      "real_ev_per_ticket_yuan": 1.5218829053276735,
+      "first_prize_per_ticket_yuan": 4901960,
+      "second_prize_per_ticket_yuan": 97647,
+      "difference_from_frozen_fixed_ev_yuan": 0.6402129053276735,
+      "gap_to_2_yuan": 0.47811709467232655,
+      "pool_rollover_yuan": 738749152,
+      "b0_threshold": {
+        "tier1_pool_yuan": 68627440,
+        "tier2_pool_yuan": 12987051,
+        "required_tier1_pool_yuan": 287045150,
+        "required_to_real_tier1_pool_multiple": 4.182658569225371,
+        "required_to_reported_rollover_multiple": 0.3885556406026169,
+        "b0_total_bets_proxy_floor_sales_div_2": 187174997,
+        "b0_total_ev_at_threshold_yuan": 2.0000000006541527
+      }
+    },
+    {
+      "issue_id": "26052",
+      "real_ev_per_ticket_yuan": 1.3237478142045702,
+      "first_prize_per_ticket_yuan": 6295115,
+      "second_prize_per_ticket_yuan": 63296,
+      "difference_from_frozen_fixed_ev_yuan": 0.44207781420457026,
+      "gap_to_2_yuan": 0.6762521857954298,
+      "pool_rollover_yuan": 782179260,
+      "b0_threshold": {
+        "tier1_pool_yuan": 56656035,
+        "tier2_pool_yuan": 12722496,
+        "required_tier1_pool_yuan": 272120424,
+        "required_to_real_tier1_pool_multiple": 4.8030262618977835,
+        "required_to_reported_rollover_multiple": 0.3479003316963429,
+        "b0_total_bets_proxy_floor_sales_div_2": 176699976,
+        "b0_total_ev_at_threshold_yuan": 2.000000002275837
+      }
+    },
+    {
+      "issue_id": "26051",
+      "real_ev_per_ticket_yuan": 1.451357898908771,
+      "first_prize_per_ticket_yuan": 9612284,
+      "second_prize_per_ticket_yuan": 137851,
+      "difference_from_frozen_fixed_ev_yuan": 0.569687898908771,
+      "gap_to_2_yuan": 0.548642101091229,
+      "pool_rollover_yuan": 799348751,
+      "b0_threshold": {
+        "tier1_pool_yuan": 38449136,
+        "tier2_pool_yuan": 18609885,
+        "required_tier1_pool_yuan": 267216583,
+        "required_to_real_tier1_pool_multiple": 6.949872241602516,
+        "required_to_reported_rollover_multiple": 0.3342928636164217,
+        "b0_total_bets_proxy_floor_sales_div_2": 177837723,
+        "b0_total_ev_at_threshold_yuan": 2.0000000049096402
+      }
+    }
+  ],
+  "caveat": "Observed accounting and conditional B0 model output; no return or winning guarantee."
+}

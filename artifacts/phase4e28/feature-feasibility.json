@@ -1,0 +1,285 @@
+[
+  {
+    "feature_id": "FREQ_ROLLING_RATE",
+    "feasibility": "computable_from_current",
+    "data_needed": "按彩种、区域排列的历史开奖号与固定滚动窗口",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "冻结数据含 SSQ/DLT 各期前后区号码和期号，可在预测截点前按窗口计数，无需外部字段。"
+  },
+  {
+    "feature_id": "FREQ_WAITING_TIME",
+    "feasibility": "computable_from_current",
+    "data_needed": "每个号码历期是否出现的二元序列",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "可从冻结号码序列向前查找最近出现期，并对未出现号码作窗口截尾。"
+  },
+  {
+    "feature_id": "FREQ_UNIFORMITY_RESIDUAL",
+    "feasibility": "computable_from_current",
+    "data_needed": "窗口内单号出现次数及各游戏号码域、每区抽取数",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "出现次数来自冻结号码；SSQ/DLT 的 k/N 号码域固定，可据超几何边际均值和方差计算残差。"
+  },
+  {
+    "feature_id": "REL_PAIR_RATE",
+    "feasibility": "computable_from_current",
+    "data_needed": "每期同区无序号码集合",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "逐期号码集合完整，能枚举同区无序号码对并计算滚动共现率。"
+  },
+  {
+    "feature_id": "REL_TRIPLE_RATE",
+    "feasibility": "computable_from_current",
+    "data_needed": "每期同区无序号码集合",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "逐期号码集合完整，能枚举同区三元组并保留计数与曝光期数。"
+  },
+  {
+    "feature_id": "REL_PREVIOUS_OVERLAP",
+    "feasibility": "computable_from_current",
+    "data_needed": "相邻两期同区号码集合",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "冻结期号和日期足以正确排序，相邻集合交集可直接计算。"
+  },
+  {
+    "feature_id": "STRUCT_ODD_COUNT",
+    "feasibility": "computable_from_current",
+    "data_needed": "当期前后区号码",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "对现有号码取模并计数即可。"
+  },
+  {
+    "feature_id": "STRUCT_SUM",
+    "feasibility": "computable_from_current",
+    "data_needed": "当期前后区号码",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "同区号码和值可直接由冻结号码求和。"
+  },
+  {
+    "feature_id": "STRUCT_RANGE",
+    "feasibility": "computable_from_current",
+    "data_needed": "当期同区号码",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "同区最大值减最小值可直接计算；单球区跨度为零，需在建模时决定是否丢弃。"
+  },
+  {
+    "feature_id": "STRUCT_ADJACENT_PAIRS",
+    "feasibility": "computable_from_current",
+    "data_needed": "当期同区号码",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "排序冻结号码后统计相邻差为 1 的对数即可。"
+  },
+  {
+    "feature_id": "STRUCT_GAP_VECTOR",
+    "feasibility": "computable_from_current",
+    "data_needed": "当期同区号码",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "冻结号码可排序后逐项作差；SSQ 蓝球单球区没有非空 gap 向量。"
+  },
+  {
+    "feature_id": "STRUCT_BAND_COUNTS",
+    "feasibility": "computable_from_current",
+    "data_needed": "当期号码与预注册的数值分段边界",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "若采用数值等宽区间，边界是建模配置而非新观测数据，现有号码足以分箱。"
+  },
+  {
+    "feature_id": "TIME_WEEKDAY",
+    "feasibility": "computable_from_current",
+    "data_needed": "本地开奖日期",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "每期已有 draw_date_local，可确定星期并编码。"
+  },
+  {
+    "feature_id": "TIME_DAYS_SINCE_DRAW",
+    "feasibility": "computable_from_current",
+    "data_needed": "按彩种排序的相邻开奖日期",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "每期已有本地日期，可按游戏分别计算相邻日历日差。"
+  },
+  {
+    "feature_id": "TIME_RULE_REGIME",
+    "feasibility": "collectable_feasible",
+    "data_needed": "每个游戏规则版本、正式生效日和号码域/奖级变更",
+    "source": "https://m.lottery.gov.cn/ksjz/m/yxgz_dlt/",
+    "collection_method": "只读保存官方规则正文及发布日期/生效日，记录抓取时间、URL、内容哈希和版本差异，再按 draw_date_local 做 point-in-time join；低频串行请求并人工复核生效日。当前来源只支持 DLT，SSQ 规则页在本轮获准链路下不可达，须保持缺失而不能外推。",
+    "reason": "规则版本属于公开规范而非内部数据，DLT 官方规则 URL 已存在，适合低频、可审计地建立版本表；本次探针超时说明采集器需重试和缓存，但不等于资料非公开。SSQ 在当前授权来源下仍不可采。"
+  },
+  {
+    "feature_id": "ENV_BALL_SET_ID",
+    "feasibility": "collectable_feasible",
+    "data_needed": "逐期正式摇奖球套编号",
+    "source": "https://www.gdlottery.cn/f_html/kjgg/P085_26NNN.html",
+    "collection_method": "按已知 DLT 期号串行请求广东体彩静态公告，解析“本期使用第N套摇奖球”，同时保存 URL、抓取时间和原文哈希；至少 3 秒限速、缓存、404/字段缺失显式记 missing，不猜测。仅 DLT 可行。",
+    "reason": "只读探针实际访问第 26070 期页面并读到“本期使用第1套摇奖球”，来源和字段均已验证。SSQ 国家主源返回 403，现有省级来源没有该字段，因此 SSQ 不可行。"
+  },
+  {
+    "feature_id": "ENV_MACHINE_ID",
+    "feasibility": "not_feasible",
+    "data_needed": "逐期实际使用摇奖机的唯一编号或主备机状态",
+    "source": "非公开",
+    "reason": "公开流程资料只说明设备被保管、抽取和使用；已验证的 DLT 逐期开奖公告不公布机器唯一编号，SSQ 也无获准公告来源。没有逐期公开台账或获准内部渠道，不能由开奖号或球套号反推。"
+  },
+  {
+    "feature_id": "ENV_DRAW_POSITION",
+    "feasibility": "collectable_feasible",
+    "data_needed": "每期前后区实际出球序列",
+    "source": "https://www.gdlottery.cn/f_html/kjgg/P085_26NNN.html",
+    "collection_method": "按 DLT 期号低速串行抓取静态公告的“本期出球顺序”前区/后区字段，保存原文哈希并校验其号码多重集合与排序开奖号码一致；至少 3 秒限速，缺字段记 missing。仅 DLT 可行。",
+    "reason": "第 26070 期可访问页面明确给出前区 15 04 05 32 21、后区 11 02，证明该字段不是由排序号码伪造。SSQ 当前无获准的含出球顺序来源。"
+  },
+  {
+    "feature_id": "ENV_PRETEST_STATUS",
+    "feasibility": "not_feasible",
+    "data_needed": "逐期试机次数、结果、异常类别和时间戳",
+    "source": "非公开",
+    "reason": "公开流程仅说明通常进行试运行，不提供覆盖每期的试机结果台账；已验证 DLT 公告也无该字段，SSQ 无获准来源。制度描述不能替代逐期观测。"
+  },
+  {
+    "feature_id": "ENV_DRAW_ANOMALY",
+    "feasibility": "not_feasible",
+    "data_needed": "逐期设备中断、重启、备用切换及异常发生出球位，并包含可靠的无异常记录",
+    "source": "非公开",
+    "reason": "官方会对个别异常发布说明，但没有公开、穷尽且逐期的异常状态表；只搜到事件公告只能识别部分阳性，不能把未发公告可靠编码为阴性，因而无法形成无选择偏差的完整特征。"
+  },
+  {
+    "feature_id": "ENV_BALL_MASS",
+    "feasibility": "not_feasible",
+    "data_needed": "每套每个编号球的逐次质量测量、球套映射和校准时间",
+    "source": "非公开",
+    "reason": "公开资料只说明球会接受重量检测，不公布中国 SSQ/DLT 的号码级历史测量台账；无获准实验室或运营内部渠道，开奖号不能识别质量。"
+  },
+  {
+    "feature_id": "ENV_BALL_DIMENSION",
+    "feasibility": "not_feasible",
+    "data_needed": "每套每个编号球的直径、圆度测量及校准时间",
+    "source": "非公开",
+    "reason": "公开开放日/流程材料至多描述尺寸检测制度，不公开逐球逐期直径与圆度台账；没有获准内部渠道，无法从开奖号反演。"
+  },
+  {
+    "feature_id": "CTX_SALES_AMOUNT",
+    "feasibility": "computable_from_current",
+    "data_needed": "逐期全国销售金额",
+    "source": "artifacts/phase4e25_b1_dlt_pool_data/dlt-draws.jsonl",
+    "reason": "当前冻结扩展数据已含 DLT 26051–26070 共 20 期 national_sales_yuan，可直接计算滞后值、log1p 和样本内滚动量；覆盖仅限 DLT 20 期。SSQ 主源本轮返回 403，省级 200 期核心号码不含销售额，因此 SSQ 当前不可用。"
+  },
+  {
+    "feature_id": "CTX_JACKPOT_BALANCE",
+    "feasibility": "computable_from_current",
+    "data_needed": "逐期公告的下期滚存奖池余额",
+    "source": "artifacts/phase4e25_b1_dlt_pool_data/dlt-draws.jsonl",
+    "reason": "现有 20 期 DLT 数据已有 pool_rollover_yuan，可按已公布时点作滞后或变化率；不能把开奖后才公布的当期值用于当期开奖预测。SSQ 无对应获准数据。"
+  },
+  {
+    "feature_id": "BEHAV_BIRTHDAY_COUNT",
+    "feasibility": "computable_from_current",
+    "data_needed": "候选或开奖号组合",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "固定口径 sum(n<=31) 只依赖号码；它只是组合结构代理，不代表观察到了投注者生日。"
+  },
+  {
+    "feature_id": "BEHAV_FORM_CENTER_DISTANCE",
+    "feasibility": "not_feasible",
+    "data_needed": "按游戏、渠道和历史版本冻结的官方选号表号码坐标与有效期",
+    "source": "非公开",
+    "reason": "冻结数据没有票面版式；本轮获准、可访问的官方公告链也不提供可版本化的 SSQ/DLT 选号表坐标。自行假定网格会伪造“票面中心”，且不同省份/终端/线上渠道版式可能不同。"
+  },
+  {
+    "feature_id": "BEHAV_FORM_LINE_PATTERN",
+    "feasibility": "not_feasible",
+    "data_needed": "按游戏、渠道和历史版本冻结的官方选号表坐标与版式",
+    "source": "非公开",
+    "reason": "没有获准的、带生效期和渠道覆盖的官方票面版式档案；数值等差图案可另算，但不能冒充真实票面直线或几何邻接。"
+  },
+  {
+    "feature_id": "BEHAV_ARITHMETIC_PATTERN",
+    "feasibility": "computable_from_current",
+    "data_needed": "候选或开奖号组合与预注册公差/整除参数",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "等差子集和整除计数只依赖现有号码及建模配置。"
+  },
+  {
+    "feature_id": "BEHAV_RECENT_WIN_OVERLAP",
+    "feasibility": "computable_from_current",
+    "data_needed": "当前组合和截点前若干期开奖结果",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "冻结历史能按预注册窗口和衰减计算交集；该量仍只是号码结构代理，不是实际投注行为观测。"
+  },
+  {
+    "feature_id": "BEHAV_NUMBER_POPULARITY_MAXENT",
+    "feasibility": "not_feasible",
+    "data_needed": "号码级或完整组合级真实投注注数分布（按期、区域和投注方式）",
+    "source": "非公开",
+    "reason": "官方公告只有销售总额和各奖级中奖注数，不公布每个号码/组合被购买多少注；这些聚合量不足以识别号码边际投注热度，最大熵假设不能把不可识别量变成观测数据。无获准运营数据库渠道，SSQ/DLT 均不可行。"
+  },
+  {
+    "feature_id": "BEHAV_WINNER_COUNT_RESIDUAL",
+    "feasibility": "computable_from_current",
+    "data_needed": "销售额、各奖级中奖注数、票价与理论命中概率",
+    "source": "artifacts/phase4e25_b1_dlt_pool_data/dlt-draws.jsonl",
+    "reason": "现有 DLT 20 期含 national_sales_yuan 和 tiers.winners，可按明确的基础票等价假设计算残差并只作滞后特征；追加投注使销售额/2 只是代理，必须保留该限制。SSQ 当前无所需公告字段。"
+  },
+  {
+    "feature_id": "STAT_LAG_AUTOCORRELATION",
+    "feasibility": "computable_from_current",
+    "data_needed": "按期排序的单号出现指示或预定义逐期标量",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "冻结号码和日期足以构造未使用未来信息的序列并计算固定 lag 自相关。"
+  },
+  {
+    "feature_id": "STAT_MARKOV_TRANSITION",
+    "feasibility": "computable_from_current",
+    "data_needed": "各号码按期出现/未出现二元序列",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "逐期号码可转为 0/1 状态并对转移计数平滑。"
+  },
+  {
+    "feature_id": "STAT_SHANNON_ENTROPY",
+    "feasibility": "computable_from_current",
+    "data_needed": "固定窗口内单号经验频率",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "窗口频率完全由现有号码得出，可分游戏、分区归一化计算。"
+  },
+  {
+    "feature_id": "STAT_RENYI_ENTROPY",
+    "feasibility": "computable_from_current",
+    "data_needed": "固定窗口内单号经验频率和预注册 q",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "经验概率来自冻结号码，q 是建模配置而非新采集字段。"
+  },
+  {
+    "feature_id": "STAT_PERMUTATION_ENTROPY",
+    "feasibility": "computable_from_current",
+    "data_needed": "由每期号码构造的预定义标量序列和嵌入维数",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "可对和值等不依赖公告号码排序的逐期标量计算；不得把升序开奖号码当真实出球顺序。"
+  },
+  {
+    "feature_id": "STAT_SAMPLE_ENTROPY",
+    "feasibility": "computable_from_current",
+    "data_needed": "由每期号码构造的预定义标量序列、m 和容差 r",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "逐期标量由冻结号码生成，固定参数后能计算；200 期样本可能不稳定但不影响数据可用性判定。"
+  },
+  {
+    "feature_id": "STAT_HYPERGEOMETRIC_MAHALANOBIS",
+    "feasibility": "computable_from_current",
+    "data_needed": "窗口内号码统计及各游戏每区 k/N 参数",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "经验统计来自冻结号码，理论均值协方差由已知游戏号码域推导，可用广义逆计算。"
+  },
+  {
+    "feature_id": "STAT_RUN_LENGTH",
+    "feasibility": "computable_from_current",
+    "data_needed": "每个号码按期出现/未出现二元序列",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "冻结号码可构造完整 0/1 序列并统计末端游程和窗口游程数。"
+  },
+  {
+    "feature_id": "STAT_CHANGE_POINT_SCORE",
+    "feasibility": "computable_from_current",
+    "data_needed": "相邻历史窗口的平滑号码频率向量",
+    "source": "artifacts/phase-1/baseline-v1/draws.jsonl",
+    "reason": "两段频率向量均可仅用截点前冻结号码生成并计算分布距离。"
+  }
+]

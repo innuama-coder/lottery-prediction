@@ -1,0 +1,83 @@
+{
+  "conclusion_note": "No predictive lift is claimed unless the pre-registered paired test is positive at alpha=0.05.",
+  "draw_count": 1430,
+  "evaluation_issue_ids": [
+    "25126",
+    "26095"
+  ],
+  "evaluation_window": 120,
+  "feature_dimensions": [
+    "rolling_rate",
+    "waiting_time",
+    "uniformity_residual",
+    "lag_autocorrelation",
+    "markov_p_1_given_1",
+    "markov_p_1_given_0",
+    "shannon_entropy",
+    "renyi_entropy",
+    "permutation_entropy",
+    "sample_entropy",
+    "run_length",
+    "change_point_score",
+    "hypergeometric_mahalanobis"
+  ],
+  "feature_families": 12,
+  "game": "dlt",
+  "lambda_candidates": [
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "lambda_selection_prefix_only": true,
+  "model": "per-number L2 logistic regression",
+  "paired_significance": {
+    "alpha": 0.05,
+    "mean_uniform_minus_model": 4.467391197604716e-05,
+    "p_value": 0.569374147245372,
+    "significantly_better": false,
+    "standard_error": 7.85166878180673e-05,
+    "test": "paired_two_sided_normal_approximation",
+    "z": 0.5689734656097827
+  },
+  "phase": "phase4e31",
+  "scientific_conclusion": "no_confirmed_lift",
+  "standardization_prefix_only": true,
+  "zones": {
+    "back": {
+      "lambda_counts": {
+        "0.0001": 120,
+        "0.001": 0,
+        "0.01": 0
+      },
+      "mean_model_log_loss": 0.45057203625303466,
+      "mean_normalized_rank": 0.5381944444444444,
+      "mean_uniform_log_loss": 0.45056120886630474,
+      "top_k_any_hit_draw_rate": {
+        "2": 0.2916666666666667,
+        "4": 0.5833333333333334
+      },
+      "top_k_winning_number_hit_rate": {
+        "2": 0.15,
+        "4": 0.325
+      }
+    },
+    "front": {
+      "lambda_counts": {
+        "0.0001": 120,
+        "0.001": 0,
+        "0.01": 0
+      },
+      "mean_model_log_loss": 0.41006081698970326,
+      "mean_normalized_rank": 0.491952380952381,
+      "mean_uniform_log_loss": 0.4101163182884093,
+      "top_k_any_hit_draw_rate": {
+        "10": 0.875,
+        "5": 0.675
+      },
+      "top_k_winning_number_hit_rate": {
+        "10": 0.32,
+        "5": 0.18333333333333332
+      }
+    }
+  }
+}

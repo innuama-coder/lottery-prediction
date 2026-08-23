@@ -1,0 +1,10 @@
+{
+  "inputs": {
+    "artifacts/phase4e30_data_expansion/dlt-draws-full.jsonl": "c893813a3ced1497ec12d8c074c724d54aff4ad0162a472041b83f69ce1da9cb"
+  },
+  "outputs": {
+    "summary.json": "234b7e01384a381de33eb36fbc5790760270a7055cc1e16fb837ad970532a9a8",
+    "walk-forward.jsonl": "f76b10ef72b85a1cc382d379f737dce4deb625cce9abb12f9ecf1540971f8c0a"
+  },
+  "phase": "phase4e31"
+}

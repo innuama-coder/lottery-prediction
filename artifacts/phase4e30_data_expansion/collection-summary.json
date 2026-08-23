@@ -1,0 +1,884 @@
+{
+  "date_range": {
+    "first": "2017-01-02",
+    "last": "2026-08-22"
+  },
+  "issues_by_year": {
+    "2017": 148,
+    "2018": 152,
+    "2019": 149,
+    "2020": 134,
+    "2021": 150,
+    "2022": 150,
+    "2023": 150,
+    "2024": 152,
+    "2025": 150,
+    "2026": 95
+  },
+  "run": {
+    "average_request_start_interval_seconds": 2.0001637821236407,
+    "completed_at_utc": "2026-08-23T03:35:21Z",
+    "minimum_configured_interval_seconds": 2.0,
+    "missing": [
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "17102",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "17130",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "17134",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "17137",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "17150",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "17154",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "17155",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "17156",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "17157",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "17158",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "17159",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "17160",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "18012",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "18118",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "18155",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "18156",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "18157",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "18158",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "18159",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "18160",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "19100",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "19151",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "19152",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "19153",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "19154",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "19155",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "19156",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "19157",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "19158",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "19159",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "19160",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20135",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20136",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20137",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20138",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20139",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20140",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20141",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20142",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20143",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20144",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20145",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20146",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20147",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20148",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20149",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20150",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20151",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20152",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20153",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20154",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20155",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20156",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20157",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20158",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20159",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "20160",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "21151",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "21152",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "21153",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "21154",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "21155",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "21156",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "21157",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "21158",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "21159",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "21160",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "22151",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "22152",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "22153",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "22154",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "22155",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "22156",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "22157",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "22158",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "22159",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "22160",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "23151",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "23152",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "23153",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "23154",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "23155",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "23156",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "23157",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "23158",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "23159",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "23160",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "24153",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "24154",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "24155",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "24156",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "24157",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "24158",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "24159",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "24160",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "25151",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "25152",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "25153",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "25154",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "25155",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "25156",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "25157",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "25158",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "25159",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "25160",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26096",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26097",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26098",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26099",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26100",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26101",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26102",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26103",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26104",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26105",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26106",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26107",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26108",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26109",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26110",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26111",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26112",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26113",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26114",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26115",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26116",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26117",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26118",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26119",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26120",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26121",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26122",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26123",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26124",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26125",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26126",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26127",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26128",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26129",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26130",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26131",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26132",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26133",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26134",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26135",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26136",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26137",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26138",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26139",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26140",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26141",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26142",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26143",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26144",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26145",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26146",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26147",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26148",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26149",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26150",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26151",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26152",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26153",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26154",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26155",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26156",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26157",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26158",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26159",
+        "status": 200
+      },
+      {
+        "final_url": "https://www.gdlottery.cn/tc_404/",
+        "issue_id": "26160",
+        "status": 200
+      }
+    ],
+    "missing_count": 170,
+    "parse_failed_count": 0,
+    "parse_failures": [],
+    "request_timeout_seconds": 20.0,
+    "started_with_existing": 1429,
+    "successful": 1430,
+    "newly_successful": 1,
+    "total_requests": 171
+  },
+  "total_issues": 1430
+}

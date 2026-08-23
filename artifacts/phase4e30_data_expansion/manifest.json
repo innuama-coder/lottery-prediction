@@ -1,0 +1,27 @@
+{
+  "inputs": {
+    "official_page_raw_hashes": {
+      "derivation": "sha256 of sorted issue_id<TAB>raw_sha256 lines",
+      "issue_count": 1430,
+      "sha256": "bc800ddc67f713660fb79492af8417c5cca94d1c85098462740931e91aef09f8"
+    }
+  },
+  "outputs": {
+    "artifacts/phase4e30_data_expansion/collection-summary.json": {
+      "sha256": "f2e730819de77e5cc1bc6c68395b768c241a4424cd782dd0f9ab0bd0899395b4"
+    },
+    "artifacts/phase4e30_data_expansion/dlt-draws-full.jsonl": {
+      "issue_count": 1430,
+      "sha256": "c893813a3ced1497ec12d8c074c724d54aff4ad0162a472041b83f69ce1da9cb"
+    }
+  },
+  "schema_version": "phase4e30-manifest-v1",
+  "source": {
+    "max_sequence": 160,
+    "requested_years": [
+      17,
+      26
+    ],
+    "url_template": "https://www.gdlottery.cn/f_html/kjgg/P085_{issue}.html"
+  }
+}

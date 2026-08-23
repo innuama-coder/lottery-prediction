@@ -1,0 +1,61 @@
+{
+  "feature_ids": [
+    "FREQ_ROLLING_RATE",
+    "FREQ_WAITING_TIME",
+    "FREQ_UNIFORMITY_RESIDUAL",
+    "REL_PAIR_RATE",
+    "REL_TRIPLE_RATE",
+    "REL_PREVIOUS_OVERLAP",
+    "STRUCT_ODD_COUNT",
+    "STRUCT_SUM",
+    "STRUCT_RANGE",
+    "STRUCT_ADJACENT_PAIRS",
+    "STRUCT_GAP_VECTOR",
+    "STRUCT_BAND_COUNTS",
+    "TIME_WEEKDAY",
+    "TIME_DAYS_SINCE_DRAW",
+    "TIME_RULE_REGIME",
+    "ENV_BALL_SET_ID",
+    "ENV_DRAW_POSITION",
+    "CTX_SALES_AMOUNT",
+    "CTX_JACKPOT_BALANCE",
+    "BEHAV_BIRTHDAY_COUNT",
+    "BEHAV_ARITHMETIC_PATTERN",
+    "BEHAV_RECENT_WIN_OVERLAP",
+    "BEHAV_WINNER_COUNT_RESIDUAL",
+    "STAT_LAG_AUTOCORRELATION",
+    "STAT_MARKOV_TRANSITION",
+    "STAT_SHANNON_ENTROPY",
+    "STAT_RENYI_ENTROPY",
+    "STAT_PERMUTATION_ENTROPY",
+    "STAT_SAMPLE_ENTROPY",
+    "STAT_HYPERGEOMETRIC_MAHALANOBIS",
+    "STAT_RUN_LENGTH",
+    "STAT_CHANGE_POINT_SCORE"
+  ],
+  "inputs": {
+    "artifacts/phase-1/baseline-v1/draws.jsonl": "f2e34a88fbd43a378d7fb6255d39deee1354216b918934f355a06ef986be60c1",
+    "artifacts/phase4e25_b1_dlt_pool_data/dlt-draws.jsonl": "79c251b1857fd80e836b40c4969c27cb760991e4a6a9e7a58e862c9727041a42"
+  },
+  "outputs": {
+    "artifacts/phase4e29_feature_engine/dlt-enriched.jsonl": "c1f067cc911d36f50c0223adfafc243a8378211e010935bf7bc7c0ec2baecd29",
+    "artifacts/phase4e29_feature_engine/dlt-feature-snapshot.jsonl": "f077e661432a0897f3cb9f7876c7283ada79b04233d0340e1ac749ab7c63e3c9",
+    "artifacts/phase4e29_feature_engine/ssq-feature-snapshot.jsonl": "a189f8c9e03919c7e4a039013cf8d02ec6175dfc4a75882142a4980f0363c3c1"
+  },
+  "parameters": {
+    "change_windows": [
+      30,
+      30
+    ],
+    "lag": 1,
+    "markov_alpha": 1,
+    "permutation_m": 3,
+    "recent_overlap_decay": 0.8,
+    "recent_overlap_window": 10,
+    "renyi_q": 2,
+    "rolling_window": 30,
+    "sample_entropy_m": 2,
+    "sample_entropy_r_sd": 0.2
+  },
+  "schema_version": "phase4e29-v1"
+}

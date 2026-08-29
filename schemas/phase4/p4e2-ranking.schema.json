@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/p4e2-ranking.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "rank", "full_space_rank", "front_numbers", "back_numbers", "joint_probability",
+    "log_joint_score", "score_order_key", "score_identity", "probability_representation",
+    "probability_layer", "tie_group_id", "tie_group_size", "tie_rank_lower",
+    "tie_rank_upper", "tie_midrank", "tie_key", "canonical_ticket_key",
+    "ranking_algorithm_id", "lineage", "explanation"
+  ],
+  "properties": {
+    "rank": {"type": "integer", "minimum": 1, "maximum": 1000},
+    "full_space_rank": {"type": "integer", "minimum": 1, "maximum": 1000},
+    "front_numbers": {"type": "array", "minItems": 5, "maxItems": 6, "uniqueItems": true, "items": {"type": "integer", "minimum": 1, "maximum": 35}},
+    "back_numbers": {"type": "array", "minItems": 1, "maxItems": 2, "uniqueItems": true, "items": {"type": "integer", "minimum": 1, "maximum": 16}},
+    "joint_probability": {"type": "string", "pattern": "^[0-9]+\\.[0-9]{18}e-[0-9]{2,3}$"},
+    "log_joint_score": {"type": "string"},
+    "score_order_key": {"type": "string", "pattern": "^P4S10HE1:-?(?:0|[1-9][0-9]*)$"},
+    "score_identity": {"type": "string", "pattern": "^score-order-key-v1:P4S10HE1:-?(?:0|[1-9][0-9]*)$"},
+    "probability_representation": {"const": "P4-LOGSUMEXP-STABLE-SCORE-KEY-1"},
+    "probability_layer": {"type": "integer", "minimum": 1, "maximum": 1000},
+    "tie_group_id": {"type": "string", "pattern": "^tie-group-score-order-key-v1:P4S10HE1:-?(?:0|[1-9][0-9]*)$"},
+    "tie_group_size": {"type": "integer", "minimum": 1, "maximum": 1000},
+    "tie_rank_lower": {"type": "integer", "minimum": 1, "maximum": 1000},
+    "tie_rank_upper": {"type": "integer", "minimum": 1, "maximum": 1000},
+    "tie_midrank": {"type": "string", "pattern": "^[0-9]+\\.[05]$"},
+    "tie_key": {"type": "string", "pattern": "^tie-score-order-key-v1:P4S10HE1:-?(?:0|[1-9][0-9]*)$"},
+    "canonical_ticket_key": {"type": "array", "minItems": 2, "maxItems": 2},
+    "ranking_algorithm_id": {"const": "joint_stable_score_key_desc_tie_canonical_ticket_asc_v1"},
+    "lineage": {"type": "object", "additionalProperties": false, "required": ["model_release_id", "feature_release_id"], "properties": {"model_release_id": {"type": "string"}, "feature_release_id": {"type": ["string", "null"]}}},
+    "explanation": {"type": "object", "additionalProperties": false, "required": ["method", "probability_primary", "feature_contributions", "feature_groups"], "properties": {"method": {"const": "P4E2-R multi-feature conditional combination model"}, "probability_primary": {"const": true}, "feature_contributions": {"type": "object", "minProperties": 14, "maxProperties": 14}, "feature_groups": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true}}}
+  }
+}

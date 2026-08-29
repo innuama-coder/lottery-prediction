@@ -1,0 +1,57 @@
+{
+  "artifact_type": "phase4_local_verifier_full_cross_runtime_replay_fixture",
+  "status": "NOT_ACCEPTED_PRESERVED",
+  "supersedes_single_first_failure": true,
+  "release_id": "P4-P4E2-20260815-r11",
+  "release_commit": "fcfa8e63d12d49acfd0406599b09a046f4be44c3",
+  "incomplete_hypothesis_commits": [
+    "18b25e2115afbcc573101329a4e24cb47f53c987",
+    "eb9c124d5c8cdbe276c25ae358024ea8bf0c4bb6"
+  ],
+  "runtime": {
+    "platform": "macOS 26.5.2 arm64",
+    "python": "CPython 3.12.11",
+    "jsonschema": "4.26.0"
+  },
+  "semantic_comparisons_by_game": {
+    "ssq": 54807,
+    "dlt": 54865
+  },
+  "legacy_numeric_bound_failures": 163,
+  "legacy_profiles": {
+    "derived_feature_snapshot_v1": {
+      "comparisons": 5475,
+      "differing_leaves": 32,
+      "max_absolute": 3.3306690738754696e-16,
+      "max_absolute_path": "feature_snapshot.634.feature_values.F04",
+      "max_relative": 2.637573631646515e-14,
+      "max_relative_path": "feature_snapshot.638.feature_values.F04",
+      "max_ulps": 151,
+      "max_ulps_path": "feature_snapshot.638.feature_values.F04"
+    },
+    "tight_recomputed_v1": {
+      "comparisons": 113405,
+      "differing_leaves": 11180,
+      "max_absolute": 3.552713678800501e-15,
+      "max_absolute_path": "model.report_only_metrics.0.model_joint_log_loss",
+      "max_relative": 2.637573631646515e-14,
+      "max_relative_path": "model.zones.1.context.number_features.F04.7",
+      "max_ulps": 151,
+      "max_ulps_path": "model.zones.1.context.number_features.F04.7",
+      "coefficient_example_path": "model.zones.1.coefficients.F04",
+      "coefficient_example_ulps": 15
+    },
+    "top1000_derived_probability_display_v1": {
+      "comparisons": 6000,
+      "differing_leaves": 146,
+      "max_absolute": 3.441071348220595e-22,
+      "max_absolute_path": "shadow_top1000.0.joint_probability",
+      "max_relative": 3.561621664915701e-15,
+      "max_relative_path": "shadow_top1000.968.joint_probability",
+      "max_ulps": 31,
+      "max_ulps_path": "shadow_top1000.968.joint_probability"
+    }
+  },
+  "exact_identity_mismatches": 0,
+  "source_feedback_id": "r11-macos-full-replay-feedback.md"
+}

@@ -39,6 +39,7 @@ PROVENANCE = {
     "session_id": "/root/implementation_author", "source_commit": "f8a7a6abb46a55f8fa17e5ae3280c5c5432c363b",
     "path": "tests/phase4/test_cli_state_integration.py", "role": "implementation_author",
 }
+LEGACY_PREP_INSTALLED = (ROOT / "artifacts/phase-4-prep/p4-prep-controller-issued-i01/control/actor-assignments-preparation.json").is_file()
 
 
 def state_records() -> list[dict]:
@@ -245,6 +246,7 @@ class CliStateIntegrationTests(unittest.TestCase):
             Draft202012Validator(top_schema).validate(row)
         self.assertEqual(projection["projection_id"], content_id("state-projection", projection, excluded_fields=("projection_id",)))
 
+    @unittest.skipUnless(LEGACY_PREP_INSTALLED, "superseded T00-T24 installed state evidence is not installed")
     def test_runtime_projection_and_show_use_only_explicit_identity(self) -> None:
         runtime_parent = ROOT / "artifacts/phase-4-runtime"
         runtime_parent.mkdir(parents=True, exist_ok=True)

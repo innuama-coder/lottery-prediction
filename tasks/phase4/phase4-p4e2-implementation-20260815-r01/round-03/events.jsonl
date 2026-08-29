@@ -1,0 +1,11 @@
+{"event":"round_started","round":"round-03","baseline_sha":"e142773ddbf24f3890bb2fcd9028d7d5ea754250","authority_sha":"95f3c6cbe1a43c7ed390907795cc89f4a64b51a9","status":"RUNNING"}
+{"event":"unexpected_task_changes_found","scope":"phase4_only","disposition":"preserve_and_audit","status":"RECOVERABLE"}
+{"event":"d00_primary","exit_code":0,"status":"PASS","blocking_findings":[]}
+{"event":"d00_independent","exit_code":0,"status":"PASS","blocking_findings":[],"old_m0_product_success_paths":0}
+{"event":"protected_baseline_captured","protected_roots":7,"status":"PASS"}
+{"event":"stale_round_02_process_terminated","reason":"concurrent writes to shared worktree","recovered_attempt_files_preserved":true,"status":"PASS"}
+{"event":"focused_p4e2_tests","tests":5,"elapsed_seconds":369.093,"peak_rss_kib":26264,"status":"PASS"}
+{"event":"phase4_non_p4e2_regression","tests":130,"skipped_superseded_prep":20,"status":"PASS"}
+{"event":"formal_release_attempt","release_id":"P4-P4E2-20260815-r01","elapsed_seconds":710.71,"exit_code":1,"reason":"over-escaped serving model_path schema pattern","status":"HOLD_CONTRACT_INCOMPLETE","preserved":true}
+{"event":"formal_release_build","release_id":"P4-P4E2-20260815-r02","elapsed_seconds":775.95,"exit_code":0,"status":"PASS"}
+{"event":"independent_replay_interrupted","release_id":"P4-P4E2-20260815-r02","reason":"execution session ended before output creation","output_created":false,"status":"RECOVERABLE"}

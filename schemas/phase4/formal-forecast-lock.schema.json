@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/formal-forecast-lock.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["artifact_type", "lock_id", "forecast_id", "game", "target_issue", "model_release_id", "locked_at_utc",
+               "content_sha256", "top1000_sha256", "create_once", "create_once_linkage", "status"],
+  "properties": {
+    "artifact_type": {"const": "phase4_forecast_lock"}, "lock_id": {"type": "string"}, "forecast_id": {"type": "string"},
+    "game": {"enum": ["ssq", "dlt"]}, "target_issue": {"type": "string"}, "model_release_id": {"type": "string"},
+    "locked_at_utc": {"type": "string", "format": "date-time"}, "content_sha256": {"pattern": "^[0-9a-f]{64}$"},
+    "top1000_sha256": {"pattern": "^[0-9a-f]{64}$"}, "create_once": {"const": true},
+    "create_once_linkage": {"pattern": "^[0-9a-f]{64}$"}, "status": {"const": "LOCKED"}
+  }
+}

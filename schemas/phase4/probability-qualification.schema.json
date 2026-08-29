@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/probability-qualification.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["artifact_type", "game", "probability_semantics", "score_order_key_id", "score_order_quantum", "score_order_rounding", "complete_space_zone_score_order_contracts", "complete_space_not_single_tie", "zone_probability_dynamic_range", "top1000_distinct_score_count", "top1000_distinct_ratio", "top1000_maximum_tie_count", "top1000_first_last_probability_ratio", "top1000_layer_count_digest", "input_permutation_stable", "ranking_algorithm_id", "one_ulp_score_drift_preserves_identity", "status"],
+  "properties": {
+    "artifact_type": {"const": "phase4_probability_qualification"},
+    "game": {"enum": ["ssq", "dlt"]},
+    "probability_semantics": {"const": "stable_decimal_score_order_key_then_exp_for_display_v1"},
+    "score_order_key_id": {"const": "P4S10HE1"},
+    "score_order_quantum": {"const": "0.0000000001"},
+    "score_order_rounding": {"const": "ROUND_HALF_EVEN"},
+    "complete_space_zone_score_order_contracts": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "object", "required": ["representation", "score_order_key_id", "score_order_quantum", "rounding_mode", "complete_space_layer_identities_not_serialized", "top1000_layer_identities_exact"], "properties": {"representation": {"const": "stable_decimal_score_order_contract_v1"}, "score_order_key_id": {"const": "P4S10HE1"}, "score_order_quantum": {"const": "0.0000000001"}, "rounding_mode": {"const": "ROUND_HALF_EVEN"}, "complete_space_layer_identities_not_serialized": {"const": true}, "top1000_layer_identities_exact": {"const": true}}}},
+    "complete_space_not_single_tie": {"const": true},
+    "zone_probability_dynamic_range": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "exclusiveMinimum": 1}},
+    "top1000_distinct_score_count": {"type": "integer", "minimum": 2, "maximum": 1000},
+    "top1000_distinct_ratio": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+    "top1000_maximum_tie_count": {"type": "integer", "minimum": 1, "maximum": 1000},
+    "top1000_first_last_probability_ratio": {"type": "number", "minimum": 1},
+    "top1000_layer_count_digest": {"pattern": "^[0-9a-f]{64}$"},
+    "input_permutation_stable": {"const": true},
+    "ranking_algorithm_id": {"const": "joint_stable_score_key_desc_tie_canonical_ticket_asc_v1"},
+    "one_ulp_score_drift_preserves_identity": {"const": true},
+    "status": {"const": "PASS"}
+  }
+}

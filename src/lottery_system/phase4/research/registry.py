@@ -36,14 +36,14 @@ def validate_frozen_registries(model_registry: Mapping[str, Any], feature_regist
     if model_registry.get("champion_promotion_surface") is not False:
         raise ResearchRegistryViolation("Champion promotion surface must remain closed")
     families = model_registry.get("parameter_families")
-    if not isinstance(families, Mapping) or set(families) != {"P01", "P02", "P03", "P04"}:
+    if not isinstance(families, Mapping) or not {"P01", "P02", "P03", "P04", "P4E2_L2", "P4E2_PAIR"} <= set(families):
         raise ResearchRegistryViolation("parameter registry is incomplete")
     if feature_registry.get("artifact_type") != "phase4_feature_registry":
         raise ResearchRegistryViolation("feature registry identity mismatch")
     if feature_registry.get("unknown_features_allowed") is not False or feature_registry.get("one_family_per_experiment") is not True:
         raise ResearchRegistryViolation("feature registry does not close the experiment surface")
     feature_ids = {row.get("feature_id") for row in feature_registry.get("features", []) if isinstance(row, Mapping)}
-    if feature_ids != {"F01", "F02"}:
+    if feature_ids != {f"F{index:02d}" for index in range(1, 15)}:
         raise ResearchRegistryViolation("feature registry is incomplete")
 
 

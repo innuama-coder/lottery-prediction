@@ -1,0 +1,10 @@
+--- scripts/phase4_independent/p4e2_oracle.py
++++ scripts/phase4_independent/p4e2_oracle.py
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
+ 
++import copy
+ import hashlib
+ 
+ 
+ 

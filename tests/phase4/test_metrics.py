@@ -21,6 +21,7 @@ from lottery_system.phase4.windows import (
 
 ROOT = Path(__file__).resolve().parents[2]
 ORACLE = ROOT / "artifacts/phase-4-prep/p4-prep-controller-issued-i01/work-items/T10/attempts/T10-I07/known-answers"
+LEGACY_PREP_INSTALLED = (ORACLE / "known-answer-manifest.json").is_file()
 
 
 def _hist(front: ZoneDistribution, back: ZoneDistribution) -> dict[int, int]:
@@ -71,10 +72,12 @@ def _window(packages, window_id):
 
 
 class MetricsTest(unittest.TestCase):
+    @unittest.skipUnless(LEGACY_PREP_INSTALLED, "superseded T00-T24 metric oracle is not installed")
     def test_decimal80_known_answers(self):
         summary = _validate_metric_oracle(ORACLE)
         self.assertEqual(summary["observations"], 30)
 
+    @unittest.skipUnless(LEGACY_PREP_INSTALLED, "superseded T00-T24 metric oracle is not installed")
     def test_fixed_cardinality_inclusion_dp(self):
         zone = zone_distribution((0, 1024, 0, -1024, 512), 2)
         values = inclusion_probabilities(zone)

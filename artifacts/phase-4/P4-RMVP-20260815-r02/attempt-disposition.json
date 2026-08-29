@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_attempt_disposition","attempt_id":"P4-RMVP-20260815-r02","blocking_findings":["acceptance command runner treated the conventional -- separator as an executable"],"replacement_release_id":"P4-RMVP-20260815-r03","status":"HOLD","terminal":"HOLD_ACCEPTANCE_RUNNER_INTERFACE"}

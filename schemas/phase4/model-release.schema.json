@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/model-release.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "family",
+    "game",
+    "rule_id",
+    "training_cutoff_issue",
+    "training_cutoff_position",
+    "forecast_target_position",
+    "training_count",
+    "canonical_order_id",
+    "canonical_comparator_id",
+    "training_dataset_id",
+    "training_config_id",
+    "knowledge_contract",
+    "available_at_fabricated",
+    "feature_ids",
+    "feature_groups_consumed",
+    "regularization",
+    "estimator",
+    "objective_trace",
+    "zones",
+    "selection_indices",
+    "report_only_indices",
+    "selection_receipt_hash",
+    "selected_candidate_identity",
+    "selection_metrics",
+    "report_only_metrics",
+    "report_only_summary",
+    "scientific_status",
+    "model_release_id",
+    "feature_release_id",
+    "source_commit",
+    "dependency_identity"
+  ],
+  "properties": {
+    "family": {
+      "const": "P4E2-R"
+    },
+    "game": {
+      "enum": [
+        "ssq",
+        "dlt"
+      ]
+    },
+    "rule_id": {
+      "type": "string"
+    },
+    "training_cutoff_issue": {
+      "type": "string"
+    },
+    "training_cutoff_position": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "forecast_target_position": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "training_count": {
+      "type": "integer",
+      "minimum": 120
+    },
+    "canonical_order_id": {
+      "type": "string"
+    },
+    "canonical_comparator_id": {
+      "type": "string"
+    },
+    "training_dataset_id": {
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "training_config_id": {
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "knowledge_contract": {
+      "const": "retrospective_sequence_safe"
+    },
+    "available_at_fabricated": {
+      "const": false
+    },
+    "feature_ids": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "uniqueItems": true,
+      "items": {
+        "pattern": "^F(?:0[1-9]|1[0-4])$"
+      }
+    },
+    "feature_groups_consumed": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "historical_change",
+          "number_relationship",
+          "combination_structure"
+        ]
+      }
+    },
+    "regularization": {
+      "type": "object"
+    },
+    "estimator": {
+      "const": "one_step_exact_uniform_gradient_l2_conditional_log_likelihood_v1"
+    },
+    "objective_trace": {
+      "type": "object",
+      "minProperties": 4
+    },
+    "zones": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {"$ref": "#/$defs/zone"}
+    },
+    "selection_indices": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "integer"
+      }
+    },
+    "report_only_indices": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "integer"
+      }
+    },
+    "selection_receipt_hash": {
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "selected_candidate_identity": {
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "selection_metrics": {
+      "type": "array",
+      "minItems": 1
+    },
+    "report_only_metrics": {
+      "type": "array",
+      "minItems": 1
+    },
+    "report_only_summary": {
+      "type": "object"
+    },
+    "scientific_status": {
+      "enum": [
+        "lift_supported",
+        "no_confirmed_lift",
+        "worse_than_M0",
+        "insufficient_evidence"
+      ]
+    },
+    "model_release_id": {
+      "pattern": "^p4e2r-(ssq|dlt)-[0-9a-f]{16}$"
+    },
+    "feature_release_id": {
+      "type": "string"
+    },
+    "source_commit": {
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "dependency_identity": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "zone": {
+      "type": "object",
+      "required": ["n", "k", "coefficients", "context", "top_zone_rows", "log_normalizer", "probability_square_sum", "combination_count", "normalization_method", "normalization_mass", "minimum_score", "maximum_score", "minimum_probability", "maximum_probability", "probability_layer_lower_bound", "score_order_contract"],
+      "properties": {"score_order_contract": {"$ref": "#/$defs/scoreOrderContract"}}
+    },
+    "scoreOrderContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["representation", "score_order_key_id", "score_order_quantum", "rounding_mode", "combination_count", "distinct_score_lower_bound", "complete_space_layer_identities_not_serialized", "top1000_layer_identities_exact"],
+      "properties": {
+        "representation": {"const": "stable_decimal_score_order_contract_v1"},
+        "score_order_key_id": {"const": "P4S10HE1"},
+        "score_order_quantum": {"const": "0.0000000001"},
+        "rounding_mode": {"const": "ROUND_HALF_EVEN"},
+        "combination_count": {"type": "integer", "minimum": 1},
+        "distinct_score_lower_bound": {"type": "integer", "minimum": 2},
+        "complete_space_layer_identities_not_serialized": {"const": true},
+        "top1000_layer_identities_exact": {"const": true}
+      }
+    }
+  }
+}

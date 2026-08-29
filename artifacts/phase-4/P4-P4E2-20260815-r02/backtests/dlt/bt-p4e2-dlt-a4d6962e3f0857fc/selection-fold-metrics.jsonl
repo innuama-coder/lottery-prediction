@@ -1,0 +1,6 @@
+{"candidate":{"family":"P4E2-R","l2":8.0},"draw_index":195,"fold_id":"selection-0195","fold_role":"selection","issue":"2026079","joint_log_loss":16.868946302990175,"used_for_selection":true}
+{"candidate":{"family":"P4E2-R","l2":8.0},"draw_index":196,"fold_id":"selection-0196","fold_role":"selection","issue":"2026080","joint_log_loss":16.902646479162666,"used_for_selection":true}
+{"candidate":{"family":"P4E2-R","l2":24.0},"draw_index":195,"fold_id":"selection-0195","fold_role":"selection","issue":"2026079","joint_log_loss":16.875490280081834,"used_for_selection":true}
+{"candidate":{"family":"P4E2-R","l2":24.0},"draw_index":196,"fold_id":"selection-0196","fold_role":"selection","issue":"2026080","joint_log_loss":16.88646001048036,"used_for_selection":true}
+{"candidate":{"family":"P4E2-R","l2":72.0},"draw_index":195,"fold_id":"selection-0195","fold_role":"selection","issue":"2026079","joint_log_loss":16.87846599919882,"used_for_selection":true}
+{"candidate":{"family":"P4E2-R","l2":72.0},"draw_index":196,"fold_id":"selection-0196","fold_role":"selection","issue":"2026080","joint_log_loss":16.88209318987063,"used_for_selection":true}

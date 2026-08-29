@@ -1,0 +1,22 @@
+#!/bin/sh
+set -eu
+
+if [ -n "${PHASE4_PYTHON:-}" ]; then
+    phase4_python=$PHASE4_PYTHON
+else
+    phase4_python=
+    for candidate in python3.12 python3; do
+        if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c 'import sys; raise SystemExit(sys.version_info[:2] != (3, 12))'; then
+            phase4_python=$candidate
+            break
+        fi
+    done
+fi
+
+if [ -z "$phase4_python" ]; then
+    echo "LOCAL ACCEPTANCE: FAIL" >&2
+    echo "reason: CPython 3.12 was not found; set PHASE4_PYTHON to a local CPython 3.12 executable" >&2
+    exit 20
+fi
+
+exec "$phase4_python" "$(dirname "$0")/local_accept_release.py" "$@"

@@ -1,0 +1,1 @@
+{"artifact_type":"phase4_failed_release_attempt","attempt_id":"P4-P4E2-20260815-r01","elapsed_seconds":710.71,"error":"serving-selection.schema.json model_path pattern was over-escaped and rejected a valid frozen model path","exit_code":1,"immutable_failed_attempt":true,"recovery_release_id":"P4-P4E2-20260815-r02","status":"HOLD_CONTRACT_INCOMPLETE"}

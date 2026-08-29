@@ -1,0 +1,1 @@
+{"allowed_change":{"zone0_theta_multiplier":0.75},"artifact_type":"phase4_research_decision","child_model_release_id":"p4e1r-dlt-child-16e9a482de770b98","decision":"shadow_only","game":"dlt","parent_model_release_id":"p4e1r-dlt-4e71551580ada764","probability_changed":true,"serving_changed":false,"status":"PASS","top1000_changed":true}

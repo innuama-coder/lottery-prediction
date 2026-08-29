@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/model-selection-receipt.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type", "game", "candidate_grid", "fold_positions", "candidate_metrics",
+    "tie_break", "selected_config", "selected_config_identity", "selected_model_identity",
+    "selection_input", "report_only_capability_boundary", "selection_fold_metrics_sha256",
+    "receipt_hash", "selection_metrics"
+  ],
+  "properties": {
+    "artifact_type": {"const": "phase4_model_selection_receipt"},
+    "game": {"enum": ["ssq", "dlt"]},
+    "candidate_grid": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true},
+    "fold_positions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["selection", "report_only_reserved"],
+      "properties": {
+        "selection": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "integer"}},
+        "report_only_reserved": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"type": "integer"}}
+      }
+    },
+    "candidate_metrics": {"type": "array", "minItems": 3, "maxItems": 3},
+    "tie_break": {"type": "array", "minItems": 3, "uniqueItems": true},
+    "selected_config": {"type": "object"},
+    "selected_config_identity": {"pattern": "^[0-9a-f]{64}$"},
+    "selected_model_identity": {"pattern": "^[0-9a-f]{64}$"},
+    "selection_input": {
+      "type": "object", "additionalProperties": false,
+      "required": ["first_position", "last_position", "ordered_fact_hashes_sha256", "last_issue"],
+      "properties": {
+        "first_position": {"const": 0}, "last_position": {"type": "integer", "minimum": 0},
+        "ordered_fact_hashes_sha256": {"pattern": "^[0-9a-f]{64}$"}, "last_issue": {"type": "string"}
+      }
+    },
+    "report_only_capability_boundary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["first_position", "labels_excluded_from_selection_input"],
+      "properties": {"first_position": {"type": "integer", "minimum": 1}, "labels_excluded_from_selection_input": {"const": true}}
+    },
+    "selection_fold_metrics_sha256": {"pattern": "^[0-9a-f]{64}$"},
+    "receipt_hash": {"pattern": "^[0-9a-f]{64}$"},
+    "selection_metrics": {"type": "array", "minItems": 6}
+  }
+}

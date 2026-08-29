@@ -1,22 +1,242 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "artifact_type": "phase4_feature_registry",
+  "model_family": "P4E2-R",
   "features": [
     {
       "feature_id": "F01",
-      "name": "prior_draw_frequency",
+      "name": "expanding_inclusion_rate",
+      "level": "number",
+      "feature_group": "historical_change",
       "time_class": "retrospective_sequence_safe",
-      "strictly_earlier_only": true
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": "expanding",
+      "normalization": "fold_local_population_zscore_v1",
+      "serving_eligible": true
     },
     {
       "feature_id": "F02",
-      "name": "external_context_categorical_v1",
-      "time_class": "external_point_in_time",
-      "maximum_categories": 8,
-      "real_runtime_default_enabled": false,
-      "synthetic_fixture_capability_required": true
+      "name": "rolling_inclusion_rate_10_30_60",
+      "level": "number",
+      "feature_group": "historical_change",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": [
+        10,
+        30,
+        60
+      ],
+      "normalization": "fold_local_population_zscore_v1",
+      "serving_eligible": true
+    },
+    {
+      "feature_id": "F03",
+      "name": "ewma_inclusion_rate",
+      "level": "number",
+      "feature_group": "historical_change",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": {
+        "half_life_grid": [
+          10,
+          30
+        ],
+        "aggregation": "mean_of_preregistered_ewma_rates"
+      },
+      "normalization": "fold_local_population_zscore_v1",
+      "serving_eligible": true
+    },
+    {
+      "feature_id": "F04",
+      "name": "recency_gap",
+      "level": "number",
+      "feature_group": "historical_change",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": {
+        "source": "expanding_gap",
+        "transform": "log1p",
+        "cap": 120,
+        "never_seen": "prefix_length_before_cap"
+      },
+      "normalization": "fold_local_population_zscore_v1",
+      "serving_eligible": true
+    },
+    {
+      "feature_id": "F05",
+      "name": "short_long_trend_10_60",
+      "level": "number",
+      "feature_group": "historical_change",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": [
+        10,
+        60
+      ],
+      "normalization": "fold_local_population_zscore_v1",
+      "serving_eligible": true
+    },
+    {
+      "feature_id": "F06",
+      "name": "shrunk_pair_residual",
+      "level": "combination",
+      "feature_group": "number_relationship",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": {
+        "window": 60,
+        "shrinkage": 20,
+        "coefficient_count": 0,
+        "bounded_residual": [
+          -2,
+          2
+        ]
+      },
+      "normalization": "fold_local_shrunk_pair_population_zscore_v1",
+      "serving_eligible": true
+    },
+    {
+      "feature_id": "F07",
+      "name": "previous_draw_overlap",
+      "level": "combination",
+      "feature_group": "number_relationship",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": 1,
+      "normalization": "rule_hypergeometric_zscore_v1",
+      "serving_eligible": true
+    },
+    {
+      "feature_id": "F08",
+      "name": "combination_sum",
+      "level": "combination",
+      "feature_group": "combination_structure",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": "rule_static",
+      "normalization": "rule_analytic_standardization_v1",
+      "serving_eligible": true
+    },
+    {
+      "feature_id": "F09",
+      "name": "combination_span",
+      "level": "combination",
+      "feature_group": "combination_structure",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": "rule_static",
+      "normalization": "rule_analytic_standardization_v1",
+      "serving_eligible": true
+    },
+    {
+      "feature_id": "F10",
+      "name": "odd_even_balance",
+      "level": "combination",
+      "feature_group": "combination_structure",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": "rule_static",
+      "normalization": "rule_analytic_standardization_v1",
+      "serving_eligible": true
+    },
+    {
+      "feature_id": "F11",
+      "name": "bucket_coverage",
+      "level": "combination",
+      "feature_group": "combination_structure",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": "rule_static",
+      "normalization": "rule_analytic_standardization_v1",
+      "serving_eligible": true
+    },
+    {
+      "feature_id": "F12",
+      "name": "consecutive_pair_count",
+      "level": "combination",
+      "feature_group": "combination_structure",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": "rule_static",
+      "normalization": "rule_analytic_standardization_v1",
+      "serving_eligible": true
+    },
+    {
+      "feature_id": "F13",
+      "name": "tail_digit_diversity",
+      "level": "combination",
+      "feature_group": "combination_structure",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": "rule_static",
+      "normalization": "rule_analytic_standardization_v1",
+      "serving_eligible": true
+    },
+    {
+      "feature_id": "F14",
+      "name": "adjacent_gap_dispersion",
+      "level": "combination",
+      "feature_group": "combination_structure",
+      "time_class": "retrospective_sequence_safe",
+      "strictly_earlier_only": true,
+      "target_cutoff_contract": "max_source_position < target_position",
+      "required_input_hash_field": "input_prefix_sha256",
+      "window": "rule_static",
+      "normalization": "rule_analytic_standardization_v1",
+      "serving_eligible": true
     }
   ],
+  "required_serving_feature_ids": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "F07",
+    "F08",
+    "F09",
+    "F10",
+    "F11",
+    "F12",
+    "F13",
+    "F14"
+  ],
+  "required_serving_feature_groups": [
+    "historical_change",
+    "number_relationship",
+    "combination_structure"
+  ],
+  "phase1_available_at_policy": "must_be_null_no_fabrication",
   "unknown_features_allowed": false,
-  "one_family_per_experiment": true
+  "one_family_per_experiment": true,
+  "formal_fixture_allowed": false,
+  "formal_inline_parameters_allowed": false,
+  "formal_worktree_defaults_allowed": false
 }

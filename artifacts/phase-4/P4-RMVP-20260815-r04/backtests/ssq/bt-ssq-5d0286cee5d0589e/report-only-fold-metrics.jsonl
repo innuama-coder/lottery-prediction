@@ -1,0 +1,2 @@
+{"delta_vs_m0":0.15329724864800975,"fold_count":40,"m0_mean_log_loss":13.917677178565086,"model_mean_log_loss":14.070974427213097,"theta":0.5,"zone":0}
+{"delta_vs_m0":0.02987184396980942,"fold_count":40,"m0_mean_log_loss":2.772588722239781,"model_mean_log_loss":2.8024605662095903,"theta":-0.5,"zone":1}

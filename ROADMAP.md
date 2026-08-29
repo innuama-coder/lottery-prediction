@@ -1,8 +1,8 @@
 # 彩票预测与 AutoResearch 系统路线图
 
-版本：2.3
+版本：2.7
 
-状态：候选项目级路线图；合入 `main` 后以包含本文件的固定 commit 生效
+状态：Phase 4 真实模型 MVP authority；以 D00 `P4_AUTHORITY_COMMIT` 中四份 authority 文档的内容哈希共同生效
 
 更新时间：2026-08-11
 
@@ -15,7 +15,7 @@
 发生冲突时按以下顺序处理：
 
 1. `main` 固定 commit 中的本文件定义项目目标、阶段顺序、全局边界和最终验收语义。
-2. 各阶段在本文件边界内另行冻结的阶段定义说明其产品范围和详细验收；总体设计、详细计划和机器验收合同只能解释和实现该定义，不能弱化它。Phase 4 的阶段定义是同一固定 commit 中的 `tasks/phase4/README.md`，其中 `P4-MVP-A01` 至 `P4-MVP-A21` 是唯一详细验收矩阵。
+2. 各阶段在本文件边界内另行冻结的阶段定义说明其产品范围和详细验收；总体设计、详细计划和机器验收合同只能解释和实现该定义，不能弱化它。Phase 4 的四份 authority 文档必须处于同一 `P4_AUTHORITY_COMMIT`，其中 `P4-R01` 至 `P4-R17` 与 D00–D15 是唯一详细验收矩阵。
 3. Phase 0–3 已验收制品分别证明其历史交付事实，不因本路线图更新而改变。
 4. `docs/research/lottery-autoresearch-technical-strategy.md` 只保留研究方法和风险背景；其中“仍不进入产品实现”的旧阶段顺序已被本文件取代。
 5. `tasks/research/v1.0.0-lottery-autoresearch-roadmap/` 是历史研究分解，不代表当前进度、产品范围或实施顺序。
@@ -49,16 +49,16 @@
 
 | 状态类型 | 唯一记录键 | 允许值 | 回答的问题 |
 | --- | --- | --- | --- |
-| 工程交付状态 | `(system_release_id)` | `HOLD`、`FAIL`、`SYSTEM_MVP_GO`、`PROSPECTIVE_GO`、`SYSTEM_GO` | 双彩种预测、评分、AutoResearch、前瞻运行、治理和恢复能力是否按合同交付 |
-| 模型改进状态 | `(game, model_id, comparator_champion_id, model_release_id, window_id)` | `baseline_only`、`shadow_candidate`、`prospective_improvement_confirmed` | 该彩种的该模型是否通过历史/合成筛选，以及是否真实前瞻优于该窗口冻结的比较 Champion |
+| 工程交付状态 | `(system_release_id)` | `HOLD`、`FAIL`、`READY_FOR_LOCAL_PRODUCT_ACCEPTANCE`、`PROSPECTIVE_GO`、`SYSTEM_GO` | 双彩种真实模型预测、评分、AutoResearch、前瞻运行、治理和恢复能力是否按合同交付 |
+| 模型科学状态 | `(game, model_id, comparator_id, model_release_id, window_id)` | `lift_supported`、`no_confirmed_lift`、`worse_than_M0`、`insufficient_evidence` | 该彩种的冻结模型相对 M0 在隔离报告窗口中的证据结论 |
 | Top-K 结果状态 | `(game, K, model_id, comparator_champion_id, model_release_id, window_id)` | `insufficient_observation`、`no_confirmed_lift`、`confirmed_lift` | 该彩种、该 K、该模型相对冻结比较 Champion 是否有足够真实观测支持召回提升结论 |
 
 规则如下：
 
-- `SYSTEM_GO` 可以和 `baseline_only`、`insufficient_observation` 同时成立。此时系统能力合格，但不得声称实际预测效果已经提高。
-- 工程状态只允许按 `SYSTEM_MVP_GO -> PROSPECTIVE_GO -> SYSTEM_GO` 前进；任一阶段的 `HOLD|FAIL` 不能被模型或 Top-K 科学状态覆盖。
+- Phase 4 的 `READY_FOR_LOCAL_PRODUCT_ACCEPTANCE` 必须同时满足 `serving_model_by_game.ssq != M0` 与 `serving_model_by_game.dlt != M0`。`baseline_only` 只可用于 comparator/diagnostic/fallback 现场，不能是产品 PASS 状态。
+- 工程状态只允许按 `READY_FOR_LOCAL_PRODUCT_ACCEPTANCE -> PROSPECTIVE_GO -> SYSTEM_GO` 前进；任一阶段的 `HOLD|FAIL` 不能被模型或 Top-K 科学状态覆盖。
 - SSQ 和 DLT 分别维护 `champion_by_game`、shadow 队列、模型状态和证据窗口。两个彩种可以使用同一模型代码，但参数、预测、指标、错误预算、晋升和回退决策必须独立。
-- 历史或合成优势最多产生 `shadow_candidate`，不能产生 `prospective_improvement_confirmed`。
+- 历史或合成优势最多产生 challenger/shadow 资格，不能产生 `prospective_improvement_confirmed`，也不能越权改变 serving release。
 - `prospective_improvement_confirmed` 必须来自结果前冻结、不可回填的真实前瞻 Champion/challenger 同期预测。
 - Top-K 观察不足时必须保持 `insufficient_observation`；不能用联合 log score、合成结果或参数变化替代实际 Top-K 提升结论。
 - 达到预注册最小观察量但未通过提升门时，Top-K 状态为 `no_confirmed_lift`；只有通过效应和置信门才是 `confirmed_lift`。
@@ -128,37 +128,44 @@ Phase 3 正式验收身份是 `P3-R07-2c0fa97-20260810-I01`，权威制品为 `a
 
 ### 7.1 目标
 
-把 Phase 3 历史研究能力扩展为可部署、可调度、可恢复和可独立验收的双彩种闭环 MVP：系统在不知道未来结果时为 SSQ 和 DLT 分别生成、锁定并发布恰好 1,000 注按联合概率排序的完整合法组合；每个新解锁开奖结果都产生绑定该结果的评分和唯一 AutoResearch decision；合格参数或特征候选能够改变下一期 shadow 输出，但 Phase 4 不能越权晋升 Champion。
+把 Phase 3 历史研究能力扩展为可部署、可调度、可恢复和可独立验收的双彩种真实模型闭环 MVP。SSQ、DLT 必须分别从 Phase 1 canonical 冻结历史构造 `retrospective_sequence_safe` 特征，训练并冻结非 M0、非均匀 serving release，并由该 release 的联合概率生成、锁定和重放恰好 1,000 注完整合法组合；每个新解锁结果产生评分和唯一 AutoResearch decision，允许的真实参数或特征 diff 必须形成新 child 并改变下一期 shadow 输出，但不得越权晋升 serving。
 
-Phase 4 交付的是持续预测和受控研究的系统能力。它不以发现真实彩票规律、产生真实 shadow candidate、替换 M0 或证明真实 Top-K 提升作为阶段成功条件。完整产品形式和必备特性由同一固定 commit 中的 `tasks/phase4/README.md` 定义。
+Phase 4 不要求证明 lift；`no_confirmed_lift|worse_than_M0|insufficient_evidence` 可与工程 PASS 并存。但任一 game 使用 M0、fixture、内联参数、工作树默认模型或全等概率输出时，必须 HOLD/FAIL，不能形成产品 PASS。完整合同由同一 `P4_AUTHORITY_COMMIT` 的其余三份 authority 文档定义。
+
+本地产品验收不得绑定正式 builder 的 VPS 绝对路径。正式 provenance 继续精确冻结 Linux interpreter/平台/依赖/命令；本地只读 verifier 支持 CPython 3.12 patch/platform 迁移，以 manifest closure 验证历史 Phase 2/2.1 receipts 而不重跑其 VPS 环境。只有合同逐路径枚举的重算浮点叶可使用 finite 且 absolute/relative/ULP 三界同时满足的语义比较；ID、hash、issue/cutoff/lineage、Top-1000 membership/order、canonical ticket、create-once 文件，以及由 `P4S10HE1`（`1e-10` decimal quantum、round-half-even）稳定数学顺序键派生的 score/tie identity 与 tie bounds 始终 exact。排名先按该稳定键降序，再按 canonical ticket 升序处理同键 tie；raw binary64 bits 不得作为身份或排名 ID。
+
+`P4-LOCAL-PATH-CLASSIFIED-BINARY64-5` 按数值来源而非旧容器分类：snapshot feature 与 context normalization 使用 feature-derived profile；nested context `number_features` 独立使用 `4 * 2^-53/3e-14/151 ULP`；fitted coefficient 与其 objective-gradient leaves 使用独立 coefficient profile；`top_zone_rows.*.0` propagated zone score 独立使用 `4 * 2^-53/2^-46/64 ULP`；formal/historical/shadow Top-1000 的三个 display `joint_probability` 路径使用独立 probability-display profile；其余逐路径叶保留 `1e-12/1e-12/8 ULP` tight profile。每个 profile 都必须 finite 且同时满足 absolute/relative/ULP 三界，并由完整 macOS CPython 3.12.11 replay 的逐 pattern maxima、明确计算来源及 just-outside negatives 约束。c5a9 controller preflight 的 17 个剩余 failures 只允许由上述两个新隔离 profile 关闭，不得扩大其余四类。`18b25e21`/`eb9c124d` 的 17-ULP 假设及 c5a9 HOLD 都是不可改写的失败证据，不构成 release authority。score/order/tie、ticket、lineage、hash、ID 与 create-once 文件不进入任何容差。
+
+controller c5a9 preflight 已证明 16-ULP coefficient 与 32-ULP probability profiles 为零 failures；新的 pre-allocation gate 只剩完整 collector 证明 nested context 与 propagated zone-score 两类为零新 bound failures，且所有 86 patterns 均被观察。
+
+`P4S10HE1` 是 D00 authority 的冻结组成部分；任何 key ID、量化精度、舍入模式、派生 identity namespace 或排名组合键的变化都必须作为新的显式版本重新冻结四份 authority 文档，不能在既有 release 内静默替换。
 
 ### 7.2 工作方法
 
 Phase 4 必须按以下顺序推进，后续步骤不能替代前置步骤：
 
-1. **冻结权威和输入：** 同一 `main` commit 固定本路线图、`tasks/phase4/README.md`、Phase 3 正式 release、Phase 1 genesis 四项身份、代码和受保护路径清单。
-2. **结果前设计：** 总体设计、详细计划、预注册和机器验收合同冻结组件、CLI、Schema、状态机、时间合同、概率/tie、指标、修订传播、调度、错误预算、种子、功效、角色、命令、路径和资源预算。
-3. **实现与 readiness：** 在隔离路径实现系统；准备冻结 wheelhouse；在全新环境离线重建；运行 benchmark、CLI smoke、恢复和 evidence-return canary；只读真实官方接口只用于连接、解析、规则、修订和失败语义 readiness。
-4. **受控资格：** 使用固定/合成 fixture、虚拟时钟、小空间顺序资格和完整规则 independent oracle 验证闭环、调整能力、错误控制、指标和修订传播，不等待真实开奖，不把合成结果解释成真实改善。
-5. **单一正式 release：** qualification、正负 E2E、独立 replay、最终 validator 和 acceptance 必须绑定同一冻结代码、输入、合同、种子和 `artifacts/phase-4/<release-id>/`；失败 attempt 和不利结果不得删除或覆盖。
-6. **独立复核：** 独立路径从底层输入重算 A01-A21、递归证据闭包和状态矩阵；人工签署只接受重算结果，不接受顶层自报 `PASS`。
+1. **D00 authority：** 四份 authority 文档在同一 clean commit 冻结，两个 checker 通过后解除 `HOLD_AUTHORITY_SYNC`。
+2. **D01–D10 实现门：** 依次冻结合同，生成真实特征和双彩种模型，隔离 selection/report-only，完成概率排名、账本、CLI、AutoResearch、调度恢复与 workload readiness。
+3. **D11–D15 正式门：** 在唯一 release 完成双彩种 E2E、独立 bottom-up replay/mutation、不可变 checklist candidate、覆盖它的 pre-acceptance manifest，最后只追加 machine acceptance、checklist release receipt 和 final closure。
+4. **独立复核：** 从底层证据重算 P4-R01–P4-R17；D15 前不请求人工确认、不接受人工豁免，也不把顶层自报 `PASS` 当作事实。
 
 ### 7.3 必须完成
 
 - 建立 Phase 4 自有数据层，以 MVP 定义冻结的 Phase 1 `baseline-v1` 四项身份作为唯一 genesis；后继 release 保持连续链，只写 Phase 4 staging/runtime，并递归保护整个 Phase 1 权威树。
 - 建立 SSQ/DLT 目标期日历、规则映射、增量官方结果采集、核验、去重和修订传播；修订必须形成 corrected score/aggregate、remediation decision 和候选重新资格，不退款或重复 alpha spending。
-- 实现 Champion/shadow 预测、严格为正且归一的完整空间联合概率、精确 Top-1000、规范概率顺序键、完整空间 tie group、锁定截止和不可变 forecast ledger。
+- 为 SSQ/DLT 分别实现真实 P4E2-R 多特征模型（或通过同等验收的低容量多特征模型）；正式 serving 必须覆盖历史变化、号码关系和组合结构三类特征，冻结 data/feature/config/code/dependency/model-card 身份。历史 P4E1-R 单特征版本只能保留为不可变回放，M0 仅作 comparator 或带 `NON_PRODUCT_BASELINE` 水印的显式 diagnostic fallback。
+- 实现严格为正且归一的完整空间联合概率、概率主排序 Top-1000、局部 tie、锁定截止和不可变 forecast ledger；完整空间单一 tie 或 Top-1000 全等概率必须拒绝。
 - 实现 guarded label unlock，并分离开奖前 forecast 诊断、绑定结果版本的逐预测 score 和带最小样本量状态的窗口指标。
 - 实现候选模型/特征 registry、参数和特征配置 diff、隔离实验、逐彩种/假设族 alpha wealth、预算、checkpoint、失败终态和 shadow 接入；历史或合成证据不得修改 Champion。
 - 实现工程、模型改进和 Top-K 三类独立状态及完整主键；不得跨 game、K、comparator、release 或 window 外推。
 - 提供确定性目标期调度、截止保护、并发/迟到/漏跑/补偿终态、幂等恢复、告警、离线 replay、CLI、配置、Schema、依赖锁、测试和版本化 release。
-- 在正式资格前完成 qualification-design/power，冻结全部生成分布、效应、开发/功效/正式种子隔离、数值算法、容差、工作负载、资源预算、角色、命令、输出路径和 acceptance 合同。
+- 在正式运行前冻结 selection folds、只报告一次的 report-only folds、数值算法、容差、工作负载、资源预算、命令、输出路径和 acceptance 合同；不得因结果不利而重选。
 
 ### 7.4 边界与约束
 
 - Phase 0–3 的冻结输入、正式结果、review、acceptance 和 manifest 全部只读；Phase 4 的 Schema 兼容不授权写入 `artifacts/phase-1/`。
 - Phase 1 历史序列只适用 `retrospective_sequence_safe`；外部时变预测特征必须有真实 `available_at_utc < prediction_locked_at`；官方结果标签必须在 forecast lock 后核验并受控解锁。三类时间证据不得互换或补造。
-- SSQ 与 DLT 的 Champion、参数、forecast、实验预算、alpha wealth、指标和科学状态相互隔离。M0 永久保留为两个彩种的默认 Champion 和回退基线。
+- SSQ 与 DLT 的 serving release、参数、forecast、实验预算、指标和科学状态相互隔离。M0 永久保留为 comparator/diagnostic fallback，但不能驱动 Phase 4 正式 lock 或产品 PASS。
 - 每个正式对象使用唯一身份和 append-only 终态；修订、失败、超时、跳过、零实验、`no_change`、恢复和不利结果全部保留。
 - 概率排序和 tie 必须确定、可传递、可独立重放；完整空间 rank 无法在批准预算内正确计算的候选不得接入或必须 `HOLD`，不能降级伪造。
 - 公网只用于准备依赖和只读官方接口 canary；隔离安装和合成正式资格只消费冻结依赖及输入。环境只记录事实并以批准 workload benchmark 判定，不设任意通用 VPS 硬件门槛。
@@ -167,32 +174,30 @@ Phase 4 必须按以下顺序推进，后续步骤不能替代前置步骤：
 
 ### 7.5 交付物
 
-Phase 4 必须交付完整集合，缺少任一类均不能得到 `SYSTEM_MVP_GO`：
+Phase 4 必须交付完整集合，缺少任一类均不能得到 `READY_FOR_LOCAL_PRODUCT_ACCEPTANCE`：
 
 1. **定义与合同：** MVP 定义、总体设计、详细计划、三类时间合同、预注册、机器验收合同、故障模型和 SLO 合同。
 2. **实现：** 自有数据追加层、日历、调度、预测/锁定、评分、AutoResearch、修订传播、三类状态矩阵、恢复、告警和 replay 代码。
 3. **机器接口：** CLI、配置、依赖锁，以及 data-release、calendar、schedule、forecast、ranking、metric、experiment、decision、champion-by-game、model-status、top-k-status、alpha-wealth、manifest、review 和 acceptance Schema。
-4. **验证资产：** 单元/属性/Schema 测试、独立概率/排序/指标/full-rule oracle、正负 E2E、修订传播、故障恢复、泄漏负控、合成资格 fixture 和 qualification-design/power。
+4. **验证资产：** 单元/属性/Schema 测试、真实双彩种训练/forecast E2E、独立概率/排序/指标 oracle、bottom-up replay/mutation、修订传播、故障恢复和泄漏负控。
 5. **运行材料：** wheelhouse 及 manifest、离线重建 receipt、benchmark、VPS 部署/运行/故障/恢复/证据取回/验收手册和 readiness 证据。
-6. **正式证据：** 单一 `artifacts/phase-4/<release-id>/` 下的冻结合同、正式资格、正负 E2E、独立 replay、独立 review、最终 validator、人工签署、acceptance 和递归 evidence manifest。
+6. **正式证据：** 单一 `artifacts/phase-4/<release-id>/` 下的 D00–D15 receipts、双彩种 E2E、独立 replay、不可变 checklist candidate、pre-acceptance manifest 和只追加的最终 acceptance 闭包。
 
 ### 7.6 验收标准与方法
 
-`tasks/phase4/README.md` 的 `P4-MVP-A01` 至 `P4-MVP-A21` 是唯一逐项验收标准；下表仅证明路线图覆盖完整，不能代替其中任何合格标准、负控或证据要求：
+`tasks/phase4/README.md` 的 `P4-R01` 至 `P4-R17` 和详细计划 D00–D15 是唯一逐项验收标准；下表仅作路线图摘要：
 
 | 路线图验收组 | 详细门 | 必须证明 |
 | --- | --- | --- |
-| 双彩种预测产品 | P4-MVP-A01–P4-MVP-A04 | 双彩种闭环、恰好 1,000 注、严格正概率、确定排序和完整空间 tie 语义 |
-| AutoResearch 能力与统计资格 | P4-MVP-A05–P4-MVP-A10 | 参数/特征确实改变 shadow；顺序错误控制、恢复能力和完整规则八单元能力全部通过 |
-| 因果、安全与数据层 | P4-MVP-A11–P4-MVP-A14 | 时间/标签、彩种/治理隔离、幂等恢复、固定 Phase 1 genesis 和只读官方接口 readiness 全部通过 |
-| 重放、交付和运行 readiness | P4-MVP-A15–P4-MVP-A17 | 独立 bottom-up replay、交付覆盖率 100%、隔离安装和批准 workload 可执行 |
-| 状态、调度、指标与修订 | P4-MVP-A18–P4-MVP-A21 | 三类状态、虚拟时钟调度、独立指标 oracle 和结果修订全链传播全部通过 |
+| 双彩种真实模型产品 | P4-R02–P4-R11 | 真实特征/模型、隔离回测、非 M0 serving、各 1,000 注与冻结 CLI lineage |
+| AutoResearch、因果与恢复 | P4-R12–P4-R13 | append-only 时间状态、修订恢复、child/shadow 真实变化且不改 serving |
+| 重放与交付闭包 | P4-R14–P4-R17 | 独立 bottom-up replay、manifest、不变率、科学措辞和机器后本地交接 |
 
-以下项目级硬门不得由后续设计放宽：均匀负控和三类正控均为每彩种、每类至少 1,000 个序列且每序列 150 周期；均匀序列错误 proposal 率不高于 5%；六个逐彩种正控单元恢复率分别不低于 90%；完整规则 Top-10/100/200/1000 八个单元全部严格优于 M0；历史或合成 Champion 晋升次数为 0；alpha/停止规则重算、交付物覆盖率、独立 replay 和递归哈希均要求 100%。
+以下项目级硬门不得放宽：双彩种分别使用真实 Phase 1 历史训练的非 M0 serving；selection/report-only 隔离；各 1,000 注合法唯一、严格正、至少两个规范概率层且概率主排序；正式 CLI 实际加载冻结 release；shadow 真实变化但不晋升 serving；独立 replay/mutation、protected roots、manifest 覆盖率和 pre-acceptance 不变率均为 100%。
 
-单元、属性、Schema、独立 known-answer/oracle、双彩种正负 E2E、故障恢复、泄漏和越权负控、合成资格、只读 canary、隔离安装、独立 replay、最终 validator、独立 review 和人工签署必须在同一正式 release 上共同通过。只证明任务已触发、代码测试通过、存在 Top-1000 文件或顶层文件自报 `PASS` 均不合格。
+单元、Schema、真实双彩种正负 E2E、故障恢复、泄漏和越权负控、隔离安装、独立 replay、最终 validator 与独立 checker 必须在同一正式 release 上共同通过。只证明命令被触发、代码测试通过、存在 Top-1000 文件、M0 known-answer 或顶层文件自报 `PASS` 均不合格；开发过程不存在人工门。
 
-只有 A01-A21 全部通过、blocking findings 为 0 且没有越界科学声明时，工程状态才能为 `SYSTEM_MVP_GO`。Phase 4 结束时允许模型状态为 `baseline_only`、Top-K 状态为 `insufficient_observation`、M0 继续作为两个彩种的 Champion；这不影响系统能力验收，但禁止宣称真实预测效果已经改善。
+只有详细计划 D00–D15 和 P4-R01–P4-R17 全部通过、blocking findings 为 0、两彩种正式 serving 均为真实非 M0 非均匀冻结模型时，工程状态才能为 `READY_FOR_LOCAL_PRODUCT_ACCEPTANCE`。科学状态可以如实为 `no_confirmed_lift|worse_than_M0|insufficient_evidence`；这不影响真实模型功能验收，但禁止宣称效果已经改善。
 
 ## 8. Phase 5：固定窗口真实前瞻运行
 
@@ -278,4 +283,4 @@ Phase 5 验证真实前瞻运行和 SLO，不宣称 20 期足以证明模型或 
 - 不实现自动购彩、代购、投注、资金、收益优化、中奖保证或随机性证明。
 - 不把机器品牌或固定硬件规格作为科学门；实际 workload 必须通过结果前 benchmark、资源预算和恢复验证。
 
-下一阶段是 Phase 4。启动开发前必须在同一个 `main` 固定 commit 中冻结本路线图和 `tasks/phase4/README.md`，再基于该身份冻结 Phase 4 总体设计、详细计划、机器验收合同、输入/代码身份和 release 目录。Phase 5 只能在 Phase 4 A01-A21 全部通过并取得 `SYSTEM_MVP_GO` 后启动；Phase 6 只能在 Phase 5 固定窗口和量化 SLO 全部通过后启动。
+下一阶段是 Phase 4。启动 D01 前必须在同一个 clean `P4_AUTHORITY_COMMIT` 中冻结四份 authority 文档并通过两个 D00 checker。Phase 5 只能在 Phase 4 D00–D15 与 P4-R01–P4-R17 全部通过并取得 `READY_FOR_LOCAL_PRODUCT_ACCEPTANCE` 后启动；Phase 6 只能在 Phase 5 固定窗口和量化 SLO 全部通过后启动。

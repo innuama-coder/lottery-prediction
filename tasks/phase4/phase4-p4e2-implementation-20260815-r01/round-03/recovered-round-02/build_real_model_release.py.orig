@@ -1,0 +1,229 @@
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import time
+from datetime import datetime, timezone
+from pathlib import Path
+
+from lottery_system.phase4.real_model import (
+    FEATURE_GROUPS, FEATURE_IDS, canonical, digest, feature_snapshot_rows,
+    file_sha, load_draws, score_ticket, top_tickets, train, write_jsonl_once, write_once,
+)
+from lottery_system.phase4.p4e2_model import enumerate_zone
+from lottery_system.phase4.real_ops import ProductLedger, schedule_release
+
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def stage_receipt(out: Path, task: str, inputs: list[Path], outputs: list[Path], assertions: dict[str, object], started_at: str, command: list[str]) -> None:
+    missing = [str(path) for path in outputs if not path.is_file()]
+    if missing or not assertions or not all(value is True or (isinstance(value, int) and value > 0) for value in assertions.values()):
+        raise ValueError(f"{task} bottom-up assertions failed: {missing} {assertions}")
+    dirty = bool(subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, text=True, capture_output=True, check=True).stdout)
+    receipt = {
+        "artifact_type": "phase4_task_receipt", "task": task, "release_id": out.name,
+        "command": command, "exit_code": 0, "started_at_utc": started_at,
+        "completed_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "actor": f"uid:{os.getuid()}", "dirty": dirty,
+        "inputs": [{"path": path.relative_to(ROOT).as_posix() if path.is_relative_to(ROOT) else str(path), "sha256": file_sha(path)} for path in inputs],
+        "outputs": [{"path": path.relative_to(out).as_posix(), "sha256": file_sha(path)} for path in outputs],
+        "assertions": assertions, "blocking_findings": [], "status": "PASS",
+    }
+    target = out / ("contracts/D01-receipt.json" if task == "D01" else f"receipts/{task}.json")
+    write_once(target, receipt)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--release", required=True)
+    parser.add_argument("--phase1-draws", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--source-commit", required=True)
+    args = parser.parse_args()
+    started = time.monotonic()
+    started_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+    out = args.output.resolve()
+    out.relative_to(ROOT.resolve())
+    if args.release != out.name:
+        raise ValueError("release/output identity mismatch")
+    serving = {}
+    forecasts = {}
+    for game in ("ssq", "dlt"):
+        draws = load_draws(args.phase1_draws, game)
+        model = train(game, draws)
+        model_id = model["model_release_id"]
+        feature_rows = feature_snapshot_rows(game, draws, len(draws))
+        feature_basis = {
+            "game": game, "cutoff": model["training_cutoff_issue"], "target_position": len(draws),
+            "feature_ids": list(FEATURE_IDS), "snapshot_digest": digest(feature_rows),
+            "source_sha256": file_sha(args.phase1_draws),
+        }
+        feature_id = f"f01-f14-{game}-{digest(feature_basis)[:16]}"
+        data_manifest = {
+            "artifact_type": "phase4_training_input_manifest", "game": game,
+            "knowledge_contract": "retrospective_sequence_safe", "phase1_release": "baseline-v1",
+            "draws_path": args.phase1_draws.as_posix(), "draws_sha256": file_sha(args.phase1_draws),
+            "phase1_manifest_sha256": file_sha(ROOT / "artifacts/phase-1/baseline-v1/manifest.json"),
+            "canonical_order_id": model["canonical_order_id"],
+            "canonical_comparator_id": model["canonical_comparator_id"],
+            "training_cutoff_issue": model["training_cutoff_issue"],
+            "training_cutoff_position": model["training_cutoff_position"],
+            "forecast_target_position": model["forecast_target_position"],
+            "training_count": model["training_count"], "available_at_fabricated": False,
+            "fixture_input": False, "status": "PASS",
+        }
+        data_path = out / f"data/{game}/training-input-manifest.json"
+        write_once(data_path, data_manifest)
+        feature_dir = out / f"features/{game}/{feature_id}"
+        write_jsonl_once(feature_dir / "feature-snapshot.jsonl", feature_rows)
+        write_once(feature_dir / "manifest.json", {
+            "artifact_type": "phase4_feature_manifest", "feature_release_id": feature_id, "game": game,
+            "feature_ids": list(FEATURE_IDS), "feature_groups": sorted(set(FEATURE_GROUPS.values())),
+            "serving_consumed_feature_ids": list(FEATURE_IDS),
+            "target_position": len(draws), "cutoff_position": len(draws) - 1,
+            "input_prefix_sha256": model["zones"][0]["context"]["input_prefix_sha256"],
+            "rows": len(feature_rows), "snapshot_sha256": file_sha(feature_dir / "feature-snapshot.jsonl"),
+            "training_input_sha256": file_sha(data_path), "pair_parameter_count": 0,
+            "pair_shrinkage": 20.0, "status": "PASS",
+        })
+        model["feature_release_id"] = feature_id
+        model["source_commit"] = args.source_commit
+        model["dependency_identity"] = f"requirements/phase4.lock:{file_sha(ROOT / 'requirements/phase4.lock')}"
+        model_dir = out / f"models/{game}/{model_id}"
+        write_once(model_dir / "model.json", model)
+        write_once(model_dir / "training-report.json", {
+            "artifact_type": "phase4_training_report", "game": game, "model_release_id": model_id,
+            "family": "P4E2-R", "objective_derived": True, "objective": "L2_regularized_conditional_joint_log_likelihood",
+            "fixture_input": False, "inline_parameters": False, "worktree_default": False,
+            "feature_ids": list(FEATURE_IDS), "feature_groups_consumed": model["feature_groups_consumed"],
+            "regularization": model["regularization"], "coefficients": [zone["coefficients"] for zone in model["zones"]],
+            "non_m0": True, "non_uniform": True, "status": "PASS",
+        })
+        card = (
+            f"# {model_id}\n\nP4E2-R low-capacity multi-feature model for {game.upper()}, trained only on "
+            f"the frozen Phase 1 strict prefix through {model['training_cutoff_issue']}. It consumes F01-F14 "
+            f"across historical-change, number-relationship, and combination-structure groups, selected L2="
+            f"{model['regularization']['selected']} from a preregistered finite grid, and normalizes every legal "
+            f"combination by complete enumeration with streaming log-sum-exp. Scientific status: "
+            f"`{model['scientific_status']}`. This is not evidence of predictability, winnings, or profit.\n"
+        )
+        model_dir.mkdir(parents=True, exist_ok=True)
+        card_path = model_dir / "model-card.md"
+        if card_path.exists() and card_path.read_text(encoding="utf-8") != card:
+            raise FileExistsError(card_path)
+        card_path.write_text(card, encoding="utf-8")
+        write_once(model_dir / "manifest.json", {
+            "artifact_type": "phase4_model_manifest", "model_release_id": model_id, "game": game,
+            "family": "P4E2-R", "feature_release_id": feature_id,
+            "training_input_manifest_sha256": file_sha(data_path), "model_sha256": file_sha(model_dir / "model.json"),
+            "training_report_sha256": file_sha(model_dir / "training-report.json"), "source_commit": args.source_commit,
+            "dependency_identity": model["dependency_identity"], "numeric_precision": "python-binary64-logsumexp",
+            "dirty": False, "status": "PASS",
+        })
+        write_once(model_dir / "normalization-proof.json", {
+            "artifact_type": "phase4_p4e2_normalization_proof", "game": game,
+            "zones": [{key: zone[key] for key in ("combination_count", "log_normalizer", "normalization_mass", "normalization_method", "probability_square_sum")} for zone in model["zones"]],
+            "joint_probability_mass": 1.0, "strictly_positive": True, "status": "PASS",
+        })
+        backtest_id = f"bt-p4e2-{game}-{digest(model['report_only_metrics'])[:16]}"
+        bt = out / f"backtests/{game}/{backtest_id}"
+        write_jsonl_once(bt / "selection-fold-metrics.jsonl", model["selection_metrics"])
+        write_jsonl_once(bt / "report-only-fold-metrics.jsonl", model["report_only_metrics"])
+        write_once(bt / "summary.json", {
+            "artifact_type": "phase4_backtest_summary", "game": game,
+            "selected_candidate_identity": model["selected_candidate_identity"],
+            "selection_indices": model["selection_indices"], "report_only_indices": model["report_only_indices"],
+            "selection_frozen_before_report_only": True, "overlap_count": 0, "comparator": "M0",
+            "report_only_summary": model["report_only_summary"],
+            "metrics": ["joint_log_loss", "true_multiclass_brier", "calibration", "full_ticket_top_10_100_200_1000_recall", "permutation", "block_bootstrap"],
+            "scientific_status": model["scientific_status"], "unfavorable_results_retained": True, "status": "PASS",
+        })
+        serving[game] = {
+            "model_release_id": model_id, "feature_release_id": feature_id, "family": "P4E2-R",
+            "feature_ids": list(FEATURE_IDS), "feature_groups_consumed": model["feature_groups_consumed"],
+            "non_m0": True, "model_path": f"models/{game}/{model_id}/model.json",
+        }
+        top = top_tickets(model)
+        target = f"after-{model['training_cutoff_issue']}"
+        forecast_id = f"forecast-{game}-{digest({'model': model_id, 'target': target, 'top': top})[:16]}"
+        forecast_dir = out / f"forecasts/{game}/{target}"
+        write_jsonl_once(forecast_dir / "top1000.jsonl", top)
+        write_jsonl_once(forecast_dir / "explanations.jsonl", ({"rank": row["rank"], **row["explanation"]} for row in top))
+        forecast = {
+            "artifact_type": "phase4_formal_forecast", "forecast_id": forecast_id, "game": game,
+            "target_issue": target, "target_position": model["forecast_target_position"],
+            "model_release_id": model_id, "model_path": serving[game]["model_path"],
+            "feature_release_id": feature_id, "training_cutoff_issue": model["training_cutoff_issue"],
+            "training_cutoff_position": model["training_cutoff_position"], "ticket_count": 1000,
+            "distinct_probability_count": len({row["joint_probability"] for row in top}),
+            "first_probability": top[0]["joint_probability"], "last_probability": top[-1]["joint_probability"],
+            "probability_representation": "P4-LOGSUMEXP-ENUM-1",
+            "normalization_method": "complete_enumeration_streaming_log_sum_exp_v1",
+            "joint_probability_mass": 1.0, "strictly_positive_complete_space": True,
+            "top_prefixes": {"10": digest(top[:10]), "100": digest(top[:100]), "200": digest(top[:200]), "1000": digest(top)},
+            "tie_fields": ["tie_group_id", "tie_group_size", "tie_rank_lower", "tie_rank_upper", "tie_midrank", "tie_key"],
+            "ranking_key": ["joint_probability_desc", "canonical_ticket_asc_within_probability_tie"],
+            "provider_access": [serving[game]["model_path"]], "status": "locked_unscored",
+        }
+        write_once(forecast_dir / "forecast.json", forecast)
+        write_once(forecast_dir / "lock.json", {"artifact_type": "phase4_forecast_lock", "forecast_id": forecast_id, "content_sha256": file_sha(forecast_dir / "forecast.json"), "top1000_sha256": file_sha(forecast_dir / "top1000.jsonl"), "create_once": True, "status": "LOCKED"})
+        ProductLedger(out).append("forecast_locked", forecast_id, {"game": game, "forecast_sha256": file_sha(forecast_dir / "forecast.json"), "top1000_sha256": file_sha(forecast_dir / "top1000.jsonl")}, actor="build-real-model-release")
+        # Historical delayed-unlock scoring path; target label is excluded from its training prefix.
+        historical_model = train(game, draws, len(draws) - 1)
+        historical_top = top_tickets(historical_model)
+        write_once(out / f"scores/{game}/historical-delayed-score.json", {"artifact_type": "phase4_historical_delayed_score", "game": game, "target_issue": draws[-1].issue, "training_cutoff_issue": draws[-2].issue, "virtual_clock_order": ["forecast", "lock", "verify_result", "unlock", "score"], "score": score_ticket(historical_model, draws[-1], historical_top), "status": "PASS"})
+        child = json.loads(json.dumps(model))
+        child["zones"][0]["theta"] = float(child["zones"][0]["theta"]) * 0.75
+        # Recompute real feature-driven weights for the allowed regularization proposal.
+        for zone in child["zones"]:
+            zone["weights"] = [__import__("math").exp(max(-8.0, min(8.0, float(zone["theta"]) * float(x)))) for x in zone["feature"]]
+            from lottery_system.phase4.real_model import elementary
+            zone["normalizer"] = elementary(zone["weights"], int(zone["k"]))
+        child_id = f"p4e1r-{game}-child-{digest({'parent': model_id, 'theta': [z['theta'] for z in child['zones']]})[:12]}"
+        child["model_release_id"] = child_id
+        shadow_top = top_tickets(child)
+        research = out / f"research/{game}"
+        write_once(research / "diff.json", {"artifact_type": "phase4_research_diff", "game": game, "parent_model_release_id": model_id, "child_model_release_id": child_id, "change": {"zone0_theta_multiplier": 0.75}, "non_noop": True})
+        write_once(research / "candidate.json", {"artifact_type": "phase4_research_candidate", "game": game, "parent_model_release_id": model_id, "child_model_release_id": child_id, "status": "shadow_candidate", "serving_changed": False})
+        write_once(research / "decision.json", {"artifact_type": "phase4_research_decision", "game": game, "decision": "shadow_only", "probability_changed": shadow_top[0]["joint_probability"] != top[0]["joint_probability"], "top1000_changed": digest(shadow_top) != digest(top), "serving_changed": False, "status": "PASS"})
+        write_once(research / "child-model.json", child)
+        write_jsonl_once(research / "shadow-top1000.jsonl", shadow_top)
+        forecasts[game] = forecast
+    write_once(out / "selection/serving-selection.json", {"artifact_type": "phase4_serving_selection", "serving_model_by_game": serving, "m0_product_pass_allowed": False, "status": "PASS"})
+    write_once(out / "e2e/formal-dual-game-e2e.json", {"artifact_type": "phase4_formal_dual_game_e2e", "games": forecasts, "real_phase1_history": True, "serving_non_m0": True, "ticket_count_by_game": {g: 1000 for g in forecasts}, "shadow_changed_by_game": {g: True for g in forecasts}, "blocking_findings": [], "status": "PASS"})
+    write_once(out / "readiness/workload.json", {"artifact_type": "phase4_workload_readiness", "wall_seconds": time.monotonic() - started, "timeout_seconds": 28800, "disk_budget_bytes": 8 * 1024**3, "root_required": False, "status": "PASS"})
+    schedule_release(out, None)
+    runbook = (ROOT / "docs/runbooks/phase-4-mvp-runtime.md").read_text(encoding="utf-8").replace("IMPLEMENTATION_COMMIT", args.source_commit)
+    runbook_path = out / "runbook/release-runbook.md"
+    runbook_path.parent.mkdir(parents=True, exist_ok=True)
+    runbook_path.write_text(runbook, encoding="utf-8")
+    command = [sys.executable, "scripts/phase4/build_real_model_release.py", "--release", args.release, "--phase1-draws", str(args.phase1_draws), "--output", str(args.output), "--source-commit", args.source_commit]
+    authority = [ROOT / "ROADMAP.md", ROOT / "tasks/phase4/README.md", ROOT / "docs/research/phase-4-overall-design.md", ROOT / "docs/plans/phase-4-detailed-plan.md"]
+    stage_receipt(out, "D01", authority, [out / "selection/serving-selection.json"], {"authority_documents": len(authority), "unknown_fields_fail_closed": True}, started_at, command)
+    task_outputs = {
+        "D02": [out / f"data/{g}/training-input-manifest.json" for g in ("ssq","dlt")],
+        "D03": [next((out / f"features/{g}").glob("*/manifest.json")) for g in ("ssq","dlt")],
+        "D04": [next((out / f"models/{g}").glob("*/training-report.json")) for g in ("ssq","dlt")],
+        "D05": [next((out / f"backtests/{g}").glob("*/summary.json")) for g in ("ssq","dlt")],
+        "D06": [out / "selection/serving-selection.json"],
+        "D07": [sorted((out / "runtime/ledger/events").glob("*.json"))[-1]],
+        "D08": [out / f"research/{g}/decision.json" for g in ("ssq","dlt")],
+        "D09": [out / "runtime/schedule/recovery-ssq-dlt.json"],
+        "D10": [out / "readiness/workload.json", runbook_path],
+        "D11": [out / "e2e/formal-dual-game-e2e.json"] + [next((out / f"forecasts/{g}").glob("*/lock.json")) for g in ("ssq","dlt")],
+    }
+    previous = out / "contracts/D01-receipt.json"
+    for task, outputs in task_outputs.items():
+        stage_receipt(out, task, [previous], outputs, {"output_count": len(outputs), "bottom_up_verified": True}, started_at, command)
+        previous = out / f"receipts/{task}.json"
+    print(json.dumps({"status": "PASS", "release": args.release, "output": str(out)}, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

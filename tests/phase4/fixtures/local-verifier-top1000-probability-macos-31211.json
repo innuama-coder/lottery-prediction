@@ -1,0 +1,19 @@
+{
+  "artifact_type": "phase4_local_verifier_cross_runtime_fixture",
+  "source": "independent_controller_local_acceptance",
+  "release_id": "P4-P4E2-20260815-r09",
+  "controller_checkout_commit": "393252eae7fef2de79571891b8cfaee5aa52fb83",
+  "release_source_commit": "581810e7645c07aa9f2d680f21ca3e92cc941a80",
+  "release_runtime": "Linux CPython 3.12.3",
+  "replay_runtime": "macOS CPython 3.12.11",
+  "profile_id": "top1000_derived_probability_display_v1",
+  "path": "top1000.622.joint_probability",
+  "game": "ssq",
+  "rank": 623,
+  "canonical_ticket_key": [[5, 6, 13, 14, 24, 28], [2]],
+  "release_value": "6.358672953029994052e-08",
+  "macos_value": "6.35867295302997155e-08",
+  "absolute_error": 2.2499312661442353e-22,
+  "relative_error": 3.5383660753807325e-15,
+  "ulp_distance": 17
+}

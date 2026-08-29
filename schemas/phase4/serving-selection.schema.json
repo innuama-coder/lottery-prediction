@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lottery.local/schemas/phase4/serving-selection.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "serving_model_by_game",
+    "m0_product_pass_allowed",
+    "status"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "phase4_serving_selection"
+    },
+    "m0_product_pass_allowed": {
+      "const": false
+    },
+    "status": {
+      "const": "PASS"
+    },
+    "serving_model_by_game": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ssq",
+        "dlt"
+      ],
+      "properties": {
+        "ssq": {
+          "$ref": "#/$defs/serving"
+        },
+        "dlt": {
+          "$ref": "#/$defs/serving"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "serving": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_release_id",
+        "feature_release_id",
+        "family",
+        "feature_ids",
+        "feature_groups_consumed",
+        "non_m0",
+        "model_path"
+      ],
+      "properties": {
+        "model_release_id": {
+          "type": "string"
+        },
+        "feature_release_id": {
+          "type": "string"
+        },
+        "family": {
+          "const": "P4E2-R"
+        },
+        "feature_ids": {
+          "type": "array",
+          "minItems": 14,
+          "maxItems": 14,
+          "uniqueItems": true
+        },
+        "feature_groups_consumed": {
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true
+        },
+        "non_m0": {
+          "const": true
+        },
+        "model_path": {
+          "type": "string",
+          "pattern": "^models/(ssq|dlt)/[^/]+/model\\.json$"
+        }
+      }
+    }
+  }
+}

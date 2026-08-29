@@ -23,6 +23,7 @@ from lottery_system.phase4.storage import AdvisoryFileLock, LockUnavailable, res
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = ROOT / "tests/phase4/fixtures/schedule/dual-game.json"
 PROVENANCE = {"producer_actor_id":"p4-implementation-author-i01","task_id":"T08","session_id":"/root/implementation_author","source_commit":"f8a7a6abb46a55f8fa17e5ae3280c5c5432c363b","path":"tests","role":"implementation_author"}
+LEGACY_PREP_INSTALLED = (ROOT / "artifacts/phase-4-prep/p4-prep-controller-issued-i01/work-items/T03/data-custodian-source-review-I01/receipt.json").is_file()
 
 
 def fixture() -> dict:
@@ -153,6 +154,7 @@ class SchedulerRecoveryTests(unittest.TestCase):
             with self.assertRaises(OrchestrationViolation):
                 execute_plan(ROOT, Path(raw), plan, plan_key=key, schedule_sha256="4"*64, clock="2026-01-03T09:00:00Z", provenance=PROVENANCE, late=True, behavior={"correction":bad})
 
+    @unittest.skipUnless(LEGACY_PREP_INSTALLED, "superseded T00-T24 correction receipts are not installed")
     def test_accepted_correction_closes_once_after_resume(self) -> None:
         plan, _old_key, _ = one_plan("prepare")
         plan = dict(plan); plan["action"] = "unlock_score_research"
@@ -203,6 +205,7 @@ class SchedulerRecoveryTests(unittest.TestCase):
                 validate_schedule(bad)
 
     @unittest.skipIf(os.name == "nt", "imported Linux calendar tzdata identity is platform-bound")
+    @unittest.skipUnless(LEGACY_PREP_INSTALLED, "superseded T00-T24 calendar runtime is not installed")
     def test_build_schedule_from_explicit_calendar_and_contract(self) -> None:
         calendar = load_json(resolve_inside(ROOT / "artifacts/phase-4-runtime/p4-runtime-t03-author-i01", "calendar-releases/calendar-release-v1:adceed49ec0df3767c4517b6bcedcd62a0f026e6285af09e6076945ea9a67c48/calendar.json"), reject_floats=True)
         expected = "schedule-release-v1:f9cdca21865612d130ff9c8e1d1fedfe22117d1f68c6f22208d2175066445492"
